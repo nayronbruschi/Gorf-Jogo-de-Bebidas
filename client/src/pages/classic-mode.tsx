@@ -1,22 +1,31 @@
 import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { classicChallenges } from "@/lib/game-data";
 import { useSound } from "@/hooks/use-sound";
-import { User, Beer, Target, ArrowRight, Award, Crown } from "lucide-react";
+import { User, Beer, Target, ArrowRight, Award, Crown, Plus, Minus } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { WinnerScreen } from "@/components/WinnerScreen";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
   const [completedChallenge, setCompletedChallenge] = useState(false);
   const [hasDrunk, setHasDrunk] = useState(false);
   const [roundPoints, setRoundPoints] = useState(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [maxPoints, setMaxPoints] = useState(100);
   const { play } = useSound();
   const { toast } = useToast();
 
@@ -30,6 +39,9 @@ export default function ClassicMode() {
 
   const { data: settings } = useQuery({
     queryKey: ["/api/settings"],
+    onSuccess: () => {
+      setMaxPoints(settings?.maxPoints || 100);
+    }
   });
 
   const updatePoints = useMutation({
@@ -41,6 +53,16 @@ export default function ClassicMode() {
   const nextPlayer = useMutation({
     mutationFn: async () => {
       await apiRequest("POST", "/api/players/next", {});
+    },
+  });
+
+  const updateMaxPoints = useMutation({
+    mutationFn: async (points: number) => {
+      await apiRequest("PATCH", "/api/settings", { maxPoints: points });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
+      setDialogOpen(false);
     },
   });
 
@@ -103,7 +125,7 @@ export default function ClassicMode() {
   };
 
   // Verificar se alguém ganhou
-  const winner = players.find(player => player.points >= (settings?.maxPoints || 100));
+  const winner = players.find(player => player.points >= maxPoints);
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
   if (winner) {
@@ -111,7 +133,7 @@ export default function ClassicMode() {
       <WinnerScreen
         winner={{ name: winner.name, points: winner.points }}
         topDrinker={{ name: topDrinker.name, drinks: topDrinker.drinksCompleted }}
-        maxPoints={settings?.maxPoints || 100}
+        maxPoints={maxPoints}
         onPlayAgain={handlePlayAgain}
       />
     );
@@ -172,53 +194,97 @@ export default function ClassicMode() {
             )}
           </AnimatePresence>
 
-          {/* Checkboxes */}
+          {/* Botões de Ação */}
           <div className="space-y-4">
-            <div 
-              className="flex items-center gap-3 bg-purple-50 p-4 rounded-lg cursor-pointer select-none" 
-              onClick={() => setCompletedChallenge(!completedChallenge)}
+            <button
+              onClick={() => {
+                setCompletedChallenge(!completedChallenge);
+                setHasDrunk(false);
+              }}
+              className={`w-full flex items-center gap-3 p-4 rounded-lg cursor-pointer select-none text-left transition-colors
+                ${completedChallenge 
+                  ? 'bg-purple-50 border-2 border-purple-700' 
+                  : 'bg-purple-50 border-2 border-transparent hover:border-purple-200'}`}
             >
-              <Checkbox
-                id="challenge"
-                checked={completedChallenge}
-                onCheckedChange={(checked) => setCompletedChallenge(checked as boolean)}
-                className="border-purple-700 data-[state=checked]:bg-purple-700 data-[state=checked]:text-white"
-              />
-              <label htmlFor="challenge" className="text-purple-900 cursor-pointer flex items-center gap-2 flex-1">
-                <Target className="h-5 w-5" />
-                <span className="flex-1">Completou o Desafio</span>
-                <span className="text-sm text-purple-700">+{roundPoints}pts</span>
-              </label>
-            </div>
+              <Target className="h-5 w-5 text-purple-900" />
+              <span className="flex-1 text-purple-900">Completou o desafio</span>
+              <span className="text-sm text-purple-700">+{roundPoints}pts</span>
+            </button>
 
-            <div 
-              className="flex items-center gap-3 bg-purple-50 p-4 rounded-lg cursor-pointer select-none"
-              onClick={() => setHasDrunk(!hasDrunk)}
+            <button
+              onClick={() => {
+                setHasDrunk(!hasDrunk);
+                setCompletedChallenge(false);
+              }}
+              className={`w-full flex items-center gap-3 p-4 rounded-lg cursor-pointer select-none text-left transition-colors
+                ${hasDrunk 
+                  ? 'bg-purple-50 border-2 border-purple-700' 
+                  : 'bg-purple-50 border-2 border-transparent hover:border-purple-200'}`}
             >
-              <Checkbox
-                id="drink"
-                checked={hasDrunk}
-                onCheckedChange={(checked) => setHasDrunk(checked as boolean)}
-                className="border-purple-700 data-[state=checked]:bg-purple-700 data-[state=checked]:text-white"
-              />
-              <label htmlFor="drink" className="text-purple-900 cursor-pointer flex items-center gap-2 flex-1">
-                <Beer className="h-5 w-5" />
-                <span className="flex-1">Bebeu {roundPoints} goles</span>
-                <span className="text-sm text-purple-700">+{roundPoints}pts</span>
-              </label>
-            </div>
+              <Beer className="h-5 w-5 text-purple-900" />
+              <span className="flex-1 text-purple-900">Bebeu {roundPoints} goles</span>
+              <span className="text-sm text-purple-700">+{roundPoints}pts</span>
+            </button>
           </div>
 
           {/* Botão Próximo */}
-          <Button
-            size="lg"
-            onClick={handleNextPlayer}
-            className="bg-purple-700 hover:bg-purple-800 text-white text-xl w-full"
-            disabled={nextPlayer.isPending || updatePoints.isPending || (!completedChallenge && !hasDrunk)}
-          >
-            <ArrowRight className="mr-2 h-6 w-6" />
-            Próximo Jogador
-          </Button>
+          <div className="space-y-4">
+            <Button
+              size="lg"
+              onClick={handleNextPlayer}
+              className="bg-purple-700 hover:bg-purple-800 text-white text-xl w-full"
+              disabled={nextPlayer.isPending || updatePoints.isPending || (!completedChallenge && !hasDrunk)}
+            >
+              <ArrowRight className="mr-2 h-6 w-6" />
+              Próxima rodada
+            </Button>
+
+            <div className="text-sm text-purple-900 text-center">
+              Objetivo: {maxPoints} pontos{" "}
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger className="text-purple-700 underline hover:text-purple-800 ml-1">
+                  alterar &gt;
+                </DialogTrigger>
+                <DialogContent className="bg-white">
+                  <DialogHeader>
+                    <DialogTitle>Alterar Pontuação Máxima</DialogTitle>
+                  </DialogHeader>
+                  <div className="flex items-center gap-2 mt-4">
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="outline"
+                      className="rounded-full w-8 h-8"
+                      onClick={() => setMaxPoints(Math.max(10, maxPoints - 10))}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <Input
+                      type="number"
+                      value={maxPoints}
+                      onChange={(e) => setMaxPoints(Number(e.target.value))}
+                      className="text-center"
+                    />
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="outline"
+                      className="rounded-full w-8 h-8"
+                      onClick={() => setMaxPoints(Math.min(1000, maxPoints + 10))}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <Button
+                    className="w-full mt-4"
+                    onClick={() => updateMaxPoints.mutate(maxPoints)}
+                  >
+                    Salvar
+                  </Button>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
         </div>
 
         {/* Box do Ranking */}
