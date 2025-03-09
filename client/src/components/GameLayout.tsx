@@ -1,10 +1,8 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Home, Beer, Users } from "lucide-react";
-import { PlayerManagementDialog } from "./PlayerManagementDialog";
 import { motion } from "framer-motion";
-import { useState } from "react";
 
 interface GameLayoutProps {
   children: React.ReactNode;
@@ -14,7 +12,7 @@ interface GameLayoutProps {
 }
 
 export function GameLayout({ children, title, className, showPlayersButton = true }: GameLayoutProps) {
-  const [showPlayerManagement, setShowPlayerManagement] = useState(false);
+  const [, navigate] = useLocation();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500">
@@ -32,7 +30,7 @@ export function GameLayout({ children, title, className, showPlayersButton = tru
           <Button 
             variant="ghost" 
             size="icon"
-            onClick={() => setShowPlayerManagement(true)}
+            onClick={() => navigate("/manage-players")}
           >
             <Users className="h-6 w-6 text-white" />
           </Button>
@@ -47,11 +45,6 @@ export function GameLayout({ children, title, className, showPlayersButton = tru
         <h2 className="text-3xl font-bold text-white text-center mb-8">{title}</h2>
         {children}
       </motion.main>
-
-      <PlayerManagementDialog
-        open={showPlayerManagement}
-        onOpenChange={setShowPlayerManagement}
-      />
     </div>
   );
 }

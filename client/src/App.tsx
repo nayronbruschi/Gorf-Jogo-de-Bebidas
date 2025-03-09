@@ -10,6 +10,7 @@ import ClassicStart from "@/pages/classic-start";
 import ClassicMode from "@/pages/classic-mode";
 import RouletteMode from "@/pages/roulette-mode";
 import TruthOrDare from "@/pages/truth-or-dare";
+import ManagePlayers from "@/pages/manage-players";
 
 function Router() {
   return (
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/classic/play" component={ClassicMode} />
       <Route path="/roulette" component={RouletteMode} />
       <Route path="/truth-or-dare" component={TruthOrDare} />
+      <Route path="/manage-players" component={ManagePlayers} />
       <Route component={NotFound} />
     </Switch>
   );
