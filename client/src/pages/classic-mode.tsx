@@ -145,9 +145,9 @@ export default function ClassicMode() {
     <GameLayout title="Modo Clássico">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Box dos Desafios */}
-        <div className="space-y-8">
+        <div className="bg-white rounded-xl p-6 space-y-8">
           {/* Jogador Atual */}
-          <div className="flex items-center gap-4 text-white/80">
+          <div className="flex items-center gap-4 text-purple-900">
             <User className="h-6 w-6" />
             <span className="text-xl">
               {currentPlayer ? `Vez de ${currentPlayer.name}` : "Selecione os jogadores"}
@@ -162,10 +162,10 @@ export default function ClassicMode() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="text-3xl font-bold text-center text-white"
+                className="text-3xl font-bold text-center text-purple-900"
               >
                 {currentChallenge}
-                <div className="mt-4 text-lg font-normal text-white/80">
+                <div className="mt-4 text-lg font-normal text-purple-700">
                   Ou beba {roundPoints} goles
                 </div>
               </motion.div>
@@ -175,36 +175,36 @@ export default function ClassicMode() {
           {/* Checkboxes e Botão Próximo */}
           <div className="space-y-4">
             <div 
-              className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer w-full select-none" 
+              className="flex items-center gap-3 bg-purple-50 p-4 rounded-lg cursor-pointer w-full select-none" 
               onClick={() => setCompletedChallenge(!completedChallenge)}
             >
               <Checkbox
                 id="challenge"
                 checked={completedChallenge}
                 onCheckedChange={(checked) => setCompletedChallenge(checked as boolean)}
-                className="data-[state=checked]:bg-white data-[state=checked]:text-purple-500 border-white"
+                className="border-purple-700 data-[state=checked]:bg-purple-700 data-[state=checked]:text-white"
               />
-              <label htmlFor="challenge" className="text-white cursor-pointer flex items-center gap-2 flex-1 w-full">
+              <label htmlFor="challenge" className="text-purple-900 cursor-pointer flex items-center gap-2 flex-1 w-full">
                 <Target className="h-5 w-5" />
                 <span className="flex-1">Completou o Desafio</span>
-                <span className="text-sm text-white/80">+{roundPoints}pts</span>
+                <span className="text-sm text-purple-700">+{roundPoints}pts</span>
               </label>
             </div>
 
             <div 
-              className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer w-full select-none"
+              className="flex items-center gap-3 bg-purple-50 p-4 rounded-lg cursor-pointer w-full select-none"
               onClick={() => setHasDrunk(!hasDrunk)}
             >
               <Checkbox
                 id="drink"
                 checked={hasDrunk}
                 onCheckedChange={(checked) => setHasDrunk(checked as boolean)}
-                className="data-[state=checked]:bg-white data-[state=checked]:text-purple-500 border-white"
+                className="border-purple-700 data-[state=checked]:bg-purple-700 data-[state=checked]:text-white"
               />
-              <label htmlFor="drink" className="text-white cursor-pointer flex items-center gap-2 flex-1 w-full">
+              <label htmlFor="drink" className="text-purple-900 cursor-pointer flex items-center gap-2 flex-1 w-full">
                 <Beer className="h-5 w-5" />
                 <span className="flex-1">Bebeu {roundPoints} goles</span>
-                <span className="text-sm text-white/80">+{roundPoints}pts</span>
+                <span className="text-sm text-purple-700">+{roundPoints}pts</span>
               </label>
             </div>
           </div>
@@ -212,7 +212,7 @@ export default function ClassicMode() {
           <Button
             size="lg"
             onClick={handleNextPlayer}
-            className="bg-white/20 hover:bg-white/30 text-white text-xl w-full"
+            className="bg-purple-700 hover:bg-purple-800 text-white text-xl w-full"
             disabled={nextPlayer.isPending || updatePoints.isPending || (!completedChallenge && !hasDrunk)}
           >
             <ArrowRight className="mr-2 h-6 w-6" />
@@ -221,7 +221,7 @@ export default function ClassicMode() {
         </div>
 
         {/* Box do Ranking */}
-        <div className="bg-white/5 rounded-xl p-6">
+        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
           <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
             <Award className="h-5 w-5" />
             Ranking
