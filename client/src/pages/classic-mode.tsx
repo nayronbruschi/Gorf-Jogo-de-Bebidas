@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
 import { classicChallenges } from "@/lib/game-data";
 import { useSound } from "@/hooks/use-sound";
-import { User, Beer, Target, ArrowRight } from "lucide-react";
+import { User, Beer, Target, ArrowRight, Award, Crown } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
@@ -132,14 +132,14 @@ export default function ClassicMode() {
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
 
-      // Reiniciar o jogo -  this line is redundant as the component rerenders with a new challenge
-      //setIsGameStarted(true); 
       generateChallenge();
     } catch (error) {
       console.error('Erro ao reiniciar o jogo:', error);
     }
   };
 
+  // Ordenar jogadores por pontuação para o ranking
+  const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
 
   return (
     <GameLayout title="Modo Clássico">
@@ -217,6 +217,40 @@ export default function ClassicMode() {
             <ArrowRight className="mr-2 h-6 w-6" />
             Próximo Jogador
           </Button>
+        </div>
+
+        {/* Ranking */}
+        <div className="w-full max-w-sm mt-8">
+          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <Award className="h-5 w-5" />
+            Ranking
+          </h3>
+          <div className="space-y-3">
+            {sortedPlayers.map((player, index) => (
+              <div
+                key={player.id}
+                className="bg-white/10 p-3 rounded-lg flex flex-col gap-2"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {index === 0 && <Crown className="h-4 w-4 text-yellow-400" />}
+                    <span className="text-white">{player.name}</span>
+                  </div>
+                  <span className="text-white font-bold">{player.points} pts</span>
+                </div>
+                <div className="flex items-center gap-4 text-sm text-white/80">
+                  <div className="flex items-center gap-1">
+                    <Beer className="h-4 w-4" />
+                    <span>{player.drinksCompleted}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Target className="h-4 w-4" />
+                    <span>{player.challengesCompleted}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </GameLayout>
