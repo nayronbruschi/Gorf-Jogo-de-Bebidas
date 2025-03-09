@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
@@ -83,11 +83,7 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-none w-full h-full m-0 p-8 bg-gradient-to-br from-purple-500 to-pink-500">
         <div className="max-w-lg mx-auto">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white mb-8">
-              Gerenciar Jogadores
-            </DialogTitle>
-          </DialogHeader>
+          <h2 className="text-2xl font-bold text-white mb-8">Gerenciar Jogadores</h2>
 
           <div className="space-y-4 mb-8">
             <AnimatePresence>
@@ -97,7 +93,7 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="bg-white/10 p-3 rounded space-y-2 w-[80%] mx-auto"
+                  className="bg-white/10 p-3 rounded space-y-2"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -133,7 +129,7 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
             </AnimatePresence>
           </div>
 
-          <form onSubmit={onSubmit} className="flex gap-2 mb-8 w-[80%] mx-auto">
+          <form onSubmit={onSubmit} className="flex gap-2 mb-8">
             <Input
               placeholder="Nome do jogador"
               {...form.register("name")}
@@ -149,11 +145,11 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
             </Button>
           </form>
 
-          <div className="flex justify-center">
+          <div className="flex justify-end gap-4">
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="bg-white/10 hover:bg-white/20 text-white border-white/20 w-[80%]"
+              className="bg-white/10 hover:bg-white/20 text-white border-white/20"
             >
               Voltar ao Jogo
             </Button>
