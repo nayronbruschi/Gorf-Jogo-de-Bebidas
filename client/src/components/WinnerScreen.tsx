@@ -38,8 +38,8 @@ export function WinnerScreen({ winner, topDrinker, maxPoints, onPlayAgain }: Win
       // Esperar um momento para garantir que tudo foi processado
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Redirecionar e forçar recarregamento da página
-      window.location.href = "/game-modes";
+      // Usar navigate para transição suave
+      navigate("/game-modes");
     } catch (error) {
       console.error('Erro ao limpar jogadores:', error);
     }
