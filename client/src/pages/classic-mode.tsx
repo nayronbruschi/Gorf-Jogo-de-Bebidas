@@ -143,35 +143,36 @@ export default function ClassicMode() {
 
   return (
     <GameLayout title="Modo Clássico">
-      <div className="flex flex-col items-center gap-8">
-        {/* Jogador Atual */}
-        <div className="flex items-center gap-4 text-white/80">
-          <User className="h-6 w-6" />
-          <span className="text-xl">
-            {currentPlayer ? `Vez de ${currentPlayer.name}` : "Selecione os jogadores"}
-          </span>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Box dos Desafios */}
+        <div className="bg-white/5 rounded-xl p-6 space-y-8">
+          {/* Jogador Atual */}
+          <div className="flex items-center gap-4 text-white/80">
+            <User className="h-6 w-6" />
+            <span className="text-xl">
+              {currentPlayer ? `Vez de ${currentPlayer.name}` : "Selecione os jogadores"}
+            </span>
+          </div>
 
-        {/* Desafio Atual */}
-        <AnimatePresence mode="wait">
-          {currentChallenge && (
-            <motion.div
-              key={currentChallenge}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="text-3xl font-bold text-center text-white"
-            >
-              {currentChallenge}
-              <div className="mt-4 text-lg font-normal text-white/80">
-                Ou beba {roundPoints} goles
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          {/* Desafio Atual */}
+          <AnimatePresence mode="wait">
+            {currentChallenge && (
+              <motion.div
+                key={currentChallenge}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="text-3xl font-bold text-center text-white"
+              >
+                {currentChallenge}
+                <div className="mt-4 text-lg font-normal text-white/80">
+                  Ou beba {roundPoints} goles
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        {/* Checkboxes e Botão Próximo */}
-        <div className="flex flex-col gap-6 w-full max-w-sm">
+          {/* Checkboxes e Botão Próximo */}
           <div className="space-y-4">
             <div 
               className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer w-full select-none" 
@@ -211,7 +212,7 @@ export default function ClassicMode() {
           <Button
             size="lg"
             onClick={handleNextPlayer}
-            className="bg-white/20 hover:bg-white/30 text-white text-xl"
+            className="bg-white/20 hover:bg-white/30 text-white text-xl w-full"
             disabled={nextPlayer.isPending || updatePoints.isPending || (!completedChallenge && !hasDrunk)}
           >
             <ArrowRight className="mr-2 h-6 w-6" />
@@ -219,9 +220,9 @@ export default function ClassicMode() {
           </Button>
         </div>
 
-        {/* Ranking */}
-        <div className="w-full max-w-sm mt-8">
-          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+        {/* Box do Ranking */}
+        <div className="bg-white/5 rounded-xl p-6">
+          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
             <Award className="h-5 w-5" />
             Ranking
           </h3>
