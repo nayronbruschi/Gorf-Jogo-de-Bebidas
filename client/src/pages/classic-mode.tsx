@@ -119,10 +119,22 @@ export default function ClassicMode() {
 
   const handlePlayAgain = async () => {
     try {
-      // Limpar todos os jogadores e pontuações
-      await apiRequest("DELETE", "/api/players/all", {});
-      // Recarregar a página
-      window.location.href = "/game-modes";
+      // Resetar pontuações mantendo os jogadores
+      await apiRequest("POST", "/api/players/reset", {});
+
+      // Atualizar o estado local
+      setIsGameStarted(false);
+      setCompletedChallenge(false);
+      setHasDrunk(false);
+      setCurrentChallenge("");
+      setRoundPoints(0);
+
+      // Atualizar os dados
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
+
+      // Reiniciar o jogo
+      setIsGameStarted(true);
     } catch (error) {
       console.error('Erro ao reiniciar o jogo:', error);
     }

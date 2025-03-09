@@ -78,6 +78,16 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  // Game players routes
+  app.post("/api/players/reset", async (_req, res) => {
+    try {
+      await storage.resetPlayersPoints();
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao resetar pontuações" });
+    }
+  });
+
   // Game Settings routes
   app.get("/api/settings", async (_req, res) => {
     const settings = await storage.getGameSettings();
