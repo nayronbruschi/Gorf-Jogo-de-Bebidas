@@ -19,9 +19,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
+import { createElement } from "react";
 
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
+  const [currentIcon, setCurrentIcon] = useState<any>(); // Added state for icon
   const [completedChallenge, setCompletedChallenge] = useState(false);
   const [hasDrunk, setHasDrunk] = useState(false);
   const [roundPoints, setRoundPoints] = useState(0);
@@ -74,7 +76,8 @@ export default function ClassicMode() {
   const generateChallenge = () => {
     const challenge = classicChallenges[Math.floor(Math.random() * classicChallenges.length)];
     const points = Math.floor(Math.random() * 9) + 2; // 2-10 pontos
-    setCurrentChallenge(challenge);
+    setCurrentChallenge(challenge.text);
+    setCurrentIcon(challenge.icon);
     setRoundPoints(points);
   };
 
@@ -87,6 +90,7 @@ export default function ClassicMode() {
       setCompletedChallenge(false);
       setHasDrunk(false);
       setCurrentChallenge("");
+      setCurrentIcon(null); // Reset icon
       setRoundPoints(0);
 
       // Atualizar os dados
@@ -195,6 +199,13 @@ export default function ClassicMode() {
                 exit={{ opacity: 0, y: -20 }}
                 className="text-3xl font-bold text-center text-purple-900"
               >
+                {currentIcon && (
+                  <div className="mb-4">
+                    {createElement(currentIcon, {
+                      className: "h-12 w-12 mx-auto text-purple-700"
+                    })}
+                  </div>
+                )}
                 {currentChallenge}
                 <div className="mt-4 text-lg font-normal text-purple-700">
                   Ou beba {roundPoints} goles

@@ -59,14 +59,11 @@ export class MemStorage implements IStorage {
 
     // Se for o primeiro jogador, define como jogador atual
     if (this.players.size === 1) {
-      this.settings.currentPlayerId = newPlayer.id;
+      this.settings = {
+        ...this.settings,
+        currentPlayerId: newPlayer.id,
+      };
     }
-
-    // Não alterar maxPoints aqui, preservar o valor atual
-    this.settings = {
-      ...this.settings,
-      currentPlayerId: this.settings.currentPlayerId,
-    };
 
     return newPlayer;
   }

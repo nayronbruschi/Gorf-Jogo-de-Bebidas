@@ -1,19 +1,44 @@
-export const classicChallenges = [
-  "Faça 10 polichinelos",
-  "Imite alguém do grupo",
-  "Dance por 30 segundos",
-  "Conte uma história engraçada",
-  "Faça uma mímica",
-  "Cante uma música",
-  "Faça 5 flexões",
-  "Imite um animal por 1 minuto",
-  "Conte uma piada",
-  "Faça uma pose de yoga",
-  "Faça uma imitação de um famoso",
-  "Invente uma rima com o nome de outro jogador",
-  "Faça uma dança engraçada",
-  "Conte um segredo (nada muito pessoal)",
-  "Faça uma careta engraçada"
+import { 
+  Dumbbell, 
+  UserRound, 
+  Music, 
+  Smile, 
+  Drama, 
+  LucideIcon,
+  Lightbulb,
+  MessageSquare,
+  HeartHandshake,
+  PartyPopper,
+  Brain,
+  SmilePlus,
+  Laugh,
+  Mic2,
+  Activity,
+  Footprints,
+  BrainCircuit
+} from "lucide-react";
+
+interface Challenge {
+  text: string;
+  icon: LucideIcon;
+}
+
+export const classicChallenges: Challenge[] = [
+  { text: "Faça 10 polichinelos", icon: Dumbbell },
+  { text: "Imite alguém do grupo", icon: UserRound },
+  { text: "Dance por 30 segundos", icon: PartyPopper },
+  { text: "Conte uma história engraçada", icon: MessageSquare },
+  { text: "Faça uma mímica", icon: Drama },
+  { text: "Cante uma música", icon: Music },
+  { text: "Faça 5 flexões", icon: Dumbbell },
+  { text: "Imite um animal por 1 minuto", icon: Smile },
+  { text: "Conte uma piada", icon: Laugh },
+  { text: "Faça uma pose de yoga", icon: Activity }, 
+  { text: "Faça uma imitação de um famoso", icon: Mic2 },
+  { text: "Invente uma rima com o nome de outro jogador", icon: Brain },
+  { text: "Faça uma dança engraçada", icon: PartyPopper },
+  { text: "Conte um segredo (nada muito pessoal)", icon: MessageSquare },
+  { text: "Faça uma careta engraçada", icon: SmilePlus }
 ];
 
 export const truthQuestions = [

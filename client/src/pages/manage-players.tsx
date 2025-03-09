@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Award, Crown, Beer, Target, UserPlus, X, Plus, Minus, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import * as z from 'zod';
 
 export default function ManagePlayers() {
   const [, navigate] = useLocation();
@@ -28,7 +29,9 @@ export default function ManagePlayers() {
   });
 
   const form = useForm({
-    resolver: zodResolver(insertPlayerSchema),
+    resolver: zodResolver(insertPlayerSchema.extend({
+      name: z.string().min(1, "Nome é obrigatório").max(30, "Nome muito longo"),
+    })),
     defaultValues: {
       name: "",
     },
@@ -225,11 +228,18 @@ export default function ManagePlayers() {
         <div className="mb-8">
           <h3 className="text-lg font-semibold text-white mb-4">Adicionar um novo jogador</h3>
           <form onSubmit={onSubmit} className="flex gap-2">
-            <Input
-              placeholder="Nome do jogador"
-              {...form.register("name")}
-              className="flex-1 bg-white border-0 text-purple-700 placeholder:text-purple-400"
-            />
+            <div className="flex-1">
+              <Input
+                placeholder="Nome do jogador"
+                {...form.register("name")}
+                className="w-full bg-white border-0 text-purple-700 placeholder:text-purple-400"
+              />
+              {form.formState.errors.name && (
+                <p className="text-sm text-red-200 mt-1">
+                  {form.formState.errors.name.message}
+                </p>
+              )}
+            </div>
             <Button
               type="submit"
               size="icon"

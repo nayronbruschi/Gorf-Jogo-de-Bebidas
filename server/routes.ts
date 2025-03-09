@@ -49,8 +49,14 @@ export async function registerRoutes(app: Express) {
   app.post("/api/players", async (req, res) => {
     const result = insertPlayerSchema.safeParse(req.body);
     if (!result.success) {
-      return res.status(400).json({ message: "Nome do jogador é obrigatório" });
+      return res.status(400).json({ message: "Nome do jogador é obrigatório e deve ter entre 1 e 30 caracteres" });
     }
+
+    // Validação adicional do nome
+    if (!result.data.name.trim()) {
+      return res.status(400).json({ message: "Nome do jogador não pode estar vazio" });
+    }
+
     const player = await storage.addPlayer(result.data);
     res.json(player);
   });

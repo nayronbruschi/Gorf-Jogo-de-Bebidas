@@ -16,9 +16,6 @@ export default function GameModes() {
         // Limpar todos os jogadores
         await apiRequest("DELETE", "/api/players/all", {});
 
-        // Resetar configurações do jogo
-        await apiRequest("PATCH", "/api/settings", { maxPoints: 100 });
-
         // Invalidar queries para forçar recarregamento dos dados
         await queryClient.invalidateQueries();
       } catch (error) {
