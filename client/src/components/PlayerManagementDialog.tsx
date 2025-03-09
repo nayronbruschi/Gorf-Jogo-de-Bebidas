@@ -8,7 +8,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
-import { Award, Crown, Beer, Target, UserPlus, X } from "lucide-react";
+import { Award, Crown, Beer, Target, UserPlus, X, Plus, Minus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface PlayerManagementDialogProps {
@@ -22,10 +22,20 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
     queryKey: ["/api/players"],
   });
 
+  const { data: settings } = useQuery({
+    queryKey: ["/api/settings"],
+  });
+
   const form = useForm({
     resolver: zodResolver(insertPlayerSchema),
     defaultValues: {
       name: "",
+    },
+  });
+
+  const maxPointsForm = useForm({
+    defaultValues: {
+      maxPoints: settings?.maxPoints || 100,
     },
   });
 
@@ -36,6 +46,15 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       form.reset();
+    },
+  });
+
+  const updateMaxPoints = useMutation({
+    mutationFn: async (maxPoints: number) => {
+      await apiRequest("PATCH", "/api/settings", { maxPoints });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
     },
   });
 
@@ -75,6 +94,10 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
     addPlayer.mutate(data.name);
   });
 
+  const onUpdateMaxPoints = maxPointsForm.handleSubmit((data) => {
+    updateMaxPoints.mutate(Number(data.maxPoints));
+  });
+
   // Ordenar jogadores por pontuação
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
   const hasPoints = sortedPlayers.some(player => player.points > 0);
@@ -82,9 +105,56 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-none w-full h-full m-0 p-8 bg-gradient-to-br from-purple-500 to-pink-500">
-        <div className="max-w-lg mx-auto">
-          <h2 className="text-2xl font-bold text-white mb-8">Gerenciar Jogadores</h2>
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-white mb-8">Jogadores e pontuação</h2>
 
+          {/* Pontuação Máxima */}
+          <div className="bg-white/10 p-6 rounded-xl mb-8">
+            <h3 className="text-lg font-semibold text-white mb-4">Pontuação máxima</h3>
+            <form onSubmit={onUpdateMaxPoints} className="flex items-center gap-4">
+              <div className="flex items-center gap-2 flex-1">
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="outline"
+                  className="rounded-full w-8 h-8 flex items-center justify-center bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  onClick={() => {
+                    const current = maxPointsForm.getValues("maxPoints");
+                    maxPointsForm.setValue("maxPoints", Math.max(10, Number(current) - 10));
+                  }}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <Input
+                  type="number"
+                  min="10"
+                  max="1000"
+                  className="text-center bg-white/10 border-white/20 text-white"
+                  {...maxPointsForm.register("maxPoints")}
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="outline"
+                  className="rounded-full w-8 h-8 flex items-center justify-center bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  onClick={() => {
+                    const current = maxPointsForm.getValues("maxPoints");
+                    maxPointsForm.setValue("maxPoints", Math.min(1000, Number(current) + 10));
+                  }}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              <Button 
+                type="submit" 
+                className="bg-white/20 hover:bg-white/30 text-white"
+              >
+                Salvar
+              </Button>
+            </form>
+          </div>
+
+          {/* Lista de Jogadores */}
           <div className="space-y-4 mb-8">
             <AnimatePresence>
               {sortedPlayers.map((player, index) => (
@@ -129,27 +199,35 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
             </AnimatePresence>
           </div>
 
-          <form onSubmit={onSubmit} className="flex gap-2 mb-8">
-            <Input
-              placeholder="Nome do jogador"
-              {...form.register("name")}
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-            />
-            <Button
-              type="submit"
-              size="icon"
-              disabled={addPlayer.isPending}
-              className="bg-white/20 hover:bg-white/30"
-            >
-              <UserPlus className="h-4 w-4" />
-            </Button>
-          </form>
+          {/* Adicionar Jogador */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-white mb-4">Adicionar um novo jogador</h3>
+            <form onSubmit={onSubmit} className="flex gap-2">
+              <Input
+                placeholder="Nome do jogador"
+                {...form.register("name")}
+                className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50"
+              />
+              <Button
+                type="submit"
+                size="icon"
+                disabled={addPlayer.isPending}
+                className="bg-white/20 hover:bg-white/30"
+              >
+                <UserPlus className="h-4 w-4" />
+              </Button>
+            </form>
+          </div>
 
-          <div className="flex justify-end gap-4">
+          <p className="text-sm text-white/80 text-center">
+            Caso um jogador seja removido a pontuação dele será distribuída igualmente para os jogadores restantes.
+          </p>
+
+          <div className="mt-8">
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="bg-white/10 hover:bg-white/20 text-white border-white/20"
+              className="w-full bg-white/10 hover:bg-white/20 text-white border-white/20"
             >
               Voltar ao Jogo
             </Button>

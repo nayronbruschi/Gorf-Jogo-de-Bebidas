@@ -219,12 +219,6 @@ export default function ClassicMode() {
               <span className="flex-1 text-purple-900">Bebeu {roundPoints} goles</span>
               <span className="text-sm text-purple-700">+{roundPoints}pts</span>
             </button>
-
-            {completedChallenge && hasDrunk && (
-              <div className="text-sm text-purple-700 text-center">
-                Total: +{roundPoints * 2}pts
-              </div>
-            )}
           </div>
 
           {/* Botão Próximo */}

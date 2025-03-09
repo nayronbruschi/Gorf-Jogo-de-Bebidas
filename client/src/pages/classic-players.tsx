@@ -16,7 +16,7 @@ export default function ClassicPlayers() {
       <div className="max-w-md mx-auto space-y-8">
         <div className="text-center">
           <p className="text-white/80 mb-6">
-            Adicione pelo menos 3 jogadores para começar!
+            Adicione pelo menos 2 jogadores para começar!
           </p>
         </div>
 
@@ -26,12 +26,12 @@ export default function ClassicPlayers() {
           <Button
             size="lg"
             onClick={() => navigate("/classic/start")}
-            disabled={players.length < 3}
+            disabled={players.length < 2}
             className="bg-white/20 hover:bg-white/30 text-white px-8 py-6"
           >
             <Play className="mr-2 h-6 w-6" />
-            {players.length < 3 
-              ? "Mínimo 3 jogadores"
+            {players.length < 2 
+              ? "Mínimo 2 jogadores"
               : "Vamos começar!"}
           </Button>
         </div>
