@@ -23,6 +23,10 @@ export default function ClassicMode() {
     queryKey: ["/api/players/current"],
   });
 
+  const { data: players = [] } = useQuery({
+    queryKey: ["/api/players"],
+  });
+
   const updatePoints = useMutation({
     mutationFn: async ({ playerId, type }: { playerId: number; type: "challenge" | "drink" }) => {
       await apiRequest("PATCH", `/api/players/${playerId}/points`, { 
@@ -51,6 +55,14 @@ export default function ClassicMode() {
   });
 
   const handleStart = () => {
+    if (players.length < 3) {
+      toast({
+        title: "Jogadores insuficientes",
+        description: "É necessário ter pelo menos 3 jogadores para iniciar o jogo.",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsGameStarted(true);
     generateChallenge();
   };
@@ -61,6 +73,15 @@ export default function ClassicMode() {
   };
 
   const handleNextPlayer = async () => {
+    if (!completedChallenge && !hasDrunk) {
+      toast({
+        title: "Ação necessária",
+        description: "Selecione se o jogador completou o desafio ou bebeu antes de continuar.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Contabilizar pontos do jogador atual
     if (currentPlayer) {
       if (completedChallenge) {
@@ -87,9 +108,17 @@ export default function ClassicMode() {
           <p className="text-xl text-white/80 text-center">
             Prepare-se para desafios divertidos! Cada jogador terá sua vez de enfrentar um desafio ou beber.
           </p>
+          <div className="text-center text-white/80">
+            {players.length < 3 ? (
+              <p className="text-red-300">É necessário ter pelo menos 3 jogadores para iniciar.</p>
+            ) : (
+              <p>{players.length} jogadores prontos!</p>
+            )}
+          </div>
           <Button
             size="lg"
             onClick={handleStart}
+            disabled={players.length < 3}
             className="bg-white/20 hover:bg-white/30 text-white text-xl px-8 py-6"
           >
             <Play className="mr-2 h-6 w-6" />
@@ -165,7 +194,7 @@ export default function ClassicMode() {
             size="lg"
             onClick={handleNextPlayer}
             className="bg-white/20 hover:bg-white/30 text-white text-xl"
-            disabled={nextPlayer.isPending || updatePoints.isPending}
+            disabled={nextPlayer.isPending || updatePoints.isPending || (!completedChallenge && !hasDrunk)}
           >
             <ArrowRight className="mr-2 h-6 w-6" />
             Próximo Jogador

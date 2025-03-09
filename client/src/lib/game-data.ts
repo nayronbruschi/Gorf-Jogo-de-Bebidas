@@ -1,13 +1,19 @@
 export const classicChallenges = [
-  "Tome 1 gole",
-  "Tome 2 goles",
-  "Distribua 3 goles",
-  "Todos bebem!",
-  "O jogador à sua direita bebe",
-  "O jogador à sua esquerda bebe",
-  "Conte uma história embaraçosa ou beba 3 goles",
-  "Imite alguém do grupo ou beba 2 goles",
-  "Crie uma regra que vale até sua próxima vez",
+  "Faça 10 polichinelos",
+  "Imite alguém do grupo",
+  "Dance por 30 segundos",
+  "Conte uma história engraçada",
+  "Faça uma mímica",
+  "Cante uma música",
+  "Faça 5 flexões",
+  "Imite um animal por 1 minuto",
+  "Conte uma piada",
+  "Faça uma pose de yoga",
+  "Faça uma imitação de um famoso",
+  "Invente uma rima com o nome de outro jogador",
+  "Faça uma dança engraçada",
+  "Conte um segredo (nada muito pessoal)",
+  "Faça uma careta engraçada"
 ];
 
 export const truthQuestions = [
