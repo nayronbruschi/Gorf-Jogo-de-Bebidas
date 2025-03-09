@@ -63,10 +63,14 @@ export default function ClassicMode() {
     }
 
     try {
+      // Limpar pontuações antes de começar
+      await apiRequest("POST", "/api/players/reset", {});
+
       // Definir o primeiro jogador
       await apiRequest("POST", "/api/players/first", {});
 
       // Atualizar os dados
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
 
       // Gerar primeiro desafio
