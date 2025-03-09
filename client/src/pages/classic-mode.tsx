@@ -37,19 +37,11 @@ export default function ClassicMode() {
     mutationFn: async ({ playerId, type, points }: { playerId: number; type: "challenge" | "drink"; points: number }) => {
       await apiRequest("PATCH", `/api/players/${playerId}/points`, { type, points });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-      play("success");
-    },
   });
 
   const nextPlayer = useMutation({
     mutationFn: async () => {
       await apiRequest("POST", "/api/players/next", {});
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
-      play("click");
     },
   });
 
@@ -60,9 +52,10 @@ export default function ClassicMode() {
     setRoundPoints(points);
   };
 
+  // Gerar desafio inicial ao iniciar o jogo
   useEffect(() => {
     if (isGameStarted) {
-      generateChallenge(); // Gerar desafio inicial
+      generateChallenge();
     }
   }, [isGameStarted]);
 
@@ -92,30 +85,47 @@ export default function ClassicMode() {
       // Contabilizar pontos do jogador atual
       if (currentPlayer) {
         if (completedChallenge) {
-          await updatePoints.mutateAsync({ playerId: currentPlayer.id, type: "challenge", points: roundPoints });
+          await updatePoints.mutateAsync({ 
+            playerId: currentPlayer.id, 
+            type: "challenge", 
+            points: roundPoints 
+          });
         }
         if (hasDrunk) {
-          await updatePoints.mutateAsync({ playerId: currentPlayer.id, type: "drink", points: roundPoints });
+          await updatePoints.mutateAsync({ 
+            playerId: currentPlayer.id, 
+            type: "drink", 
+            points: roundPoints 
+          });
         }
       }
 
       // Passar para o próximo jogador
       await nextPlayer.mutateAsync();
 
+      // Atualizar a lista de jogadores
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
+
       // Resetar estados e gerar novo desafio
       setCompletedChallenge(false);
       setHasDrunk(false);
       generateChallenge();
+      play("click");
     } catch (error) {
       console.error('Erro ao processar a rodada:', error);
     }
   };
 
-  const handlePlayAgain = () => {
-    // Limpar todos os jogadores e pontuações
-    apiRequest("DELETE", "/api/players/all", {}).then(() => {
-      window.location.reload();
-    });
+  const handlePlayAgain = async () => {
+    try {
+      // Limpar todos os jogadores e pontuações
+      await apiRequest("DELETE", "/api/players/all", {});
+      // Recarregar a página
+      window.location.href = "/game-modes";
+    } catch (error) {
+      console.error('Erro ao reiniciar o jogo:', error);
+    }
   };
 
   // Verificar se alguém ganhou
@@ -194,7 +204,7 @@ export default function ClassicMode() {
         <div className="flex flex-col gap-6 w-full max-w-sm">
           <div className="space-y-4">
             <div 
-              className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer" 
+              className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer w-full select-none" 
               onClick={() => setCompletedChallenge(!completedChallenge)}
             >
               <Checkbox
@@ -203,7 +213,7 @@ export default function ClassicMode() {
                 onCheckedChange={(checked) => setCompletedChallenge(checked as boolean)}
                 className="data-[state=checked]:bg-white data-[state=checked]:text-purple-500 border-white"
               />
-              <label htmlFor="challenge" className="text-white cursor-pointer flex items-center gap-2 flex-1">
+              <label htmlFor="challenge" className="text-white cursor-pointer flex items-center gap-2 flex-1 w-full">
                 <Target className="h-5 w-5" />
                 <span className="flex-1">Completou o Desafio</span>
                 <span className="text-sm text-white/80">+{roundPoints}pts</span>
@@ -211,7 +221,7 @@ export default function ClassicMode() {
             </div>
 
             <div 
-              className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer"
+              className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer w-full select-none"
               onClick={() => setHasDrunk(!hasDrunk)}
             >
               <Checkbox
@@ -220,7 +230,7 @@ export default function ClassicMode() {
                 onCheckedChange={(checked) => setHasDrunk(checked as boolean)}
                 className="data-[state=checked]:bg-white data-[state=checked]:text-purple-500 border-white"
               />
-              <label htmlFor="drink" className="text-white cursor-pointer flex items-center gap-2 flex-1">
+              <label htmlFor="drink" className="text-white cursor-pointer flex items-center gap-2 flex-1 w-full">
                 <Beer className="h-5 w-5" />
                 <span className="flex-1">Bebeu {roundPoints} goles</span>
                 <span className="text-sm text-white/80">+{roundPoints}pts</span>
