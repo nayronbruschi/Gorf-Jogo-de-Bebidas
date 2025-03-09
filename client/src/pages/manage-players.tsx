@@ -113,7 +113,7 @@ export default function ManagePlayers() {
         variant="ghost"
         size="icon"
         className="absolute left-4 top-4 text-white hover:text-white/80"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate("/classic/play")}
       >
         <ArrowLeft className="h-6 w-6" />
       </Button>
@@ -158,8 +158,8 @@ export default function ManagePlayers() {
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="bg-white/20 hover:bg-white/30 text-white"
             >
               Salvar
@@ -242,7 +242,7 @@ export default function ManagePlayers() {
         <div className="mt-8 flex justify-center">
           <Button
             variant="outline"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/classic/play")}
             className="bg-purple-700 hover:bg-purple-800 text-white border-white/20"
           >
             Voltar ao Jogo
