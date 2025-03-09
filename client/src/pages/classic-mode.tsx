@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
 import { classicChallenges } from "@/lib/game-data";
 import { useSound } from "@/hooks/use-sound";
-import { User, Beer, Target, ArrowRight, Play } from "lucide-react";
+import { User, Beer, Target, ArrowRight } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
@@ -13,7 +13,6 @@ import { useToast } from "@/hooks/use-toast";
 import { WinnerScreen } from "@/components/WinnerScreen";
 
 export default function ClassicMode() {
-  const [isGameStarted, setIsGameStarted] = useState(false);
   const [currentChallenge, setCurrentChallenge] = useState("");
   const [completedChallenge, setCompletedChallenge] = useState(false);
   const [hasDrunk, setHasDrunk] = useState(false);
@@ -52,36 +51,10 @@ export default function ClassicMode() {
     setRoundPoints(points);
   };
 
-  const handleStart = async () => {
-    if (players.length < 3) {
-      toast({
-        title: "Jogadores insuficientes",
-        description: "É necessário ter pelo menos 3 jogadores para iniciar o jogo.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      // Limpar pontuações antes de começar
-      await apiRequest("POST", "/api/players/reset", {});
-
-      // Definir o primeiro jogador
-      await apiRequest("POST", "/api/players/first", {});
-
-      // Atualizar os dados
-      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-      await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
-
-      // Gerar primeiro desafio
-      generateChallenge();
-
-      // Iniciar o jogo
-      setIsGameStarted(true);
-    } catch (error) {
-      console.error('Erro ao iniciar o jogo:', error);
-    }
-  };
+  // Gerar desafio inicial se ainda não existe
+  if (!currentChallenge) {
+    generateChallenge();
+  }
 
   const handleNextPlayer = async () => {
     if (!completedChallenge && !hasDrunk) {
@@ -129,29 +102,6 @@ export default function ClassicMode() {
     }
   };
 
-  const handlePlayAgain = async () => {
-    try {
-      // Resetar pontuações mantendo os jogadores
-      await apiRequest("POST", "/api/players/reset", {});
-
-      // Atualizar o estado local
-      setIsGameStarted(false);
-      setCompletedChallenge(false);
-      setHasDrunk(false);
-      setCurrentChallenge("");
-      setRoundPoints(0);
-
-      // Atualizar os dados
-      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-      await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
-
-      // Reiniciar o jogo
-      setIsGameStarted(true);
-    } catch (error) {
-      console.error('Erro ao reiniciar o jogo:', error);
-    }
-  };
-
   // Verificar se alguém ganhou
   const winner = players.find(player => player.points >= (settings?.maxPoints || 100));
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
@@ -167,33 +117,29 @@ export default function ClassicMode() {
     );
   }
 
-  if (!isGameStarted) {
-    return (
-      <GameLayout title="Modo Clássico">
-        <div className="flex flex-col items-center gap-8">
-          <p className="text-xl text-white/80 text-center">
-            Prepare-se para desafios divertidos! Cada jogador terá sua vez de enfrentar um desafio ou beber.
-          </p>
-          <div className="text-center text-white/80">
-            {players.length < 3 ? (
-              <p className="text-red-300">É necessário ter pelo menos 3 jogadores para iniciar.</p>
-            ) : (
-              <p>{players.length} jogadores prontos!</p>
-            )}
-          </div>
-          <Button
-            size="lg"
-            onClick={handleStart}
-            disabled={players.length < 3}
-            className="bg-white/20 hover:bg-white/30 text-white text-xl px-8 py-6"
-          >
-            <Play className="mr-2 h-6 w-6" />
-            Iniciar Jogo
-          </Button>
-        </div>
-      </GameLayout>
-    );
-  }
+  const handlePlayAgain = async () => {
+    try {
+      // Resetar pontuações mantendo os jogadores
+      await apiRequest("POST", "/api/players/reset", {});
+
+      // Atualizar o estado local
+      setCompletedChallenge(false);
+      setHasDrunk(false);
+      setCurrentChallenge("");
+      setRoundPoints(0);
+
+      // Atualizar os dados
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
+
+      // Reiniciar o jogo -  this line is redundant as the component rerenders with a new challenge
+      //setIsGameStarted(true); 
+      generateChallenge();
+    } catch (error) {
+      console.error('Erro ao reiniciar o jogo:', error);
+    }
+  };
+
 
   return (
     <GameLayout title="Modo Clássico">
