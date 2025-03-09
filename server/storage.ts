@@ -62,6 +62,12 @@ export class MemStorage implements IStorage {
       this.settings.currentPlayerId = newPlayer.id;
     }
 
+    // Não alterar maxPoints aqui, preservar o valor atual
+    this.settings = {
+      ...this.settings,
+      currentPlayerId: this.settings.currentPlayerId,
+    };
+
     return newPlayer;
   }
 

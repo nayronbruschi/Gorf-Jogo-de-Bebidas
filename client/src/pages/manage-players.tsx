@@ -18,10 +18,12 @@ export default function ManagePlayers() {
     queryKey: ["/api/players"],
   });
 
-  const { data: settings, onSuccess: handleSettingsSuccess } = useQuery({
+  const { data: settings } = useQuery({
     queryKey: ["/api/settings"],
     onSuccess: (data) => {
-      maxPointsForm.setValue("maxPoints", data?.maxPoints || 100);
+      if (data?.maxPoints) {
+        maxPointsForm.setValue("maxPoints", data.maxPoints);
+      }
     }
   });
 
@@ -43,6 +45,7 @@ export default function ManagePlayers() {
       await apiRequest("POST", "/api/players", { name });
     },
     onSuccess: () => {
+      // Apenas invalidar a query de players, não a de settings
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       form.reset();
       toast({
