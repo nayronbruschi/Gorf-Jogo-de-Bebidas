@@ -129,27 +129,31 @@ export default function ClassicMode() {
         {/* Checkboxes e Botão Próximo */}
         <div className="flex flex-col gap-6 w-full max-w-sm">
           <div className="space-y-4">
-            <div className="flex items-center gap-3 bg-white/10 p-4 rounded-lg">
+            <div className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer" onClick={() => setCompletedChallenge(!completedChallenge)}>
               <Checkbox
                 id="challenge"
                 checked={completedChallenge}
                 onCheckedChange={(checked) => setCompletedChallenge(checked as boolean)}
+                className="data-[state=checked]:bg-white data-[state=checked]:text-purple-500 border-white"
               />
-              <label htmlFor="challenge" className="text-white cursor-pointer flex items-center gap-2">
+              <label htmlFor="challenge" className="text-white cursor-pointer flex items-center gap-2 flex-1">
                 <Target className="h-5 w-5" />
-                Completou o Desafio
+                <span className="flex-1">Completou o Desafio</span>
+                <span className="text-sm text-white/80">+10pts</span>
               </label>
             </div>
 
-            <div className="flex items-center gap-3 bg-white/10 p-4 rounded-lg">
+            <div className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer" onClick={() => setHasDrunk(!hasDrunk)}>
               <Checkbox
                 id="drink"
                 checked={hasDrunk}
                 onCheckedChange={(checked) => setHasDrunk(checked as boolean)}
+                className="data-[state=checked]:bg-white data-[state=checked]:text-purple-500 border-white"
               />
-              <label htmlFor="drink" className="text-white cursor-pointer flex items-center gap-2">
+              <label htmlFor="drink" className="text-white cursor-pointer flex items-center gap-2 flex-1">
                 <Beer className="h-5 w-5" />
-                Bebeu
+                <span className="flex-1">Bebeu</span>
+                <span className="text-sm text-white/80">+10pts</span>
               </label>
             </div>
           </div>
