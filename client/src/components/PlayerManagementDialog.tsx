@@ -46,6 +46,10 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       form.reset();
+      toast({
+        title: "Jogador adicionado",
+        description: "Um novo jogador foi adicionado com sucesso.",
+      });
     },
   });
 
