@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
-import { insertPlayerSchema, insertCustomGameSchema } from "@shared/schema";
+import { insertPlayerSchema, insertCustomGameSchema, updatePlayerPointsSchema, gameSettingsSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -10,6 +10,22 @@ export async function registerRoutes(app: Express) {
   app.get("/api/players", async (_req, res) => {
     const players = await storage.getPlayers();
     res.json(players);
+  });
+
+  app.get("/api/players/current", async (_req, res) => {
+    const player = await storage.getCurrentPlayer();
+    if (!player) {
+      return res.status(404).json({ message: "Nenhum jogador atual" });
+    }
+    res.json(player);
+  });
+
+  app.post("/api/players/next", async (_req, res) => {
+    const player = await storage.setNextPlayer();
+    if (!player) {
+      return res.status(404).json({ message: "Nenhum jogador disponível" });
+    }
+    res.json(player);
   });
 
   app.post("/api/players", async (req, res) => {
@@ -22,13 +38,19 @@ export async function registerRoutes(app: Express) {
   });
 
   app.patch("/api/players/:id/points", async (req, res) => {
-    const { points } = req.body;
-    const id = parseInt(req.params.id);
-    if (isNaN(id) || typeof points !== "number") {
-      return res.status(400).json({ message: "ID e pontos inválidos" });
+    const result = updatePlayerPointsSchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({ message: "Dados inválidos" });
     }
+
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "ID inválido" });
+    }
+
     try {
-      const player = await storage.updatePlayerPoints(id, points);
+      const points = result.data.type === "drink" ? 10 : 5;
+      const player = await storage.updatePlayerPoints(id, points, result.data.type);
       res.json(player);
     } catch (error) {
       res.status(404).json({ message: "Jogador não encontrado" });
@@ -46,6 +68,21 @@ export async function registerRoutes(app: Express) {
     } catch (error) {
       res.status(404).json({ message: "Jogador não encontrado" });
     }
+  });
+
+  // Game Settings routes
+  app.get("/api/settings", async (_req, res) => {
+    const settings = await storage.getGameSettings();
+    res.json(settings);
+  });
+
+  app.patch("/api/settings", async (req, res) => {
+    const result = gameSettingsSchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({ message: "Pontuação máxima inválida" });
+    }
+    const settings = await storage.updateGameSettings(result.data.maxPoints);
+    res.json(settings);
   });
 
   // Custom game routes
