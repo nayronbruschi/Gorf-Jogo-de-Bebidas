@@ -17,8 +17,7 @@ export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
   const [completedChallenge, setCompletedChallenge] = useState(false);
   const [hasDrunk, setHasDrunk] = useState(false);
-  const [challengePoints, setChallengePoints] = useState(0);
-  const [drinkPoints, setDrinkPoints] = useState(0);
+  const [roundPoints, setRoundPoints] = useState(0);
   const { play } = useSound();
   const { toast } = useToast();
 
@@ -69,9 +68,9 @@ export default function ClassicMode() {
 
   const generateChallenge = () => {
     const challenge = classicChallenges[Math.floor(Math.random() * classicChallenges.length)];
+    const points = Math.floor(Math.random() * 9) + 2; // 2-10 pontos
     setCurrentChallenge(challenge);
-    setChallengePoints(Math.floor(Math.random() * 9) + 2); // 2-10 pontos
-    setDrinkPoints(Math.floor(Math.random() * 9) + 2); // 2-10 pontos
+    setRoundPoints(points);
   };
 
   const handleNextPlayer = async () => {
@@ -87,10 +86,10 @@ export default function ClassicMode() {
     // Contabilizar pontos do jogador atual
     if (currentPlayer) {
       if (completedChallenge) {
-        await updatePoints.mutate({ playerId: currentPlayer.id, type: "challenge", points: challengePoints });
+        await updatePoints.mutate({ playerId: currentPlayer.id, type: "challenge", points: roundPoints });
       }
       if (hasDrunk) {
-        await updatePoints.mutate({ playerId: currentPlayer.id, type: "drink", points: drinkPoints });
+        await updatePoints.mutate({ playerId: currentPlayer.id, type: "drink", points: roundPoints });
       }
     }
 
@@ -104,9 +103,10 @@ export default function ClassicMode() {
   };
 
   const handlePlayAgain = () => {
-    // Limpar dados antes de reiniciar
-    localStorage.clear();
-    window.location.reload();
+    // Limpar todos os jogadores e pontuações
+    apiRequest("DELETE", "/api/players/all", {}).then(() => {
+      window.location.reload();
+    });
   };
 
   // Verificar se alguém ganhou
@@ -197,7 +197,7 @@ export default function ClassicMode() {
               <label htmlFor="challenge" className="text-white cursor-pointer flex items-center gap-2 flex-1">
                 <Target className="h-5 w-5" />
                 <span className="flex-1">Completou o Desafio</span>
-                <span className="text-sm text-white/80">+{challengePoints}pts</span>
+                <span className="text-sm text-white/80">+{roundPoints}pts</span>
               </label>
             </div>
 
@@ -214,7 +214,7 @@ export default function ClassicMode() {
               <label htmlFor="drink" className="text-white cursor-pointer flex items-center gap-2 flex-1">
                 <Beer className="h-5 w-5" />
                 <span className="flex-1">Bebeu</span>
-                <span className="text-sm text-white/80">+{drinkPoints}pts</span>
+                <span className="text-sm text-white/80">+{roundPoints}pts</span>
               </label>
             </div>
           </div>

@@ -8,6 +8,7 @@ export interface IStorage {
   getCurrentPlayer(): Promise<Player | undefined>;
   setNextPlayer(): Promise<Player | undefined>;
   removePlayer(id: number): Promise<void>;
+  removeAllPlayers(): Promise<void>; // Added removeAllPlayers method signature
 
   // Game Settings
   getGameSettings(): Promise<GameSettings>;
@@ -66,7 +67,7 @@ export class MemStorage implements IStorage {
     const player = this.players.get(id);
     if (!player) throw new Error("Player not found");
 
-    const updatedPlayer = { 
+    const updatedPlayer = {
       ...player,
       points: (player.points || 0) + points,
       challengesCompleted: type === "challenge" ? (player.challengesCompleted || 0) + 1 : (player.challengesCompleted || 0),
@@ -138,6 +139,11 @@ export class MemStorage implements IStorage {
     if (!this.customGames.delete(id)) {
       throw new Error("Custom game not found");
     }
+  }
+
+  async removeAllPlayers(): Promise<void> { // Added removeAllPlayers method implementation
+    this.players.clear();
+    this.settings.currentPlayerId = undefined;
   }
 }
 

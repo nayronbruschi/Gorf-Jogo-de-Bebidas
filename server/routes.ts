@@ -70,6 +70,15 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  app.delete("/api/players/all", async (_req, res) => {
+    try {
+      await storage.removeAllPlayers();
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao remover jogadores" });
+    }
+  });
+
   // Game Settings routes
   app.get("/api/settings", async (_req, res) => {
     const settings = await storage.getGameSettings();
