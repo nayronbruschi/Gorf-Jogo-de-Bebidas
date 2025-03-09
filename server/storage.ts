@@ -10,6 +10,7 @@ export interface IStorage {
   removePlayer(id: number): Promise<void>;
   removeAllPlayers(): Promise<void>;
   resetPlayersPoints(): Promise<void>; // Added resetPlayersPoints
+  setFirstPlayer(): Promise<Player | undefined>; // Added setFirstPlayer
 
   // Game Settings
   getGameSettings(): Promise<GameSettings>;
@@ -162,6 +163,15 @@ export class MemStorage implements IStorage {
     // Resetar o jogador atual para o primeiro da lista
     const firstPlayer = Array.from(this.players.values())[0];
     this.settings.currentPlayerId = firstPlayer?.id;
+  }
+
+  async setFirstPlayer(): Promise<Player | undefined> {
+    const players = Array.from(this.players.values());
+    if (players.length === 0) return undefined;
+
+    const firstPlayer = players[0];
+    this.settings.currentPlayerId = firstPlayer.id;
+    return firstPlayer;
   }
 }
 

@@ -20,6 +20,14 @@ export async function registerRoutes(app: Express) {
     res.json(player);
   });
 
+  app.post("/api/players/first", async (_req, res) => {
+    const player = await storage.setFirstPlayer();
+    if (!player) {
+      return res.status(404).json({ message: "Nenhum jogador disponível" });
+    }
+    res.json(player);
+  });
+
   app.post("/api/players/next", async (_req, res) => {
     const player = await storage.setNextPlayer();
     if (!player) {

@@ -64,7 +64,7 @@ export default function ClassicMode() {
 
     try {
       // Definir o primeiro jogador
-      await nextPlayer.mutateAsync();
+      await apiRequest("POST", "/api/players/first", {});
 
       // Atualizar os dados
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
