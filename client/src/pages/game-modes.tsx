@@ -2,11 +2,31 @@ import { useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { GameCard } from "@/components/GameCard";
 import { Dices, CircleDot, MessageSquareQuote } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 
 export default function GameModes() {
   // Limpar dados ao entrar na página de modos
   useEffect(() => {
-    localStorage.clear();
+    const cleanupData = async () => {
+      try {
+        // Limpar localStorage
+        localStorage.clear();
+
+        // Limpar todos os jogadores
+        await apiRequest("DELETE", "/api/players/all", {});
+
+        // Resetar configurações do jogo
+        await apiRequest("PATCH", "/api/settings", { maxPoints: 100 });
+
+        // Invalidar queries para forçar recarregamento dos dados
+        await queryClient.invalidateQueries();
+      } catch (error) {
+        console.error('Erro ao limpar dados:', error);
+      }
+    };
+
+    cleanupData();
   }, []);
 
   return (

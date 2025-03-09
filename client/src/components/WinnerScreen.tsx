@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { Trophy, Play } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 
 interface WinnerScreenProps {
   winner: {
@@ -22,14 +23,23 @@ export function WinnerScreen({ winner, topDrinker, maxPoints, onPlayAgain }: Win
 
   const handleChooseNewGame = async () => {
     try {
-      // Limpar todos os jogadores antes de redirecionar
+      // Limpar localStorage
+      localStorage.clear();
+
+      // Limpar todos os jogadores
       await apiRequest("DELETE", "/api/players/all", {});
+
       // Resetar configurações do jogo
       await apiRequest("PATCH", "/api/settings", { maxPoints: 100 });
-      // Esperar um momento para garantir que tudo foi limpo
+
+      // Invalidar queries para forçar recarregamento dos dados
+      await queryClient.invalidateQueries();
+
+      // Esperar um momento para garantir que tudo foi processado
       await new Promise(resolve => setTimeout(resolve, 100));
-      // Redirecionar para a página de modos de jogo
-      navigate("/game-modes");
+
+      // Redirecionar e forçar recarregamento da página
+      window.location.href = "/game-modes";
     } catch (error) {
       console.error('Erro ao limpar jogadores:', error);
     }
