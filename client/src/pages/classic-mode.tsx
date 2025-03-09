@@ -78,6 +78,27 @@ export default function ClassicMode() {
     setRoundPoints(points);
   };
 
+  const handlePlayAgain = async () => {
+    try {
+      // Resetar pontuações mantendo os jogadores
+      await apiRequest("POST", "/api/players/reset", {});
+
+      // Atualizar o estado local
+      setCompletedChallenge(false);
+      setHasDrunk(false);
+      setCurrentChallenge("");
+      setRoundPoints(0);
+
+      // Atualizar os dados
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
+
+      generateChallenge();
+    } catch (error) {
+      console.error('Erro ao reiniciar o jogo:', error);
+    }
+  };
+
   // Gerar desafio inicial se ainda não existe
   if (!currentChallenge) {
     generateChallenge();
@@ -133,7 +154,7 @@ export default function ClassicMode() {
   const winner = players.find(player => player.points >= maxPoints);
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
-  if (winner) {
+  if (winner && topDrinker) {
     return (
       <WinnerScreen
         winner={{ name: winner.name, points: winner.points }}
@@ -143,27 +164,6 @@ export default function ClassicMode() {
       />
     );
   }
-
-  const handlePlayAgain = async () => {
-    try {
-      // Resetar pontuações mantendo os jogadores
-      await apiRequest("POST", "/api/players/reset", {});
-
-      // Atualizar o estado local
-      setCompletedChallenge(false);
-      setHasDrunk(false);
-      setCurrentChallenge("");
-      setRoundPoints(0);
-
-      // Atualizar os dados
-      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-      await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
-
-      generateChallenge();
-    } catch (error) {
-      console.error('Erro ao reiniciar o jogo:', error);
-    }
-  };
 
   // Ordenar jogadores por pontuação para o ranking
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
