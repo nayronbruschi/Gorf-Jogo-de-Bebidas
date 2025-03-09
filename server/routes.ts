@@ -28,6 +28,16 @@ export async function registerRoutes(app: Express) {
     res.json(player);
   });
 
+  // Importante: Colocar a rota "all" antes da rota com :id
+  app.delete("/api/players/all", async (_req, res) => {
+    try {
+      await storage.removeAllPlayers();
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao remover jogadores" });
+    }
+  });
+
   app.post("/api/players", async (req, res) => {
     const result = insertPlayerSchema.safeParse(req.body);
     if (!result.success) {
@@ -66,15 +76,6 @@ export async function registerRoutes(app: Express) {
       res.status(204).end();
     } catch (error) {
       res.status(404).json({ message: "Jogador não encontrado" });
-    }
-  });
-
-  app.delete("/api/players/all", async (_req, res) => {
-    try {
-      await storage.removeAllPlayers();
-      res.status(204).end();
-    } catch (error) {
-      res.status(500).json({ message: "Erro ao remover jogadores" });
     }
   });
 
