@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { Trophy, Play } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
 
 interface WinnerScreenProps {
   winner: {
@@ -18,6 +19,17 @@ interface WinnerScreenProps {
 
 export function WinnerScreen({ winner, topDrinker, maxPoints, onPlayAgain }: WinnerScreenProps) {
   const [, navigate] = useLocation();
+
+  const handleChooseNewGame = async () => {
+    try {
+      // Limpar todos os jogadores antes de redirecionar
+      await apiRequest("DELETE", "/api/players/all", {});
+      // Redirecionar para a página de modos de jogo
+      navigate("/game-modes");
+    } catch (error) {
+      console.error('Erro ao limpar jogadores:', error);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
@@ -55,7 +67,7 @@ export function WinnerScreen({ winner, topDrinker, maxPoints, onPlayAgain }: Win
             Jogar de novo
           </Button>
           <Button
-            onClick={() => navigate("/game-modes")}
+            onClick={handleChooseNewGame}
             variant="outline"
           >
             Escolher outro jogo
