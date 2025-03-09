@@ -1,30 +1,37 @@
-import { GameLayout } from "@/components/GameLayout";
-import { GameCard } from "@/components/GameCard";
-import { Dices, CircleDot, MessageSquareQuote } from "lucide-react";
+import { useEffect } from "react";
+import { useLocation } from "wouter";
+import { motion } from "framer-motion";
+import { GorfLogo } from "@/components/GorfLogo";
+import { Button } from "@/components/ui/button";
+import { Play } from "lucide-react";
 
 export default function Home() {
+  const [, navigate] = useLocation();
+
+  // Limpar dados dos jogadores ao iniciar o app
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
+
   return (
-    <GameLayout title="Escolha seu modo de jogo" showPlayers={false}>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <GameCard
-          title="Modo Clássico"
-          description="Desafios e perguntas para todos os jogadores beberem conforme as regras."
-          icon={<Dices className="h-8 w-8" />}
-          href="/classic"
-        />
-        <GameCard
-          title="Roleta"
-          description="Gire a roleta e descubra seu destino! Quem será o próximo a beber?"
-          icon={<CircleDot className="h-8 w-8" />}
-          href="/roulette"
-        />
-        <GameCard
-          title="Verdade ou Desafio"
-          description="Escolha entre revelar seus segredos ou enfrentar desafios ousados."
-          icon={<MessageSquareQuote className="h-8 w-8" />}
-          href="/truth-or-dare"
-        />
-      </div>
-    </GameLayout>
+    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex flex-col items-center justify-center p-4">
+      <GorfLogo />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 2 }}
+        className="mt-12"
+      >
+        <Button
+          size="lg"
+          onClick={() => navigate("/game-modes")}
+          className="bg-white/20 hover:bg-white/30 text-white text-xl px-8 py-6"
+        >
+          <Play className="mr-2 h-6 w-6" />
+          Começar
+        </Button>
+      </motion.div>
+    </div>
   );
 }
