@@ -197,13 +197,10 @@ export default function ClassicMode() {
           {/* Botões de Ação */}
           <div className="space-y-4">
             <button
-              onClick={() => {
-                setCompletedChallenge(!completedChallenge);
-                setHasDrunk(false);
-              }}
+              onClick={() => setCompletedChallenge(!completedChallenge)}
               className={`w-full flex items-center gap-3 p-4 rounded-lg cursor-pointer select-none text-left transition-colors
-                ${completedChallenge 
-                  ? 'bg-purple-50 border-2 border-purple-700' 
+                ${completedChallenge
+                  ? 'bg-purple-50 border-2 border-purple-700'
                   : 'bg-purple-50 border-2 border-transparent hover:border-purple-200'}`}
             >
               <Target className="h-5 w-5 text-purple-900" />
@@ -212,19 +209,22 @@ export default function ClassicMode() {
             </button>
 
             <button
-              onClick={() => {
-                setHasDrunk(!hasDrunk);
-                setCompletedChallenge(false);
-              }}
+              onClick={() => setHasDrunk(!hasDrunk)}
               className={`w-full flex items-center gap-3 p-4 rounded-lg cursor-pointer select-none text-left transition-colors
-                ${hasDrunk 
-                  ? 'bg-purple-50 border-2 border-purple-700' 
+                ${hasDrunk
+                  ? 'bg-purple-50 border-2 border-purple-700'
                   : 'bg-purple-50 border-2 border-transparent hover:border-purple-200'}`}
             >
               <Beer className="h-5 w-5 text-purple-900" />
               <span className="flex-1 text-purple-900">Bebeu {roundPoints} goles</span>
               <span className="text-sm text-purple-700">+{roundPoints}pts</span>
             </button>
+
+            {completedChallenge && hasDrunk && (
+              <div className="text-sm text-purple-700 text-center">
+                Total: +{roundPoints * 2}pts
+              </div>
+            )}
           </div>
 
           {/* Botão Próximo */}
