@@ -52,14 +52,7 @@ export default function ClassicMode() {
     setRoundPoints(points);
   };
 
-  // Gerar desafio inicial ao iniciar o jogo
-  useEffect(() => {
-    if (isGameStarted) {
-      generateChallenge();
-    }
-  }, [isGameStarted]);
-
-  const handleStart = () => {
+  const handleStart = async () => {
     if (players.length < 3) {
       toast({
         title: "Jogadores insuficientes",
@@ -68,7 +61,22 @@ export default function ClassicMode() {
       });
       return;
     }
-    setIsGameStarted(true);
+
+    try {
+      // Definir o primeiro jogador
+      await nextPlayer.mutateAsync();
+
+      // Atualizar os dados
+      await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
+
+      // Gerar primeiro desafio
+      generateChallenge();
+
+      // Iniciar o jogo
+      setIsGameStarted(true);
+    } catch (error) {
+      console.error('Erro ao iniciar o jogo:', error);
+    }
   };
 
   const handleNextPlayer = async () => {
