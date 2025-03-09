@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useForm } from "react-hook-form";
 
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
@@ -28,6 +29,9 @@ export default function ClassicMode() {
   const [maxPoints, setMaxPoints] = useState(100);
   const { play } = useSound();
   const { toast } = useToast();
+  const maxPointsForm = useForm({
+    defaultValues: { maxPoints: 100 },
+  });
 
   const { data: currentPlayer } = useQuery({
     queryKey: ["/api/players/current"],
@@ -41,6 +45,7 @@ export default function ClassicMode() {
     queryKey: ["/api/settings"],
     onSuccess: () => {
       setMaxPoints(settings?.maxPoints || 100);
+      maxPointsForm.setValue("maxPoints", settings?.maxPoints || 100);
     }
   });
 
@@ -92,17 +97,17 @@ export default function ClassicMode() {
       // Contabilizar pontos do jogador atual
       if (currentPlayer) {
         if (completedChallenge) {
-          await updatePoints.mutateAsync({ 
-            playerId: currentPlayer.id, 
-            type: "challenge", 
-            points: roundPoints 
+          await updatePoints.mutateAsync({
+            playerId: currentPlayer.id,
+            type: "challenge",
+            points: roundPoints
           });
         }
         if (hasDrunk) {
-          await updatePoints.mutateAsync({ 
-            playerId: currentPlayer.id, 
-            type: "drink", 
-            points: roundPoints 
+          await updatePoints.mutateAsync({
+            playerId: currentPlayer.id,
+            type: "drink",
+            points: roundPoints
           });
         }
       }
@@ -164,14 +169,14 @@ export default function ClassicMode() {
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
 
   return (
-    <GameLayout title="Modo Clássico">
+    <GameLayout title="">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Box do Jogo */}
         <div className="bg-white rounded-xl p-6 space-y-8">
           {/* Jogador Atual */}
           <div className="flex items-center gap-4 text-purple-900">
             <User className="h-6 w-6" />
-            <span className="text-xl">
+            <span className="text-xl font-bold">
               {currentPlayer ? `Vez de ${currentPlayer.name}` : "Selecione os jogadores"}
             </span>
           </div>
@@ -239,7 +244,7 @@ export default function ClassicMode() {
                 <DialogTrigger className="text-purple-700 underline hover:text-purple-800 ml-1">
                   alterar &gt;
                 </DialogTrigger>
-                <DialogContent className="bg-white">
+                <DialogContent className="bg-white rounded-xl">
                   <DialogHeader>
                     <DialogTitle>Alterar Pontuação Máxima</DialogTitle>
                   </DialogHeader>
@@ -248,30 +253,38 @@ export default function ClassicMode() {
                       type="button"
                       size="icon"
                       variant="outline"
-                      className="rounded-full w-8 h-8"
-                      onClick={() => setMaxPoints(Math.max(10, maxPoints - 10))}
+                      className="rounded-full w-8 h-8 flex items-center justify-center"
+                      onClick={() => {
+                        const current = maxPointsForm.getValues("maxPoints");
+                        maxPointsForm.setValue("maxPoints", Math.max(10, Number(current) - 10));
+                      }}
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
                     <Input
                       type="number"
-                      value={maxPoints}
-                      onChange={(e) => setMaxPoints(Number(e.target.value))}
-                      className="text-center"
+                      min="10"
+                      max="1000"
+                      className="text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      {...maxPointsForm.register("maxPoints")}
+                      
                     />
                     <Button
                       type="button"
                       size="icon"
                       variant="outline"
-                      className="rounded-full w-8 h-8"
-                      onClick={() => setMaxPoints(Math.min(1000, maxPoints + 10))}
+                      className="rounded-full w-8 h-8 flex items-center justify-center"
+                      onClick={() => {
+                        const current = maxPointsForm.getValues("maxPoints");
+                        maxPointsForm.setValue("maxPoints", Math.min(1000, Number(current) + 10));
+                      }}
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
                   <Button
-                    className="w-full mt-4"
-                    onClick={() => updateMaxPoints.mutate(maxPoints)}
+                    className="w-full mt-4 bg-purple-700 hover:bg-purple-800 text-white"
+                    onClick={() => updateMaxPoints.mutate(maxPointsForm.getValues("maxPoints"))}
                   >
                     Salvar
                   </Button>

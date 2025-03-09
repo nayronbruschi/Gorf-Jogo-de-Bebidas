@@ -106,7 +106,7 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-none w-full h-full m-0 p-8 bg-gradient-to-br from-purple-500 to-pink-500">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-white mb-8">Jogadores e pontuação</h2>
+          <h2 className="text-2xl font-bold text-white mb-8 text-center">Jogadores e pontuação</h2>
 
           {/* Pontuação Máxima */}
           <div className="bg-white/10 p-6 rounded-xl mb-8">
@@ -155,48 +155,51 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
           </div>
 
           {/* Lista de Jogadores */}
-          <div className="space-y-4 mb-8">
-            <AnimatePresence>
-              {sortedPlayers.map((player, index) => (
-                <motion.div
-                  key={player.id}
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="bg-white/10 p-3 rounded space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {hasPoints && index === 0 && <Crown className="h-4 w-4 text-yellow-400" />}
-                      <span className="text-white">{player.name}</span>
+          <div className="bg-white/10 p-6 rounded-xl mb-8">
+            <h3 className="text-lg font-semibold text-white mb-4">Jogadores</h3>
+            <div className="space-y-4">
+              <AnimatePresence>
+                {sortedPlayers.map((player, index) => (
+                  <motion.div
+                    key={player.id}
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="bg-white/10 p-3 rounded space-y-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {hasPoints && index === 0 && <Crown className="h-4 w-4 text-yellow-400" />}
+                        <span className="text-white">{player.name}</span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removePlayer.mutate(player.id)}
+                        className="text-white/50 hover:text-white"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removePlayer.mutate(player.id)}
-                      className="text-white/50 hover:text-white"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
 
-                  <div className="flex items-center gap-4 text-sm">
-                    <div className="flex items-center gap-1 text-white/80">
-                      <Award className="h-4 w-4" />
-                      <span>{player.points} pts</span>
+                    <div className="flex items-center gap-4 text-sm">
+                      <div className="flex items-center gap-1 text-white/80">
+                        <Award className="h-4 w-4" />
+                        <span>{player.points} pts</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-white/80">
+                        <Beer className="h-4 w-4" />
+                        <span>{player.drinksCompleted}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-white/80">
+                        <Target className="h-4 w-4" />
+                        <span>{player.challengesCompleted}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1 text-white/80">
-                      <Beer className="h-4 w-4" />
-                      <span>{player.drinksCompleted}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-white/80">
-                      <Target className="h-4 w-4" />
-                      <span>{player.challengesCompleted}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Adicionar Jogador */}
@@ -206,7 +209,7 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
               <Input
                 placeholder="Nome do jogador"
                 {...form.register("name")}
-                className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                className="flex-1 bg-white border-0 text-purple-500 placeholder:text-purple-300"
               />
               <Button
                 type="submit"
