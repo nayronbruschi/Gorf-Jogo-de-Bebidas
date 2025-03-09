@@ -45,9 +45,7 @@ export function GameLayout({ children, title, className, showPlayersButton = tru
         className={cn("container mx-auto p-4", className)}
       >
         <h2 className="text-3xl font-bold text-white text-center mb-8">{title}</h2>
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 text-white">
-          {children}
-        </div>
+        {children}
       </motion.main>
 
       <PlayerManagementDialog

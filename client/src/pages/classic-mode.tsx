@@ -145,9 +145,9 @@ export default function ClassicMode() {
     <GameLayout title="Modo Clássico">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Box do Jogo */}
-        <div className="rounded-xl p-6 bg-white">
+        <div className="bg-white rounded-xl p-6 space-y-8">
           {/* Jogador Atual */}
-          <div className="flex items-center gap-4 text-purple-900 mb-8">
+          <div className="flex items-center gap-4 text-purple-900">
             <User className="h-6 w-6" />
             <span className="text-xl">
               {currentPlayer ? `Vez de ${currentPlayer.name}` : "Selecione os jogadores"}
@@ -162,7 +162,7 @@ export default function ClassicMode() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="text-3xl font-bold text-center text-purple-900 mb-8"
+                className="text-3xl font-bold text-center text-purple-900"
               >
                 {currentChallenge}
                 <div className="mt-4 text-lg font-normal text-purple-700">
@@ -173,7 +173,7 @@ export default function ClassicMode() {
           </AnimatePresence>
 
           {/* Checkboxes */}
-          <div className="space-y-4 mb-8">
+          <div className="space-y-4">
             <div 
               className="flex items-center gap-3 bg-purple-50 p-4 rounded-lg cursor-pointer select-none" 
               onClick={() => setCompletedChallenge(!completedChallenge)}
