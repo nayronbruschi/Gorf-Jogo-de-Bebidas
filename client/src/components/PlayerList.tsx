@@ -7,7 +7,7 @@ import { insertPlayerSchema } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
-import { Award, Crown, Beer, Target, UserPlus, X } from "lucide-react";
+import { Award, Crown, Beer, Target, UserPlus, X, Plus, Minus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useState } from "react";
 
 export function PlayerList() {
   const { data: players = [] } = useQuery({
@@ -25,6 +26,8 @@ export function PlayerList() {
     queryKey: ["/api/settings"],
   });
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   const form = useForm({
     resolver: zodResolver(insertPlayerSchema),
     defaultValues: {
@@ -34,7 +37,7 @@ export function PlayerList() {
 
   const maxPointsForm = useForm({
     defaultValues: {
-      maxPoints: 100,
+      maxPoints: settings?.maxPoints || 100,
     },
   });
 
@@ -54,6 +57,7 @@ export function PlayerList() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
+      setDialogOpen(false);
     },
   });
 
@@ -84,23 +88,51 @@ export function PlayerList() {
 
       <div className="text-sm text-white/60 mb-2 flex items-center gap-2">
         Objetivo: {settings?.maxPoints || 100} pontos
-        <Dialog>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger className="text-white/60 underline hover:text-white">
             alterar
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="rounded-xl">
             <DialogHeader>
               <DialogTitle>Alterar Pontuação Máxima</DialogTitle>
             </DialogHeader>
             <form onSubmit={onUpdateMaxPoints} className="space-y-4">
-              <Input
-                type="number"
-                min="10"
-                max="1000"
-                defaultValue={settings?.maxPoints || 100}
-                {...maxPointsForm.register("maxPoints")}
-              />
-              <Button type="submit">Salvar</Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="outline"
+                  className="rounded-full w-8 h-8 flex items-center justify-center"
+                  onClick={() => {
+                    const current = maxPointsForm.getValues("maxPoints");
+                    maxPointsForm.setValue("maxPoints", Math.max(10, Number(current) - 1));
+                  }}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <Input
+                  type="number"
+                  min="10"
+                  max="1000"
+                  className="text-center"
+                  {...maxPointsForm.register("maxPoints")}
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="outline"
+                  className="rounded-full w-8 h-8 flex items-center justify-center"
+                  onClick={() => {
+                    const current = maxPointsForm.getValues("maxPoints");
+                    maxPointsForm.setValue("maxPoints", Math.min(1000, Number(current) + 1));
+                  }}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              <Button type="submit" className="w-full">
+                Salvar
+              </Button>
             </form>
           </DialogContent>
         </Dialog>

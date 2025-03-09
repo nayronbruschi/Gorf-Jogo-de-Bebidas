@@ -10,6 +10,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { WinnerScreen } from "@/components/WinnerScreen";
 
 export default function ClassicMode() {
   const [isGameStarted, setIsGameStarted] = useState(false);
@@ -25,6 +26,10 @@ export default function ClassicMode() {
 
   const { data: players = [] } = useQuery({
     queryKey: ["/api/players"],
+  });
+
+  const { data: settings } = useQuery({
+    queryKey: ["/api/settings"],
   });
 
   const updatePoints = useMutation({
@@ -97,6 +102,25 @@ export default function ClassicMode() {
     await nextPlayer.mutate();
     generateChallenge();
   };
+
+  const handlePlayAgain = () => {
+    window.location.reload();
+  };
+
+  // Verificar se alguém ganhou
+  const winner = players.find(player => player.points >= (settings?.maxPoints || 100));
+  const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
+
+  if (winner) {
+    return (
+      <WinnerScreen
+        winner={{ name: winner.name, points: winner.points }}
+        topDrinker={{ name: topDrinker.name, drinks: topDrinker.drinksCompleted }}
+        maxPoints={settings?.maxPoints || 100}
+        onPlayAgain={handlePlayAgain}
+      />
+    );
+  }
 
   if (!isGameStarted) {
     return (
