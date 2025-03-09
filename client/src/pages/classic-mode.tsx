@@ -144,10 +144,10 @@ export default function ClassicMode() {
   return (
     <GameLayout title="Modo Clássico">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Box dos Desafios */}
-        <div className="bg-white rounded-xl p-6 space-y-8">
+        {/* Box do Jogo */}
+        <div className="rounded-xl p-6 bg-white">
           {/* Jogador Atual */}
-          <div className="flex items-center gap-4 text-purple-900">
+          <div className="flex items-center gap-4 text-purple-900 mb-8">
             <User className="h-6 w-6" />
             <span className="text-xl">
               {currentPlayer ? `Vez de ${currentPlayer.name}` : "Selecione os jogadores"}
@@ -162,7 +162,7 @@ export default function ClassicMode() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="text-3xl font-bold text-center text-purple-900"
+                className="text-3xl font-bold text-center text-purple-900 mb-8"
               >
                 {currentChallenge}
                 <div className="mt-4 text-lg font-normal text-purple-700">
@@ -172,10 +172,10 @@ export default function ClassicMode() {
             )}
           </AnimatePresence>
 
-          {/* Checkboxes e Botão Próximo */}
-          <div className="space-y-4">
+          {/* Checkboxes */}
+          <div className="space-y-4 mb-8">
             <div 
-              className="flex items-center gap-3 bg-purple-50 p-4 rounded-lg cursor-pointer w-full select-none" 
+              className="flex items-center gap-3 bg-purple-50 p-4 rounded-lg cursor-pointer select-none" 
               onClick={() => setCompletedChallenge(!completedChallenge)}
             >
               <Checkbox
@@ -184,7 +184,7 @@ export default function ClassicMode() {
                 onCheckedChange={(checked) => setCompletedChallenge(checked as boolean)}
                 className="border-purple-700 data-[state=checked]:bg-purple-700 data-[state=checked]:text-white"
               />
-              <label htmlFor="challenge" className="text-purple-900 cursor-pointer flex items-center gap-2 flex-1 w-full">
+              <label htmlFor="challenge" className="text-purple-900 cursor-pointer flex items-center gap-2 flex-1">
                 <Target className="h-5 w-5" />
                 <span className="flex-1">Completou o Desafio</span>
                 <span className="text-sm text-purple-700">+{roundPoints}pts</span>
@@ -192,7 +192,7 @@ export default function ClassicMode() {
             </div>
 
             <div 
-              className="flex items-center gap-3 bg-purple-50 p-4 rounded-lg cursor-pointer w-full select-none"
+              className="flex items-center gap-3 bg-purple-50 p-4 rounded-lg cursor-pointer select-none"
               onClick={() => setHasDrunk(!hasDrunk)}
             >
               <Checkbox
@@ -201,7 +201,7 @@ export default function ClassicMode() {
                 onCheckedChange={(checked) => setHasDrunk(checked as boolean)}
                 className="border-purple-700 data-[state=checked]:bg-purple-700 data-[state=checked]:text-white"
               />
-              <label htmlFor="drink" className="text-purple-900 cursor-pointer flex items-center gap-2 flex-1 w-full">
+              <label htmlFor="drink" className="text-purple-900 cursor-pointer flex items-center gap-2 flex-1">
                 <Beer className="h-5 w-5" />
                 <span className="flex-1">Bebeu {roundPoints} goles</span>
                 <span className="text-sm text-purple-700">+{roundPoints}pts</span>
@@ -209,6 +209,7 @@ export default function ClassicMode() {
             </div>
           </div>
 
+          {/* Botão Próximo */}
           <Button
             size="lg"
             onClick={handleNextPlayer}
