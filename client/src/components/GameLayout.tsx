@@ -5,6 +5,7 @@ import { Home, Beer, Users } from "lucide-react";
 import { PlayerManagementDialog } from "./PlayerManagementDialog";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { GorfLogo } from "./GorfLogo";
 
 interface GameLayoutProps {
   children: React.ReactNode;
@@ -39,13 +40,15 @@ export function GameLayout({ children, title, className, showPlayersButton = tru
         )}
       </nav>
 
+      <GorfLogo />
+
       <motion.main
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className={cn("container mx-auto p-4", className)}
       >
         <h2 className="text-3xl font-bold text-white text-center mb-8">{title}</h2>
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 text-white">
+        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 text-purple-500">
           {children}
         </div>
       </motion.main>
