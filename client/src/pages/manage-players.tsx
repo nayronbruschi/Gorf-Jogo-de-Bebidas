@@ -7,9 +7,8 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
-import { Award, Crown, Beer, Target, UserPlus, X, Plus, Minus } from "lucide-react";
+import { Award, Crown, Beer, Target, UserPlus, X, Plus, Minus, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { GameLayout } from "@/components/GameLayout";
 import { useLocation } from "wouter";
 
 export default function ManagePlayers() {
@@ -108,8 +107,20 @@ export default function ManagePlayers() {
   const hasPoints = sortedPlayers.some(player => player.points > 0);
 
   return (
-    <GameLayout title="Jogadores e pontuação" showPlayersButton={false}>
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500">
+      {/* Botão Voltar */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute left-4 top-4 text-white hover:text-white/80"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft className="h-6 w-6" />
+      </Button>
+
+      <div className="max-w-4xl mx-auto p-8">
+        <h2 className="text-2xl font-bold text-white mb-8 text-center">Jogadores e pontuação</h2>
+
         {/* Pontuação Máxima */}
         <div className="bg-white/10 p-6 rounded-xl mb-8">
           <h3 className="text-lg font-semibold text-white mb-4">Pontuação máxima</h3>
@@ -232,12 +243,12 @@ export default function ManagePlayers() {
           <Button
             variant="outline"
             onClick={() => navigate(-1)}
-            className="bg-white/10 hover:bg-white/20 text-white border-white/20"
+            className="bg-purple-700 hover:bg-purple-800 text-white border-white/20"
           >
             Voltar ao Jogo
           </Button>
         </div>
       </div>
-    </GameLayout>
+    </div>
   );
 }
