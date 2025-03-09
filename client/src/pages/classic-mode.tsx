@@ -25,7 +25,10 @@ export default function ClassicMode() {
 
   const updatePoints = useMutation({
     mutationFn: async ({ playerId, type }: { playerId: number; type: "challenge" | "drink" }) => {
-      await apiRequest("PATCH", `/api/players/${playerId}/points`, { type });
+      await apiRequest("PATCH", `/api/players/${playerId}/points`, { 
+        type,
+        points: 10 // Always 10 points, for both challenge and drink
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });

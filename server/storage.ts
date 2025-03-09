@@ -68,9 +68,9 @@ export class MemStorage implements IStorage {
 
     const updatedPlayer = { 
       ...player,
-      points: player.points + points,
-      challengesCompleted: type === "challenge" ? player.challengesCompleted + 1 : player.challengesCompleted,
-      drinksCompleted: type === "drink" ? player.drinksCompleted + 1 : player.drinksCompleted,
+      points: (player.points || 0) + points,
+      challengesCompleted: type === "challenge" ? (player.challengesCompleted || 0) + 1 : (player.challengesCompleted || 0),
+      drinksCompleted: type === "drink" ? (player.drinksCompleted || 0) + 1 : (player.drinksCompleted || 0),
     };
 
     this.players.set(id, updatedPlayer);
