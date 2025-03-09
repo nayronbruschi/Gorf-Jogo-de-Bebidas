@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPlayerSchema } from "@shared/schema";
-import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
@@ -108,14 +107,14 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-none w-full h-full m-0 overflow-y-auto bg-gradient-to-br from-purple-500 to-pink-500">
+      <DialogContent className="max-w-none w-[95vw] lg:w-[80vw] xl:w-[60vw] h-[90vh] m-4 overflow-y-auto bg-gradient-to-br from-purple-500 to-pink-500">
         <div className="absolute right-4 top-4">
-          <DialogClose className="h-10 w-10 text-white hover:text-white/80">
-            <X className="h-6 w-6" />
+          <DialogClose className="h-12 w-12 text-white hover:text-white/80 flex items-center justify-center">
+            <X className="h-8 w-8" />
           </DialogClose>
         </div>
 
-        <div className="max-w-3xl mx-auto p-8">
+        <div className="max-w-4xl mx-auto p-8">
           <h2 className="text-2xl font-bold text-white mb-8 text-center">Jogadores e pontuação</h2>
 
           {/* Pontuação Máxima */}

@@ -10,4 +10,14 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
+
+  /* Esconder barras de rolagem mas manter funcionalidade */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
