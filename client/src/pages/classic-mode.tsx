@@ -29,18 +29,15 @@ export default function ClassicMode() {
 
   const updatePoints = useMutation({
     mutationFn: async ({ playerId, type }: { playerId: number; type: "challenge" | "drink" }) => {
+      const points = Math.floor(Math.random() * 9) + 2; // Gera número aleatório entre 2 e 10
       await apiRequest("PATCH", `/api/players/${playerId}/points`, { 
         type,
-        points: 10 // Always 10 points, for both challenge and drink
+        points
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       play("success");
-      toast({
-        title: "Pontos atualizados!",
-        description: "Os pontos foram adicionados com sucesso.",
-      });
     },
   });
 
@@ -161,7 +158,10 @@ export default function ClassicMode() {
         {/* Checkboxes e Botão Próximo */}
         <div className="flex flex-col gap-6 w-full max-w-sm">
           <div className="space-y-4">
-            <div className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer" onClick={() => setCompletedChallenge(!completedChallenge)}>
+            <div 
+              className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer" 
+              onClick={() => setCompletedChallenge(!completedChallenge)}
+            >
               <Checkbox
                 id="challenge"
                 checked={completedChallenge}
@@ -171,11 +171,14 @@ export default function ClassicMode() {
               <label htmlFor="challenge" className="text-white cursor-pointer flex items-center gap-2 flex-1">
                 <Target className="h-5 w-5" />
                 <span className="flex-1">Completou o Desafio</span>
-                <span className="text-sm text-white/80">+10pts</span>
+                <span className="text-sm text-white/80">2-10pts</span>
               </label>
             </div>
 
-            <div className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer" onClick={() => setHasDrunk(!hasDrunk)}>
+            <div 
+              className="flex items-center gap-3 bg-white/10 p-4 rounded-lg cursor-pointer"
+              onClick={() => setHasDrunk(!hasDrunk)}
+            >
               <Checkbox
                 id="drink"
                 checked={hasDrunk}
@@ -185,7 +188,7 @@ export default function ClassicMode() {
               <label htmlFor="drink" className="text-white cursor-pointer flex items-center gap-2 flex-1">
                 <Beer className="h-5 w-5" />
                 <span className="flex-1">Bebeu</span>
-                <span className="text-sm text-white/80">+10pts</span>
+                <span className="text-sm text-white/80">2-10pts</span>
               </label>
             </div>
           </div>
