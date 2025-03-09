@@ -1,8 +1,14 @@
+import { useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { GameCard } from "@/components/GameCard";
 import { Dices, CircleDot, MessageSquareQuote } from "lucide-react";
 
 export default function GameModes() {
+  // Limpar dados ao entrar na página de modos
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
+
   return (
     <GameLayout title="Escolha seu modo de jogo">
       <div className="grid grid-cols-1 gap-6">
