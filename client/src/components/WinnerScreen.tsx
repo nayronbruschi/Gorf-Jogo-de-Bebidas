@@ -24,6 +24,10 @@ export function WinnerScreen({ winner, topDrinker, maxPoints, onPlayAgain }: Win
     try {
       // Limpar todos os jogadores antes de redirecionar
       await apiRequest("DELETE", "/api/players/all", {});
+      // Resetar configurações do jogo
+      await apiRequest("PATCH", "/api/settings", { maxPoints: 100 });
+      // Esperar um momento para garantir que tudo foi limpo
+      await new Promise(resolve => setTimeout(resolve, 100));
       // Redirecionar para a página de modos de jogo
       navigate("/game-modes");
     } catch (error) {
