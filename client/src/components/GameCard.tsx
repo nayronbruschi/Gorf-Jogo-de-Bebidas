@@ -17,12 +17,12 @@ export function GameCard({ title, description, icon, href }: GameCardProps) {
         whileTap={{ scale: 0.95 }}
         className="cursor-pointer"
       >
-        <Card className="h-full p-6 bg-white/10 backdrop-blur-lg border-white/20 text-white hover:bg-white/20 transition-colors">
+        <Card className="h-full p-6 bg-white rounded-xl shadow-lg">
           <div className="flex items-center gap-4 mb-4">
             {icon}
-            <h3 className="text-xl font-bold text-white">{title}</h3>
+            <h3 className="text-xl font-bold text-gray-800">{title}</h3>
           </div>
-          <p className="text-white/80">{description}</p>
+          <p className="text-gray-600">{description}</p>
         </Card>
       </motion.div>
     </Link>
