@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
@@ -55,6 +55,10 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
+      toast({
+        title: "Pontuação máxima atualizada",
+        description: "A nova pontuação máxima foi salva com sucesso.",
+      });
     },
   });
 
@@ -104,8 +108,14 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-none w-full h-full m-0 p-8 bg-gradient-to-br from-purple-500 to-pink-500">
-        <div className="max-w-3xl mx-auto">
+      <DialogContent className="max-w-none w-full h-full m-0 overflow-y-auto bg-gradient-to-br from-purple-500 to-pink-500">
+        <div className="absolute right-4 top-4">
+          <DialogClose className="h-10 w-10 text-white hover:text-white/80">
+            <X className="h-6 w-6" />
+          </DialogClose>
+        </div>
+
+        <div className="max-w-3xl mx-auto p-8">
           <h2 className="text-2xl font-bold text-white mb-8 text-center">Jogadores e pontuação</h2>
 
           {/* Pontuação Máxima */}
@@ -129,7 +139,7 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
                   type="number"
                   min="10"
                   max="1000"
-                  className="text-center bg-white/10 border-white/20 text-white"
+                  className="text-center bg-white/10 border-white/20 text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   {...maxPointsForm.register("maxPoints")}
                 />
                 <Button
@@ -209,7 +219,7 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
               <Input
                 placeholder="Nome do jogador"
                 {...form.register("name")}
-                className="flex-1 bg-white border-0 text-purple-500 placeholder:text-purple-300"
+                className="flex-1 bg-white border-0 text-purple-700 placeholder:text-purple-400"
               />
               <Button
                 type="submit"

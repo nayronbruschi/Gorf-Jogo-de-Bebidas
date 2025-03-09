@@ -267,7 +267,6 @@ export default function ClassicMode() {
                       max="1000"
                       className="text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       {...maxPointsForm.register("maxPoints")}
-                      
                     />
                     <Button
                       type="button"
@@ -284,7 +283,12 @@ export default function ClassicMode() {
                   </div>
                   <Button
                     className="w-full mt-4 bg-purple-700 hover:bg-purple-800 text-white"
-                    onClick={() => updateMaxPoints.mutate(maxPointsForm.getValues("maxPoints"))}
+                    onClick={() => {
+                      const newMaxPoints = maxPointsForm.getValues("maxPoints");
+                      updateMaxPoints.mutate(newMaxPoints);
+                      setMaxPoints(newMaxPoints);
+                      setDialogOpen(false);
+                    }}
                   >
                     Salvar
                   </Button>
