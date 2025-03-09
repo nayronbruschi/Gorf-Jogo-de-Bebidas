@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -53,6 +53,19 @@ export default function ClassicMode() {
     },
   });
 
+  const generateChallenge = () => {
+    const challenge = classicChallenges[Math.floor(Math.random() * classicChallenges.length)];
+    const points = Math.floor(Math.random() * 9) + 2; // 2-10 pontos
+    setCurrentChallenge(challenge);
+    setRoundPoints(points);
+  };
+
+  useEffect(() => {
+    if (isGameStarted) {
+      generateChallenge(); // Gerar desafio inicial
+    }
+  }, [isGameStarted]);
+
   const handleStart = () => {
     if (players.length < 3) {
       toast({
@@ -63,14 +76,6 @@ export default function ClassicMode() {
       return;
     }
     setIsGameStarted(true);
-    generateChallenge();
-  };
-
-  const generateChallenge = () => {
-    const challenge = classicChallenges[Math.floor(Math.random() * classicChallenges.length)];
-    const points = Math.floor(Math.random() * 9) + 2; // 2-10 pontos
-    setCurrentChallenge(challenge);
-    setRoundPoints(points);
   };
 
   const handleNextPlayer = async () => {
@@ -83,23 +88,27 @@ export default function ClassicMode() {
       return;
     }
 
-    // Contabilizar pontos do jogador atual
-    if (currentPlayer) {
-      if (completedChallenge) {
-        await updatePoints.mutate({ playerId: currentPlayer.id, type: "challenge", points: roundPoints });
+    try {
+      // Contabilizar pontos do jogador atual
+      if (currentPlayer) {
+        if (completedChallenge) {
+          await updatePoints.mutateAsync({ playerId: currentPlayer.id, type: "challenge", points: roundPoints });
+        }
+        if (hasDrunk) {
+          await updatePoints.mutateAsync({ playerId: currentPlayer.id, type: "drink", points: roundPoints });
+        }
       }
-      if (hasDrunk) {
-        await updatePoints.mutate({ playerId: currentPlayer.id, type: "drink", points: roundPoints });
-      }
+
+      // Passar para o próximo jogador
+      await nextPlayer.mutateAsync();
+
+      // Resetar estados e gerar novo desafio
+      setCompletedChallenge(false);
+      setHasDrunk(false);
+      generateChallenge();
+    } catch (error) {
+      console.error('Erro ao processar a rodada:', error);
     }
-
-    // Resetar estados
-    setCompletedChallenge(false);
-    setHasDrunk(false);
-
-    // Passar para o próximo jogador e gerar novo desafio
-    await nextPlayer.mutate();
-    generateChallenge();
   };
 
   const handlePlayAgain = () => {
@@ -175,7 +184,7 @@ export default function ClassicMode() {
             >
               {currentChallenge}
               <div className="mt-4 text-lg font-normal text-white/80">
-                Ou beba 3 goles
+                Ou beba {roundPoints} goles
               </div>
             </motion.div>
           )}
@@ -213,7 +222,7 @@ export default function ClassicMode() {
               />
               <label htmlFor="drink" className="text-white cursor-pointer flex items-center gap-2 flex-1">
                 <Beer className="h-5 w-5" />
-                <span className="flex-1">Bebeu</span>
+                <span className="flex-1">Bebeu {roundPoints} goles</span>
                 <span className="text-sm text-white/80">+{roundPoints}pts</span>
               </label>
             </div>

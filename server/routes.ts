@@ -49,8 +49,7 @@ export async function registerRoutes(app: Express) {
     }
 
     try {
-      const points = result.data.type === "drink" ? 10 : 5;
-      const player = await storage.updatePlayerPoints(id, points, result.data.type);
+      const player = await storage.updatePlayerPoints(id, result.data.points, result.data.type);
       res.json(player);
     } catch (error) {
       res.status(404).json({ message: "Jogador não encontrado" });
