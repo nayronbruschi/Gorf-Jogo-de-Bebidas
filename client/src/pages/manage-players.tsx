@@ -18,8 +18,11 @@ export default function ManagePlayers() {
     queryKey: ["/api/players"],
   });
 
-  const { data: settings } = useQuery({
+  const { data: settings, onSuccess: handleSettingsSuccess } = useQuery({
     queryKey: ["/api/settings"],
+    onSuccess: (data) => {
+      maxPointsForm.setValue("maxPoints", data?.maxPoints || 100);
+    }
   });
 
   const form = useForm({

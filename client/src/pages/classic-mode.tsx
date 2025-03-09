@@ -176,8 +176,12 @@ export default function ClassicMode() {
           {/* Jogador Atual */}
           <div className="flex items-center gap-4 text-purple-900">
             <User className="h-6 w-6" />
-            <span className="text-xl font-bold">
-              {currentPlayer ? `Vez de ${currentPlayer.name}` : "Selecione os jogadores"}
+            <span className="text-xl">
+              {currentPlayer ? (
+                <>
+                  Vez de <span className="font-bold">{currentPlayer.name}</span>
+                </>
+              ) : "Selecione os jogadores"}
             </span>
           </div>
 
