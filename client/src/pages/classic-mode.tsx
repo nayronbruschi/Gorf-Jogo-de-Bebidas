@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
 import { classicChallenges } from "@/lib/game-data";
 import { useSound } from "@/hooks/use-sound";
-import { Shuffle, User, Beer, Target, SkipForward } from "lucide-react";
+import { User, Beer, Target, ArrowRight, Play } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ClassicMode() {
+  const [isGameStarted, setIsGameStarted] = useState(false);
   const [currentChallenge, setCurrentChallenge] = useState("");
+  const [completedChallenge, setCompletedChallenge] = useState(false);
+  const [hasDrunk, setHasDrunk] = useState(false);
   const { play } = useSound();
   const { toast } = useToast();
 
@@ -43,11 +47,55 @@ export default function ClassicMode() {
     },
   });
 
+  const handleStart = () => {
+    setIsGameStarted(true);
+    generateChallenge();
+  };
+
   const generateChallenge = () => {
-    play("click");
     const challenge = classicChallenges[Math.floor(Math.random() * classicChallenges.length)];
     setCurrentChallenge(challenge);
   };
+
+  const handleNextPlayer = async () => {
+    // Contabilizar pontos do jogador atual
+    if (currentPlayer) {
+      if (completedChallenge) {
+        await updatePoints.mutate({ playerId: currentPlayer.id, type: "challenge" });
+      }
+      if (hasDrunk) {
+        await updatePoints.mutate({ playerId: currentPlayer.id, type: "drink" });
+      }
+    }
+
+    // Resetar estados
+    setCompletedChallenge(false);
+    setHasDrunk(false);
+
+    // Passar para o próximo jogador e gerar novo desafio
+    await nextPlayer.mutate();
+    generateChallenge();
+  };
+
+  if (!isGameStarted) {
+    return (
+      <GameLayout title="Modo Clássico">
+        <div className="flex flex-col items-center gap-8">
+          <p className="text-xl text-white/80 text-center">
+            Prepare-se para desafios divertidos! Cada jogador terá sua vez de enfrentar um desafio ou beber.
+          </p>
+          <Button
+            size="lg"
+            onClick={handleStart}
+            className="bg-white/20 hover:bg-white/30 text-white text-xl px-8 py-6"
+          >
+            <Play className="mr-2 h-6 w-6" />
+            Iniciar Jogo
+          </Button>
+        </div>
+      </GameLayout>
+    );
+  }
 
   return (
     <GameLayout title="Modo Clássico">
@@ -58,14 +106,6 @@ export default function ClassicMode() {
           <span className="text-xl">
             {currentPlayer ? `Vez de ${currentPlayer.name}` : "Selecione os jogadores"}
           </span>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => nextPlayer.mutate()}
-            className="text-white/80 hover:text-white"
-          >
-            <SkipForward className="h-5 w-5" />
-          </Button>
         </div>
 
         {/* Desafio Atual */}
@@ -86,37 +126,43 @@ export default function ClassicMode() {
           )}
         </AnimatePresence>
 
-        {/* Botões de Ação */}
-        <div className="flex flex-col gap-4 w-full max-w-sm">
+        {/* Checkboxes e Botão Próximo */}
+        <div className="flex flex-col gap-6 w-full max-w-sm">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 bg-white/10 p-4 rounded-lg">
+              <Checkbox
+                id="challenge"
+                checked={completedChallenge}
+                onCheckedChange={(checked) => setCompletedChallenge(checked as boolean)}
+              />
+              <label htmlFor="challenge" className="text-white cursor-pointer flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                Completou o Desafio
+              </label>
+            </div>
+
+            <div className="flex items-center gap-3 bg-white/10 p-4 rounded-lg">
+              <Checkbox
+                id="drink"
+                checked={hasDrunk}
+                onCheckedChange={(checked) => setHasDrunk(checked as boolean)}
+              />
+              <label htmlFor="drink" className="text-white cursor-pointer flex items-center gap-2">
+                <Beer className="h-5 w-5" />
+                Bebeu
+              </label>
+            </div>
+          </div>
+
           <Button
             size="lg"
-            onClick={generateChallenge}
+            onClick={handleNextPlayer}
             className="bg-white/20 hover:bg-white/30 text-white text-xl"
+            disabled={nextPlayer.isPending || updatePoints.isPending}
           >
-            <Shuffle className="mr-2 h-6 w-6" />
-            Gerar Desafio
+            <ArrowRight className="mr-2 h-6 w-6" />
+            Próximo Jogador
           </Button>
-
-          {currentChallenge && currentPlayer && (
-            <div className="grid grid-cols-2 gap-4">
-              <Button
-                onClick={() => updatePoints.mutate({ playerId: currentPlayer.id, type: "challenge" })}
-                className="bg-green-500/50 hover:bg-green-500/70 text-white"
-                disabled={updatePoints.isPending}
-              >
-                <Target className="mr-2 h-5 w-5" />
-                Completou Desafio
-              </Button>
-              <Button
-                onClick={() => updatePoints.mutate({ playerId: currentPlayer.id, type: "drink" })}
-                className="bg-purple-500/50 hover:bg-purple-500/70 text-white"
-                disabled={updatePoints.isPending}
-              >
-                <Beer className="mr-2 h-5 w-5" />
-                Bebeu
-              </Button>
-            </div>
-          )}
         </div>
       </div>
     </GameLayout>
