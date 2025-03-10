@@ -44,36 +44,6 @@ export default function RouletteMode() {
     queryKey: ["/api/players"],
   });
 
-  // Verificar vitória para todos os jogadores
-  const checkAllPlayersForWin = async () => {
-    const maxPoints = Number(localStorage.getItem("maxPoints"));
-    console.log('Pontuação máxima:', maxPoints);
-
-    try {
-      // Buscar dados atualizados dos jogadores
-      const response = await apiRequest("GET", "/api/players");
-      const updatedPlayers = response || [];
-
-      for (const player of updatedPlayers) {
-        console.log('Verificando jogador:', {
-          nome: player.name,
-          pontos: player.points,
-          maximoPontos: maxPoints
-        });
-
-        if (player.points >= maxPoints) {
-          console.log('VITÓRIA ENCONTRADA! Redirecionando...');
-          navigate(`/roulette/winner?playerId=${player.id}`);
-          return true;
-        }
-      }
-      return false;
-    } catch (error) {
-      console.error('Erro ao verificar vitória:', error);
-      return false;
-    }
-  };
-
   // Mutation para atualizar pontos
   const updatePoints = useMutation({
     mutationFn: async (data: { playerId: number; points: number }) => {
@@ -125,6 +95,7 @@ export default function RouletteMode() {
 
     try {
       const pointsToAdd = action === "drink" ? numDrinks : punishmentDrinks;
+      const maxPoints = Number(localStorage.getItem("maxPoints"));
 
       // 1. Atualizar pontos
       await updatePoints.mutateAsync({
@@ -132,18 +103,26 @@ export default function RouletteMode() {
         points: pointsToAdd
       });
 
-      // 2. Forçar atualização do cache
-      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      // 2. Buscar dados atualizados do jogador
+      const playerData = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
 
-      // 3. Verificar vitória
-      const hasWinner = await checkAllPlayersForWin();
+      console.log('Verificando vitória:', {
+        jogador: selectedPlayer.name,
+        pontosAtuais: playerData.points,
+        pontosParaVencer: maxPoints
+      });
 
-      // 4. Se não houver vencedor, preparar próxima rodada
-      if (!hasWinner) {
-        setShowPunishment(false);
-        setAction(null);
-        selectRandomPlayer();
+      // 3. Verificar vitória imediatamente
+      if (playerData.points >= maxPoints) {
+        console.log('VITÓRIA! Redirecionando para tela de vencedor...');
+        navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
+        return;
       }
+
+      // 4. Se não houver vitória, continuar o jogo
+      setShowPunishment(false);
+      setAction(null);
+      selectRandomPlayer();
     } catch (error) {
       console.error('Erro ao processar a rodada:', error);
     }
