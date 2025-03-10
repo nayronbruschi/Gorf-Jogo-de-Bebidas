@@ -52,7 +52,7 @@ export default function ClassicStart() {
   };
 
   return (
-    <GameLayout title="Modo Clássico">
+    <GameLayout title="">
       <div className="flex flex-col items-center gap-8">
         <div className="text-center max-w-lg">
           <h3 className="text-2xl font-bold text-white mb-4">
@@ -98,7 +98,7 @@ export default function ClassicStart() {
         <Button
           size="lg"
           onClick={handleStartGame}
-          className="bg-white/20 hover:bg-white/30 text-white text-xl px-8 py-6"
+          className="bg-purple-700 hover:bg-purple-800 text-white text-xl px-8 py-6 flex items-center justify-center"
         >
           <Play className="mr-2 h-6 w-6" />
           Iniciar Jogo

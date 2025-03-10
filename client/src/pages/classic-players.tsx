@@ -12,7 +12,7 @@ export default function ClassicPlayers() {
   });
 
   return (
-    <GameLayout title="Modo Clássico" showPlayers={false}>
+    <GameLayout title="">
       <div className="max-w-md mx-auto space-y-8">
         <div className="text-center">
           <p className="text-white/80 mb-6">
@@ -27,7 +27,11 @@ export default function ClassicPlayers() {
             size="lg"
             onClick={() => navigate("/classic/start")}
             disabled={players.length < 2}
-            className="bg-white/20 hover:bg-white/30 text-white px-8 py-6"
+            className={`px-8 py-6 ${
+              players.length >= 2 
+                ? "bg-purple-700 hover:bg-purple-800 text-white"
+                : "bg-white/20 hover:bg-white/30 text-white"
+            }`}
           >
             <Play className="mr-2 h-6 w-6" />
             {players.length < 2 

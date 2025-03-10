@@ -15,21 +15,18 @@ export function GameLayout({ children, title, className }: GameLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500">
-      <nav className="p-4 flex items-center relative bg-black/20 backdrop-blur-sm">
-        <div className="absolute left-4">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => navigate("/game-modes")}
-          >
-            <Home className="h-6 w-6 text-white" />
-          </Button>
-        </div>
-        <div className="flex-1 flex justify-center items-center">
-          <h1 className="text-2xl font-bold text-white">Gorf</h1>
-        </div>
-        {/* Espaço vazio à direita para manter o logo centralizado */}
-        <div className="w-[40px]" />
+      <nav className="p-4 flex items-center justify-between relative bg-black/20 backdrop-blur-sm">
+        <Button 
+          variant="ghost" 
+          size="icon"
+          onClick={() => navigate("/game-modes")}
+          className="text-white"
+        >
+          <Home className="h-6 w-6" />
+        </Button>
+        <h1 className="text-2xl font-bold text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          Gorf
+        </h1>
       </nav>
 
       <motion.main
