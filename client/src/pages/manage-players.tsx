@@ -58,10 +58,6 @@ export default function ManagePlayers() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
-      toast({
-        title: "Pontuação máxima atualizada",
-        description: "A nova pontuação máxima foi salva com sucesso.",
-      });
     },
   });
 

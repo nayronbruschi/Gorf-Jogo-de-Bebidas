@@ -3,7 +3,7 @@ import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-import { classicChallenges } from "@/lib/game-data";
+import { decks } from "@/lib/game-data";
 import { useSound } from "@/hooks/use-sound";
 import { User, Beer, Target, ArrowRight, Award, Crown, Plus, Minus } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -23,7 +23,7 @@ import { createElement } from "react";
 
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
-  const [currentIcon, setCurrentIcon] = useState<any>(); // Added state for icon
+  const [currentIcon, setCurrentIcon] = useState<any>();
   const [completedChallenge, setCompletedChallenge] = useState(false);
   const [hasDrunk, setHasDrunk] = useState(false);
   const [roundPoints, setRoundPoints] = useState(0);
@@ -48,7 +48,7 @@ export default function ClassicMode() {
       if (data?.maxPoints) {
         maxPointsForm.setValue("maxPoints", data.maxPoints);
       }
-    },
+    }
   });
 
   const updatePoints = useMutation({
@@ -70,16 +70,21 @@ export default function ClassicMode() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
       setDialogOpen(false);
-      toast({
-        title: "Pontuação máxima atualizada",
-        description: "A nova pontuação máxima foi salva com sucesso.",
-      });
     },
   });
 
   const generateChallenge = () => {
-    const challenge = classicChallenges[Math.floor(Math.random() * classicChallenges.length)];
+    // Recuperar os decks selecionados do localStorage
+    const selectedDeckIds = JSON.parse(localStorage.getItem("selectedDecks") || '["classic"]');
+
+    // Filtrar os desafios dos decks selecionados
+    const availableChallenges = decks
+      .filter(deck => selectedDeckIds.includes(deck.id))
+      .flatMap(deck => deck.challenges);
+
+    const challenge = availableChallenges[Math.floor(Math.random() * availableChallenges.length)];
     const points = Math.floor(Math.random() * 9) + 2; // 2-10 pontos
+
     setCurrentChallenge(challenge.text);
     setCurrentIcon(challenge.icon);
     setRoundPoints(points);
@@ -94,7 +99,7 @@ export default function ClassicMode() {
       setCompletedChallenge(false);
       setHasDrunk(false);
       setCurrentChallenge("");
-      setCurrentIcon(null); // Reset icon
+      setCurrentIcon(null);
       setRoundPoints(0);
 
       // Atualizar os dados
