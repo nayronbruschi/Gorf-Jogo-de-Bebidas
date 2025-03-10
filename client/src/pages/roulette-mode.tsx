@@ -50,8 +50,8 @@ export default function RouletteMode() {
   });
 
   const updateDrinks = useMutation({
-    mutationFn: async ({ playerId, drinks }: { playerId: number; drinks: number }) => {
-      await apiRequest("PATCH", `/api/players/${playerId}/drinks`, { drinks });
+    mutationFn: async ({ playerId, type, points }: { playerId: number; type: "challenge" | "drink"; points: number }) => {
+      await apiRequest("PATCH", `/api/players/${playerId}/drinks`, { drinks: points });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
@@ -62,7 +62,7 @@ export default function RouletteMode() {
     setIsSelecting(true);
     setAction(null);
     setPunishmentDrinks(0);
-    play("spin");
+    play('spin');
 
     setTimeout(() => {
       const randomPlayer = players[Math.floor(Math.random() * players.length)];
@@ -72,7 +72,7 @@ export default function RouletteMode() {
       setSelectedPlayer(randomPlayer);
       setNumDrinks(randomDrinks);
       setIsSelecting(false);
-      play("tada");
+      play('tada');
     }, 2000);
   };
 
@@ -93,37 +93,19 @@ export default function RouletteMode() {
 
     setIsGeneratingChallenge(true);
     try {
-      await updateDrinks.mutateAsync({
-        playerId: selectedPlayer.id,
-        drinks: 1
-      });
+      // Adicionar um gole ao contador do popup
       setPunishmentDrinks(prev => prev + 1);
 
+      // Aguardar um momento antes de gerar novo desafio
       setTimeout(() => {
         const randomPunishment = punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)];
         setCurrentPunishment(randomPunishment);
         setIsGeneratingChallenge(false);
       }, 1000);
     } catch (error) {
-      console.error('Erro ao atualizar goles:', error);
+      console.error('Erro ao gerar novo desafio:', error);
       setIsGeneratingChallenge(false);
     }
-  };
-
-  const handlePunishmentComplete = async () => {
-    // Garantir que os goles do desafio sejam somados antes de fechar
-    if (punishmentDrinks > 0) {
-      try {
-        await updateDrinks.mutateAsync({
-          playerId: selectedPlayer.id,
-          drinks: punishmentDrinks
-        });
-      } catch (error) {
-        console.error('Erro ao atualizar goles do desafio:', error);
-      }
-    }
-    setShowPunishment(false);
-    selectRandomPlayer();
   };
 
   const handleNextPlayer = async () => {
@@ -133,9 +115,17 @@ export default function RouletteMode() {
       if (action === "drink") {
         await updateDrinks.mutateAsync({
           playerId: selectedPlayer.id,
-          drinks: numDrinks
+          type: "drink",
+          points: numDrinks
+        });
+      } else if (action === "refuse" && punishmentDrinks > 0) {
+        await updateDrinks.mutateAsync({
+          playerId: selectedPlayer.id,
+          type: "drink",
+          points: punishmentDrinks
         });
       }
+      setShowPunishment(false);
       selectRandomPlayer();
     } catch (error) {
       console.error('Erro ao processar a rodada:', error);
@@ -242,7 +232,7 @@ export default function RouletteMode() {
             </Button>
           </div>
           <div className="space-y-3">
-            {sortedPlayers.map((player, index) => (
+            {sortedPlayers.map((player) => (
               <div
                 key={player.id}
                 className="bg-white/10 p-3 rounded-lg flex items-center justify-between"
@@ -304,7 +294,7 @@ export default function RouletteMode() {
             </div>
             <div className="flex flex-col gap-2">
               <Button
-                onClick={handlePunishmentComplete}
+                onClick={handleNextPlayer}
                 className="bg-purple-700 hover:bg-purple-800 text-white text-xl py-6"
               >
                 Fez o desafio
