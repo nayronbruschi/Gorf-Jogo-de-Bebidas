@@ -21,6 +21,7 @@ import {
 import { useForm } from "react-hook-form";
 import { createElement } from "react";
 import { useLocation } from "wouter";
+import { TutorialOverlay } from "@/components/TutorialOverlay";
 
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
@@ -29,6 +30,10 @@ export default function ClassicMode() {
   const [hasDrunk, setHasDrunk] = useState(false);
   const [roundPoints, setRoundPoints] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(() => {
+    const hasSeenTutorial = localStorage.getItem("hasSeenTutorial");
+    return !hasSeenTutorial;
+  });
   const { play } = useSound();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -81,7 +86,7 @@ export default function ClassicMode() {
       .filter(deck => selectedDeckIds.includes(deck.id))
       .flatMap(deck => deck.challenges);
     const challenge = availableChallenges[Math.floor(Math.random() * availableChallenges.length)];
-    const points = Math.floor(Math.random() * 9) + 2; 
+    const points = Math.floor(Math.random() * 9) + 2;
 
     setCurrentChallenge(challenge.text);
     setCurrentIcon(challenge.icon);
@@ -102,6 +107,11 @@ export default function ClassicMode() {
     } catch (error) {
       console.error('Erro ao reiniciar o jogo:', error);
     }
+  };
+
+  const handleCloseTutorial = () => {
+    localStorage.setItem("hasSeenTutorial", "true");
+    setShowTutorial(false);
   };
 
   if (!currentChallenge) {
@@ -164,182 +174,189 @@ export default function ClassicMode() {
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
 
   return (
-    <GameLayout title="">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white rounded-xl p-6 space-y-8">
-          <div className="flex items-center gap-4 text-purple-900">
-            <User className="h-6 w-6" />
-            <span className="text-xl">
-              {currentPlayer ? (
-                <>
-                  Vez de <span className="font-bold">{currentPlayer.name}</span>
-                </>
-              ) : "Selecione os jogadores"}
-            </span>
-          </div>
+    <>
+      <AnimatePresence>
+        {showTutorial && (
+          <TutorialOverlay onClose={handleCloseTutorial} />
+        )}
+      </AnimatePresence>
+      <GameLayout title="">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-white rounded-xl p-6 space-y-8">
+            <div className="flex items-center gap-4 text-purple-900">
+              <User className="h-6 w-6" />
+              <span className="text-xl">
+                {currentPlayer ? (
+                  <>
+                    Vez de <span className="font-bold">{currentPlayer.name}</span>
+                  </>
+                ) : "Selecione os jogadores"}
+              </span>
+            </div>
 
-          <AnimatePresence mode="wait">
-            {currentChallenge && (
-              <motion.div
-                key={currentChallenge}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="text-3xl font-bold text-center text-purple-900"
-              >
-                {currentIcon && (
-                  <div className="mb-4">
-                    {createElement(currentIcon, {
-                      className: "h-12 w-12 mx-auto text-purple-700"
-                    })}
+            <AnimatePresence mode="wait">
+              {currentChallenge && (
+                <motion.div
+                  key={currentChallenge}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="text-3xl font-bold text-center text-purple-900"
+                >
+                  {currentIcon && (
+                    <div className="mb-4">
+                      {createElement(currentIcon, {
+                        className: "h-12 w-12 mx-auto text-purple-700"
+                      })}
+                    </div>
+                  )}
+                  {currentChallenge}
+                  <div className="mt-4 text-lg font-normal text-purple-700">
+                    Ou beba {roundPoints} goles
                   </div>
-                )}
-                {currentChallenge}
-                <div className="mt-4 text-lg font-normal text-purple-700">
-                  Ou beba {roundPoints} goles
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-          <div className="space-y-4">
-            <button
-              onClick={() => setCompletedChallenge(!completedChallenge)}
-              className={`w-full flex items-center gap-3 p-4 rounded-lg cursor-pointer select-none text-left transition-colors
+            <div className="space-y-4">
+              <button
+                onClick={() => setCompletedChallenge(!completedChallenge)}
+                className={`w-full flex items-center gap-3 p-4 rounded-lg cursor-pointer select-none text-left transition-colors
                 ${completedChallenge
                   ? 'bg-purple-50 border-2 border-purple-700'
                   : 'bg-purple-50 border-2 border-transparent hover:border-purple-200'}`}
-            >
-              <Target className="h-5 w-5 text-purple-900" />
-              <span className="flex-1 text-purple-900">Completou o desafio</span>
-              <span className="text-sm text-purple-700">+{roundPoints}pts</span>
-            </button>
+              >
+                <Target className="h-5 w-5 text-purple-900" />
+                <span className="flex-1 text-purple-900">Completou o desafio</span>
+                <span className="text-sm text-purple-700">+{roundPoints}pts</span>
+              </button>
 
-            <button
-              onClick={() => setHasDrunk(!hasDrunk)}
-              className={`w-full flex items-center gap-3 p-4 rounded-lg cursor-pointer select-none text-left transition-colors
+              <button
+                onClick={() => setHasDrunk(!hasDrunk)}
+                className={`w-full flex items-center gap-3 p-4 rounded-lg cursor-pointer select-none text-left transition-colors
                 ${hasDrunk
                   ? 'bg-purple-50 border-2 border-purple-700'
                   : 'bg-purple-50 border-2 border-transparent hover:border-purple-200'}`}
-            >
-              <Beer className="h-5 w-5 text-purple-900" />
-              <span className="flex-1 text-purple-900">Bebeu {roundPoints} goles</span>
-              <span className="text-sm text-purple-700">+{roundPoints}pts</span>
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            <Button
-              size="lg"
-              onClick={handleNextPlayer}
-              className="bg-purple-700 hover:bg-purple-800 text-white text-xl w-full"
-              disabled={nextPlayer.isPending || updatePoints.isPending || (!completedChallenge && !hasDrunk)}
-            >
-              <ArrowRight className="mr-2 h-6 w-6" />
-              Próxima rodada
-            </Button>
-
-            <div className="text-sm text-purple-900 text-center">
-              Objetivo: {settings?.maxPoints || 100} pontos{" "}
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogTrigger className="text-purple-700 underline hover:text-purple-800 ml-1">
-                  alterar &gt;
-                </DialogTrigger>
-                <DialogContent className="bg-white rounded-xl">
-                  <DialogHeader>
-                    <DialogTitle>Alterar Pontuação Máxima</DialogTitle>
-                  </DialogHeader>
-                  <div className="flex items-center gap-2 mt-4">
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="outline"
-                      className="rounded-full w-8 h-8 flex items-center justify-center"
-                      onClick={() => {
-                        const current = maxPointsForm.getValues("maxPoints");
-                        maxPointsForm.setValue("maxPoints", Math.max(10, Number(current) - 10));
-                      }}
-                    >
-                      <Minus className="h-4 w-4" />
-                    </Button>
-                    <Input
-                      type="number"
-                      min="10"
-                      max="1000"
-                      className="text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      {...maxPointsForm.register("maxPoints")}
-                    />
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="outline"
-                      className="rounded-full w-8 h-8 flex items-center justify-center"
-                      onClick={() => {
-                        const current = maxPointsForm.getValues("maxPoints");
-                        maxPointsForm.setValue("maxPoints", Math.min(1000, Number(current) + 10));
-                      }}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <Button
-                    className="w-full mt-4 bg-purple-700 hover:bg-purple-800 text-white"
-                    onClick={() => {
-                      const newMaxPoints = maxPointsForm.getValues("maxPoints");
-                      updateMaxPoints.mutate(Number(newMaxPoints));
-                    }}
-                  >
-                    Salvar
-                  </Button>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <Award className="h-5 w-5 text-white" />
-              <h3 className="text-xl font-bold text-white">Ranking</h3>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/manage-players")}
-              className="text-white hover:text-white/80"
-            >
-              <Users className="h-5 w-5" />
-            </Button>
-          </div>
-          <div className="space-y-3">
-            {sortedPlayers.map((player, index) => (
-              <div
-                key={player.id}
-                className="bg-white/10 p-3 rounded-lg flex flex-col gap-2"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {index === 0 && <Crown className="h-4 w-4 text-yellow-400" />}
-                    <span className="text-white">{player.name}</span>
-                  </div>
-                  <span className="text-white font-bold">{player.points} pts</span>
-                </div>
-                <div className="flex items-center gap-4 text-sm text-white/80">
-                  <div className="flex items-center gap-1">
-                    <Beer className="h-4 w-4" />
-                    <span>{player.drinksCompleted}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Target className="h-4 w-4" />
-                    <span>{player.challengesCompleted}</span>
-                  </div>
-                </div>
+                <Beer className="h-5 w-5 text-purple-900" />
+                <span className="flex-1 text-purple-900">Bebeu {roundPoints} goles</span>
+                <span className="text-sm text-purple-700">+{roundPoints}pts</span>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <Button
+                size="lg"
+                onClick={handleNextPlayer}
+                className="bg-purple-700 hover:bg-purple-800 text-white text-xl w-full"
+                disabled={nextPlayer.isPending || updatePoints.isPending || (!completedChallenge && !hasDrunk)}
+              >
+                <ArrowRight className="mr-2 h-6 w-6" />
+                Próxima rodada
+              </Button>
+
+              <div className="text-sm text-purple-900 text-center">
+                Objetivo: {settings?.maxPoints || 100} pontos{" "}
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                  <DialogTrigger className="text-purple-700 underline hover:text-purple-800 ml-1">
+                    alterar &gt;
+                  </DialogTrigger>
+                  <DialogContent className="bg-white rounded-xl">
+                    <DialogHeader>
+                      <DialogTitle>Alterar Pontuação Máxima</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex items-center gap-2 mt-4">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="outline"
+                        className="rounded-full w-8 h-8 flex items-center justify-center"
+                        onClick={() => {
+                          const current = maxPointsForm.getValues("maxPoints");
+                          maxPointsForm.setValue("maxPoints", Math.max(10, Number(current) - 10));
+                        }}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <Input
+                        type="number"
+                        min="10"
+                        max="1000"
+                        className="text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        {...maxPointsForm.register("maxPoints")}
+                      />
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="outline"
+                        className="rounded-full w-8 h-8 flex items-center justify-center"
+                        onClick={() => {
+                          const current = maxPointsForm.getValues("maxPoints");
+                          maxPointsForm.setValue("maxPoints", Math.min(1000, Number(current) + 10));
+                        }}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <Button
+                      className="w-full mt-4 bg-purple-700 hover:bg-purple-800 text-white"
+                      onClick={() => {
+                        const newMaxPoints = maxPointsForm.getValues("maxPoints");
+                        updateMaxPoints.mutate(Number(newMaxPoints));
+                      }}
+                    >
+                      Salvar
+                    </Button>
+                  </DialogContent>
+                </Dialog>
               </div>
-            ))}
+            </div>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-white" />
+                <h3 className="text-xl font-bold text-white">Ranking</h3>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/manage-players")}
+                className="text-white hover:text-white/80"
+              >
+                <Users className="h-5 w-5" />
+              </Button>
+            </div>
+            <div className="space-y-3">
+              {sortedPlayers.map((player, index) => (
+                <div
+                  key={player.id}
+                  className="bg-white/10 p-3 rounded-lg flex flex-col gap-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {index === 0 && <Crown className="h-4 w-4 text-yellow-400" />}
+                      <span className="text-white">{player.name}</span>
+                    </div>
+                    <span className="text-white font-bold">{player.points} pts</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm text-white/80">
+                    <div className="flex items-center gap-1">
+                      <Beer className="h-4 w-4" />
+                      <span>{player.drinksCompleted}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Target className="h-4 w-4" />
+                      <span>{player.challengesCompleted}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </GameLayout>
+      </GameLayout>
+    </>
   );
 }
