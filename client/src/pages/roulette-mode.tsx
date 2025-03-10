@@ -3,7 +3,7 @@ import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSound } from "@/hooks/use-sound";
-import { Beer, X, Award, Target } from "lucide-react";
+import { Beer, X, Award, Users, Activity, Cat, Mic2, Dumbbell, Flower2, Music, Drama, Trophy, Heart, PartyPopper } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
@@ -11,18 +11,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { PlayerList } from "@/components/PlayerList";
 
 const punishmentChallenges = [
-  "Dançar 'I'm a Little Teapot' com gestos",
-  "Imitar um animal por 30 segundos",
-  "Cantar 'Parabéns pra Você' em ópera",
-  "Fazer 10 polichinelos contando em alemão",
-  "Declarar seu amor para uma planta",
-  "Inventar uma música sobre bebida",
-  "Fazer uma pose de balé por 30 segundos",
-  "Imitar um jogador de futebol comemorando",
-  "Fazer uma declaração dramática",
-  "Dançar como se estivesse nos anos 80"
+  { text: "Dançar 'I'm a Little Teapot' com gestos", icon: Activity },
+  { text: "Imitar um animal por 30 segundos", icon: Cat },
+  { text: "Cantar 'Parabéns pra Você' em ópera", icon: Mic2 },
+  { text: "Fazer 10 polichinelos contando em alemão", icon: Dumbbell },
+  { text: "Declarar seu amor para uma planta", icon: Flower2 },
+  { text: "Inventar uma música sobre bebida", icon: Music },
+  { text: "Fazer uma pose de balé por 30 segundos", icon: Drama },
+  { text: "Imitar um jogador de futebol comemorando", icon: Trophy },
+  { text: "Fazer uma declaração dramática", icon: Heart },
+  { text: "Dançar como se estivesse nos anos 80", icon: PartyPopper }
 ];
 
 export default function RouletteMode() {
@@ -30,7 +31,8 @@ export default function RouletteMode() {
   const [isSelecting, setIsSelecting] = useState(false);
   const [numDrinks, setNumDrinks] = useState(0);
   const [showPunishment, setShowPunishment] = useState(false);
-  const [currentPunishment, setCurrentPunishment] = useState("");
+  const [currentPunishment, setCurrentPunishment] = useState<{text: string, icon: any} | null>(null);
+  const [showPlayerList, setShowPlayerList] = useState(false);
   const { play } = useSound();
 
   const { data: players = [] } = useQuery({
@@ -62,8 +64,8 @@ export default function RouletteMode() {
     setCurrentPunishment(randomPunishment);
   };
 
-  // Ordenar jogadores por pontuação
-  const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
+  // Ordenar jogadores por quantidade de goles
+  const sortedPlayers = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted);
 
   return (
     <GameLayout title="">
@@ -100,12 +102,17 @@ export default function RouletteMode() {
                 exit={{ opacity: 0, y: -20 }}
                 className="text-center"
               >
-                <h3 className="text-2xl font-bold text-purple-900 mb-4">
-                  É a vez de {selectedPlayer.name}
-                </h3>
-                <p className="text-purple-700 text-xl mb-6">
-                  Beba {numDrinks} {numDrinks === 1 ? 'gole' : 'goles'}!
+                <p className="text-purple-900 text-xl mb-2">
+                  É a vez de
                 </p>
+                <h3 className="text-2xl font-bold text-purple-900 mb-6">
+                  {selectedPlayer.name}
+                </h3>
+                <div className="bg-purple-50 rounded-lg p-6 mb-6">
+                  <p className="text-purple-700 text-4xl font-bold">
+                    Beba {numDrinks} {numDrinks === 1 ? 'gole' : 'goles'}!
+                  </p>
+                </div>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     size="lg"
@@ -132,28 +139,30 @@ export default function RouletteMode() {
 
         {/* Ranking */}
         <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
-          <div className="flex items-center gap-2 mb-6">
-            <Award className="h-5 w-5 text-white" />
-            <h3 className="text-xl font-bold text-white">Ranking</h3>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-white" />
+              <h3 className="text-xl font-bold text-white">Ranking</h3>
+            </div>
+            <Button
+              variant="ghost"
+              onClick={() => setShowPlayerList(true)}
+              className="text-white hover:text-white/80"
+            >
+              <Users className="h-5 w-5" />
+            </Button>
           </div>
           <div className="space-y-3">
             {sortedPlayers.map((player, index) => (
               <div
                 key={player.id}
-                className="bg-white/10 p-3 rounded-lg flex flex-col gap-2"
+                className="bg-white/10 p-3 rounded-lg flex items-center justify-between"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
                   <span className="text-white">{player.name}</span>
-                  <span className="text-white font-bold">{player.points} pts</span>
-                </div>
-                <div className="flex items-center gap-4 text-sm text-white/80">
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 text-white/80">
                     <Beer className="h-4 w-4" />
-                    <span>{player.drinksCompleted}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Target className="h-4 w-4" />
-                    <span>{player.challengesCompleted}</span>
+                    <span>{player.drinksCompleted} goles</span>
                   </div>
                 </div>
               </div>
@@ -165,8 +174,8 @@ export default function RouletteMode() {
       <Dialog open={showPunishment} onOpenChange={setShowPunishment}>
         <DialogContent className="bg-white rounded-xl">
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl text-purple-900">
-              Se recusando a beber?
+            <DialogTitle className="text-center text-3xl text-purple-900">
+              Se recusando a beber, {selectedPlayer?.name}?
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-6">
@@ -176,9 +185,14 @@ export default function RouletteMode() {
             <p className="text-center">
               Por isso você deve:
             </p>
-            <div className="bg-purple-50 p-4 rounded-lg text-center text-purple-700 font-medium">
-              {currentPunishment}
-            </div>
+            {currentPunishment && (
+              <div className="bg-purple-50 p-6 rounded-lg text-center">
+                <currentPunishment.icon className="h-12 w-12 mx-auto mb-4 text-purple-700" />
+                <p className="text-purple-700 text-2xl font-bold">
+                  {currentPunishment.text}
+                </p>
+              </div>
+            )}
             <div className="flex flex-col gap-2">
               <Button
                 onClick={() => setShowPunishment(false)}
@@ -195,6 +209,15 @@ export default function RouletteMode() {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showPlayerList} onOpenChange={setShowPlayerList}>
+        <DialogContent className="bg-white rounded-xl">
+          <DialogHeader>
+            <DialogTitle>Gerenciar Jogadores</DialogTitle>
+          </DialogHeader>
+          <PlayerList />
         </DialogContent>
       </Dialog>
     </GameLayout>
