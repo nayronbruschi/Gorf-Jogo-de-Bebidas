@@ -29,8 +29,7 @@ export function TutorialOverlay({ onClose }: TutorialOverlay) {
       image: (
         <svg className="w-full h-32 mb-4" viewBox="0 0 300 80">
           <rect x="20" y="10" width="260" height="60" rx="8" fill="#F3E8FF" stroke="#7E22CE" strokeWidth="2"/>
-          <path d="M40 35 l8 -10 l8 10 M48 25 v20 M44 45 h8" stroke="#7E22CE" strokeWidth="2"/>
-          <text x="70" y="40" fill="#581C87" fontSize="16" fontWeight="bold">Ranking</text>
+          <text x="40" y="40" fill="#581C87" fontSize="16" fontWeight="bold">Ranking</text>
           {/* Users icon */}
           <path d="M240 30 a5,5 0 1,1 -10,0 a5,5 0 1,1 10,0 M235 40 a8,4 0 1,0 16,0" 
                 stroke="#7E22CE" strokeWidth="2" fill="none"/>
