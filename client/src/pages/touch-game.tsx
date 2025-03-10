@@ -194,6 +194,11 @@ export default function TouchGame() {
         <ChevronLeft className="h-6 w-6" />
       </Button>
 
+      {/* Texto de instrução */}
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-white/80 text-sm text-center w-full">
+        Coloque os dedos na tela para sortear
+      </div>
+
       <div className="flex flex-col items-center h-full">
         <div
           ref={containerRef}
@@ -247,7 +252,7 @@ export default function TouchGame() {
           </AnimatePresence>
 
           {/* Botão Jogar de novo dentro do campo */}
-          {gameEnded && !selecting && (
+          {gameEnded && (
             <div className="absolute bottom-8 inset-x-0 flex justify-center">
               <Button
                 size="lg"
