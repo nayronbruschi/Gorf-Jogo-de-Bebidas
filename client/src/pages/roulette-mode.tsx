@@ -108,6 +108,18 @@ export default function RouletteMode() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto pb-24">
         {/* Área do Jogo */}
         <div className="bg-white rounded-xl p-6 space-y-8">
+          {!selectedPlayer && !isSelecting && (
+            <div className="flex justify-center">
+              <Button
+                size="lg"
+                onClick={selectRandomPlayer}
+                className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl"
+              >
+                Sortear Jogador
+              </Button>
+            </div>
+          )}
+
           <AnimatePresence mode="wait">
             {isSelecting && (
               <motion.div
@@ -200,13 +212,13 @@ export default function RouletteMode() {
       </div>
 
       {/* Botão Sortear fixo no rodapé */}
-      {hasDrunk && (
+      {selectedPlayer && hasDrunk && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/10 backdrop-blur-sm">
           <div className="container max-w-4xl mx-auto">
             <Button
               size="lg"
               onClick={selectRandomPlayer}
-              disabled={isSelecting || !hasDrunk}
+              disabled={isSelecting}
               className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl w-full"
             >
               Sortear Próximo Jogador
