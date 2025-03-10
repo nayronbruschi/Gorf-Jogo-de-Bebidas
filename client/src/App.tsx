@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Auth from "@/pages/auth";
+import Dashboard from "@/pages/dashboard";
+import Stats from "@/pages/stats";
 import GameModes from "@/pages/game-modes";
 import ClassicStart from "@/pages/classic-start";
 import ClassicPlayers from "@/pages/classic-players";
@@ -28,6 +30,8 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/auth" component={Auth} />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/stats" component={Stats} />
       <Route path="/game-modes" component={GameModes} />
       <Route path="/classic" component={ClassicStart} />
       <Route path="/classic/players" component={ClassicPlayers} />

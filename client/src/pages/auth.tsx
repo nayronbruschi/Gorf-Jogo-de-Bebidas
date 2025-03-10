@@ -54,7 +54,7 @@ export default function Auth() {
       setError("");
       const result = await signInWithPopup(auth, googleProvider);
       if (result.user) {
-        setLocation("/game-modes");
+        setLocation("/dashboard");  
       }
     } catch (error: any) {
       console.error("Error signing in with Google:", error);
@@ -79,7 +79,7 @@ export default function Auth() {
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
-      setLocation("/game-modes");
+      setLocation("/dashboard");  
     } catch (error: any) {
       console.error("Error with email auth:", error);
       setError(getErrorMessage(error.code));
