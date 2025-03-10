@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
+import { cn } from "@/lib/utils";
 
 const punishmentChallenges = [
   { text: "Dançar 'I'm a Little Teapot' com gestos", icon: Activity },
@@ -35,10 +36,12 @@ export default function RouletteMode() {
   const [showPunishment, setShowPunishment] = useState(false);
   const [currentPunishment, setCurrentPunishment] = useState<{text: string, icon: any} | null>(null);
   const [showPlayerList, setShowPlayerList] = useState(false);
-  const [hasDrunk, setHasDrunk] = useState(false);
+  const [action, setAction] = useState<"drink" | "refuse" | null>(null);
   const { play } = useSound();
 
   const gameMode = localStorage.getItem("rouletteMode") || "goles";
+  const drinkText = gameMode === "shots" ? "shot" : "gole";
+  const drinkTextPlural = gameMode === "shots" ? "shots" : "goles";
 
   const { data: players = [] } = useQuery({
     queryKey: ["/api/players"],
@@ -56,13 +59,14 @@ export default function RouletteMode() {
 
   const selectRandomPlayer = () => {
     setIsSelecting(true);
-    setHasDrunk(false);
+    setAction(null);
     play("spin");
 
     setTimeout(() => {
       const randomPlayer = players[Math.floor(Math.random() * players.length)];
-      const maxDrinks = gameMode === "shots" ? 3 : 10;
-      const randomDrinks = Math.floor(Math.random() * maxDrinks) + 1;
+      const minDrinks = gameMode === "shots" ? 1 : 2;
+      const maxDrinks = gameMode === "shots" ? 5 : 15;
+      const randomDrinks = Math.floor(Math.random() * (maxDrinks - minDrinks + 1)) + minDrinks;
       setSelectedPlayer(randomPlayer);
       setNumDrinks(randomDrinks);
       setIsSelecting(false);
@@ -72,19 +76,15 @@ export default function RouletteMode() {
 
   const handleDrink = async () => {
     if (!selectedPlayer) return;
+    if (action === "drink") return; // Evita múltiplos cliques
 
-    setHasDrunk(true);
-    try {
-      await updateDrinks.mutateAsync({
-        playerId: selectedPlayer.id,
-        drinks: numDrinks
-      });
-    } catch (error) {
-      console.error('Erro ao atualizar goles:', error);
-    }
+    setAction("drink");
   };
 
   const handleRefusal = () => {
+    if (action === "refuse") return; // Evita múltiplos cliques
+
+    setAction("refuse");
     const randomPunishment = punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)];
     setCurrentPunishment(randomPunishment);
     setShowPunishment(true);
@@ -109,6 +109,22 @@ export default function RouletteMode() {
   const handlePunishmentComplete = () => {
     setShowPunishment(false);
     selectRandomPlayer();
+  };
+
+  const handleNextPlayer = async () => {
+    if (!selectedPlayer || !action) return;
+
+    try {
+      if (action === "drink") {
+        await updateDrinks.mutateAsync({
+          playerId: selectedPlayer.id,
+          drinks: numDrinks
+        });
+      }
+      selectRandomPlayer();
+    } catch (error) {
+      console.error('Erro ao atualizar goles:', error);
+    }
   };
 
   // Ordenar jogadores por quantidade de goles
@@ -159,9 +175,9 @@ export default function RouletteMode() {
                 <div className="bg-purple-50 rounded-lg p-6 mb-6">
                   <p className="text-purple-700 text-4xl font-bold">
                     {gameMode === "shots" ? (
-                      <>Tome {numDrinks} {numDrinks === 1 ? 'shot' : 'shots'}!</>
+                      <>Tome {numDrinks} {numDrinks === 1 ? drinkText : drinkTextPlural}!</>
                     ) : (
-                      <>Beba {numDrinks} {numDrinks === 1 ? 'gole' : 'goles'}!</>
+                      <>Beba {numDrinks} {numDrinks === 1 ? drinkText : drinkTextPlural}!</>
                     )}
                   </p>
                 </div>
@@ -169,10 +185,14 @@ export default function RouletteMode() {
                   <Button
                     size="lg"
                     onClick={handleDrink}
-                    variant={hasDrunk ? "outline" : "default"}
-                    className={hasDrunk 
-                      ? "border-purple-700 text-purple-700 hover:bg-purple-50 w-full sm:w-auto"
-                      : "bg-purple-700 hover:bg-purple-800 text-white w-full sm:w-auto"}
+                    variant={action === "drink" ? "outline" : "default"}
+                    disabled={action === "refuse"}
+                    className={cn(
+                      "w-full sm:w-auto justify-center",
+                      action === "drink"
+                        ? "border-purple-700 text-purple-700 hover:bg-purple-50"
+                        : "bg-purple-700 hover:bg-purple-800 text-white"
+                    )}
                   >
                     <Beer className="mr-2 h-5 w-5" />
                     Bebeu
@@ -181,7 +201,8 @@ export default function RouletteMode() {
                     size="lg"
                     onClick={handleRefusal}
                     variant="outline"
-                    className="bg-white border-purple-700 text-purple-700 hover:bg-purple-50 w-full sm:w-auto"
+                    disabled={action === "drink"}
+                    className="bg-white border-purple-700 text-purple-700 hover:bg-purple-50 w-full sm:w-auto justify-center"
                   >
                     <X className="mr-2 h-5 w-5" />
                     Se recusou a beber
@@ -217,7 +238,7 @@ export default function RouletteMode() {
                   <span className="text-white">{player.name}</span>
                   <div className="flex items-center gap-1 text-white/80">
                     <Beer className="h-4 w-4" />
-                    <span>{player.drinksCompleted} {gameMode === "shots" ? "shots" : "goles"}</span>
+                    <span>{player.drinksCompleted} {drinkTextPlural}</span>
                   </div>
                 </div>
               </div>
@@ -227,13 +248,13 @@ export default function RouletteMode() {
       </div>
 
       {/* Botão Sortear fixo no rodapé */}
-      {selectedPlayer && hasDrunk && (
+      {selectedPlayer && action && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/10 backdrop-blur-sm">
           <div className="container max-w-4xl mx-auto">
             <Button
               size="lg"
-              onClick={selectRandomPlayer}
-              disabled={isSelecting}
+              onClick={handleNextPlayer}
+              disabled={isSelecting || !action}
               className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl w-full"
             >
               Sortear Próximo Jogador
@@ -277,7 +298,7 @@ export default function RouletteMode() {
                 onClick={generateNewPunishment}
                 className="border-purple-700 text-purple-700 hover:bg-purple-50"
               >
-                Beba mais um {gameMode === "shots" ? "shot" : "gole"} para gerar outro desafio
+                Beba mais um {drinkText} para gerar outro desafio
               </Button>
             </div>
           </div>
