@@ -132,6 +132,10 @@ export default function GuessWhoGame() {
           clearInterval(timer);
           setShowItem(false);
           setPortraitMode();
+          // Vibrar quando o tempo acabar (200ms)
+          if (navigator.vibrate) {
+            navigator.vibrate(200);
+          }
           return 0;
         }
         return prev - 1;
@@ -246,7 +250,7 @@ export default function GuessWhoGame() {
       </div>
 
       {/* Área Principal */}
-      <div className="absolute inset-0 mt-16 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center">
         <AnimatePresence mode="wait">
           {isSetup ? (
             <motion.div
@@ -272,9 +276,9 @@ export default function GuessWhoGame() {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="text-center space-y-8"
+              className="w-full h-full flex flex-col items-center justify-center"
             >
-              <div className="text-6xl font-bold text-white mb-8">
+              <div className="text-6xl font-bold text-white text-center mb-12">
                 {currentItem}
               </div>
               <div className="text-4xl font-bold text-white">
@@ -287,7 +291,7 @@ export default function GuessWhoGame() {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="flex flex-col items-center gap-4"
+              className="flex flex-col items-center gap-4 p-4"
             >
               <Input
                 type="text"
@@ -310,7 +314,7 @@ export default function GuessWhoGame() {
                   size="lg"
                   className="text-white border-white hover:bg-white/20"
                 >
-                  Próximo Jogador
+                  Não sei
                 </Button>
               </div>
             </motion.div>
