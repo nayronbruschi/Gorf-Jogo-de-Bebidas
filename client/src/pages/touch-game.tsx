@@ -100,14 +100,15 @@ export default function TouchGame() {
       if (timeElapsed >= duration) {
         clearInterval(flash);
         const randomPoint = touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)];
+        // Quando terminar a seleção, mostrar apenas o ponto vencedor e parar de piscar
         setSelectedPoint(randomPoint);
-        // Mostrar apenas o ponto vencedor
         setTouchPoints([randomPoint]);
         setSelecting(false);
         setGameEnded(true);
       } else {
         // Durante a animação, todos os pontos piscam
         setSelectedPoint(null);
+        setTouchPoints(touchPointsRef.current); // Added this line
       }
     }, interval);
   };
