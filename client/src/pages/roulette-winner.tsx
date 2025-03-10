@@ -15,7 +15,8 @@ export default function RouletteWinner() {
 
   const { data: winner } = useQuery({
     queryKey: ["/api/players", playerId],
-    enabled: !!playerId
+    enabled: !!playerId,
+    refetchOnWindowFocus: false
   });
 
   const handlePlayAgain = async () => {
@@ -33,7 +34,7 @@ export default function RouletteWinner() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 relative overflow-hidden">
-      {/* Animação de gosma */}
+      {/* Animação de gosma com múltiplas pontas */}
       <motion.div
         initial={{ y: -1000 }}
         animate={{ y: 0 }}
@@ -41,12 +42,31 @@ export default function RouletteWinner() {
           duration: 2,
           ease: [0.87, 0, 0.13, 1],
         }}
-        className="absolute inset-x-0 top-0 h-[200%] bg-purple-800/30 backdrop-blur-sm"
-        style={{
-          borderRadius: "0 0 50% 50%/0 0 100% 100%",
-          transform: "scaleX(1.5)",
-        }}
-      />
+        className="absolute inset-x-0 top-0 h-[200%]"
+      >
+        <svg
+          viewBox="0 0 100 100"
+          className="w-full h-full fill-purple-800/30 backdrop-blur-sm"
+          preserveAspectRatio="none"
+        >
+          <motion.path
+            initial={{ d: "M0,0 L100,0 L100,20 Q50,40 0,20 Z" }}
+            animate={{
+              d: [
+                "M0,0 L100,0 L100,20 Q50,40 0,20 Z",
+                "M0,0 L100,0 L100,30 Q75,60 50,45 Q25,30 0,30 Z",
+                "M0,0 L100,0 L100,40 Q80,70 60,55 Q40,40 20,55 Q0,70 0,40 Z"
+              ]
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut"
+            }}
+          />
+        </svg>
+      </motion.div>
 
       <div className="relative min-h-screen flex items-center justify-center">
         <motion.div
@@ -76,7 +96,7 @@ export default function RouletteWinner() {
                 <span>
                   Bebeu {winner.points} {winner.points === 1 ? 
                     (gameMode === "shots" ? "shot" : "gole") : 
-                    (gameMode === "shots" ? "shots" : "goles")}
+                    (gameMode === "shots" ? "shots" : "goles")}!
                 </span>
               </div>
 
