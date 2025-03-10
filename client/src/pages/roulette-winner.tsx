@@ -18,7 +18,9 @@ export default function RouletteWinner() {
     queryKey: [`/api/players/${playerId}`],
     queryFn: async () => {
       if (!playerId) return null;
-      return await apiRequest("GET", `/api/players/${playerId}`);
+      const response = await apiRequest("GET", `/api/players/${playerId}`);
+      console.log('Resposta da API:', response);
+      return response;
     },
     enabled: !!playerId,
     refetchOnWindowFocus: false
@@ -103,8 +105,8 @@ export default function RouletteWinner() {
               <div className="flex items-center justify-center gap-2 text-2xl text-purple-700">
                 <Beer className="h-8 w-8" />
                 <span>
-                  Bebeu {winner?.points} {winner?.points === 1 ? 
-                    (gameMode === "shots" ? "shot" : "gole") : 
+                  Bebeu {winner?.points} {winner?.points === 1 ?
+                    (gameMode === "shots" ? "shot" : "gole") :
                     (gameMode === "shots" ? "shots" : "goles")}!
                 </span>
               </div>

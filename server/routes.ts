@@ -36,6 +36,19 @@ export async function registerRoutes(app: Express) {
     res.json(player);
   });
 
+  app.get("/api/players/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "ID inválido" });
+    }
+    const players = await storage.getPlayers();
+    const player = players.find(p => p.id === id);
+    if (!player) {
+      return res.status(404).json({ message: "Jogador não encontrado" });
+    }
+    res.json(player);
+  });
+
   // Importante: Colocar a rota "all" antes da rota com :id
   app.delete("/api/players/all", async (_req, res) => {
     try {
