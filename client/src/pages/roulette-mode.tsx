@@ -37,6 +37,7 @@ export default function RouletteMode() {
   const [currentPunishment, setCurrentPunishment] = useState<{text: string, icon: any} | null>(null);
   const [showPlayerList, setShowPlayerList] = useState(false);
   const [action, setAction] = useState<"drink" | "refuse" | null>(null);
+  const [punishmentDrinks, setPunishmentDrinks] = useState(0);
   const { play } = useSound();
 
   const gameMode = localStorage.getItem("rouletteMode") || "goles";
@@ -60,6 +61,7 @@ export default function RouletteMode() {
   const selectRandomPlayer = () => {
     setIsSelecting(true);
     setAction(null);
+    setPunishmentDrinks(0);
     play("spin");
 
     setTimeout(() => {
@@ -76,14 +78,10 @@ export default function RouletteMode() {
 
   const handleDrink = async () => {
     if (!selectedPlayer) return;
-    if (action === "drink") return; // Evita múltiplos cliques
-
     setAction("drink");
   };
 
   const handleRefusal = () => {
-    if (action === "refuse") return; // Evita múltiplos cliques
-
     setAction("refuse");
     const randomPunishment = punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)];
     setCurrentPunishment(randomPunishment);
@@ -94,6 +92,7 @@ export default function RouletteMode() {
     if (!selectedPlayer) return;
 
     try {
+      setPunishmentDrinks(prev => prev + 1);
       await updateDrinks.mutateAsync({
         playerId: selectedPlayer.id,
         drinks: 1
@@ -123,7 +122,7 @@ export default function RouletteMode() {
       }
       selectRandomPlayer();
     } catch (error) {
-      console.error('Erro ao atualizar goles:', error);
+      console.error('Erro ao processar a rodada:', error);
     }
   };
 
@@ -186,7 +185,6 @@ export default function RouletteMode() {
                     size="lg"
                     onClick={handleDrink}
                     variant={action === "drink" ? "outline" : "default"}
-                    disabled={action === "refuse"}
                     className={cn(
                       "w-full sm:w-auto justify-center",
                       action === "drink"
@@ -201,7 +199,6 @@ export default function RouletteMode() {
                     size="lg"
                     onClick={handleRefusal}
                     variant="outline"
-                    disabled={action === "drink"}
                     className="bg-white border-purple-700 text-purple-700 hover:bg-purple-50 w-full sm:w-auto justify-center"
                   >
                     <X className="mr-2 h-5 w-5" />
@@ -287,7 +284,7 @@ export default function RouletteMode() {
               </div>
             )}
             <div className="text-center text-sm text-purple-600">
-              Goles acumulados neste desafio: {selectedPlayer?.drinksCompleted || 0}
+              {drinkTextPlural} acumulados neste desafio: {punishmentDrinks}
             </div>
             <div className="flex flex-col gap-2">
               <Button
