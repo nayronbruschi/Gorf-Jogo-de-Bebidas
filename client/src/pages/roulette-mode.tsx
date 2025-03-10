@@ -47,9 +47,23 @@ export default function RouletteMode() {
   // Mutation para atualizar pontos
   const updatePoints = useMutation({
     mutationFn: async (data: { playerId: number; points: number }) => {
+      // Primeiro, buscar os pontos atuais do jogador
+      const currentPlayerData = await apiRequest("GET", `/api/players/${data.playerId}`);
+      const currentPoints = currentPlayerData.points || 0;
+
+      // Calcular novo total
+      const newTotal = currentPoints + data.points;
+
+      console.log('Atualizando pontos:', {
+        pontosAtuais: currentPoints,
+        pontosSomados: data.points,
+        novoTotal: newTotal
+      });
+
+      // Atualizar com o novo total
       return await apiRequest("PATCH", `/api/players/${data.playerId}/points`, {
         type: "drink",
-        points: data.points
+        points: newTotal //Corrected to update with the new total
       });
     }
   });
@@ -103,7 +117,10 @@ export default function RouletteMode() {
         points: pointsToAdd
       });
 
-      // 2. Buscar dados atualizados do jogador
+      // 2. Forçar atualização do cache
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+
+      // 3. Buscar dados atualizados do jogador
       const playerData = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
 
       console.log('Verificando vitória:', {
@@ -112,14 +129,14 @@ export default function RouletteMode() {
         pontosParaVencer: maxPoints
       });
 
-      // 3. Verificar vitória imediatamente
+      // 4. Verificar vitória imediatamente
       if (playerData.points >= maxPoints) {
         console.log('VITÓRIA! Redirecionando para tela de vencedor...');
         navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
         return;
       }
 
-      // 4. Se não houver vitória, continuar o jogo
+      // 5. Se não houver vitória, continuar o jogo
       setShowPunishment(false);
       setAction(null);
       selectRandomPlayer();
