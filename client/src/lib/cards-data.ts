@@ -1,88 +1,89 @@
-import { Beer, Crown, Heart, Star, Target, Flame, Sparkles, PartyPopper } from "lucide-react";
+import { Beer, Crown, UserPlus, Users, Brain, MessageSquare, Hand, Target, Sparkles, PartyPopper } from "lucide-react";
 
 export interface Card {
   suit: "hearts" | "diamonds" | "clubs" | "spades";
   value: string;
   rule: string;
   icon: any;
+  specialAction?: "bathroom" | "finger";
 }
 
 export const cardRules: Card[] = [
   // Ás
-  { suit: "hearts", value: "A", rule: "Todos bebem! O Ás é o rei da festa!", icon: Crown },
-  { suit: "diamonds", value: "A", rule: "Todos bebem! O Ás é o rei da festa!", icon: Crown },
-  { suit: "clubs", value: "A", rule: "Todos bebem! O Ás é o rei da festa!", icon: Crown },
-  { suit: "spades", value: "A", rule: "Todos bebem! O Ás é o rei da festa!", icon: Crown },
-  
-  // Reis
-  { suit: "hearts", value: "K", rule: "Crie uma regra que vale até a próxima rodada!", icon: Star },
-  { suit: "diamonds", value: "K", rule: "Crie uma regra que vale até a próxima rodada!", icon: Star },
-  { suit: "clubs", value: "K", rule: "Crie uma regra que vale até a próxima rodada!", icon: Star },
-  { suit: "spades", value: "K", rule: "Crie uma regra que vale até a próxima rodada!", icon: Star },
-  
-  // Damas
-  { suit: "hearts", value: "Q", rule: "Escolha alguém para beber com você!", icon: Heart },
-  { suit: "diamonds", value: "Q", rule: "Escolha alguém para beber com você!", icon: Heart },
-  { suit: "clubs", value: "Q", rule: "Escolha alguém para beber com você!", icon: Heart },
-  { suit: "spades", value: "Q", rule: "Escolha alguém para beber com você!", icon: Heart },
-  
-  // Valetes
-  { suit: "hearts", value: "J", rule: "Distribua 3 goles entre os jogadores!", icon: Beer },
-  { suit: "diamonds", value: "J", rule: "Distribua 3 goles entre os jogadores!", icon: Beer },
-  { suit: "clubs", value: "J", rule: "Distribua 3 goles entre os jogadores!", icon: Beer },
-  { suit: "spades", value: "J", rule: "Distribua 3 goles entre os jogadores!", icon: Beer },
-  
-  // 10
-  { suit: "hearts", value: "10", rule: "Waterfall! Todos começam a beber, só param quando o jogador à sua direita parar!", icon: Flame },
-  { suit: "diamonds", value: "10", rule: "Waterfall! Todos começam a beber, só param quando o jogador à sua direita parar!", icon: Flame },
-  { suit: "clubs", value: "10", rule: "Waterfall! Todos começam a beber, só param quando o jogador à sua direita parar!", icon: Flame },
-  { suit: "spades", value: "10", rule: "Waterfall! Todos começam a beber, só param quando o jogador à sua direita parar!", icon: Flame },
-  
-  // 9
-  { suit: "hearts", value: "9", rule: "Rima! Escolha uma palavra, próximo jogador rima ou bebe!", icon: PartyPopper },
-  { suit: "diamonds", value: "9", rule: "Rima! Escolha uma palavra, próximo jogador rima ou bebe!", icon: PartyPopper },
-  { suit: "clubs", value: "9", rule: "Rima! Escolha uma palavra, próximo jogador rima ou bebe!", icon: PartyPopper },
-  { suit: "spades", value: "9", rule: "Rima! Escolha uma palavra, próximo jogador rima ou bebe!", icon: PartyPopper },
-  
-  // 8
-  { suit: "hearts", value: "8", rule: "Escolha um parceiro de bebida! Sempre que você beber, ele bebe também!", icon: Heart },
-  { suit: "diamonds", value: "8", rule: "Escolha um parceiro de bebida! Sempre que você beber, ele bebe também!", icon: Heart },
-  { suit: "clubs", value: "8", rule: "Escolha um parceiro de bebida! Sempre que você beber, ele bebe também!", icon: Heart },
-  { suit: "spades", value: "8", rule: "Escolha um parceiro de bebida! Sempre que você beber, ele bebe também!", icon: Heart },
-  
-  // 7
-  { suit: "hearts", value: "7", rule: "Apontar para o céu! Último a apontar bebe!", icon: Target },
-  { suit: "diamonds", value: "7", rule: "Apontar para o céu! Último a apontar bebe!", icon: Target },
-  { suit: "clubs", value: "7", rule: "Apontar para o céu! Último a apontar bebe!", icon: Target },
-  { suit: "spades", value: "7", rule: "Apontar para o céu! Último a apontar bebe!", icon: Target },
-  
-  // 6
-  { suit: "hearts", value: "6", rule: "Os homens bebem!", icon: Beer },
-  { suit: "diamonds", value: "6", rule: "Os homens bebem!", icon: Beer },
-  { suit: "clubs", value: "6", rule: "Os homens bebem!", icon: Beer },
-  { suit: "spades", value: "6", rule: "Os homens bebem!", icon: Beer },
-  
-  // 5
-  { suit: "hearts", value: "5", rule: "As mulheres bebem!", icon: Beer },
-  { suit: "diamonds", value: "5", rule: "As mulheres bebem!", icon: Beer },
-  { suit: "clubs", value: "5", rule: "As mulheres bebem!", icon: Beer },
-  { suit: "spades", value: "5", rule: "As mulheres bebem!", icon: Beer },
-  
-  // 4
-  { suit: "hearts", value: "4", rule: "Categoria! Escolha um tema, cada um fala algo relacionado ou bebe!", icon: Sparkles },
-  { suit: "diamonds", value: "4", rule: "Categoria! Escolha um tema, cada um fala algo relacionado ou bebe!", icon: Sparkles },
-  { suit: "clubs", value: "4", rule: "Categoria! Escolha um tema, cada um fala algo relacionado ou bebe!", icon: Sparkles },
-  { suit: "spades", value: "4", rule: "Categoria! Escolha um tema, cada um fala algo relacionado ou bebe!", icon: Sparkles },
-  
-  // 3
-  { suit: "hearts", value: "3", rule: "Você bebe!", icon: Beer },
-  { suit: "diamonds", value: "3", rule: "Você bebe!", icon: Beer },
-  { suit: "clubs", value: "3", rule: "Você bebe!", icon: Beer },
-  { suit: "spades", value: "3", rule: "Você bebe!", icon: Beer },
-  
+  { suit: "hearts", value: "A", rule: "Manda alguém dar 1 gole!", icon: Target },
+  { suit: "diamonds", value: "A", rule: "Manda alguém dar 1 gole!", icon: Target },
+  { suit: "clubs", value: "A", rule: "Manda alguém dar 1 gole!", icon: Target },
+  { suit: "spades", value: "A", rule: "Manda alguém dar 1 gole!", icon: Target },
+
   // 2
-  { suit: "hearts", value: "2", rule: "Escolha alguém para beber!", icon: Target },
-  { suit: "diamonds", value: "2", rule: "Escolha alguém para beber!", icon: Target },
-  { suit: "clubs", value: "2", rule: "Escolha alguém para beber!", icon: Target },
-  { suit: "spades", value: "2", rule: "Escolha alguém para beber!", icon: Target },
+  { suit: "hearts", value: "2", rule: "Manda alguém dar 2 goles!", icon: Target },
+  { suit: "diamonds", value: "2", rule: "Manda alguém dar 2 goles!", icon: Target },
+  { suit: "clubs", value: "2", rule: "Manda alguém dar 2 goles!", icon: Target },
+  { suit: "spades", value: "2", rule: "Manda alguém dar 2 goles!", icon: Target },
+
+  // 3
+  { suit: "hearts", value: "3", rule: "Manda alguém dar 3 goles!", icon: Target },
+  { suit: "diamonds", value: "3", rule: "Manda alguém dar 3 goles!", icon: Target },
+  { suit: "clubs", value: "3", rule: "Manda alguém dar 3 goles!", icon: Target },
+  { suit: "spades", value: "3", rule: "Manda alguém dar 3 goles!", icon: Target },
+
+  // 4
+  { suit: "hearts", value: "4", rule: "EU NUNCA! Fale algo que nunca fez, quem já fez bebe!", icon: Brain },
+  { suit: "diamonds", value: "4", rule: "EU NUNCA! Fale algo que nunca fez, quem já fez bebe!", icon: Brain },
+  { suit: "clubs", value: "4", rule: "EU NUNCA! Fale algo que nunca fez, quem já fez bebe!", icon: Brain },
+  { suit: "spades", value: "4", rule: "EU NUNCA! Fale algo que nunca fez, quem já fez bebe!", icon: Brain },
+
+  // 5
+  { suit: "hearts", value: "5", rule: "C, S ou Composto! Fale uma palavra que não comece com C ou S e não seja composta!", icon: MessageSquare },
+  { suit: "diamonds", value: "5", rule: "C, S ou Composto! Fale uma palavra que não comece com C ou S e não seja composta!", icon: MessageSquare },
+  { suit: "clubs", value: "5", rule: "C, S ou Composto! Fale uma palavra que não comece com C ou S e não seja composta!", icon: MessageSquare },
+  { suit: "spades", value: "5", rule: "C, S ou Composto! Fale uma palavra que não comece com C ou S e não seja composta!", icon: MessageSquare },
+
+  // 6
+  { suit: "hearts", value: "6", rule: "BANHEIRO! Você ganhou o direito de ir ao banheiro!", icon: UserPlus, specialAction: "bathroom" },
+  { suit: "diamonds", value: "6", rule: "BANHEIRO! Você ganhou o direito de ir ao banheiro!", icon: UserPlus, specialAction: "bathroom" },
+  { suit: "clubs", value: "6", rule: "BANHEIRO! Você ganhou o direito de ir ao banheiro!", icon: UserPlus, specialAction: "bathroom" },
+  { suit: "spades", value: "6", rule: "BANHEIRO! Você ganhou o direito de ir ao banheiro!", icon: UserPlus, specialAction: "bathroom" },
+
+  // 7
+  { suit: "hearts", value: "7", rule: "PI! Contem de 1 em 1, quando for 7, múltiplo de 7 ou tiver 7, diga PI!", icon: Brain },
+  { suit: "diamonds", value: "7", rule: "PI! Contem de 1 em 1, quando for 7, múltiplo de 7 ou tiver 7, diga PI!", icon: Brain },
+  { suit: "clubs", value: "7", rule: "PI! Contem de 1 em 1, quando for 7, múltiplo de 7 ou tiver 7, diga PI!", icon: Brain },
+  { suit: "spades", value: "7", rule: "PI! Contem de 1 em 1, quando for 7, múltiplo de 7 ou tiver 7, diga PI!", icon: Brain },
+
+  // 8
+  { suit: "hearts", value: "8", rule: "Crie uma regra para o jogo!", icon: Crown },
+  { suit: "diamonds", value: "8", rule: "Crie uma regra para o jogo!", icon: Crown },
+  { suit: "clubs", value: "8", rule: "Crie uma regra para o jogo!", icon: Crown },
+  { suit: "spades", value: "8", rule: "Crie uma regra para o jogo!", icon: Crown },
+
+  // 9
+  { suit: "hearts", value: "9", rule: "DEDINHO! Você pode colocar o dedo na mesa sem ninguém perceber, último a colocar bebe!", icon: Hand, specialAction: "finger" },
+  { suit: "diamonds", value: "9", rule: "DEDINHO! Você pode colocar o dedo na mesa sem ninguém perceber, último a colocar bebe!", icon: Hand, specialAction: "finger" },
+  { suit: "clubs", value: "9", rule: "DEDINHO! Você pode colocar o dedo na mesa sem ninguém perceber, último a colocar bebe!", icon: Hand, specialAction: "finger" },
+  { suit: "spades", value: "9", rule: "DEDINHO! Você pode colocar o dedo na mesa sem ninguém perceber, último a colocar bebe!", icon: Hand, specialAction: "finger" },
+
+  // 10
+  { suit: "hearts", value: "10", rule: "Escolha uma palavra que não pode mais ser falada durante o jogo, quem falar bebe!", icon: MessageSquare },
+  { suit: "diamonds", value: "10", rule: "Escolha uma palavra que não pode mais ser falada durante o jogo, quem falar bebe!", icon: MessageSquare },
+  { suit: "clubs", value: "10", rule: "Escolha uma palavra que não pode mais ser falada durante o jogo, quem falar bebe!", icon: MessageSquare },
+  { suit: "spades", value: "10", rule: "Escolha uma palavra que não pode mais ser falada durante o jogo, quem falar bebe!", icon: MessageSquare },
+
+  // Valetes
+  { suit: "hearts", value: "J", rule: "Todos os homens bebem!", icon: Users },
+  { suit: "diamonds", value: "J", rule: "Todos os homens bebem!", icon: Users },
+  { suit: "clubs", value: "J", rule: "Todos os homens bebem!", icon: Users },
+  { suit: "spades", value: "J", rule: "Todos os homens bebem!", icon: Users },
+
+  // Damas
+  { suit: "hearts", value: "Q", rule: "Todas as mulheres bebem!", icon: Users },
+  { suit: "diamonds", value: "Q", rule: "Todas as mulheres bebem!", icon: Users },
+  { suit: "clubs", value: "Q", rule: "Todas as mulheres bebem!", icon: Users },
+  { suit: "spades", value: "Q", rule: "Todas as mulheres bebem!", icon: Users },
+
+  // Reis
+  { suit: "hearts", value: "K", rule: "A pessoa que tirou essa carta bebe!", icon: Beer },
+  { suit: "diamonds", value: "K", rule: "A pessoa que tirou essa carta bebe!", icon: Beer },
+  { suit: "clubs", value: "K", rule: "A pessoa que tirou essa carta bebe!", icon: Beer },
+  { suit: "spades", value: "K", rule: "A pessoa que tirou essa carta bebe!", icon: Beer }
 ];

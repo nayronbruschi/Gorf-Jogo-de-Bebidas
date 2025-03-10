@@ -4,11 +4,31 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid } from "lucide-react";
 import { cardRules, type Card } from "@/lib/cards-data";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+
+interface SpecialPermission {
+  type: "bathroom" | "finger";
+  name: string;
+  timestamp: string;
+}
 
 export default function Cards() {
   const [currentCard, setCurrentCard] = useState<Card | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [remainingCards, setRemainingCards] = useState([...cardRules]);
+  const [showDialog, setShowDialog] = useState(false);
+  const [specialPermissions, setSpecialPermissions] = useState<SpecialPermission[]>([]);
+  const [playerName, setPlayerName] = useState("");
 
   const drawCard = () => {
     if (isDrawing || remainingCards.length === 0) return;
@@ -25,12 +45,30 @@ export default function Cards() {
       setCurrentCard(drawnCard);
       setRemainingCards(newRemainingCards);
       setIsDrawing(false);
+
+      if (drawnCard.specialAction) {
+        setShowDialog(true);
+      }
     }, 1000);
   };
 
   const resetDeck = () => {
     setRemainingCards([...cardRules]);
     setCurrentCard(null);
+  };
+
+  const handleAddPermission = () => {
+    if (!currentCard?.specialAction || !playerName.trim()) return;
+
+    const newPermission: SpecialPermission = {
+      type: currentCard.specialAction,
+      name: playerName.trim(),
+      timestamp: new Date().toLocaleTimeString()
+    };
+
+    setSpecialPermissions([...specialPermissions, newPermission]);
+    setShowDialog(false);
+    setPlayerName("");
   };
 
   return (
@@ -113,6 +151,47 @@ export default function Cards() {
             </Button>
           )}
         </div>
+
+        {/* Lista de permissões especiais */}
+        {specialPermissions.length > 0 && (
+          <div className="w-full max-w-md mt-8">
+            <h3 className="text-xl font-semibold text-white mb-4">Permissões Especiais:</h3>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 space-y-2">
+              {specialPermissions.map((permission, index) => (
+                <div key={index} className="text-white flex justify-between items-center">
+                  <span>
+                    {permission.name} - {permission.type === "bathroom" ? "🚽 Banheiro" : "👆 Dedinho"}
+                  </span>
+                  <span className="text-sm opacity-75">{permission.timestamp}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Dialog para adicionar permissão */}
+        <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {currentCard?.specialAction === "bathroom" ? "Permissão para Banheiro" : "Permissão para Dedinho"}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Digite o nome da pessoa que recebeu a permissão:
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <Input
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              placeholder="Nome do jogador"
+              className="my-4"
+            />
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setShowDialog(false)}>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleAddPermission}>Confirmar</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </GameLayout>
   );
