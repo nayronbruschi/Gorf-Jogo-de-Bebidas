@@ -185,28 +185,28 @@ export default function TouchGame() {
 
   return (
     <div className="h-screen bg-gradient-to-b from-purple-900 to-purple-800 relative">
-      {/* Botão Voltar */}
-      <Button
-        variant="ghost"
-        className="absolute top-4 left-4 text-white hover:bg-white/20"
-        onClick={() => setLocation("/game-modes")}
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </Button>
+      {/* Barra superior com navegação e controles */}
+      <div className="absolute top-0 left-0 right-0 px-4 py-4 flex items-center justify-between z-50">
+        <Button
+          variant="ghost"
+          className="text-white hover:bg-white/20"
+          onClick={() => setLocation("/game-modes")}
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </Button>
 
-      {/* Texto de instrução */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-white/80 text-sm text-center w-full">
-        {gameEnded ? (
+        <div className="text-white/80 text-sm">
+          {!gameEnded && "Coloque os dedos na tela para sortear"}
+        </div>
+
+        {gameEnded && (
           <Button
-            size="lg"
             onClick={resetGame}
-            className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl"
+            className="bg-purple-700 hover:bg-purple-800 text-white"
           >
             <RotateCcw className="mr-2 h-5 w-5" />
             Jogar de novo
           </Button>
-        ) : (
-          "Coloque os dedos na tela para sortear"
         )}
       </div>
 
@@ -222,7 +222,7 @@ export default function TouchGame() {
                 initial={{ scale: 0.5, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 1.5, opacity: 0 }}
-                className="absolute inset-x-0 top-8 flex items-center justify-center"
+                className="absolute inset-x-0 top-1/4 flex items-center justify-center"
               >
                 <span className="text-8xl font-bold text-white drop-shadow-lg">
                   {countdown}
