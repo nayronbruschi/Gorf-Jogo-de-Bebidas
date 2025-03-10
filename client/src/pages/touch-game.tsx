@@ -186,7 +186,7 @@ export default function TouchGame() {
   return (
     <div className="h-screen bg-gradient-to-b from-purple-900 to-purple-800 relative">
       {/* Barra superior com navegação e controles */}
-      <div className="absolute top-0 left-0 right-0 px-4 py-4 flex items-center justify-between z-50">
+      <div className="absolute top-0 left-0 right-0 px-4 py-4 flex items-center z-50">
         <Button
           variant="ghost"
           className="text-white hover:bg-white/20"
@@ -195,19 +195,24 @@ export default function TouchGame() {
           <ChevronLeft className="h-6 w-6" />
         </Button>
 
-        <div className="text-white/80 text-sm">
-          {!gameEnded && "Coloque os dedos na tela para sortear"}
+        <div className="flex-1 flex justify-center">
+          {gameEnded ? (
+            <Button
+              onClick={resetGame}
+              className="bg-purple-700 hover:bg-purple-800 text-white"
+            >
+              <RotateCcw className="mr-2 h-5 w-5" />
+              Jogar de novo
+            </Button>
+          ) : (
+            <div className="text-white/80 text-sm">
+              Coloque os dedos na tela para sortear
+            </div>
+          )}
         </div>
 
-        {gameEnded && (
-          <Button
-            onClick={resetGame}
-            className="bg-purple-700 hover:bg-purple-800 text-white"
-          >
-            <RotateCcw className="mr-2 h-5 w-5" />
-            Jogar de novo
-          </Button>
-        )}
+        {/* Espaço vazio para manter o equilíbrio */}
+        <div className="w-10" />
       </div>
 
       <div className="flex flex-col items-center h-full">
