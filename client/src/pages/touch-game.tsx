@@ -30,13 +30,15 @@ export default function TouchGame() {
     e.preventDefault();
     const now = Date.now();
 
-    // Se não houver toques, resetar tudo
+    // Se não houver toques e estivermos em estado de seleção, mantenha o ponto selecionado
     if (e.touches.length === 0) {
-      lastTouchTime.current = now;
-      setTouchPoints([]);
-      setSelectedPoint(null);
-      setCountdown(null);
-      touchPointsRef.current = [];
+      if (!selecting) {
+        lastTouchTime.current = now;
+        setTouchPoints([]);
+        setSelectedPoint(null);
+        setCountdown(null);
+        touchPointsRef.current = [];
+      }
       return;
     }
 
@@ -111,14 +113,10 @@ export default function TouchGame() {
         setSelectedPoint(randomPoint);
         setSelecting(false);
 
-        // Auto-limpar após 2 segundos
+        // Manter o ponto selecionado visível até o próximo toque
         setTimeout(() => {
-          if (Date.now() - lastTouchTime.current > 1500) {
-            setTouchPoints([]);
-            setSelectedPoint(null);
-            touchPointsRef.current = [];
-          }
-        }, 2000);
+          setTouchPoints([randomPoint]);
+        }, 500);
       } else {
         setSelectedPoint(touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)]);
       }
@@ -156,16 +154,16 @@ export default function TouchGame() {
           ref={containerRef}
           className="w-full aspect-[3/4] bg-white/10 backdrop-blur-sm rounded-xl relative touch-none"
         >
-          {/* Contador regressivo */}
+          {/* Contador regressivo no topo */}
           <AnimatePresence>
             {countdown !== null && (
               <motion.div
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
+                initial={{ scale: 0.5, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 1.5, opacity: 0 }}
-                className="absolute inset-0 flex items-center justify-center"
+                className="absolute inset-x-0 top-8 flex items-center justify-center"
               >
-                <span className="text-8xl font-bold text-white/90">
+                <span className="text-8xl font-bold text-white drop-shadow-lg">
                   {countdown}
                 </span>
               </motion.div>
@@ -180,22 +178,28 @@ export default function TouchGame() {
                 animate={{
                   scale: selectedPoint?.id === point.id ? [1, 1.2, 1] : 1,
                   backgroundColor: selectedPoint?.id === point.id 
-                    ? "rgba(255, 255, 255, 0.9)" 
+                    ? [point.color, "rgba(255, 255, 255, 0.9)", point.color] 
                     : point.color
                 }}
                 exit={{ scale: 0 }}
                 transition={{
                   scale: {
                     duration: 0.3,
-                    repeat: selectedPoint?.id === point.id ? Infinity : 0
+                    repeat: selectedPoint?.id === point.id ? Infinity : 0,
+                    repeatDelay: 0.5
+                  },
+                  backgroundColor: {
+                    duration: 1,
+                    repeat: selectedPoint?.id === point.id ? Infinity : 0,
+                    repeatDelay: 0.5
                   }
                 }}
                 style={{
                   position: "absolute",
-                  left: point.x - 50, // Aumentado para mais tolerância
-                  top: point.y - 50, // Aumentado para mais tolerância
-                  width: 100, // Aumentado o tamanho
-                  height: 100, // Aumentado o tamanho
+                  left: point.x - 50,
+                  top: point.y - 50,
+                  width: 100,
+                  height: 100,
                   borderRadius: "50%",
                   opacity: 0.8,
                   border: "3px solid rgba(255, 255, 255, 0.8)"
