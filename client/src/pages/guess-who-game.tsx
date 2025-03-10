@@ -218,7 +218,6 @@ export default function GuessWhoGame() {
               size="lg"
               onClick={() => {
                 setShowLoseScreen(false);
-                setEliminated([...eliminated, currentPlayerId]);
                 handleNextPlayer();
               }}
               className="bg-purple-700 hover:bg-purple-800 text-white"
