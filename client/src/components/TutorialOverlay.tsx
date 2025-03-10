@@ -30,9 +30,13 @@ export function TutorialOverlay({ onClose }: TutorialOverlay) {
         <svg className="w-full h-32 mb-4" viewBox="0 0 300 80">
           <rect x="20" y="10" width="260" height="60" rx="8" fill="#F3E8FF" stroke="#7E22CE" strokeWidth="2"/>
           <text x="40" y="40" fill="#581C87" fontSize="16" fontWeight="bold">Ranking</text>
-          {/* Users icon */}
-          <path d="M240 30 a5,5 0 1,1 -10,0 a5,5 0 1,1 10,0 M235 40 a8,4 0 1,0 16,0" 
-                stroke="#7E22CE" strokeWidth="2" fill="none"/>
+          {/* Users icon - corrigido para corresponder ao ícone do app */}
+          <g transform="translate(235, 30)">
+            <circle cx="7.5" cy="4" r="3" fill="#7E22CE"/>
+            <path d="M14,14 C14,11 11,8 7.5,8 C4,8 1,11 1,14" stroke="#7E22CE" strokeWidth="2" fill="none"/>
+            <circle cx="15" cy="4" r="3" fill="#7E22CE"/>
+            <path d="M21.5,14 C21.5,11 18.5,8 15,8 C13.5,8 12,8.5 11,9.5" stroke="#7E22CE" strokeWidth="2" fill="none"/>
+          </g>
         </svg>
       )
     },
