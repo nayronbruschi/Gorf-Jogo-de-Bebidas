@@ -1,17 +1,35 @@
-import { players, customGames, gameSettings, type Player, type InsertPlayer, type CustomGame, type InsertCustomGame, type GameSettings } from "@shared/schema";
+import { 
+  collection, 
+  doc, 
+  getDocs, 
+  setDoc, 
+  updateDoc, 
+  deleteDoc, 
+  getDoc,
+  increment,
+  writeBatch
+} from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { 
+  Player, 
+  InsertPlayer, 
+  CustomGame, 
+  InsertCustomGame, 
+  GameSettings 
+} from "@shared/schema";
 
 export interface IStorage {
   // Players
   getPlayers(): Promise<Player[]>;
   addPlayer(player: InsertPlayer): Promise<Player>;
-  updatePlayerPoints(id: number, points: number, type: "challenge" | "drink"): Promise<Player>;
+  updatePlayerPoints(id: string, points: number, type: "challenge" | "drink"): Promise<Player>;
   getCurrentPlayer(): Promise<Player | undefined>;
   setNextPlayer(): Promise<Player | undefined>;
-  removePlayer(id: number): Promise<void>;
+  removePlayer(id: string): Promise<void>;
   removeAllPlayers(): Promise<void>;
-  resetPlayersPoints(): Promise<void>; // Added resetPlayersPoints
-  setFirstPlayer(): Promise<Player | undefined>; // Added setFirstPlayer
-  getPlayer(id: number): Promise<Player | undefined>; // Added getPlayer
+  resetPlayersPoints(): Promise<void>;
+  setFirstPlayer(): Promise<Player | undefined>;
+  getPlayer(id: string): Promise<Player | undefined>;
 
   // Game Settings
   getGameSettings(): Promise<GameSettings>;
@@ -20,176 +38,183 @@ export interface IStorage {
   // Custom Games
   getCustomGames(): Promise<CustomGame[]>;
   addCustomGame(game: InsertCustomGame): Promise<CustomGame>;
-  getCustomGame(id: number): Promise<CustomGame | undefined>;
-  deleteCustomGame(id: number): Promise<void>;
+  getCustomGame(id: string): Promise<CustomGame | undefined>;
+  deleteCustomGame(id: string): Promise<void>;
 }
 
-export class MemStorage implements IStorage {
-  private players: Map<number, Player>;
-  private customGames: Map<number, CustomGame>;
-  private settings: GameSettings;
-  private playerIdCounter: number;
-  private gameIdCounter: number;
-
-  constructor() {
-    this.players = new Map();
-    this.customGames = new Map();
-    this.playerIdCounter = 1;
-    this.gameIdCounter = 1;
-    this.settings = {
-      id: 1,
-      maxPoints: 100,
-      currentPlayerId: undefined,
-    };
-  }
+export class FirestoreStorage implements IStorage {
+  private readonly playersRef = collection(db, 'players');
+  private readonly settingsRef = doc(db, 'settings', 'game');
+  private readonly customGamesRef = collection(db, 'customGames');
 
   async getPlayers(): Promise<Player[]> {
-    return Array.from(this.players.values());
+    const snapshot = await getDocs(this.playersRef);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Player));
   }
 
   async addPlayer(player: InsertPlayer): Promise<Player> {
+    const docRef = doc(this.playersRef);
     const newPlayer: Player = {
-      id: this.playerIdCounter++,
+      id: docRef.id,
       name: player.name,
       points: 0,
       isActive: true,
       challengesCompleted: 0,
       drinksCompleted: 0,
     };
-    this.players.set(newPlayer.id, newPlayer);
+
+    await setDoc(docRef, newPlayer);
 
     // Se for o primeiro jogador, define como jogador atual
-    if (this.players.size === 1) {
-      this.settings = {
-        ...this.settings,
-        currentPlayerId: newPlayer.id,
-        // Mantém o maxPoints existente
-        maxPoints: this.settings.maxPoints,
-      };
+    const players = await this.getPlayers();
+    if (players.length === 1) {
+      await this.updateGameSettings(100); // Mantém maxPoints padrão
+      await updateDoc(this.settingsRef, { currentPlayerId: docRef.id });
     }
 
     return newPlayer;
   }
 
-  async updatePlayerPoints(id: number, points: number, type: "challenge" | "drink"): Promise<Player> {
-    const player = this.players.get(id);
-    if (!player) throw new Error("Player not found");
+  async updatePlayerPoints(id: string, points: number, type: "challenge" | "drink"): Promise<Player> {
+    const playerRef = doc(this.playersRef, id);
+    const playerDoc = await getDoc(playerRef);
 
-    const updatedPlayer = {
-      ...player,
-      points: player.points + points,
-      challengesCompleted: type === "challenge" ? player.challengesCompleted + 1 : player.challengesCompleted,
-      drinksCompleted: type === "drink" ? player.drinksCompleted + points : player.drinksCompleted,
-    };
-
-    this.players.set(id, updatedPlayer);
-    return updatedPlayer;
-  }
-
-  async getCurrentPlayer(): Promise<Player | undefined> {
-    if (!this.settings.currentPlayerId) return undefined;
-    return this.players.get(this.settings.currentPlayerId);
-  }
-
-  async setNextPlayer(): Promise<Player | undefined> {
-    const players = Array.from(this.players.values());
-    if (players.length === 0) return undefined;
-
-    const currentIndex = players.findIndex(p => p.id === this.settings.currentPlayerId);
-    const nextIndex = (currentIndex + 1) % players.length;
-    const nextPlayer = players[nextIndex];
-
-    this.settings.currentPlayerId = nextPlayer.id;
-    return nextPlayer;
-  }
-
-  async removePlayer(id: number): Promise<void> {
-    if (!this.players.delete(id)) {
+    if (!playerDoc.exists()) {
       throw new Error("Player not found");
     }
 
+    const updateData = {
+      points: increment(points),
+      challengesCompleted: type === "challenge" ? increment(1) : increment(0),
+      drinksCompleted: type === "drink" ? increment(points) : increment(0),
+    };
+
+    await updateDoc(playerRef, updateData);
+
+    const updatedDoc = await getDoc(playerRef);
+    return { id: updatedDoc.id, ...updatedDoc.data() } as Player;
+  }
+
+  async getCurrentPlayer(): Promise<Player | undefined> {
+    const settings = await this.getGameSettings();
+    if (!settings.currentPlayerId) return undefined;
+
+    const playerDoc = await getDoc(doc(this.playersRef, settings.currentPlayerId));
+    return playerDoc.exists() ? { id: playerDoc.id, ...playerDoc.data() } as Player : undefined;
+  }
+
+  async setNextPlayer(): Promise<Player | undefined> {
+    const players = await this.getPlayers();
+    if (players.length === 0) return undefined;
+
+    const settings = await this.getGameSettings();
+    const currentIndex = players.findIndex(p => p.id === settings.currentPlayerId);
+    const nextIndex = (currentIndex + 1) % players.length;
+    const nextPlayer = players[nextIndex];
+
+    await updateDoc(this.settingsRef, { currentPlayerId: nextPlayer.id });
+    return nextPlayer;
+  }
+
+  async removePlayer(id: string): Promise<void> {
+    const playerRef = doc(this.playersRef, id);
+    await deleteDoc(playerRef);
+
     // Se o jogador removido era o atual, passa para o próximo
-    if (this.settings.currentPlayerId === id) {
+    const settings = await this.getGameSettings();
+    if (settings.currentPlayerId === id) {
       await this.setNextPlayer();
     }
   }
 
   async getGameSettings(): Promise<GameSettings> {
-    return this.settings;
+    const settingsDoc = await getDoc(this.settingsRef);
+    if (!settingsDoc.exists()) {
+      const defaultSettings: GameSettings = {
+        maxPoints: 100,
+        currentPlayerId: null,
+      };
+      await setDoc(this.settingsRef, defaultSettings);
+      return defaultSettings;
+    }
+    return settingsDoc.data() as GameSettings;
   }
 
   async updateGameSettings(maxPoints: number): Promise<GameSettings> {
-    this.settings = {
-      ...this.settings,
-      maxPoints,
-    };
-    return this.settings;
+    await updateDoc(this.settingsRef, { maxPoints });
+    const updatedDoc = await getDoc(this.settingsRef);
+    return updatedDoc.data() as GameSettings;
   }
 
   async getCustomGames(): Promise<CustomGame[]> {
-    return Array.from(this.customGames.values());
+    const snapshot = await getDocs(this.customGamesRef);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CustomGame));
   }
 
   async addCustomGame(game: InsertCustomGame): Promise<CustomGame> {
+    const docRef = doc(this.customGamesRef);
     const newGame: CustomGame = {
-      id: this.gameIdCounter++,
+      id: docRef.id,
       ...game,
     };
-    this.customGames.set(newGame.id, newGame);
+    await setDoc(docRef, newGame);
     return newGame;
   }
 
-  async getCustomGame(id: number): Promise<CustomGame | undefined> {
-    return this.customGames.get(id);
+  async getCustomGame(id: string): Promise<CustomGame | undefined> {
+    const gameDoc = await getDoc(doc(this.customGamesRef, id));
+    return gameDoc.exists() ? { id: gameDoc.id, ...gameDoc.data() } as CustomGame : undefined;
   }
 
-  async deleteCustomGame(id: number): Promise<void> {
-    if (!this.customGames.delete(id)) {
-      throw new Error("Custom game not found");
-    }
+  async deleteCustomGame(id: string): Promise<void> {
+    await deleteDoc(doc(this.customGamesRef, id));
   }
 
   async removeAllPlayers(): Promise<void> {
-    this.players.clear();
-    this.settings.currentPlayerId = undefined;
-    this.playerIdCounter = 1;
-    // Não resetar maxPoints ao remover jogadores
+    const snapshot = await getDocs(this.playersRef);
+    const batch = writeBatch(db);
+
+    snapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    await updateDoc(this.settingsRef, { currentPlayerId: null });
   }
 
   async resetPlayersPoints(): Promise<void> {
-    // Manter os jogadores mas resetar seus pontos
-    console.log('Resetando pontos - Jogadores antes:', Array.from(this.players.values()));
+    const snapshot = await getDocs(this.playersRef);
+    const batch = writeBatch(db);
 
-    for (const [id, player] of this.players.entries()) {
-      const resetPlayer = {
-        ...player,
+    snapshot.docs.forEach(doc => {
+      batch.update(doc.ref, {
         points: 0,
         challengesCompleted: 0,
-        drinksCompleted: 0,
-      };
-      this.players.set(id, resetPlayer);
-    }
+        drinksCompleted: 0
+      });
+    });
+
+    await batch.commit();
 
     // Resetar o jogador atual para o primeiro da lista
-    const firstPlayer = Array.from(this.players.values())[0];
-    this.settings.currentPlayerId = firstPlayer?.id;
-
-    console.log('Resetando pontos - Jogadores depois:', Array.from(this.players.values()));
+    const players = await this.getPlayers();
+    if (players.length > 0) {
+      await updateDoc(this.settingsRef, { currentPlayerId: players[0].id });
+    }
   }
 
   async setFirstPlayer(): Promise<Player | undefined> {
-    const players = Array.from(this.players.values());
+    const players = await this.getPlayers();
     if (players.length === 0) return undefined;
 
-    const firstPlayer = players[0];
-    this.settings.currentPlayerId = firstPlayer.id;
-    return firstPlayer;
+    await updateDoc(this.settingsRef, { currentPlayerId: players[0].id });
+    return players[0];
   }
-  async getPlayer(id: number): Promise<Player | undefined> {
-    const player = this.players.get(id);
-    console.log('GetPlayer - ID:', id, 'Player found:', player);
-    return player;
+
+  async getPlayer(id: string): Promise<Player | undefined> {
+    const playerDoc = await getDoc(doc(this.playersRef, id));
+    return playerDoc.exists() ? { id: playerDoc.id, ...playerDoc.data() } as Player : undefined;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new FirestoreStorage();

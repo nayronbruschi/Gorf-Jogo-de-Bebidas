@@ -1,33 +1,32 @@
-import { pgTable, text, serial, integer, boolean, json } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const players = pgTable("players", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  points: integer("points").default(0),
-  isActive: boolean("is_active").default(true),
-  challengesCompleted: integer("challenges_completed").default(0),
-  drinksCompleted: integer("drinks_completed").default(0),
-});
+// Types para dados do jogo
+export interface Player {
+  id: string;
+  name: string;
+  points: number;
+  isActive: boolean;
+  challengesCompleted: number;
+  drinksCompleted: number;
+}
 
-export const gameSettings = pgTable("game_settings", {
-  id: serial("id").primaryKey(),
-  maxPoints: integer("max_points").default(100),
-  currentPlayerId: integer("current_player_id"),
-});
+export interface GameSettings {
+  maxPoints: number;
+  currentPlayerId: string | null;
+}
 
-export const customGames = pgTable("custom_games", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  mode: text("mode").notNull(),
-  intensity: text("intensity").notNull(),
-  challenges: json("challenges").notNull().$type<string[]>(),
-  isAlcoholic: boolean("is_alcoholic").default(true),
-});
+export interface CustomGame {
+  id: string;
+  name: string;
+  mode: string;
+  intensity: string;
+  challenges: string[];
+  isAlcoholic: boolean;
+}
 
-export const insertPlayerSchema = createInsertSchema(players).pick({
-  name: true,
+// Schemas Zod para validação
+export const insertPlayerSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório"),
 });
 
 export const updatePlayerPointsSchema = z.object({
@@ -39,19 +38,16 @@ export const gameSettingsSchema = z.object({
   maxPoints: z.number().min(10).max(1000),
 });
 
-export const insertCustomGameSchema = createInsertSchema(customGames).pick({
-  name: true,
-  mode: true,
-  intensity: true,
-  challenges: true,
-  isAlcoholic: true,
+export const insertCustomGameSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório"),
+  mode: z.string(),
+  intensity: z.string(),
+  challenges: z.array(z.string()),
+  isAlcoholic: z.boolean(),
 });
 
 export type InsertPlayer = z.infer<typeof insertPlayerSchema>;
-export type Player = typeof players.$inferSelect;
 export type InsertCustomGame = z.infer<typeof insertCustomGameSchema>;
-export type CustomGame = typeof customGames.$inferSelect;
-export type GameSettings = typeof gameSettings.$inferSelect;
 
 export const intensityLevels = ["Leve", "Moderado", "Hard"] as const;
 export const gameModes = ["Clássico", "Roleta", "Verdade ou Desafio"] as const;
