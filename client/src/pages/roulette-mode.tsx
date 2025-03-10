@@ -35,10 +35,10 @@ export default function RouletteMode() {
   const [showPlayerList, setShowPlayerList] = useState(false);
   const [action, setAction] = useState<"drink" | "refuse" | null>(null);
   const [punishmentDrinks, setPunishmentDrinks] = useState(0);
-  const [isGeneratingChallenge, setIsGeneratingChallenge] = useState(false);
   const { play } = useSound();
 
   const gameMode = localStorage.getItem("rouletteMode") || "goles";
+  const maxPoints = Number(localStorage.getItem("maxPoints")) || 100;
   const drinkText = gameMode === "shots" ? "shot" : "gole";
   const drinkTextPlural = gameMode === "shots" ? "shots" : "goles";
 
@@ -46,16 +46,49 @@ export default function RouletteMode() {
     queryKey: ["/api/players"],
   });
 
-  const updatePoints = useMutation({
-    mutationFn: async ({ playerId, type, points }: { playerId: number; type: "challenge" | "drink"; points: number }) => {
-      return await apiRequest("PATCH", `/api/players/${playerId}/points`, { type, points });
+  const checkWinner = async (playerId: number) => {
+    try {
+      const playerData = await apiRequest("GET", `/api/players/${playerId}`);
+      console.log('Verificando vitória:', {
+        jogador: playerData.name,
+        pontosAtuais: playerData.points,
+        pontosMaximos: maxPoints
+      });
+
+      if (playerData.points >= maxPoints) {
+        console.log('VITÓRIA CONFIRMADA! Redirecionando...');
+        navigate(`/roulette/winner?playerId=${playerId}`);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Erro ao verificar vitória:', error);
+      return false;
+    }
+  };
+
+  const updatePlayerPoints = useMutation({
+    mutationFn: async ({ playerId, points }: { playerId: number; points: number }) => {
+      const result = await apiRequest("PATCH", `/api/players/${playerId}/points`, {
+        type: "drink",
+        points
+      });
+      return result;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+    onSuccess: async (_, variables) => {
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      const hasWon = await checkWinner(variables.playerId);
+      if (!hasWon) {
+        setAction(null);
+        setShowPunishment(false);
+        selectRandomPlayer();
+      }
     }
   });
 
   const selectRandomPlayer = () => {
+    if (isSelecting) return;
+
     setIsSelecting(true);
     setAction(null);
     setPunishmentDrinks(0);
@@ -66,11 +99,32 @@ export default function RouletteMode() {
       const minDrinks = gameMode === "shots" ? 1 : 2;
       const maxDrinks = Number(localStorage.getItem("maxPerRound")) || (gameMode === "shots" ? 5 : 15);
       const randomDrinks = Math.floor(Math.random() * (maxDrinks - minDrinks + 1)) + minDrinks;
+
       setSelectedPlayer(randomPlayer);
       setNumDrinks(randomDrinks);
       setIsSelecting(false);
       play('tada');
     }, 2000);
+  };
+
+  const handleNextPlayer = async () => {
+    if (!selectedPlayer || !action) return;
+
+    try {
+      if (action === "drink") {
+        await updatePlayerPoints.mutateAsync({
+          playerId: selectedPlayer.id,
+          points: numDrinks
+        });
+      } else if (action === "refuse" && punishmentDrinks > 0) {
+        await updatePlayerPoints.mutateAsync({
+          playerId: selectedPlayer.id,
+          points: punishmentDrinks
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao processar rodada:', error);
+    }
   };
 
   const handleDrink = () => {
@@ -82,77 +136,15 @@ export default function RouletteMode() {
     setAction("refuse");
     const randomPunishment = punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)];
     setCurrentPunishment(randomPunishment);
+    setPunishmentDrinks(1);
     setShowPunishment(true);
   };
 
-  const generateNewPunishment = async () => {
-    if (!selectedPlayer || isGeneratingChallenge) return;
-
-    setIsGeneratingChallenge(true);
-    try {
-      setPunishmentDrinks(prev => prev + 1);
-
-      setTimeout(() => {
-        const randomPunishment = punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)];
-        setCurrentPunishment(randomPunishment);
-        setIsGeneratingChallenge(false);
-      }, 1000);
-    } catch (error) {
-      console.error('Erro ao gerar novo desafio:', error);
-      setIsGeneratingChallenge(false);
-    }
-  };
-
-  const handleNextPlayer = async () => {
-    if (!selectedPlayer || !action) return;
-
-    try {
-      if (action === "drink") {
-        // Atualizar pontos dos drinks
-        await updatePoints.mutateAsync({
-          playerId: selectedPlayer.id,
-          type: "drink",
-          points: numDrinks
-        });
-      } else if (action === "refuse" && punishmentDrinks > 0) {
-        // Atualizar pontos do desafio e drinks
-        await updatePoints.mutateAsync({
-          playerId: selectedPlayer.id,
-          type: "challenge",
-          points: punishmentDrinks
-        });
-        await updatePoints.mutateAsync({
-          playerId: selectedPlayer.id,
-          type: "drink",
-          points: punishmentDrinks
-        });
-      }
-
-      // Aguardar a atualização do cache
-      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-
-      // Verificar vitória após todas as atualizações
-      const maxPoints = Number(localStorage.getItem("maxPoints"));
-      const response = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
-
-      console.log('Verificando vitória:', {
-        jogador: selectedPlayer.name,
-        pontosAtuais: response.points,
-        maximoDePontos: maxPoints
-      });
-
-      if (response.points >= maxPoints) {
-        console.log('VITÓRIA! Navegando para tela de vencedor...');
-        navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
-        return;
-      }
-
-      // Apenas continuar se não houver vitória
-      setShowPunishment(false);
-      selectRandomPlayer();
-    } catch (error) {
-      console.error('Erro ao processar a rodada:', error);
-    }
+  const generateNewPunishment = () => {
+    if (!selectedPlayer) return;
+    setPunishmentDrinks(prev => prev + 1);
+    const randomPunishment = punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)];
+    setCurrentPunishment(randomPunishment);
   };
 
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
@@ -212,12 +204,9 @@ export default function RouletteMode() {
                     size="lg"
                     onClick={handleDrink}
                     variant={action === "drink" ? "outline" : "default"}
-                    className={cn(
-                      "w-full sm:w-auto justify-center",
-                      action === "drink"
-                        ? "border-purple-700 text-purple-700 hover:bg-purple-50"
-                        : "bg-purple-700 hover:bg-purple-800 text-white"
-                    )}
+                    className={action === "drink"
+                      ? "border-purple-700 text-purple-700 hover:bg-purple-50 w-full sm:w-auto justify-center"
+                      : "bg-purple-700 hover:bg-purple-800 text-white w-full sm:w-auto justify-center"}
                   >
                     <Beer className="mr-2 h-5 w-5" />
                     Bebeu
@@ -274,7 +263,7 @@ export default function RouletteMode() {
             <Button
               size="lg"
               onClick={handleNextPlayer}
-              disabled={isSelecting}
+              disabled={updatePlayerPoints.isPending}
               className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl w-full"
             >
               Sortear Próximo Jogador
@@ -318,14 +307,9 @@ export default function RouletteMode() {
               <Button
                 variant="outline"
                 onClick={generateNewPunishment}
-                disabled={isGeneratingChallenge}
                 className="border-purple-700 text-purple-700 hover:bg-purple-50"
               >
-                {isGeneratingChallenge ? (
-                  "Gerando outro desafio..."
-                ) : (
-                  <>Beba mais um {drinkText} para gerar outro desafio</>
-                )}
+                Beba mais um {drinkText} para gerar outro desafio
               </Button>
             </div>
           </div>
