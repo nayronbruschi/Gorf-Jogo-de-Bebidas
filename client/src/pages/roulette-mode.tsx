@@ -111,49 +111,52 @@ export default function RouletteMode() {
       let totalPoints = 0;
       const maxPoints = Number(localStorage.getItem("maxPoints")) || 100;
 
+      // Primeiro vamos atualizar todos os pontos
       if (action === "drink") {
-        // Atualizar pontos do jogador
         await updatePoints.mutateAsync({
           playerId: selectedPlayer.id,
           type: "drink",
           points: numDrinks
         });
-
         totalPoints = numDrinks;
       } else if (action === "refuse" && punishmentDrinks > 0) {
-        // Atualizar pontos do desafio e dos drinks
+        // Atualizar pontos do desafio
         await updatePoints.mutateAsync({
           playerId: selectedPlayer.id,
           type: "challenge",
           points: punishmentDrinks
         });
+        // Atualizar pontos dos drinks
         await updatePoints.mutateAsync({
           playerId: selectedPlayer.id,
           type: "drink",
           points: punishmentDrinks
         });
-
         totalPoints = punishmentDrinks * 2;
       }
 
-      // Atualizar cache e pegar dados atualizados
+      // Invalidar cache para garantir dados atualizados
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-      const playerData = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
 
-      console.log('Verificando condição de vitória:', {
-        jogador: playerData.name,
-        pontosAtuais: playerData.points,
-        pontosDessaRodada: totalPoints,
-        pontosParaVencer: maxPoints,
+      // Buscar dados atualizados do jogador
+      const playerData = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
+      const currentPoints = playerData.points || 0;
+
+      console.log('Verificando vitória:', {
+        jogador: selectedPlayer.name,
+        pontosAtuais: currentPoints,
+        maximoDePontos: maxPoints,
+        pontosDessaRodada: totalPoints
       });
 
-      // Verificar se o jogador ganhou usando maior ou igual
-      if (playerData.points >= maxPoints) {
-        console.log('Vencedor encontrado! Redirecionando para tela de vitória...');
+      // Verificar se o jogador atingiu ou ultrapassou o máximo
+      if (currentPoints >= maxPoints) {
+        console.log('Jogador venceu! Redirecionando...');
         navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
         return;
       }
 
+      // Se não ganhou, continuar o jogo
       setShowPunishment(false);
       selectRandomPlayer();
     } catch (error) {
