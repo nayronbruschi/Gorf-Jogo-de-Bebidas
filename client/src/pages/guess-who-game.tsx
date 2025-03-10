@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getItemsByTheme, type ThemeId } from "@/lib/guess-who-data";
-import { ChevronLeft, User2, RotateCcw, Home } from "lucide-react";
+import { ChevronLeft, RotateCcw, Home, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 interface PlayerItem {
@@ -29,7 +29,9 @@ export default function GuessWhoGame() {
   const [setupTime, setSetupTime] = useState(5);
   const [isSetup, setIsSetup] = useState(true);
   const [showWinScreen, setShowWinScreen] = useState(false);
+  const [showLoseScreen, setShowLoseScreen] = useState(false);
   const [winner, setWinner] = useState("");
+  const [readyToStart, setReadyToStart] = useState(false);
 
   // Helpers
   const setLandscapeMode = () => {
@@ -104,7 +106,7 @@ export default function GuessWhoGame() {
 
   // Timer de preparação
   useEffect(() => {
-    if (!isSetup) return;
+    if (!isSetup || !readyToStart || setupTime <= 0) return;
 
     const timer = setInterval(() => {
       setSetupTime(prev => {
@@ -120,7 +122,7 @@ export default function GuessWhoGame() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isSetup]);
+  }, [isSetup, readyToStart]);
 
   // Timer principal
   useEffect(() => {
@@ -174,6 +176,7 @@ export default function GuessWhoGame() {
     setLandscapeMode();
     setWinner("");
     setShowWinScreen(false);
+    setReadyToStart(false);
   }, [currentPlayerIndex, players, eliminated, setLocation, winner]);
 
   const handleGuess = () => {
@@ -185,12 +188,8 @@ export default function GuessWhoGame() {
       setShowWinScreen(true);
       setPortraitMode();
     } else {
-      setEliminated([...eliminated, currentPlayerId]);
-      if (eliminated.length + 1 >= players.length - 1) {
-        setLocation("/game-modes");
-      } else {
-        handleNextPlayer();
-      }
+      setShowLoseScreen(true);
+      setPortraitMode();
     }
   };
 
@@ -204,22 +203,57 @@ export default function GuessWhoGame() {
   // Verifica se tem mais de 2 jogadores para mostrar o botão de continuar
   const canContinueGame = players.length > 2;
 
+  if (showLoseScreen) {
+    return (
+      <div className="fixed inset-0 bg-gradient-to-br from-purple-900 to-purple-800 flex items-center justify-center">
+        <div className="text-center space-y-8 p-4">
+          <h1 className="text-4xl font-bold text-white mb-8">
+            Você errou!
+          </h1>
+          <p className="text-2xl text-white/80 mb-12">
+            Você pode tomar 5 goles e continuar jogando ou sair do jogo
+          </p>
+          <div className="flex flex-col gap-4 max-w-xs mx-auto">
+            <Button
+              size="lg"
+              onClick={() => {
+                setShowLoseScreen(false);
+                setEliminated([...eliminated, currentPlayerId]);
+                handleNextPlayer();
+              }}
+              className="bg-purple-700 hover:bg-purple-800 text-white"
+            >
+              Tomar 5 goles e continuar
+            </Button>
+            <Button
+              size="lg"
+              onClick={() => setLocation("/game-modes")}
+              className="bg-white/20 hover:bg-white/30 text-white"
+            >
+              Sair do Jogo
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (showWinScreen) {
     return (
       <div className="fixed inset-0 bg-gradient-to-br from-purple-900 to-purple-800 flex items-center justify-center">
-        <div className="text-center space-y-8">
-          <h1 className="text-4xl font-bold text-white mb-8">
+        <div className="text-center space-y-8 p-4">
+          <h1 className="text-3xl font-bold text-white mb-8">
             🎉 Parabéns {winnerName}! 🎉
           </h1>
           <p className="text-2xl text-white/80 mb-12">
             Você acertou!
           </p>
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4 max-w-xs mx-auto">
             {canContinueGame && (
               <Button
                 size="lg"
                 onClick={handleNextPlayer}
-                className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                className="bg-purple-700 hover:bg-purple-800 text-white"
               >
                 <RotateCcw className="mr-2 h-5 w-5" />
                 Continuar Jogando
@@ -228,7 +262,7 @@ export default function GuessWhoGame() {
             <Button
               size="lg"
               onClick={() => setLocation("/guess-who/theme")}
-              className="w-full bg-white/20 hover:bg-white/30 text-white"
+              className="bg-white/20 hover:bg-white/30 text-white"
             >
               <RotateCcw className="mr-2 h-5 w-5" />
               Escolher Outra Categoria
@@ -236,7 +270,7 @@ export default function GuessWhoGame() {
             <Button
               size="lg"
               onClick={() => setLocation("/game-modes")}
-              className="w-full bg-white/10 hover:bg-white/20 text-white"
+              className="bg-white/10 hover:bg-white/20 text-white"
             >
               <Home className="mr-2 h-5 w-5" />
               Escolher Outro Jogo
@@ -254,7 +288,7 @@ export default function GuessWhoGame() {
         <Button
           variant="ghost"
           className="text-white hover:bg-white/20"
-          onClick={() => setLocation("/game-modes")}
+          onClick={() => setLocation("/guess-who/theme")}
         >
           <ChevronLeft className="h-6 w-6" />
         </Button>
@@ -283,9 +317,20 @@ export default function GuessWhoGame() {
               <p className="text-xl text-white/80">
                 Coloque o celular de lado na testa
               </p>
-              <div className="text-8xl font-bold text-white">
-                {setupTime}
-              </div>
+              {!readyToStart ? (
+                <Button
+                  size="lg"
+                  onClick={() => setReadyToStart(true)}
+                  className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6"
+                >
+                  <Play className="mr-2 h-6 w-6" />
+                  Estou Pronto!
+                </Button>
+              ) : (
+                <div className="text-8xl font-bold text-white">
+                  {setupTime}
+                </div>
+              )}
             </motion.div>
           ) : showItem ? (
             <motion.div

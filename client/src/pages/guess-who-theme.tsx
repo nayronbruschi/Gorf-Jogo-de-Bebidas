@@ -1,11 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { themes, type ThemeId } from "@/lib/guess-who-data";
 import {
   Cat, UserSquare2, Clapperboard, Palmtree,
-  Box, Users
+  Box, Users, Play
 } from "lucide-react";
 
 const themeIcons = {
@@ -19,6 +19,7 @@ const themeIcons = {
 
 export default function GuessWhoTheme() {
   const [, setLocation] = useLocation();
+  const [selectedTheme, setSelectedTheme] = useState<ThemeId | null>(null);
 
   // Verificar se existem jogadores selecionados
   useEffect(() => {
@@ -40,6 +41,12 @@ export default function GuessWhoTheme() {
   }, [setLocation]);
 
   const handleSelectTheme = (themeId: ThemeId) => {
+    setSelectedTheme(themeId);
+  };
+
+  const handleStartGame = () => {
+    if (!selectedTheme) return;
+
     try {
       // Validar os dados antes de prosseguir
       const storedPlayers = localStorage.getItem("guessWhoPlayers");
@@ -49,7 +56,7 @@ export default function GuessWhoTheme() {
       }
 
       // Salvar tema e ir para o jogo
-      localStorage.setItem("guessWhoTheme", themeId);
+      localStorage.setItem("guessWhoTheme", selectedTheme);
       setLocation("/guess-who/play");
     } catch (error) {
       console.error("Erro ao selecionar tema:", error);
@@ -74,7 +81,11 @@ export default function GuessWhoTheme() {
               <Button
                 key={theme.id}
                 onClick={() => handleSelectTheme(theme.id)}
-                className="flex flex-col items-center gap-2 p-6 h-auto bg-purple-700/50 hover:bg-purple-700"
+                className={`flex flex-col items-center gap-2 p-6 h-auto ${
+                  selectedTheme === theme.id
+                    ? 'bg-white text-purple-700'
+                    : 'bg-purple-700/50 hover:bg-purple-700/70 text-white'
+                }`}
                 variant="ghost"
               >
                 <Icon className="w-12 h-12" />
@@ -83,6 +94,16 @@ export default function GuessWhoTheme() {
             );
           })}
         </div>
+
+        <Button
+          size="lg"
+          onClick={handleStartGame}
+          disabled={!selectedTheme}
+          className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 mt-4"
+        >
+          <Play className="mr-2 h-6 w-6" />
+          Iniciar Jogo
+        </Button>
       </div>
     </GameLayout>
   );
