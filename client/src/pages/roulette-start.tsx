@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
-import { PlayerList } from "@/components/PlayerList";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { Play } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { Beer, Flame } from "lucide-react";
 
 type GameMode = "goles" | "shots";
@@ -30,10 +28,6 @@ export default function RouletteStart() {
   const [, navigate] = useLocation();
   const [selectedMode, setSelectedMode] = useState<GameMode>("goles");
 
-  const { data: players = [] } = useQuery({
-    queryKey: ["/api/players"],
-  });
-
   const handleStartGame = () => {
     // Salvar o modo selecionado no localStorage
     localStorage.setItem("rouletteMode", selectedMode);
@@ -44,15 +38,6 @@ export default function RouletteStart() {
   return (
     <GameLayout title="">
       <div className="max-w-4xl mx-auto space-y-12">
-        {/* Seção de Jogadores */}
-        <section>
-          <h2 className="text-2xl font-bold text-white text-center mb-6">
-            Jogadores
-          </h2>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-            <PlayerList />
-          </div>
-        </section>
 
         {/* Seção de Modos de Jogo */}
         <section>
@@ -85,17 +70,10 @@ export default function RouletteStart() {
           <Button
             size="lg"
             onClick={handleStartGame}
-            disabled={players.length < 2}
-            className={`px-8 py-6 flex items-center justify-center ${
-              players.length >= 2
-                ? "bg-purple-700 hover:bg-purple-800 text-white"
-                : "bg-white/20 hover:bg-white/30 text-white"
-            }`}
+            className="bg-purple-700 hover:bg-purple-800 text-white text-xl px-8 py-6"
           >
             <Play className="mr-2 h-6 w-6" />
-            {players.length < 2
-              ? "Mínimo 2 jogadores"
-              : "Vamos começar!"}
+            Continuar
           </Button>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { PlayerList } from "@/components/PlayerList";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useLocation } from "wouter";
-import { Play } from "lucide-react";
+import { Play, Plus, Minus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 export default function RoulettePlayers() {
@@ -52,43 +52,90 @@ export default function RoulettePlayers() {
           </h2>
           <Card className="bg-white/10 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-white">Regras do Jogo</CardTitle>
-              <CardDescription className="text-white/80">
+              <CardTitle className="text-white text-2xl">Regras do Jogo</CardTitle>
+              <CardDescription className="text-white/80 text-lg">
                 Define os limites para cada rodada e para vencer o jogo
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-8">
               <div>
-                <label className="text-white text-sm mb-2 block">
+                <label className="text-white text-lg mb-4 block">
                   Máximo por rodada
                 </label>
-                <Input
-                  type="number"
-                  value={maxPerRound}
-                  onChange={(e) => setMaxPerRound(e.target.value)}
-                  min={gameMode === "shots" ? "1" : "2"}
-                  max={gameMode === "shots" ? "5" : "15"}
-                  className="bg-white/20 text-white border-0"
-                />
-                <p className="text-white/60 text-xs mt-1">
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="outline"
+                    className="rounded-full w-10 h-10 flex items-center justify-center bg-white/10 border-0 text-white hover:bg-white/20 hover:text-white"
+                    onClick={() => {
+                      const min = gameMode === "shots" ? 1 : 2;
+                      setMaxPerRound(prev => Math.max(min, Number(prev) - 1).toString());
+                    }}
+                  >
+                    <Minus className="h-5 w-5" />
+                  </Button>
+                  <Input
+                    type="number"
+                    value={maxPerRound}
+                    onChange={(e) => setMaxPerRound(e.target.value)}
+                    min={gameMode === "shots" ? "1" : "2"}
+                    max={gameMode === "shots" ? "5" : "15"}
+                    className="bg-white/20 text-white border-0 text-center text-xl"
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="outline"
+                    className="rounded-full w-10 h-10 flex items-center justify-center bg-white/10 border-0 text-white hover:bg-white/20 hover:text-white"
+                    onClick={() => {
+                      const max = gameMode === "shots" ? 5 : 15;
+                      setMaxPerRound(prev => Math.min(max, Number(prev) + 1).toString());
+                    }}
+                  >
+                    <Plus className="h-5 w-5" />
+                  </Button>
+                </div>
+                <p className="text-white/60 text-base mt-2">
                   {gameMode === "shots" 
                     ? "Número máximo de shots por rodada (1-5)"
                     : "Número máximo de goles por rodada (2-15)"}
                 </p>
               </div>
+
               <div>
-                <label className="text-white text-sm mb-2 block">
+                <label className="text-white text-lg mb-4 block">
                   Total para vencer
                 </label>
-                <Input
-                  type="number"
-                  value={maxToWin}
-                  onChange={(e) => setMaxToWin(e.target.value)}
-                  min="10"
-                  max="200"
-                  className="bg-white/20 text-white border-0"
-                />
-                <p className="text-white/60 text-xs mt-1">
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="outline"
+                    className="rounded-full w-10 h-10 flex items-center justify-center bg-white/10 border-0 text-white hover:bg-white/20 hover:text-white"
+                    onClick={() => setMaxToWin(prev => Math.max(10, Number(prev) - 10).toString())}
+                  >
+                    <Minus className="h-5 w-5" />
+                  </Button>
+                  <Input
+                    type="number"
+                    value={maxToWin}
+                    onChange={(e) => setMaxToWin(e.target.value)}
+                    min="10"
+                    max="200"
+                    className="bg-white/20 text-white border-0 text-center text-xl"
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="outline"
+                    className="rounded-full w-10 h-10 flex items-center justify-center bg-white/10 border-0 text-white hover:bg-white/20 hover:text-white"
+                    onClick={() => setMaxToWin(prev => Math.min(200, Number(prev) + 10).toString())}
+                  >
+                    <Plus className="h-5 w-5" />
+                  </Button>
+                </div>
+                <p className="text-white/60 text-base mt-2">
                   Quantidade total de {gameMode === "shots" ? "shots" : "goles"} para vencer o jogo
                 </p>
               </div>

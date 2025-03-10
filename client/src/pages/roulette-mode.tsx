@@ -90,10 +90,8 @@ export default function RouletteMode() {
 
     setIsGeneratingChallenge(true);
     try {
-      // Adicionar um gole ao contador do popup
       setPunishmentDrinks(prev => prev + 1);
 
-      // Aguardar um momento antes de gerar novo desafio
       setTimeout(() => {
         const randomPunishment = punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)];
         setCurrentPunishment(randomPunishment);
@@ -105,12 +103,25 @@ export default function RouletteMode() {
     }
   };
 
+  const checkWinCondition = async (playerId: number) => {
+    try {
+      const maxPoints = localStorage.getItem("maxPoints") || "100";
+      const response = await apiRequest("GET", `/api/players/${playerId}`);
+      if (response.points >= parseInt(maxPoints)) {
+        navigate(`/roulette/winner?playerId=${playerId}`);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Erro ao verificar condição de vitória:', error);
+      return false;
+    }
+  };
+
   const handleNextPlayer = async () => {
     if (!selectedPlayer || !action) return;
 
     try {
-      const maxPoints = localStorage.getItem("maxPoints") || "100";
-
       if (action === "drink") {
         await updatePoints.mutateAsync({
           playerId: selectedPlayer.id,
@@ -118,13 +129,9 @@ export default function RouletteMode() {
           points: numDrinks
         });
 
-        // Verificar se o jogador atingiu o máximo
-        const updatedPlayer = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
-        if (updatedPlayer.drinksCompleted >= parseInt(maxPoints)) {
-          // Redirecionar para a tela de vitória
-          navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
-          return;
-        }
+        const hasWon = await checkWinCondition(selectedPlayer.id);
+        if (hasWon) return;
+
       } else if (action === "refuse" && punishmentDrinks > 0) {
         await updatePoints.mutateAsync({
           playerId: selectedPlayer.id,
@@ -137,13 +144,8 @@ export default function RouletteMode() {
           points: punishmentDrinks
         });
 
-        // Verificar se o jogador atingiu o máximo
-        const updatedPlayer = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
-        if (updatedPlayer.drinksCompleted >= parseInt(maxPoints)) {
-          // Redirecionar para a tela de vitória
-          navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
-          return;
-        }
+        const hasWon = await checkWinCondition(selectedPlayer.id);
+        if (hasWon) return;
       }
       setShowPunishment(false);
       selectRandomPlayer();
@@ -152,13 +154,11 @@ export default function RouletteMode() {
     }
   };
 
-  // Ordenar jogadores por quantidade de goles
   const sortedPlayers = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted);
 
   return (
     <GameLayout title="">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto pb-24">
-        {/* Área do Jogo */}
         <div className="bg-white rounded-xl p-6 space-y-8">
           {!selectedPlayer && !isSelecting && (
             <div className="flex justify-center">
@@ -236,7 +236,6 @@ export default function RouletteMode() {
           </AnimatePresence>
         </div>
 
-        {/* Ranking */}
         <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
@@ -270,7 +269,6 @@ export default function RouletteMode() {
         </div>
       </div>
 
-      {/* Botão Sortear fixo no rodapé */}
       {selectedPlayer && action && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/10 backdrop-blur-sm">
           <div className="container max-w-4xl mx-auto">
@@ -286,7 +284,6 @@ export default function RouletteMode() {
         </div>
       )}
 
-      {/* Popup de Desafio */}
       <Dialog open={showPunishment} onOpenChange={setShowPunishment}>
         <DialogContent className="bg-white rounded-xl">
           <DialogHeader>
@@ -336,7 +333,6 @@ export default function RouletteMode() {
         </DialogContent>
       </Dialog>
 
-      {/* Popup de Gerenciar Jogadores */}
       <Dialog open={showPlayerList} onOpenChange={setShowPlayerList}>
         <DialogContent className="bg-white rounded-xl">
           <DialogHeader>
