@@ -56,18 +56,18 @@ export function PlayerList({ selectedPlayers, onSelectedPlayersChange }: PlayerL
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       <form onSubmit={onSubmit} className="flex gap-2">
         <Input
           placeholder="Nome do jogador"
           {...form.register("name")}
-          className="bg-white border-0 text-purple-900 placeholder:text-purple-400"
+          className="bg-white border-0 text-purple-900 placeholder:text-purple-400 flex-1"
         />
         <Button
           type="submit"
           size="icon"
           disabled={addPlayer.isPending}
-          className="bg-purple-700 hover:bg-purple-800"
+          className="bg-purple-700 hover:bg-purple-800 min-w-[44px]"
         >
           <UserPlus className="h-4 w-4 text-white" />
         </Button>

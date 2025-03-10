@@ -3,20 +3,20 @@ import { useLocation } from "wouter";
 import { GameLayout } from "@/components/GameLayout";
 import { PlayerList } from "@/components/PlayerList";
 import { Button } from "@/components/ui/button";
-import { PlayerManagementDialog } from "@/components/PlayerManagementDialog";
 import { Users } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function GuessWhoPlayers() {
   const [, setLocation] = useLocation();
-  const [showDialog, setShowDialog] = useState(false);
-  const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
+  const { data: players = [] } = useQuery({
+    queryKey: ["/api/players"],
+  });
 
   const handleStartGame = () => {
-    if (selectedPlayers.length < 2) {
-      return;
-    }
-    // Salvar jogadores selecionados no localStorage
-    localStorage.setItem("guessWhoPlayers", JSON.stringify(selectedPlayers));
+    if (players.length < 2) return;
+
+    // Salvar os IDs dos jogadores no localStorage
+    localStorage.setItem("guessWhoPlayers", JSON.stringify(players.map(p => p.id)));
     setLocation("/guess-who/theme");
   };
 
@@ -31,34 +31,18 @@ export default function GuessWhoPlayers() {
           </p>
         </div>
 
-        <PlayerList
-          selectedPlayers={selectedPlayers}
-          onSelectedPlayersChange={setSelectedPlayers}
-        />
-
-        <div className="space-y-4 w-full max-w-md">
-          <Button
-            className="w-full bg-purple-700 hover:bg-purple-800"
-            size="lg"
-            onClick={() => setShowDialog(true)}
-          >
-            Gerenciar Jogadores
-          </Button>
-
-          <Button
-            className="w-full bg-green-600 hover:bg-green-700"
-            size="lg"
-            onClick={handleStartGame}
-            disabled={selectedPlayers.length < 2}
-          >
-            Continuar
-          </Button>
+        <div className="w-full max-w-md">
+          <PlayerList /> {/*Retained this line as it's in the edited code and is likely needed despite original code having different implementation*/}
         </div>
 
-        <PlayerManagementDialog
-          open={showDialog}
-          onOpenChange={setShowDialog}
-        />
+        <Button
+          className="w-full max-w-md bg-purple-700 hover:bg-purple-800 text-white"
+          size="lg"
+          onClick={handleStartGame}
+          disabled={players.length < 2}
+        >
+          {players.length < 2 ? "Mínimo 2 jogadores" : "Continuar"}
+        </Button>
       </div>
     </GameLayout>
   );
