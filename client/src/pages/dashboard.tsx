@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -76,7 +76,7 @@ export default function Dashboard() {
           >
             <CarouselContent className="-ml-4">
               {games.map((game) => (
-                <CarouselItem key={game.id} className="pl-4 basis-1/4 md:basis-1/4 lg:basis-[22%]">
+                <CarouselItem key={game.id} className="pl-4 basis-[18%] md:basis-[18%] lg:basis-[18%]">
                   <div 
                     className="flex flex-col items-center gap-2 p-4 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => navigate(game.route)}
