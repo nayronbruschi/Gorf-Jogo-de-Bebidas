@@ -52,11 +52,11 @@ export default function RouletteWinner() {
               <h1 className="text-4xl font-bold text-purple-900">
                 Parece que {winner.name} deu Gorf!
               </h1>
-              
+
               <div className="flex items-center justify-center gap-2 text-2xl text-purple-700">
                 <Beer className="h-8 w-8" />
                 <span>
-                  Bebeu {winner.drinksCompleted} {gameMode === "shots" ? "shots" : "goles"}
+                  {winner.points} {gameMode === "shots" ? "shots" : "goles"}
                 </span>
               </div>
 
