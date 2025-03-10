@@ -36,18 +36,6 @@ export async function registerRoutes(app: Express) {
     res.json(player);
   });
 
-  app.get("/api/players/:id", async (req, res) => {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
-      return res.status(400).json({ message: "ID inválido" });
-    }
-    const player = await storage.getPlayer(id);
-    if (!player) {
-      return res.status(404).json({ message: "Jogador não encontrado" });
-    }
-    res.json(player);
-  });
-
   // Importante: Colocar a rota "all" antes da rota com :id
   app.delete("/api/players/all", async (_req, res) => {
     try {
@@ -58,15 +46,31 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  app.get("/api/players/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "ID inválido" });
+      }
+
+      const player = await storage.getPlayer(id);
+      console.log('Retornando dados do jogador:', player);
+
+      if (!player) {
+        return res.status(404).json({ message: "Jogador não encontrado" });
+      }
+
+      res.json(player);
+    } catch (error) {
+      console.error('Erro ao buscar jogador:', error);
+      res.status(500).json({ message: "Erro ao buscar jogador" });
+    }
+  });
+
   app.post("/api/players", async (req, res) => {
     const result = insertPlayerSchema.safeParse(req.body);
     if (!result.success) {
-      return res.status(400).json({ message: "Nome do jogador é obrigatório e deve ter entre 1 e 30 caracteres" });
-    }
-
-    // Validação adicional do nome
-    if (!result.data.name.trim()) {
-      return res.status(400).json({ message: "Nome do jogador não pode estar vazio" });
+      return res.status(400).json({ message: "Nome do jogador é obrigatório" });
     }
 
     const player = await storage.addPlayer(result.data);

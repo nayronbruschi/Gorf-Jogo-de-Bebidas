@@ -19,7 +19,7 @@ export default function RouletteWinner() {
     queryFn: async () => {
       if (!playerId) return null;
       const response = await apiRequest("GET", `/api/players/${playerId}`);
-      console.log('Resposta da API:', response);
+      console.log('Dados do vencedor:', response);
       return response;
     },
     enabled: !!playerId,
@@ -38,9 +38,13 @@ export default function RouletteWinner() {
   };
 
   // Mostrar loading ou retornar null se não tiver dados
-  if (isLoading || !winner) return null;
-
-  console.log('Dados do vencedor:', winner);
+  if (isLoading || !winner) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+        <div className="text-white text-2xl">Carregando...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 relative overflow-hidden">
