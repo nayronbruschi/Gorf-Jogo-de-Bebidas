@@ -45,9 +45,11 @@ export default function ClassicMode() {
 
   const { data: settings } = useQuery({
     queryKey: ["/api/settings"],
-    onSuccess: () => {
-      setMaxPoints(settings?.maxPoints || 100);
-      maxPointsForm.setValue("maxPoints", settings?.maxPoints || 100);
+    onSuccess: (data) => {
+      if (data?.maxPoints) {
+        setMaxPoints(data.maxPoints);
+        maxPointsForm.setValue("maxPoints", data.maxPoints);
+      }
     }
   });
 
@@ -64,12 +66,16 @@ export default function ClassicMode() {
   });
 
   const updateMaxPoints = useMutation({
-    mutationFn: async (points: number) => {
-      await apiRequest("PATCH", "/api/settings", { maxPoints: points });
+    mutationFn: async (maxPoints: number) => {
+      await apiRequest("PATCH", "/api/settings", { maxPoints });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
       setDialogOpen(false);
+      toast({
+        title: "Pontuação máxima atualizada",
+        description: "A nova pontuação máxima foi salva com sucesso.",
+      });
     },
   });
 

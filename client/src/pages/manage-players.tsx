@@ -21,11 +21,6 @@ export default function ManagePlayers() {
 
   const { data: settings } = useQuery({
     queryKey: ["/api/settings"],
-    onSuccess: (data) => {
-      if (data?.maxPoints) {
-        maxPointsForm.setValue("maxPoints", data.maxPoints);
-      }
-    }
   });
 
   const form = useForm({
