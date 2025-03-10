@@ -1,8 +1,7 @@
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Home } from "lucide-react";
-import { motion } from "framer-motion";
+import { Home, Users } from "lucide-react";
 
 interface GameLayoutProps {
   children: React.ReactNode;
@@ -12,7 +11,7 @@ interface GameLayoutProps {
 }
 
 export function GameLayout({ children, title, className, showPlayersButton = true }: GameLayoutProps) {
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500">
@@ -27,14 +26,13 @@ export function GameLayout({ children, title, className, showPlayersButton = tru
         <div className="flex-1 flex justify-center items-center">
           <h1 className="text-2xl font-bold text-white">Gorf</h1>
         </div>
-        {showPlayersButton && (
+        {showPlayersButton && location === "/classic/play" && (
           <Button 
             variant="ghost" 
             size="icon"
             onClick={() => navigate("/manage-players")}
-            className="opacity-0 pointer-events-none" 
           >
-            <div className="h-6 w-6" />
+            <Users className="h-6 w-6 text-white" />
           </Button>
         )}
       </nav>
