@@ -34,9 +34,7 @@ export default function TouchGame() {
     if (gameEnded) return;
 
     // Se não houver toques
-    if (e.touches.length === 0) {
-      return;
-    }
+    if (e.touches.length === 0) return;
 
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -75,22 +73,38 @@ export default function TouchGame() {
         });
       };
 
-      // Criar intervalos para a contagem regressiva
-      setTimeout(updateCountdown, 1000);
-      setTimeout(updateCountdown, 2000);
+      // Aumentar o intervalo entre os números para 1.5 segundos
+      setTimeout(updateCountdown, 1500);
+      setTimeout(updateCountdown, 3000);
       timerRef.current = setTimeout(() => {
         updateCountdown();
-      }, 3000);
+      }, 4500);
     }
   };
 
   const selectRandom = () => {
     if (touchPointsRef.current.length === 0) return;
 
-    const randomPoint = touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)];
-    setSelectedPoint(randomPoint);
-    setTouchPoints([randomPoint]);
-    setGameEnded(true);
+    setSelecting(true);
+    const duration = 2000; // 2 segundos de animação
+    const interval = 150; // Intervalo entre as piscadas
+    let timeElapsed = 0;
+
+    const flash = setInterval(() => {
+      timeElapsed += interval;
+
+      if (timeElapsed >= duration) {
+        clearInterval(flash);
+        const randomPoint = touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)];
+        setSelectedPoint(randomPoint);
+        setTouchPoints([randomPoint]);
+        setSelecting(false);
+        setGameEnded(true);
+      } else {
+        // Durante a animação, piscar aleatoriamente entre os pontos
+        setSelectedPoint(touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)]);
+      }
+    }, interval);
   };
 
   const resetGame = () => {
@@ -98,6 +112,7 @@ export default function TouchGame() {
     setSelectedPoint(null);
     setCountdown(null);
     setGameEnded(false);
+    setSelecting(false);
     touchPointsRef.current = [];
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -129,6 +144,17 @@ export default function TouchGame() {
           <p className="text-white/80">
             Toque na tela com até 15 dedos e aguarde 3 segundos para o sorteio começar!
           </p>
+          {/* Botão "Jogar de novo" movido para cima */}
+          {gameEnded && (
+            <Button
+              size="lg"
+              onClick={resetGame}
+              className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-4 text-xl mt-4"
+            >
+              <RotateCcw className="mr-2 h-5 w-5" />
+              Jogar de novo
+            </Button>
+          )}
         </div>
 
         <div
@@ -156,8 +182,17 @@ export default function TouchGame() {
               <motion.div
                 key={point.id}
                 initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
+                animate={{
+                  scale: selecting && selectedPoint?.id === point.id ? [1, 1.2, 1] : 1,
+                  backgroundColor: selecting && selectedPoint?.id === point.id ? 
+                    [point.color, "#ffffff", point.color] : point.color
+                }}
                 exit={{ scale: 0 }}
+                transition={{
+                  duration: 0.3,
+                  repeat: selecting && selectedPoint?.id === point.id ? Infinity : 0,
+                  repeatDelay: 0.2
+                }}
                 style={{
                   position: "absolute",
                   left: point.x - 50,
@@ -165,7 +200,6 @@ export default function TouchGame() {
                   width: 100,
                   height: 100,
                   borderRadius: "50%",
-                  backgroundColor: point.color,
                   opacity: 0.8,
                   border: "3px solid rgba(255, 255, 255, 0.8)"
                 }}
@@ -173,17 +207,6 @@ export default function TouchGame() {
             ))}
           </AnimatePresence>
         </div>
-
-        {gameEnded && (
-          <Button
-            size="lg"
-            onClick={resetGame}
-            className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl mt-4"
-          >
-            <RotateCcw className="mr-2 h-5 w-5" />
-            Jogar de novo
-          </Button>
-        )}
       </div>
     </GameLayout>
   );
