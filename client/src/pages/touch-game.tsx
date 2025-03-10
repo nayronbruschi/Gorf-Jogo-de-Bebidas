@@ -26,6 +26,18 @@ export default function TouchGame() {
 
   const handleTouch = (e: TouchEvent) => {
     e.preventDefault();
+
+    // Se não houver toques, resetar tudo
+    if (e.touches.length === 0) {
+      if (selectedPoint) {
+        setTouchPoints([]);
+        setSelectedPoint(null);
+        touchPointsRef.current = [];
+        return;
+      }
+    }
+
+    // Se estiver selecionando, ignorar novos toques
     if (selecting) return;
 
     const rect = containerRef.current?.getBoundingClientRect();
@@ -41,6 +53,7 @@ export default function TouchGame() {
         color: colors[i]
       });
     }
+
     setTouchPoints(newPoints);
     touchPointsRef.current = newPoints;
 
