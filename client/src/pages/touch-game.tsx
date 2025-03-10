@@ -144,17 +144,6 @@ export default function TouchGame() {
           <p className="text-white/80">
             Toque na tela com até 15 dedos e aguarde 3 segundos para o sorteio começar!
           </p>
-          {/* Botão "Jogar de novo" movido para cima */}
-          {gameEnded && (
-            <Button
-              size="lg"
-              onClick={resetGame}
-              className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-4 text-xl mt-4"
-            >
-              <RotateCcw className="mr-2 h-5 w-5" />
-              Jogar de novo
-            </Button>
-          )}
         </div>
 
         <div
@@ -184,7 +173,7 @@ export default function TouchGame() {
                 initial={{ scale: 0 }}
                 animate={{
                   scale: selecting && selectedPoint?.id === point.id ? [1, 1.2, 1] : 1,
-                  backgroundColor: selecting && selectedPoint?.id === point.id ? 
+                  backgroundColor: selecting && selectedPoint?.id === point.id ?
                     [point.color, "#ffffff", point.color] : point.color
                 }}
                 exit={{ scale: 0 }}
@@ -207,6 +196,17 @@ export default function TouchGame() {
             ))}
           </AnimatePresence>
         </div>
+
+        {gameEnded && (
+          <Button
+            size="lg"
+            onClick={resetGame}
+            className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl mt-8"
+          >
+            <RotateCcw className="mr-2 h-5 w-5" />
+            Jogar de novo
+          </Button>
+        )}
       </div>
     </GameLayout>
   );

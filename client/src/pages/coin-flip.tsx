@@ -16,10 +16,12 @@ export default function CoinFlip() {
     const newResult = Math.random() < 0.5 ? "cara" : "coroa";
     setResult(null);
 
+    // Mostrar o resultado apenas quando a animação terminar
+    const animationDuration = 1500; // 1.5 segundos
     setTimeout(() => {
       setResult(newResult);
       setIsFlipping(false);
-    }, 1500);
+    }, animationDuration);
   };
 
   return (

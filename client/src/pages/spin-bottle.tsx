@@ -3,6 +3,7 @@ import { GameLayout } from "@/components/GameLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
+import { BottleIcon } from "@/components/BottleIcon";
 
 export default function SpinBottle() {
   const [rotation, setRotation] = useState(0);
@@ -40,11 +41,7 @@ export default function SpinBottle() {
               bounce: 0.2
             }}
           >
-            <img
-              src="/garrafa.webp"
-              alt="Garrafa"
-              className="w-full h-full object-contain"
-            />
+            <BottleIcon />
           </motion.div>
         </div>
 
