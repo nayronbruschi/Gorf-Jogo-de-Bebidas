@@ -2,6 +2,7 @@ import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Home, Users } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface GameLayoutProps {
   children: React.ReactNode;
