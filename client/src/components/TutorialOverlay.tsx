@@ -35,6 +35,12 @@ export function TutorialOverlay({ onClose }: TutorialOverlay) {
     }
   };
 
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -81,12 +87,23 @@ export function TutorialOverlay({ onClose }: TutorialOverlay) {
             <span className="text-sm text-gray-500">
               Passo {currentStep + 1} de {tutorialSteps.length}
             </span>
-            <Button
-              onClick={handleNext}
-              className="bg-purple-700 hover:bg-purple-800 text-white"
-            >
-              {currentStep === tutorialSteps.length - 1 ? 'Começar' : 'Próximo'}
-            </Button>
+            <div className="flex gap-2">
+              {currentStep > 0 && (
+                <Button
+                  variant="outline"
+                  onClick={handleBack}
+                  className="text-purple-700 border-purple-700 hover:bg-purple-50"
+                >
+                  Voltar
+                </Button>
+              )}
+              <Button
+                onClick={handleNext}
+                className="bg-purple-700 hover:bg-purple-800 text-white"
+              >
+                {currentStep === tutorialSteps.length - 1 ? 'Começar' : 'Próximo'}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
