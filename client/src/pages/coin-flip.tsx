@@ -17,11 +17,10 @@ export default function CoinFlip() {
     setResult(null);
 
     // Mostrar o resultado apenas quando a animação terminar
-    const animationDuration = 1500; // 1.5 segundos
     setTimeout(() => {
       setResult(newResult);
       setIsFlipping(false);
-    }, animationDuration);
+    }, 1500); // 1.5 segundos
   };
 
   return (

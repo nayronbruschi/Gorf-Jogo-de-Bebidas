@@ -34,7 +34,11 @@ export default function TouchGame() {
     if (gameEnded) return;
 
     // Se não houver toques
-    if (e.touches.length === 0) return;
+    if (e.touches.length === 0) {
+      setTouchPoints([]);
+      touchPointsRef.current = [];
+      return;
+    }
 
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -50,35 +54,32 @@ export default function TouchGame() {
       });
     }
 
-    setTouchPoints(newPoints);
-    touchPointsRef.current = newPoints;
+    // Atualizar pontos apenas se não estivermos em contagem regressiva
+    if (countdown === null) {
+      setTouchPoints(newPoints);
+      touchPointsRef.current = newPoints;
 
-    // Reset timer
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      setCountdown(null);
-    }
+      // Iniciar contagem apenas se não estiver já contando
+      if (timerRef.current === null) {
+        setCountdown(3);
 
-    // Start new timer if there are points
-    if (newPoints.length > 0) {
-      setCountdown(3);
+        const updateCountdown = () => {
+          setCountdown((prev) => {
+            if (prev === null || prev <= 1) {
+              selectRandom();
+              return null;
+            }
+            return prev - 1;
+          });
+        };
 
-      const updateCountdown = () => {
-        setCountdown((prev) => {
-          if (prev === null || prev <= 1) {
-            selectRandom();
-            return null;
-          }
-          return prev - 1;
-        });
-      };
-
-      // Aumentar o intervalo entre os números para 1.5 segundos
-      setTimeout(updateCountdown, 1500);
-      setTimeout(updateCountdown, 3000);
-      timerRef.current = setTimeout(() => {
-        updateCountdown();
-      }, 4500);
+        // Contagem regressiva mais lenta
+        setTimeout(updateCountdown, 1500);
+        setTimeout(updateCountdown, 3000);
+        timerRef.current = setTimeout(() => {
+          updateCountdown();
+        }, 4500);
+      }
     }
   };
 
@@ -117,6 +118,7 @@ export default function TouchGame() {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
+    timerRef.current = null;
   };
 
   useEffect(() => {
@@ -139,7 +141,7 @@ export default function TouchGame() {
 
   return (
     <GameLayout title="Toque na Sorte">
-      <div className="flex flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-8">
         <div className="text-center mb-4">
           <p className="text-white/80">
             Toque na tela com até 15 dedos e aguarde 3 segundos para o sorteio começar!
