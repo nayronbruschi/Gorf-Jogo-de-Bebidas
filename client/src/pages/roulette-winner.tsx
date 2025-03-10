@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Beer, Home } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 
 export default function RouletteWinner() {
   const [, navigate] = useLocation();
@@ -17,53 +18,72 @@ export default function RouletteWinner() {
     enabled: !!playerId
   });
 
+  const handlePlayAgain = async () => {
+    try {
+      // Resetar apenas os pontos dos jogadores
+      await apiRequest("POST", "/api/players/reset", {});
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      navigate("/roulette/play");
+    } catch (error) {
+      console.error('Erro ao reiniciar jogo:', error);
+    }
+  };
+
   if (!winner) return null;
 
   return (
-    <GameLayout title="">
-      <div className="relative min-h-[80vh] flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 relative overflow-hidden">
+      {/* Animação de gosma */}
+      <motion.div
+        initial={{ y: -1000 }}
+        animate={{ y: 0 }}
+        transition={{
+          duration: 2,
+          ease: [0.87, 0, 0.13, 1],
+        }}
+        className="absolute inset-x-0 top-0 h-[200%] bg-purple-800/30 backdrop-blur-sm"
+        style={{
+          borderRadius: "0 0 50% 50%/0 0 100% 100%",
+          transform: "scaleX(1.5)",
+        }}
+      />
+
+      <div className="relative min-h-screen flex items-center justify-center">
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{
             type: "spring",
             stiffness: 260,
-            damping: 20
+            damping: 20,
+            delay: 1
           }}
-          className="max-w-lg w-full mx-auto text-center"
+          className="max-w-lg w-full mx-auto text-center px-4"
         >
-          {/* Animação de Splash */}
-          <motion.div
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="absolute inset-0 pointer-events-none"
-          >
-            <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl" />
-          </motion.div>
-
-          <div className="bg-white rounded-xl p-8 relative z-10 shadow-xl">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 relative shadow-xl">
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 1.5 }}
               className="space-y-6"
             >
               <h1 className="text-4xl font-bold text-purple-900">
-                Parece que {winner.name} deu Gorf!
+                {winner.name} deu Gorf!
               </h1>
 
               <div className="flex items-center justify-center gap-2 text-2xl text-purple-700">
                 <Beer className="h-8 w-8" />
                 <span>
-                  {winner.points} {gameMode === "shots" ? "shots" : "goles"}
+                  Bebeu {winner.points} {winner.points === 1 ? 
+                    (gameMode === "shots" ? "shot" : "gole") : 
+                    (gameMode === "shots" ? "shots" : "goles")}
                 </span>
               </div>
 
               <div className="flex flex-col gap-4 mt-8">
                 <Button
                   size="lg"
-                  onClick={() => navigate("/roulette/play")}
+                  onClick={handlePlayAgain}
                   className="bg-purple-700 hover:bg-purple-800 text-white text-xl py-6"
                 >
                   Jogar de novo
@@ -82,6 +102,6 @@ export default function RouletteWinner() {
           </div>
         </motion.div>
       </div>
-    </GameLayout>
+    </div>
   );
 }
