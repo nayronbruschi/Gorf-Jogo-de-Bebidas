@@ -230,12 +230,9 @@ export default function GuessWhoGame() {
         </Button>
 
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-white">
-            <User2 className="w-6 h-6" />
-            <span className="text-xl font-medium">
-              {currentPlayerName}
-            </span>
-          </div>
+          <span className="text-xl font-medium text-white">
+            {currentPlayerName}
+          </span>
         </div>
       </div>
 
@@ -268,7 +265,7 @@ export default function GuessWhoGame() {
               exit={{ scale: 0.8, opacity: 0 }}
               className="text-center space-y-8"
             >
-              <div className="text-8xl font-bold text-white mb-8">
+              <div className="text-6xl font-bold text-white mb-8">
                 {currentItem}
               </div>
               <div className="text-4xl font-bold text-white">
