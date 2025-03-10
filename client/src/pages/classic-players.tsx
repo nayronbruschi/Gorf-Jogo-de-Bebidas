@@ -1,14 +1,32 @@
 import { GameLayout } from "@/components/GameLayout";
 import { PlayerList } from "@/components/PlayerList";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Play } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 
 export default function ClassicPlayers() {
   const [, navigate] = useLocation();
   const { data: players = [] } = useQuery({
     queryKey: ["/api/players"],
+  });
+
+  const startGame = useMutation({
+    mutationFn: async () => {
+      // Limpar pontuações antes de começar
+      await apiRequest("POST", "/api/players/reset", {});
+      // Definir o primeiro jogador
+      await apiRequest("POST", "/api/players/first", {});
+    },
+    onSuccess: async () => {
+      // Atualizar os dados
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
+      // Iniciar o jogo
+      navigate("/classic/play");
+    }
   });
 
   return (
@@ -25,9 +43,9 @@ export default function ClassicPlayers() {
         <div className="flex justify-center">
           <Button
             size="lg"
-            onClick={() => navigate("/classic/start")}
+            onClick={() => startGame.mutate()}
             disabled={players.length < 2}
-            className={`px-8 py-6 ${
+            className={`px-8 py-6 flex items-center justify-center ${
               players.length >= 2 
                 ? "bg-purple-700 hover:bg-purple-800 text-white"
                 : "bg-white/20 hover:bg-white/30 text-white"

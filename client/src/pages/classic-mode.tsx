@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { decks } from "@/lib/game-data";
 import { useSound } from "@/hooks/use-sound";
-import { User, Beer, Target, ArrowRight, Award, Crown, Plus, Minus, Users } from "lucide-react";
+import { User, Beer, Target, ArrowRight, Award, Crown, Plus, Minus, Users, ArrowLeft } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
@@ -173,6 +173,10 @@ export default function ClassicMode() {
 
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
 
+  const handleBackToGame = () => {
+    navigate("/manage-players");
+  };
+
   return (
     <>
       <AnimatePresence>
@@ -321,11 +325,10 @@ export default function ClassicMode() {
               </div>
               <Button
                 variant="ghost"
-                size="icon"
-                onClick={() => navigate("/manage-players")}
+                onClick={handleBackToGame}
                 className="text-white hover:text-white/80"
               >
-                <Users className="h-5 w-5" />
+                <ArrowLeft className="h-5 w-5" />
               </Button>
             </div>
             <div className="space-y-3">
