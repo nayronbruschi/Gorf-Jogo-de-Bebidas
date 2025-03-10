@@ -12,7 +12,12 @@ interface PlayerItem {
 }
 
 export default function GuessWhoGame() {
+  // Todos os hooks são chamados primeiro
   const [, setLocation] = useLocation();
+  const { data: playersData = [] } = useQuery({
+    queryKey: ["/api/players"],
+  });
+
   const [players, setPlayers] = useState<string[]>([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [items, setItems] = useState<string[]>([]);
@@ -26,7 +31,39 @@ export default function GuessWhoGame() {
   const [showWinScreen, setShowWinScreen] = useState(false);
   const [winner, setWinner] = useState("");
 
-  // Inicialização do jogo
+  // Helpers definidos antes dos efeitos
+  const setLandscapeMode = () => {
+    document.documentElement.style.setProperty('transform', 'rotate(-90deg)');
+    document.documentElement.style.setProperty('transform-origin', 'left top');
+    document.documentElement.style.setProperty('width', '100vh');
+    document.documentElement.style.setProperty('height', '100vw');
+    document.documentElement.style.setProperty('overflow', 'hidden');
+    document.documentElement.style.setProperty('position', 'absolute');
+    document.documentElement.style.setProperty('top', '100%');
+    document.documentElement.style.setProperty('left', '0');
+  };
+
+  const setPortraitMode = () => {
+    resetOrientation();
+  };
+
+  const resetOrientation = () => {
+    document.documentElement.style.removeProperty('transform');
+    document.documentElement.style.removeProperty('transform-origin');
+    document.documentElement.style.removeProperty('width');
+    document.documentElement.style.removeProperty('height');
+    document.documentElement.style.removeProperty('overflow');
+    document.documentElement.style.removeProperty('position');
+    document.documentElement.style.removeProperty('top');
+    document.documentElement.style.removeProperty('left');
+  };
+
+  const getPlayerName = (playerId: string) => {
+    const player = playersData.find((p: any) => p.id === Number(playerId));
+    return player ? player.name : "";
+  };
+
+  // Efeito de inicialização
   useEffect(() => {
     const storedPlayers = localStorage.getItem("guessWhoPlayers");
     const theme = localStorage.getItem("guessWhoTheme") as ThemeId;
@@ -54,72 +91,48 @@ export default function GuessWhoGame() {
         initialPlayerItems[playerId] = randomItem;
       });
       setPlayerItems(initialPlayerItems);
+
+      setLandscapeMode();
     } catch (error) {
       console.error('Erro ao inicializar o jogo:', error);
       setLocation("/guess-who/players");
       return;
     }
 
-    setLandscapeMode();
-
-    return () => {
-      resetOrientation();
-    };
+    return resetOrientation;
   }, [setLocation]);
-
-  const setLandscapeMode = () => {
-    document.documentElement.style.setProperty('transform', 'rotate(-90deg)');
-    document.documentElement.style.setProperty('transform-origin', 'left top');
-    document.documentElement.style.setProperty('width', '100vh');
-    document.documentElement.style.setProperty('height', '100vw');
-    document.documentElement.style.setProperty('overflow', 'hidden');
-    document.documentElement.style.setProperty('position', 'absolute');
-    document.documentElement.style.setProperty('top', '100%');
-    document.documentElement.style.setProperty('left', '0');
-  };
-
-  const setPortraitMode = () => {
-    resetOrientation();
-  };
-
-  const resetOrientation = () => {
-    document.documentElement.style.removeProperty('transform');
-    document.documentElement.style.removeProperty('transform-origin');
-    document.documentElement.style.removeProperty('width');
-    document.documentElement.style.removeProperty('height');
-    document.documentElement.style.removeProperty('overflow');
-    document.documentElement.style.removeProperty('position');
-    document.documentElement.style.removeProperty('top');
-    document.documentElement.style.removeProperty('left');
-  };
 
   // Timer de preparação
   useEffect(() => {
-    if (isSetup && setupTime > 0) {
-      const timer = setInterval(() => {
-        setSetupTime(prev => prev - 1);
-      }, 1000);
+    if (!isSetup || setupTime <= 0) return;
 
-      return () => clearInterval(timer);
-    } else if (isSetup && setupTime === 0) {
+    const timer = setInterval(() => {
+      setSetupTime(prev => prev - 1);
+    }, 1000);
+
+    if (setupTime === 0) {
       setIsSetup(false);
       setShowItem(true);
       setTimeLeft(30);
     }
+
+    return () => clearInterval(timer);
   }, [setupTime, isSetup]);
 
   // Timer principal
   useEffect(() => {
-    if (!isSetup && timeLeft > 0 && showItem) {
-      const timer = setInterval(() => {
-        setTimeLeft(prev => prev - 1);
-      }, 1000);
+    if (isSetup || !showItem || timeLeft <= 0) return;
 
-      return () => clearInterval(timer);
-    } else if (!isSetup && timeLeft === 0 && showItem) {
+    const timer = setInterval(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000);
+
+    if (timeLeft === 0) {
       setShowItem(false);
       setPortraitMode();
     }
+
+    return () => clearInterval(timer);
   }, [timeLeft, showItem, isSetup]);
 
   const handleNextPlayer = useCallback(() => {
@@ -129,7 +142,6 @@ export default function GuessWhoGame() {
     } while (eliminated.includes(players[nextIndex]));
 
     if (nextIndex === currentPlayerIndex) {
-      // Todos os jogadores foram eliminados
       setLocation("/game-modes");
       return;
     }
@@ -147,14 +159,11 @@ export default function GuessWhoGame() {
     const currentItem = playerItems[currentPlayerId];
 
     if (guess.toLowerCase().trim() === currentItem?.toLowerCase().trim()) {
-      // Jogador venceu
       setWinner(currentPlayerId);
       setShowWinScreen(true);
     } else {
-      // Jogador eliminado
       setEliminated([...eliminated, currentPlayerId]);
       if (eliminated.length + 1 >= players.length - 1) {
-        // Jogo acabou, todos eliminados
         setLocation("/game-modes");
       } else {
         handleNextPlayer();
@@ -166,17 +175,6 @@ export default function GuessWhoGame() {
 
   const currentPlayerId = players[currentPlayerIndex];
   const currentItem = playerItems[currentPlayerId];
-
-  // Buscar os nomes dos jogadores
-  const { data: playersData = [] } = useQuery({
-    queryKey: ["/api/players"],
-  });
-
-  const getPlayerName = (playerId: string) => {
-    const player = playersData.find((p: any) => p.id === Number(playerId));
-    return player ? player.name : "";
-  };
-
   const currentPlayerName = getPlayerName(currentPlayerId);
   const winnerName = winner ? getPlayerName(winner) : "";
 
