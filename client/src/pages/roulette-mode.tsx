@@ -107,7 +107,7 @@ export default function RouletteMode() {
     try {
       const maxPoints = localStorage.getItem("maxPoints") || "100";
       const response = await apiRequest("GET", `/api/players/${playerId}`);
-      if (response.points >= parseInt(maxPoints)) {
+      if (response.drinksCompleted >= parseInt(maxPoints)) {
         navigate(`/roulette/winner?playerId=${playerId}`);
         return true;
       }
@@ -129,6 +129,7 @@ export default function RouletteMode() {
           points: numDrinks
         });
 
+        await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
         const hasWon = await checkWinCondition(selectedPlayer.id);
         if (hasWon) return;
 
@@ -144,6 +145,7 @@ export default function RouletteMode() {
           points: punishmentDrinks
         });
 
+        await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
         const hasWon = await checkWinCondition(selectedPlayer.id);
         if (hasWon) return;
       }
