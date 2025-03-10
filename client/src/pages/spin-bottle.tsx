@@ -41,7 +41,7 @@ export default function SpinBottle() {
             }}
           >
             <img
-              src="/attached_assets/garrafa.webp"
+              src="/garrafa.webp"
               alt="Garrafa"
               className="w-full h-full object-contain"
             />

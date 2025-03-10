@@ -22,7 +22,7 @@ export default function TouchGame() {
   const [selectedPoint, setSelectedPoint] = useState<TouchPoint | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const startTimeRef = useRef<number | null>(null);
+  const touchPointsRef = useRef<TouchPoint[]>([]);
 
   const handleTouch = (e: TouchEvent) => {
     e.preventDefault();
@@ -42,25 +42,23 @@ export default function TouchGame() {
       });
     }
     setTouchPoints(newPoints);
+    touchPointsRef.current = newPoints;
 
-    // Reset timer and start time
+    // Reset timer
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
 
     // Start new timer if there are points
     if (newPoints.length > 0) {
-      startTimeRef.current = Date.now();
       timerRef.current = setTimeout(() => {
         selectRandom();
       }, 3000);
-    } else {
-      startTimeRef.current = null;
     }
   };
 
   const selectRandom = () => {
-    if (touchPoints.length === 0 || selecting) return;
+    if (touchPointsRef.current.length === 0 || selecting) return;
 
     setSelecting(true);
     const duration = 2000; // 2 segundos
@@ -72,11 +70,11 @@ export default function TouchGame() {
 
       if (timeElapsed >= duration) {
         clearInterval(flash);
-        const randomPoint = touchPoints[Math.floor(Math.random() * touchPoints.length)];
+        const randomPoint = touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)];
         setSelectedPoint(randomPoint);
         setSelecting(false);
       } else {
-        setSelectedPoint(touchPoints[Math.floor(Math.random() * touchPoints.length)]);
+        setSelectedPoint(touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)]);
       }
     }, interval);
   };
@@ -132,10 +130,10 @@ export default function TouchGame() {
                 }}
                 style={{
                   position: "absolute",
-                  left: point.x - 40, // Aumentado para círculos maiores
-                  top: point.y - 40, // Aumentado para círculos maiores
-                  width: 80, // Aumentado o tamanho
-                  height: 80, // Aumentado o tamanho
+                  left: point.x - 40,
+                  top: point.y - 40,
+                  width: 80,
+                  height: 80,
                   borderRadius: "50%",
                   opacity: 0.8,
                   border: "3px solid rgba(255, 255, 255, 0.8)"

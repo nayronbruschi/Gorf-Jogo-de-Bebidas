@@ -31,42 +31,48 @@ export default function CoinFlip() {
 
         <div className="relative w-32 h-32">
           <motion.div
-            className="w-full h-full"
+            className="w-full h-full [transform-style:preserve-3d]"
             animate={isFlipping ? {
-              rotateX: [0, 720 + (Math.random() < 0.5 ? 180 : 0)],
-              y: [0, -150, 0],
-              scale: [1, 1.1, 1]
-            } : {}}
+              rotateX: [0, 720],
+              y: [0, -200, 0],
+            } : {
+              rotateY: result === "coroa" ? 180 : 0
+            }}
             transition={{
-              duration: 1.5,
-              times: [0, 0.5, 1],
-              y: {
-                type: "spring",
-                stiffness: 200,
-                damping: 15
-              }
+              duration: isFlipping ? 1.5 : 0.6,
+              type: "spring",
+              stiffness: 200,
+              damping: 15
             }}
           >
-            <div className="relative w-full h-full perspective-1000">
-              <div className={`absolute w-full h-full rounded-full transition-transform duration-500 ${isFlipping ? "animate-flip" : ""}`}>
-                {/* Cara */}
-                <div className="absolute w-full h-full rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center transform-style-3d backface-hidden border-4 border-yellow-300">
-                  <div className="relative w-20 h-20">
-                    <div className="absolute inset-0 rounded-full bg-yellow-300 flex items-center justify-center">
-                      <div className="absolute w-3 h-3 rounded-full bg-yellow-700" style={{ top: '30%', left: '40%' }} />
-                      <div className="absolute w-3 h-3 rounded-full bg-yellow-700" style={{ top: '30%', right: '40%' }} />
-                      <div className="absolute w-8 h-4 rounded-full border-2 border-yellow-700" style={{ top: '60%', left: '50%', transform: 'translateX(-50%)' }} />
-                    </div>
-                  </div>
+            {/* Face da moeda (Cara) */}
+            <div 
+              className="absolute w-full h-full rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 
+                         [backface-visibility:hidden] flex items-center justify-center border-4 border-yellow-300"
+            >
+              <div className="relative w-20 h-20">
+                <div className="absolute inset-0 rounded-full bg-yellow-300 flex items-center justify-center">
+                  <div className="absolute w-3 h-3 rounded-full bg-yellow-700" style={{ top: '30%', left: '40%' }} />
+                  <div className="absolute w-3 h-3 rounded-full bg-yellow-700" style={{ top: '30%', right: '40%' }} />
+                  <div className="absolute w-8 h-4 rounded-full border-2 border-yellow-700" style={{ top: '60%', left: '50%', transform: 'translateX(-50%)' }} />
                 </div>
-                {/* Coroa */}
-                <div className="absolute w-full h-full rounded-full bg-gradient-to-br from-yellow-500 to-yellow-700 flex items-center justify-center transform rotateY-180 transform-style-3d backface-hidden border-4 border-yellow-300">
-                  <div className="relative w-20 h-20">
-                    <div className="absolute inset-0 rounded-full bg-yellow-300 flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-12 h-12 text-yellow-700" fill="currentColor">
-                        <path d="M12 1L15.5 9L23 9L17 14L19.5 22L12 17.5L4.5 22L7 14L1 9L8.5 9L12 1Z" />
-                      </svg>
-                    </div>
+              </div>
+            </div>
+
+            {/* Face da moeda (Coroa) */}
+            <div 
+              className="absolute w-full h-full rounded-full bg-gradient-to-br from-yellow-500 to-yellow-700 
+                         [backface-visibility:hidden] [transform:rotateY(180deg)] flex items-center justify-center 
+                         border-4 border-yellow-300"
+            >
+              <div className="relative w-20 h-20">
+                <div className="absolute inset-0 rounded-full bg-yellow-300 flex items-center justify-center">
+                  <div className="w-12 h-12 relative">
+                    <div className="absolute w-full h-2 bg-yellow-700 top-0 left-0" />
+                    <div className="absolute w-2 h-8 bg-yellow-700 top-2 left-1" />
+                    <div className="absolute w-2 h-8 bg-yellow-700 top-2 right-1" />
+                    <div className="absolute w-2 h-8 bg-yellow-700 top-2 left-[calc(50%-1px)]" />
+                    <div className="absolute w-8 h-2 bg-yellow-700 bottom-0 left-[calc(50%-16px)]" />
                   </div>
                 </div>
               </div>
