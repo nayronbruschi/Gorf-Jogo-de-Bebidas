@@ -70,10 +70,14 @@ export default function RouletteMode() {
     if (!selectedPlayer) return;
 
     setHasDrunk(true);
-    await updateDrinks.mutateAsync({
-      playerId: selectedPlayer.id,
-      drinks: numDrinks
-    });
+    try {
+      await updateDrinks.mutateAsync({
+        playerId: selectedPlayer.id,
+        drinks: numDrinks
+      });
+    } catch (error) {
+      console.error('Erro ao atualizar goles:', error);
+    }
   };
 
   const handleRefusal = () => {
@@ -85,14 +89,18 @@ export default function RouletteMode() {
   const generateNewPunishment = async () => {
     if (!selectedPlayer) return;
 
-    // Adicionar um gole ao contador
-    await updateDrinks.mutateAsync({
-      playerId: selectedPlayer.id,
-      drinks: 1
-    });
+    try {
+      // Adicionar um gole ao contador
+      await updateDrinks.mutateAsync({
+        playerId: selectedPlayer.id,
+        drinks: 1
+      });
 
-    const randomPunishment = punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)];
-    setCurrentPunishment(randomPunishment);
+      const randomPunishment = punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)];
+      setCurrentPunishment(randomPunishment);
+    } catch (error) {
+      console.error('Erro ao atualizar goles:', error);
+    }
   };
 
   const handlePunishmentComplete = () => {
@@ -166,7 +174,7 @@ export default function RouletteMode() {
                     size="lg"
                     onClick={handleRefusal}
                     variant="outline"
-                    className="border-purple-700 text-purple-700 hover:bg-purple-50 w-full sm:w-auto"
+                    className="bg-white border-purple-700 text-purple-700 hover:bg-purple-50 w-full sm:w-auto"
                   >
                     <X className="mr-2 h-5 w-5" />
                     Se recusou a beber
