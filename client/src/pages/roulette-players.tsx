@@ -28,6 +28,11 @@ export default function RoulettePlayers() {
     // Salvar configurações no localStorage
     localStorage.setItem("maxPerRound", maxPerRound);
     localStorage.setItem("maxPoints", maxToWin);
+    console.log('Configurações salvas:', {
+      maxPerRound,
+      maxToWin,
+      gameMode
+    });
     // Ir para a página do jogo
     navigate("/roulette/play");
   };

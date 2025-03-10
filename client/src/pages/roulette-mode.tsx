@@ -108,10 +108,11 @@ export default function RouletteMode() {
     if (!selectedPlayer || !action) return;
 
     try {
-      let totalPoints = 0;
-      const maxPoints = Number(localStorage.getItem("maxPoints")) || 100;
+      const maxPoints = Number(localStorage.getItem("maxPoints"));
+      console.log('Pontuação máxima configurada:', maxPoints);
 
-      // Primeiro vamos atualizar todos os pontos
+      let totalPoints = 0;
+
       if (action === "drink") {
         await updatePoints.mutateAsync({
           playerId: selectedPlayer.id,
