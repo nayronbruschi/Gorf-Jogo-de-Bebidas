@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, ChevronLeft, Hand } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface TouchPoint {
   id: number;
@@ -19,6 +20,7 @@ const colors = [
 ];
 
 export default function TouchGame() {
+  const [isPlaying, setIsPlaying] = useState(false);
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
   const [selecting, setSelecting] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<TouchPoint | null>(null);
@@ -27,6 +29,7 @@ export default function TouchGame() {
   const containerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const touchPointsRef = useRef<TouchPoint[]>([]);
+  const [, setLocation] = useLocation();
 
   const handleTouch = (e: TouchEvent) => {
     e.preventDefault();
@@ -129,6 +132,8 @@ export default function TouchGame() {
   };
 
   useEffect(() => {
+    if (!isPlaying) return;
+
     const container = containerRef.current;
     if (!container) return;
 
@@ -144,20 +149,55 @@ export default function TouchGame() {
         clearTimeout(timerRef.current);
       }
     };
-  }, [gameEnded]);
+  }, [isPlaying, gameEnded]);
+
+  if (!isPlaying) {
+    return (
+      <GameLayout title="Toque na Sorte">
+        <div className="flex flex-col items-center gap-8 p-6">
+          <div className="text-center space-y-4">
+            <Hand className="w-16 h-16 text-white mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-2">Como Jogar</h2>
+            <p className="text-white/80 text-lg leading-relaxed">
+              1. Toque na tela com vários dedos ao mesmo tempo (até 15)
+            </p>
+            <p className="text-white/80 text-lg leading-relaxed">
+              2. Mantenha os dedos na tela por 3 segundos
+            </p>
+            <p className="text-white/80 text-lg leading-relaxed">
+              3. O jogo vai sortear aleatoriamente um dos dedos
+            </p>
+            <p className="text-white/80 text-lg leading-relaxed">
+              4. O dedo escolhido é o vencedor!
+            </p>
+          </div>
+          <Button
+            size="lg"
+            onClick={() => setIsPlaying(true)}
+            className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl mt-8"
+          >
+            Começar
+          </Button>
+        </div>
+      </GameLayout>
+    );
+  }
 
   return (
-    <GameLayout title="Toque na Sorte">
-      <div className="flex flex-col items-center gap-8">
-        <div className="text-center mb-4">
-          <p className="text-white/80">
-            Toque na tela com até 15 dedos e aguarde 3 segundos para o sorteio começar!
-          </p>
-        </div>
+    <div className="h-screen bg-gradient-to-b from-purple-900 to-purple-800 relative">
+      {/* Botão Voltar */}
+      <Button
+        variant="ghost"
+        className="absolute top-4 left-4 text-white hover:bg-white/20"
+        onClick={() => setLocation("/game-modes")}
+      >
+        <ChevronLeft className="h-6 w-6" />
+      </Button>
 
+      <div className="flex flex-col items-center h-full">
         <div
           ref={containerRef}
-          className="w-full aspect-[3/4] bg-white/10 backdrop-blur-sm rounded-xl relative touch-none"
+          className="w-full h-full relative touch-none"
         >
           {/* Contador regressivo no topo */}
           <AnimatePresence>
@@ -205,19 +245,22 @@ export default function TouchGame() {
               />
             ))}
           </AnimatePresence>
-        </div>
 
-        {gameEnded && !selecting && (
-          <Button
-            size="lg"
-            onClick={resetGame}
-            className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl mt-8"
-          >
-            <RotateCcw className="mr-2 h-5 w-5" />
-            Jogar de novo
-          </Button>
-        )}
+          {/* Botão Jogar de novo dentro do campo */}
+          {gameEnded && !selecting && (
+            <div className="absolute bottom-8 inset-x-0 flex justify-center">
+              <Button
+                size="lg"
+                onClick={resetGame}
+                className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl"
+              >
+                <RotateCcw className="mr-2 h-5 w-5" />
+                Jogar de novo
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
-    </GameLayout>
+    </div>
   );
 }
