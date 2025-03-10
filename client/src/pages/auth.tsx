@@ -39,6 +39,8 @@ export default function Auth() {
         return 'Login com Google cancelado';
       case 'auth/cancelled-popup-request':
         return 'Operação cancelada';
+      case 'auth/unauthorized-domain':
+        return 'Domínio não autorizado. Por favor, adicione o domínio do Replit no console do Firebase: Authentication > Settings > Authorized domains';
       case 'auth/configuration-not-found':
         return 'Erro de configuração do Firebase';
       default:
@@ -106,6 +108,8 @@ export default function Auth() {
               onChange={(e) => setEmail(e.target.value)}
               className="bg-white/20 text-white placeholder:text-white/60 border-none"
               disabled={isLoading}
+              autoComplete="email"
+              enterKeyHint="next"
             />
             <Input
               type="password"
@@ -114,6 +118,8 @@ export default function Auth() {
               onChange={(e) => setPassword(e.target.value)}
               className="bg-white/20 text-white placeholder:text-white/60 border-none"
               disabled={isLoading}
+              autoComplete={isLogin ? "current-password" : "new-password"}
+              enterKeyHint="done"
             />
 
             {error && (
