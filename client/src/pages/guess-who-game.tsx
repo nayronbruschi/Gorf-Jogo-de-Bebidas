@@ -132,9 +132,9 @@ export default function GuessWhoGame() {
           clearInterval(timer);
           setShowItem(false);
           setPortraitMode();
-          // Vibrar quando o tempo acabar (200ms)
-          if (navigator.vibrate) {
-            navigator.vibrate(200);
+          // Vibrar quando o tempo acabar (500ms)
+          if ('vibrate' in navigator) {
+            navigator.vibrate([200, 100, 200]); // Padrão mais perceptível: vibra-pausa-vibra
           }
           return 0;
         }
