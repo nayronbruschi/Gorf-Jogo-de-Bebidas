@@ -14,6 +14,10 @@ import RouletteMode from "@/pages/roulette-mode";
 import RouletteWinner from "@/pages/roulette-winner";
 import TruthOrDare from "@/pages/truth-or-dare";
 import ManagePlayers from "@/pages/manage-players";
+import TouchGame from "@/pages/touch-game";
+import SpinBottle from "@/pages/spin-bottle";
+import CoinFlip from "@/pages/coin-flip";
+import Cards from "@/pages/cards";
 
 function Router() {
   return (
@@ -29,6 +33,11 @@ function Router() {
       <Route path="/roulette/winner" component={RouletteWinner} />
       <Route path="/truth-or-dare" component={TruthOrDare} />
       <Route path="/manage-players" component={ManagePlayers} />
+      {/* Novas rotas */}
+      <Route path="/touch-game" component={TouchGame} />
+      <Route path="/spin-bottle" component={SpinBottle} />
+      <Route path="/coin-flip" component={CoinFlip} />
+      <Route path="/cards" component={Cards} />
       <Route component={NotFound} />
     </Switch>
   );
