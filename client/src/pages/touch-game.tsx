@@ -91,6 +91,9 @@ export default function TouchGame() {
     const interval = 150; // Intervalo entre as piscadas
     let timeElapsed = 0;
 
+    // Array para armazenar todos os pontos durante a animação
+    setTouchPoints(touchPointsRef.current);
+
     const flash = setInterval(() => {
       timeElapsed += interval;
 
@@ -98,12 +101,13 @@ export default function TouchGame() {
         clearInterval(flash);
         const randomPoint = touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)];
         setSelectedPoint(randomPoint);
+        // Mostrar apenas o ponto vencedor
         setTouchPoints([randomPoint]);
         setSelecting(false);
         setGameEnded(true);
       } else {
-        // Durante a animação, piscar aleatoriamente entre os pontos
-        setSelectedPoint(touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)]);
+        // Durante a animação, todos os pontos piscam
+        setSelectedPoint(null);
       }
     }, interval);
   };
@@ -174,15 +178,16 @@ export default function TouchGame() {
                 key={point.id}
                 initial={{ scale: 0 }}
                 animate={{
-                  scale: selecting && selectedPoint?.id === point.id ? [1, 1.2, 1] : 1,
-                  backgroundColor: selecting && selectedPoint?.id === point.id ?
-                    [point.color, "#ffffff", point.color] : point.color
+                  scale: selecting ? [1, 1.2, 1] : 1,
+                  backgroundColor: point.color
                 }}
                 exit={{ scale: 0 }}
                 transition={{
-                  duration: 0.3,
-                  repeat: selecting && selectedPoint?.id === point.id ? Infinity : 0,
-                  repeatDelay: 0.2
+                  scale: {
+                    duration: 0.3,
+                    repeat: selecting ? Infinity : 0,
+                    repeatDelay: 0.2
+                  }
                 }}
                 style={{
                   position: "absolute",
