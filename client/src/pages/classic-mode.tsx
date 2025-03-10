@@ -22,6 +22,7 @@ import { useForm } from "react-hook-form";
 import { createElement } from "react";
 import { useLocation } from "wouter";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
+import { updateGameStats } from "@/lib/stats";
 
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
@@ -34,6 +35,7 @@ export default function ClassicMode() {
     const hasSeenTutorial = localStorage.getItem("hasSeenTutorial");
     return !hasSeenTutorial;
   });
+  const [gameStartTime] = useState<number>(Date.now());
   const { play } = useSound();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -161,6 +163,16 @@ export default function ClassicMode() {
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
   if (winner && topDrinker) {
+    const gameEndTime = Date.now();
+    const playTimeInMinutes = Math.floor((gameEndTime - gameStartTime) / (1000 * 60));
+
+    updateGameStats({
+      gameType: "classic",
+      playTime: playTimeInMinutes,
+      isVictory: true,
+      playerCount: players.length
+    });
+
     return (
       <WinnerScreen
         winner={{ name: winner.name, points: winner.points }}

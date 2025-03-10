@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
 import { BottleIcon } from "@/components/BottleIcon";
+import { updateGameStats } from "@/lib/stats";
 
 export default function SpinBottle() {
   const [rotation, setRotation] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
+  const [gameStartTime] = useState<number>(Date.now());
 
   const spinBottle = () => {
     if (isSpinning) return;
@@ -19,6 +21,17 @@ export default function SpinBottle() {
 
     setTimeout(() => {
       setIsSpinning(false);
+
+      // Atualizar estatísticas quando a garrafa para
+      const gameEndTime = Date.now();
+      const playTimeInMinutes = Math.floor((gameEndTime - gameStartTime) / (1000 * 60));
+
+      updateGameStats({
+        gameType: "spinBottle",
+        playTime: playTimeInMinutes,
+        isVictory: true,
+        playerCount: 1
+      });
     }, 3000);
   };
 

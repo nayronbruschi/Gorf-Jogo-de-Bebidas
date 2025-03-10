@@ -6,12 +6,14 @@ import { useQuery } from "@tanstack/react-query";
 import { Beer, Home, Award } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
+import { updateGameStats } from "@/lib/stats";
 
 export default function RouletteWinner() {
   const [, navigate] = useLocation();
   const params = new URLSearchParams(window.location.search);
   const playerId = params.get("playerId");
   const gameMode = localStorage.getItem("rouletteMode") || "goles";
+  const gameStartTime = Number(localStorage.getItem("rouletteStartTime") || Date.now());
 
   // Buscar dados do jogador vencedor
   const { data: winner, isLoading: isLoadingWinner } = useQuery({
@@ -30,11 +32,31 @@ export default function RouletteWinner() {
     queryKey: ["/api/players"],
   });
 
+  // Atualizar estatísticas quando o componente é montado
+  useEffect(() => {
+    if (winner && players.length > 0) {
+      const gameEndTime = Date.now();
+      const playTimeInMinutes = Math.floor((gameEndTime - gameStartTime) / (1000 * 60));
+
+      updateGameStats({
+        gameType: "roulette",
+        playTime: playTimeInMinutes,
+        isVictory: true,
+        playerCount: players.length
+      });
+
+      // Limpar o tempo de início do jogo
+      localStorage.removeItem("rouletteStartTime");
+    }
+  }, [winner, players, gameStartTime]);
+
   const handlePlayAgain = async () => {
     try {
       // Resetar apenas os pontos dos jogadores
       await apiRequest("POST", "/api/players/reset", {});
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      // Salvar novo tempo de início
+      localStorage.setItem("rouletteStartTime", Date.now().toString());
       navigate("/roulette/play");
     } catch (error) {
       console.error('Erro ao reiniciar jogo:', error);
