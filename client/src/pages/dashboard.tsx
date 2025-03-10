@@ -13,32 +13,40 @@ import { GamepadIcon, Trophy, Users, Clock } from "lucide-react";
 import { PromotionalBanner } from "@/components/PromotionalBanner";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { games } from "@/lib/game-data";
+import { getUserStats, type UserStats } from "@/lib/stats";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
 
-  const stats = [
+  // Buscar estatísticas do usuário
+  const { data: stats = {} as UserStats, isLoading } = useQuery({
+    queryKey: ['/api/stats'],
+    queryFn: getUserStats
+  });
+
+  const statsCards = [
     {
       title: "Jogos Jogados",
-      value: "0",
+      value: stats.gamesPlayed?.toString() || "0",
       description: "Total de partidas",
       icon: GamepadIcon,
     },
     {
       title: "Vitórias",
-      value: "0",
+      value: stats.victories?.toString() || "0",
       description: "Jogos vencidos",
       icon: Trophy,
     },
     {
       title: "Jogadores",
-      value: "0",
+      value: stats.uniquePlayers?.toString() || "0",
       description: "Participantes únicos",
       icon: Users,
     },
     {
       title: "Tempo Total",
-      value: "0h",
+      value: `${Math.floor((stats.totalPlayTime || 0) / 60)}h`,
       description: "De diversão",
       icon: Clock,
     },
@@ -145,7 +153,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {stats.map((stat) => (
+              {statsCards.map((stat) => (
                 <div key={stat.title} className="flex items-center gap-4 p-4 rounded-lg bg-white/5">
                   <stat.icon className="h-8 w-8 text-white/60" />
                   <div>
