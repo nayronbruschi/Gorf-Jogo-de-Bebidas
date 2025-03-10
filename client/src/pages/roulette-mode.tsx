@@ -124,6 +124,11 @@ export default function RouletteMode() {
           type: "challenge",
           points: punishmentDrinks
         });
+        await updateDrinks.mutateAsync({
+          playerId: selectedPlayer.id,
+          type: "drink",
+          points: punishmentDrinks
+        });
       }
       setShowPunishment(false);
       selectRandomPlayer();
