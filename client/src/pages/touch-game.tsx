@@ -190,7 +190,7 @@ export default function TouchGame() {
         <Button
           variant="ghost"
           className="text-white hover:bg-white/20"
-          onClick={() => setLocation("/game-modes")}
+          onClick={() => setLocation("/dashboard")}
         >
           <ChevronLeft className="h-6 w-6" />
         </Button>
