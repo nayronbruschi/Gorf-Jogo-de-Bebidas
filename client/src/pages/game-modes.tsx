@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { GameCard } from "@/components/GameCard";
-import { Dices, CircleDot, MessageSquareQuote } from "lucide-react";
+import { Dices, CircleDot, MessageSquareQuote, Hand, Wine, Coins, LayoutGrid } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 
@@ -50,6 +50,30 @@ export default function GameModes() {
           description="Escolha entre revelar seus segredos ou enfrentar desafios ousados."
           icon={<MessageSquareQuote className="h-8 w-8 text-purple-500" />}
           href="/truth-or-dare"
+        />
+        <GameCard
+          title="Toque na Sorte"
+          description="Toque na tela e veja quem será o escolhido pelo destino!"
+          icon={<Hand className="h-8 w-8 text-purple-500" />}
+          href="/touch-game"
+        />
+        <GameCard
+          title="Garrafa Giratória"
+          description="Gire a garrafa e descubra quem será o próximo a beber!"
+          icon={<Wine className="h-8 w-8 text-purple-500" />}
+          href="/spin-bottle"
+        />
+        <GameCard
+          title="Cara ou Coroa"
+          description="Deixe a sorte decidir quem vai beber!"
+          icon={<Coins className="h-8 w-8 text-purple-500" />}
+          href="/coin-flip"
+        />
+        <GameCard
+          title="Sueca"
+          description="Cada carta tem sua regra. Quem será o próximo a beber?"
+          icon={<LayoutGrid className="h-8 w-8 text-purple-500" />}
+          href="/cards"
         />
       </div>
     </GameLayout>
