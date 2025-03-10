@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { RotateCcw } from "lucide-react";
 
 interface TouchPoint {
   id: number;
@@ -21,29 +23,20 @@ export default function TouchGame() {
   const [selecting, setSelecting] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<TouchPoint | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [gameEnded, setGameEnded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const touchPointsRef = useRef<TouchPoint[]>([]);
-  const lastTouchTime = useRef<number>(0);
 
   const handleTouch = (e: TouchEvent) => {
     e.preventDefault();
-    const now = Date.now();
 
-    // Se não houver toques e estivermos em estado de seleção, mantenha o ponto selecionado
+    if (gameEnded) return;
+
+    // Se não houver toques
     if (e.touches.length === 0) {
-      if (!selecting) {
-        lastTouchTime.current = now;
-        setTouchPoints([]);
-        setSelectedPoint(null);
-        setCountdown(null);
-        touchPointsRef.current = [];
-      }
       return;
     }
-
-    // Se estiver selecionando, ignorar novos toques
-    if (selecting) return;
 
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -70,11 +63,8 @@ export default function TouchGame() {
 
     // Start new timer if there are points
     if (newPoints.length > 0) {
-      lastTouchTime.current = now;
-      // Iniciar contagem regressiva
       setCountdown(3);
 
-      // Atualizar contagem a cada segundo
       const updateCountdown = () => {
         setCountdown((prev) => {
           if (prev === null || prev <= 1) {
@@ -86,41 +76,32 @@ export default function TouchGame() {
       };
 
       // Criar intervalos para a contagem regressiva
-      const countdown1 = setTimeout(updateCountdown, 1000);
-      const countdown2 = setTimeout(updateCountdown, 2000);
-      const countdown3 = setTimeout(() => {
+      setTimeout(updateCountdown, 1000);
+      setTimeout(updateCountdown, 2000);
+      timerRef.current = setTimeout(() => {
         updateCountdown();
       }, 3000);
-
-      timerRef.current = countdown3;
     }
   };
 
   const selectRandom = () => {
-    if (touchPointsRef.current.length === 0 || selecting) return;
+    if (touchPointsRef.current.length === 0) return;
 
-    setSelecting(true);
-    const duration = 2000; // 2 segundos
-    const interval = 100; // 0.1 segundo por ponto
-    let timeElapsed = 0;
+    const randomPoint = touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)];
+    setSelectedPoint(randomPoint);
+    setTouchPoints([randomPoint]);
+    setGameEnded(true);
+  };
 
-    const flash = setInterval(() => {
-      timeElapsed += interval;
-
-      if (timeElapsed >= duration) {
-        clearInterval(flash);
-        const randomPoint = touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)];
-        setSelectedPoint(randomPoint);
-        setSelecting(false);
-
-        // Manter o ponto selecionado visível até o próximo toque
-        setTimeout(() => {
-          setTouchPoints([randomPoint]);
-        }, 500);
-      } else {
-        setSelectedPoint(touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)]);
-      }
-    }, interval);
+  const resetGame = () => {
+    setTouchPoints([]);
+    setSelectedPoint(null);
+    setCountdown(null);
+    setGameEnded(false);
+    touchPointsRef.current = [];
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
   };
 
   useEffect(() => {
@@ -139,7 +120,7 @@ export default function TouchGame() {
         clearTimeout(timerRef.current);
       }
     };
-  }, [selecting]);
+  }, [gameEnded]);
 
   return (
     <GameLayout title="Toque na Sorte">
@@ -175,25 +156,8 @@ export default function TouchGame() {
               <motion.div
                 key={point.id}
                 initial={{ scale: 0 }}
-                animate={{
-                  scale: selectedPoint?.id === point.id ? [1, 1.2, 1] : 1,
-                  backgroundColor: selectedPoint?.id === point.id 
-                    ? [point.color, "rgba(255, 255, 255, 0.9)", point.color] 
-                    : point.color
-                }}
+                animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
-                transition={{
-                  scale: {
-                    duration: 0.3,
-                    repeat: selectedPoint?.id === point.id ? Infinity : 0,
-                    repeatDelay: 0.5
-                  },
-                  backgroundColor: {
-                    duration: 1,
-                    repeat: selectedPoint?.id === point.id ? Infinity : 0,
-                    repeatDelay: 0.5
-                  }
-                }}
                 style={{
                   position: "absolute",
                   left: point.x - 50,
@@ -201,6 +165,7 @@ export default function TouchGame() {
                   width: 100,
                   height: 100,
                   borderRadius: "50%",
+                  backgroundColor: point.color,
                   opacity: 0.8,
                   border: "3px solid rgba(255, 255, 255, 0.8)"
                 }}
@@ -208,6 +173,17 @@ export default function TouchGame() {
             ))}
           </AnimatePresence>
         </div>
+
+        {gameEnded && (
+          <Button
+            size="lg"
+            onClick={resetGame}
+            className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl mt-4"
+          >
+            <RotateCcw className="mr-2 h-5 w-5" />
+            Jogar de novo
+          </Button>
+        )}
       </div>
     </GameLayout>
   );

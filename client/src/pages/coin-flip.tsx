@@ -12,10 +12,12 @@ export default function CoinFlip() {
     if (isFlipping) return;
 
     setIsFlipping(true);
+    // Definir o resultado antes da animação
+    const newResult = Math.random() < 0.5 ? "cara" : "coroa";
     setResult(null);
 
     setTimeout(() => {
-      setResult(Math.random() < 0.5 ? "cara" : "coroa");
+      setResult(newResult);
       setIsFlipping(false);
     }, 1500);
   };
