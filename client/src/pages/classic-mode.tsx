@@ -50,7 +50,8 @@ export default function ClassicMode() {
         setMaxPoints(data.maxPoints);
         maxPointsForm.setValue("maxPoints", data.maxPoints);
       }
-    }
+    },
+    refetchOnMount: true, // Garante que os dados sejam recarregados ao montar o componente
   });
 
   const updatePoints = useMutation({
@@ -69,7 +70,8 @@ export default function ClassicMode() {
     mutationFn: async (maxPoints: number) => {
       await apiRequest("PATCH", "/api/settings", { maxPoints });
     },
-    onSuccess: () => {
+    onSuccess: (_, maxPoints) => {
+      setMaxPoints(maxPoints); // Atualiza o estado local
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
       setDialogOpen(false);
       toast({

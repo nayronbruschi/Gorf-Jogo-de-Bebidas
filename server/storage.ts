@@ -62,6 +62,8 @@ export class MemStorage implements IStorage {
       this.settings = {
         ...this.settings,
         currentPlayerId: newPlayer.id,
+        // Mantém o maxPoints existente
+        maxPoints: this.settings.maxPoints,
       };
     }
 

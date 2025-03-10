@@ -106,6 +106,14 @@ export default function ManagePlayers() {
     updateMaxPoints.mutate(Number(data.maxPoints));
   });
 
+  const handleBackToGame = () => {
+    // Garantir que as configurações estejam atualizadas antes de voltar
+    if (settings?.maxPoints) {
+      navigate("/classic/play");
+    }
+  };
+
+
   // Ordenar jogadores por pontuação
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
   const hasPoints = sortedPlayers.some(player => player.points > 0);
@@ -117,7 +125,7 @@ export default function ManagePlayers() {
         variant="ghost"
         size="icon"
         className="absolute left-4 top-4 text-white hover:text-white/80"
-        onClick={() => navigate("/classic/play")}
+        onClick={handleBackToGame}
       >
         <ArrowLeft className="h-6 w-6" />
       </Button>
@@ -253,7 +261,7 @@ export default function ManagePlayers() {
         <div className="mt-8 flex justify-center">
           <Button
             variant="outline"
-            onClick={() => navigate("/classic/play")}
+            onClick={handleBackToGame}
             className="bg-purple-700 hover:bg-purple-800 text-white border-white/20"
           >
             Voltar ao Jogo
