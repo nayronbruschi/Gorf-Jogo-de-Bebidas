@@ -11,6 +11,7 @@ export interface IStorage {
   removeAllPlayers(): Promise<void>;
   resetPlayersPoints(): Promise<void>; // Added resetPlayersPoints
   setFirstPlayer(): Promise<Player | undefined>; // Added setFirstPlayer
+  getPlayer(id: number): Promise<Player | undefined>; // Added getPlayer
 
   // Game Settings
   getGameSettings(): Promise<GameSettings>;
@@ -76,9 +77,9 @@ export class MemStorage implements IStorage {
 
     const updatedPlayer = {
       ...player,
-      points: (player.points || 0) + points,
-      challengesCompleted: type === "challenge" ? (player.challengesCompleted || 0) + 1 : (player.challengesCompleted || 0),
-      drinksCompleted: type === "drink" ? (player.drinksCompleted || 0) + points : (player.drinksCompleted || 0), // Acumula o número de goles
+      points: player.points + points,
+      challengesCompleted: type === "challenge" ? player.challengesCompleted + 1 : player.challengesCompleted,
+      drinksCompleted: type === "drink" ? player.drinksCompleted + points : player.drinksCompleted,
     };
 
     this.players.set(id, updatedPlayer);
@@ -178,6 +179,9 @@ export class MemStorage implements IStorage {
     const firstPlayer = players[0];
     this.settings.currentPlayerId = firstPlayer.id;
     return firstPlayer;
+  }
+  async getPlayer(id: number): Promise<Player | undefined> {
+    return this.players.get(id);
   }
 }
 

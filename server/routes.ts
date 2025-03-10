@@ -41,8 +41,7 @@ export async function registerRoutes(app: Express) {
     if (isNaN(id)) {
       return res.status(400).json({ message: "ID inválido" });
     }
-    const players = await storage.getPlayers();
-    const player = players.find(p => p.id === id);
+    const player = await storage.getPlayer(id);
     if (!player) {
       return res.status(404).json({ message: "Jogador não encontrado" });
     }
