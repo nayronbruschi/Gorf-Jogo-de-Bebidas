@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
-import { PlayerList } from "@/components/PlayerList";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSound } from "@/hooks/use-sound";
@@ -10,23 +9,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { useLocation } from "wouter";
-import { cn } from "@/lib/utils";
+import { PlayerList } from "@/components/PlayerList";
 
+// Desafios de punição para quem se recusa a beber
 const punishmentChallenges = [
   { text: "Dançar 'I'm a Little Teapot' com gestos", icon: Beer },
   { text: "Imitar um animal por 30 segundos", icon: Beer },
   { text: "Cantar 'Parabéns pra Você' em ópera", icon: Beer },
   { text: "Fazer 10 polichinelos contando em alemão", icon: Beer },
   { text: "Declarar seu amor para uma planta", icon: Beer },
-  { text: "Inventar uma música sobre bebida", icon: Beer },
-  { text: "Fazer uma pose de balé por 30 segundos", icon: Beer },
-  { text: "Imitar um jogador de futebol comemorando", icon: Beer },
-  { text: "Fazer uma declaração dramática", icon: Beer },
-  { text: "Dançar como se estivesse nos anos 80", icon: Beer }
 ];
 
 export default function RouletteMode() {
-  const [, navigate] = useLocation();
+  // Estados do jogo
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
   const [isSelecting, setIsSelecting] = useState(false);
   const [numDrinks, setNumDrinks] = useState(0);
@@ -35,49 +30,51 @@ export default function RouletteMode() {
   const [showPlayerList, setShowPlayerList] = useState(false);
   const [action, setAction] = useState<"drink" | "refuse" | null>(null);
   const [punishmentDrinks, setPunishmentDrinks] = useState(0);
-  const { play } = useSound();
 
+  // Hooks e configurações
+  const [, navigate] = useLocation();
+  const { play } = useSound();
   const gameMode = localStorage.getItem("rouletteMode") || "goles";
-  const maxPoints = Number(localStorage.getItem("maxPoints")) || 100;
+  const maxPoints = Number(localStorage.getItem("maxPoints"));
   const drinkText = gameMode === "shots" ? "shot" : "gole";
   const drinkTextPlural = gameMode === "shots" ? "shots" : "goles";
 
+  // Queries e Mutations
   const { data: players = [] } = useQuery({
     queryKey: ["/api/players"],
   });
 
-  const checkWinner = async (playerId: number) => {
-    try {
-      const playerData = await apiRequest("GET", `/api/players/${playerId}`);
-      console.log('Verificando vitória:', {
-        jogador: playerData.name,
-        pontosAtuais: playerData.points,
-        pontosMaximos: maxPoints
-      });
+  // Verificar se um jogador venceu
+  const checkVictory = async (playerId: number) => {
+    const playerData = await apiRequest("GET", `/api/players/${playerId}`);
 
-      if (playerData.points >= maxPoints) {
-        console.log('VITÓRIA CONFIRMADA! Redirecionando...');
-        navigate(`/roulette/winner?playerId=${playerId}`);
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error('Erro ao verificar vitória:', error);
-      return false;
+    console.log('Verificando vitória:', {
+      jogador: playerData.name,
+      pontosAtuais: playerData.points,
+      pontosMaximos: maxPoints
+    });
+
+    if (playerData.points >= maxPoints) {
+      console.log('VITÓRIA! Redirecionando para tela de vencedor...');
+      navigate(`/roulette/winner?playerId=${playerId}`);
+      return true;
     }
+    return false;
   };
 
-  const updatePlayerPoints = useMutation({
-    mutationFn: async ({ playerId, points }: { playerId: number; points: number }) => {
-      const result = await apiRequest("PATCH", `/api/players/${playerId}/points`, {
+  // Mutation para atualizar pontos
+  const updatePoints = useMutation({
+    mutationFn: async (data: { playerId: number; points: number }) => {
+      const result = await apiRequest("PATCH", `/api/players/${data.playerId}/points`, {
         type: "drink",
-        points
+        points: data.points
       });
       return result;
     },
     onSuccess: async (_, variables) => {
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-      const hasWon = await checkWinner(variables.playerId);
+      const hasWon = await checkVictory(variables.playerId);
+
       if (!hasWon) {
         setAction(null);
         setShowPunishment(false);
@@ -86,6 +83,7 @@ export default function RouletteMode() {
     }
   });
 
+  // Selecionar jogador aleatório
   const selectRandomPlayer = () => {
     if (isSelecting) return;
 
@@ -107,26 +105,7 @@ export default function RouletteMode() {
     }, 2000);
   };
 
-  const handleNextPlayer = async () => {
-    if (!selectedPlayer || !action) return;
-
-    try {
-      if (action === "drink") {
-        await updatePlayerPoints.mutateAsync({
-          playerId: selectedPlayer.id,
-          points: numDrinks
-        });
-      } else if (action === "refuse" && punishmentDrinks > 0) {
-        await updatePlayerPoints.mutateAsync({
-          playerId: selectedPlayer.id,
-          points: punishmentDrinks
-        });
-      }
-    } catch (error) {
-      console.error('Erro ao processar rodada:', error);
-    }
-  };
-
+  // Handlers
   const handleDrink = () => {
     if (!selectedPlayer) return;
     setAction("drink");
@@ -140,6 +119,20 @@ export default function RouletteMode() {
     setShowPunishment(true);
   };
 
+  const handleNextPlayer = async () => {
+    if (!selectedPlayer || !action) return;
+
+    try {
+      const pointsToAdd = action === "drink" ? numDrinks : punishmentDrinks;
+      await updatePoints.mutateAsync({
+        playerId: selectedPlayer.id,
+        points: pointsToAdd
+      });
+    } catch (error) {
+      console.error('Erro ao processar a rodada:', error);
+    }
+  };
+
   const generateNewPunishment = () => {
     if (!selectedPlayer) return;
     setPunishmentDrinks(prev => prev + 1);
@@ -147,6 +140,7 @@ export default function RouletteMode() {
     setCurrentPunishment(randomPunishment);
   };
 
+  // Ordenar jogadores por pontos
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
 
   return (
@@ -263,7 +257,7 @@ export default function RouletteMode() {
             <Button
               size="lg"
               onClick={handleNextPlayer}
-              disabled={updatePlayerPoints.isPending}
+              disabled={updatePoints.isPending}
               className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl w-full"
             >
               Sortear Próximo Jogador

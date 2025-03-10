@@ -2,6 +2,10 @@ import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { PlayerList } from "@/components/PlayerList";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useLocation } from "wouter";
+import { Play, Plus, Minus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
@@ -9,37 +13,35 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useLocation } from "wouter";
-import { Play, Plus, Minus } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 
 export default function RoulettePlayers() {
   const [, navigate] = useLocation();
   const gameMode = localStorage.getItem("rouletteMode") || "goles";
   const [maxPerRound, setMaxPerRound] = useState(gameMode === "shots" ? "3" : "10");
-  const [maxToWin, setMaxToWin] = useState("100");
+  const [maxToWin, setMaxToWin] = useState("15");
 
   const { data: players = [] } = useQuery({
     queryKey: ["/api/players"],
   });
 
   const handleStartGame = () => {
-    // Converter para números e garantir valores mínimos
-    const maxPerRoundNumber = Math.max(gameMode === "shots" ? 1 : 2, Number(maxPerRound));
-    const maxToWinNumber = Math.max(10, Number(maxToWin));
+    // Garantir valores numéricos válidos
+    const maxPerRoundNumber = Math.max(
+      gameMode === "shots" ? 1 : 2,
+      Math.min(gameMode === "shots" ? 5 : 15, Number(maxPerRound))
+    );
+    const maxToWinNumber = Math.max(10, Math.min(200, Number(maxToWin)));
 
     // Salvar configurações no localStorage
     localStorage.setItem("maxPerRound", String(maxPerRoundNumber));
     localStorage.setItem("maxPoints", String(maxToWinNumber));
 
-    console.log('Configurações salvas:', {
-      maxPerRound: maxPerRoundNumber,
-      maxToWin: maxToWinNumber,
-      gameMode
+    console.log('Configurações do jogo:', {
+      modo: gameMode,
+      maximoPorRodada: maxPerRoundNumber,
+      pontosParaVencer: maxToWinNumber
     });
 
-    // Ir para a página do jogo
     navigate("/roulette/play");
   };
 
@@ -124,7 +126,7 @@ export default function RoulettePlayers() {
                     size="icon"
                     variant="outline"
                     className="rounded-full w-10 h-10 flex items-center justify-center bg-white/10 border-0 text-white hover:bg-white/20 hover:text-white"
-                    onClick={() => setMaxToWin(prev => Math.max(10, Number(prev) - 10).toString())}
+                    onClick={() => setMaxToWin(prev => Math.max(10, Number(prev) - 5).toString())}
                   >
                     <Minus className="h-5 w-5" />
                   </Button>
@@ -141,7 +143,7 @@ export default function RoulettePlayers() {
                     size="icon"
                     variant="outline"
                     className="rounded-full w-10 h-10 flex items-center justify-center bg-white/10 border-0 text-white hover:bg-white/20 hover:text-white"
-                    onClick={() => setMaxToWin(prev => Math.min(200, Number(prev) + 10).toString())}
+                    onClick={() => setMaxToWin(prev => Math.min(200, Number(prev) + 5).toString())}
                   >
                     <Plus className="h-5 w-5" />
                   </Button>
