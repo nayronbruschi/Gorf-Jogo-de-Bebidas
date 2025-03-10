@@ -76,16 +76,8 @@ export default function RouletteMode() {
       });
       return result;
     },
-    onSuccess: async (_, variables) => {
-      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-
-      // Verificar vitória após atualização de pontos
-      const hasWinner = await checkAllPlayersForWin();
-      if (!hasWinner) {
-        setAction(null);
-        setShowPunishment(false);
-        selectRandomPlayer();
-      }
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/players"] });
     }
   });
 
@@ -133,9 +125,8 @@ export default function RouletteMode() {
     if (!selectedPlayer || !action) return;
 
     try {
+      // 1. Atualizar pontuação no banco
       const pointsToAdd = action === "drink" ? numDrinks : punishmentDrinks;
-
-      // Atualizar pontos do jogador atual
       await updatePoints.mutateAsync({
         playerId: selectedPlayer.id,
         points: pointsToAdd
@@ -144,18 +135,10 @@ export default function RouletteMode() {
       // Aguardar atualização do cache
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
 
-      // Verificar vitória antes de continuar
-      const maxPoints = Number(localStorage.getItem("maxPoints"));
-      console.log('Verificando vitória após atualização:', {
-        jogador: selectedPlayer.name,
-        pontosAtuais: selectedPlayer.points + pointsToAdd,
-        pontosMaximos: maxPoints
-      });
-
-      // Buscar dados atualizados de todos os jogadores
+      // 2. Verificar se atingiu pontuação máxima
       const hasWinner = await checkAllPlayersForWin();
 
-      // Só continua se não houver vencedor
+      // 3. Se não houver vencedor, gerar nova rodada
       if (!hasWinner) {
         setShowPunishment(false);
         setAction(null);
