@@ -8,7 +8,6 @@ import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserPlus, X } from "lucide-react";
-import { useState } from "react";
 
 export function PlayerList() {
   const { data: players = [] } = useQuery({
@@ -51,7 +50,7 @@ export function PlayerList() {
         <Input
           placeholder="Nome do jogador"
           {...form.register("name")}
-          className="bg-white border-0 text-purple-700 placeholder:text-purple-400"
+          className="bg-white border-0 text-purple-900 placeholder:text-purple-400"
         />
         <Button
           type="submit"
@@ -70,15 +69,15 @@ export function PlayerList() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="bg-white/10 p-3 rounded space-y-2"
+            className="bg-purple-50 p-3 rounded space-y-2"
           >
             <div className="flex items-center justify-between">
-              <span className="text-white">{player.name}</span>
+              <span className="text-purple-900">{player.name}</span>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => removePlayer.mutate(player.id)}
-                className="text-white/50 hover:text-white"
+                className="text-purple-700 hover:text-purple-900"
               >
                 <X className="h-4 w-4" />
               </Button>
