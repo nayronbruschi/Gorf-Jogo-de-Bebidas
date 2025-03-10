@@ -62,14 +62,24 @@ export default function Dashboard() {
     { name: "Verdade ou Desafio", date: "2 dias atrás", players: 5, winner: "-" },
   ];
 
+  const getGamePath = (gameName: string) => {
+    const gameRoutes: { [key: string]: string } = {
+      "Roleta": "/roulette",
+      "Quem Sou Eu?": "/guess-who/players",
+      "Verdade ou Desafio": "/truth-or-dare"
+    };
+    return gameRoutes[gameName] || "/game-modes";
+  };
+
   return (
     <AppLayout>
-      <div className="container mx-auto p-4 space-y-8">
+      <div className="container mx-auto p-4 space-y-8 min-h-screen bg-gray-900/80">
         <section className="pb-4">
           <PromotionalBanner />
         </section>
 
-        <section className="pb-4 overflow-x-visible">
+        <section className="pb-4">
+          <h2 className="text-white text-lg font-medium mb-4">Todos os Jogos</h2>
           <Carousel 
             className="w-full"
             opts={{
@@ -79,10 +89,10 @@ export default function Dashboard() {
           >
             <CarouselContent className="-ml-4">
               {decks.map((deck) => (
-                <CarouselItem key={deck.id} className="pl-4 md:basis-1/4 lg:basis-1/6">
+                <CarouselItem key={deck.id} className="pl-4 basis-1/3 md:basis-1/4 lg:basis-[18%]">
                   <div 
                     className="flex flex-col items-center gap-2 p-4 cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => navigate(`/${deck.id}`)}
+                    onClick={() => navigate(`/${deck.id}/players`)}
                   >
                     <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
                       <deck.icon className="h-8 w-8 text-white" />
@@ -109,7 +119,7 @@ export default function Dashboard() {
                   <h3 className="text-lg font-medium text-white mb-2">Roleta</h3>
                   <p className="text-sm text-white/60 mb-4">Jogado há 2 horas</p>
                   <Button 
-                    onClick={() => navigate("/roulette-mode")}
+                    onClick={() => navigate("/roulette")}
                     className="w-full bg-purple-700 hover:bg-purple-800 text-white"
                   >
                     Jogar Novamente
@@ -185,7 +195,7 @@ export default function Dashboard() {
                   <Button
                     variant="ghost"
                     className="shrink-0 text-white hover:bg-white/10"
-                    onClick={() => navigate(`/${game.name.toLowerCase().replace(/\s+/g, '-')}`)}
+                    onClick={() => navigate(getGamePath(game.name))}
                   >
                     Jogar Novamente
                   </Button>

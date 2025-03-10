@@ -1,19 +1,17 @@
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
-import { useEffect, useState } from "react";
-import { auth } from "@/lib/firebase";
 
 const bannerImages = [
   {
-    src: "/banner/banner1.jpg",
+    src: "/attached_assets/[99Pay] INAPPS FASE 1 V2-promotion-zone-710x280.jpg",
     alt: "Promoção 99Pay"
   },
   {
-    src: "/banner/banner2.jpg",
+    src: "/attached_assets/[99Pay] INAPPS FASE 1 V2-promotion-zone-710x280.jpg",
     alt: "Promoção 99Pay"
   },
   {
-    src: "/banner/banner3.jpg",
+    src: "/attached_assets/[99Pay] INAPPS FASE 1 V2-promotion-zone-710x280.jpg",
     alt: "Promoção 99Pay"
   }
 ];
@@ -36,8 +34,6 @@ export function PromotionalBanner() {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious className="left-4" />
-      <CarouselNext className="right-4" />
     </Carousel>
   );
 }

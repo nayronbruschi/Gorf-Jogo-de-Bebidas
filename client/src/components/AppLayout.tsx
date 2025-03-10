@@ -32,8 +32,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/10 backdrop-blur-lg">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-lg">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex-1" />
           <h1 className="text-3xl font-bold text-white text-center">Gorf</h1>
