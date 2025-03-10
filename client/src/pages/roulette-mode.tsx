@@ -134,10 +134,33 @@ export default function RouletteMode() {
 
     try {
       const pointsToAdd = action === "drink" ? numDrinks : punishmentDrinks;
+
+      // Atualizar pontos do jogador atual
       await updatePoints.mutateAsync({
         playerId: selectedPlayer.id,
         points: pointsToAdd
       });
+
+      // Aguardar atualização do cache
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+
+      // Verificar vitória antes de continuar
+      const maxPoints = Number(localStorage.getItem("maxPoints"));
+      console.log('Verificando vitória após atualização:', {
+        jogador: selectedPlayer.name,
+        pontosAtuais: selectedPlayer.points + pointsToAdd,
+        pontosMaximos: maxPoints
+      });
+
+      // Buscar dados atualizados de todos os jogadores
+      const hasWinner = await checkAllPlayersForWin();
+
+      // Só continua se não houver vencedor
+      if (!hasWinner) {
+        setShowPunishment(false);
+        setAction(null);
+        selectRandomPlayer();
+      }
     } catch (error) {
       console.error('Erro ao processar a rodada:', error);
     }
