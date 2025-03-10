@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getItemsByTheme, type ThemeId } from "@/lib/guess-who-data";
-import { ChevronLeft, Timer, User2 } from "lucide-react";
+import { ChevronLeft, Timer, User2, RotateCcw, Home } from "lucide-react";
 
 interface ScreenOrientation {
   lock(orientation: OrientationLockType): Promise<void>;
@@ -35,6 +35,8 @@ export default function GuessWhoGame() {
   const [eliminated, setEliminated] = useState<string[]>([]);
   const [setupTime, setSetupTime] = useState(5);
   const [isSetup, setIsSetup] = useState(true);
+  const [showWinScreen, setShowWinScreen] = useState(false);
+  const [winner, setWinner] = useState("");
 
   // Inicialização do jogo
   useEffect(() => {
@@ -54,6 +56,14 @@ export default function GuessWhoGame() {
     setCurrentItem(themeItems[0].name);
 
     // Força rotação para paisagem via CSS
+    setLandscapeMode();
+
+    return () => {
+      resetOrientation();
+    };
+  }, [setLocation]);
+
+  const setLandscapeMode = () => {
     document.documentElement.style.setProperty('transform', 'rotate(-90deg)');
     document.documentElement.style.setProperty('transform-origin', 'left top');
     document.documentElement.style.setProperty('width', '100vh');
@@ -62,19 +72,22 @@ export default function GuessWhoGame() {
     document.documentElement.style.setProperty('position', 'absolute');
     document.documentElement.style.setProperty('top', '100%');
     document.documentElement.style.setProperty('left', '0');
+  };
 
-    return () => {
-      // Remove CSS de rotação
-      document.documentElement.style.removeProperty('transform');
-      document.documentElement.style.removeProperty('transform-origin');
-      document.documentElement.style.removeProperty('width');
-      document.documentElement.style.removeProperty('height');
-      document.documentElement.style.removeProperty('overflow');
-      document.documentElement.style.removeProperty('position');
-      document.documentElement.style.removeProperty('top');
-      document.documentElement.style.removeProperty('left');
-    };
-  }, [setLocation]);
+  const setPortraitMode = () => {
+    resetOrientation();
+  };
+
+  const resetOrientation = () => {
+    document.documentElement.style.removeProperty('transform');
+    document.documentElement.style.removeProperty('transform-origin');
+    document.documentElement.style.removeProperty('width');
+    document.documentElement.style.removeProperty('height');
+    document.documentElement.style.removeProperty('overflow');
+    document.documentElement.style.removeProperty('position');
+    document.documentElement.style.removeProperty('top');
+    document.documentElement.style.removeProperty('left');
+  };
 
   // Timer de preparação
   useEffect(() => {
@@ -101,6 +114,7 @@ export default function GuessWhoGame() {
       return () => clearInterval(timer);
     } else if (!isSetup && timeLeft === 0 && showItem) {
       setShowItem(false);
+      setPortraitMode();
     }
   }, [timeLeft, showItem, isSetup]);
 
@@ -123,12 +137,14 @@ export default function GuessWhoGame() {
     setIsSetup(true);
     setShowItem(false);
     setGuess("");
+    setLandscapeMode();
   }, [currentPlayerIndex, players, eliminated, items, setLocation]);
 
   const handleGuess = () => {
     if (guess.toLowerCase().trim() === currentItem.toLowerCase().trim()) {
       // Jogador venceu
-      setLocation("/game-modes");
+      setWinner(players[currentPlayerIndex]);
+      setShowWinScreen(true);
     } else {
       // Jogador eliminado
       setEliminated([...eliminated, players[currentPlayerIndex]]);
@@ -144,6 +160,39 @@ export default function GuessWhoGame() {
   if (players.length === 0) return null;
 
   const currentPlayer = players[currentPlayerIndex];
+
+  if (showWinScreen) {
+    return (
+      <div className="fixed inset-0 bg-gradient-to-br from-purple-900 to-purple-800 flex items-center justify-center">
+        <div className="text-center space-y-8">
+          <h1 className="text-4xl font-bold text-white mb-8">
+            🎉 Parabéns {winner}! 🎉
+          </h1>
+          <p className="text-2xl text-white/80 mb-12">
+            Você acertou!
+          </p>
+          <div className="space-y-4">
+            <Button
+              size="lg"
+              onClick={handleNextPlayer}
+              className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+            >
+              <RotateCcw className="mr-2 h-5 w-5" />
+              Continuar Jogando
+            </Button>
+            <Button
+              size="lg"
+              onClick={() => setLocation("/game-modes")}
+              className="w-full bg-white/20 hover:bg-white/30 text-white"
+            >
+              <Home className="mr-2 h-5 w-5" />
+              Voltar ao Menu
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-purple-900 to-purple-800 overflow-hidden">
@@ -168,7 +217,7 @@ export default function GuessWhoGame() {
       </div>
 
       {/* Área Principal */}
-      <div className="absolute inset-0 mt-16 flex items-center justify-center p-8">
+      <div className="absolute inset-0 mt-16 flex items-center justify-center">
         <AnimatePresence mode="wait">
           {isSetup ? (
             <motion.div
@@ -196,11 +245,11 @@ export default function GuessWhoGame() {
               exit={{ scale: 0.8, opacity: 0 }}
               className="text-center space-y-8"
             >
-              <div className="text-4xl font-bold text-white">
+              <div className="text-8xl font-bold text-white mb-8">
                 {currentItem}
               </div>
-              <div className="text-8xl font-bold text-white">
-                {timeLeft}
+              <div className="text-4xl font-bold text-white">
+                {timeLeft}s
               </div>
             </motion.div>
           ) : (
@@ -216,7 +265,7 @@ export default function GuessWhoGame() {
                 placeholder="Quem você acha que é?"
                 value={guess}
                 onChange={(e) => setGuess(e.target.value)}
-                className="text-lg p-6 w-full max-w-md"
+                className="text-lg p-6 w-full max-w-md mb-4"
               />
               <div className="flex gap-4">
                 <Button
