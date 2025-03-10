@@ -196,7 +196,18 @@ export default function TouchGame() {
 
       {/* Texto de instrução */}
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-white/80 text-sm text-center w-full">
-        Coloque os dedos na tela para sortear
+        {gameEnded ? (
+          <Button
+            size="lg"
+            onClick={resetGame}
+            className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl"
+          >
+            <RotateCcw className="mr-2 h-5 w-5" />
+            Jogar de novo
+          </Button>
+        ) : (
+          "Coloque os dedos na tela para sortear"
+        )}
       </div>
 
       <div className="flex flex-col items-center h-full">
@@ -250,20 +261,6 @@ export default function TouchGame() {
               />
             ))}
           </AnimatePresence>
-
-          {/* Botão Jogar de novo dentro do campo */}
-          {gameEnded && (
-            <div className="absolute bottom-8 inset-x-0 flex justify-center">
-              <Button
-                size="lg"
-                onClick={resetGame}
-                className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl"
-              >
-                <RotateCcw className="mr-2 h-5 w-5" />
-                Jogar de novo
-              </Button>
-            </div>
-          )}
         </div>
       </div>
     </div>
