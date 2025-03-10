@@ -65,6 +65,17 @@ export default function GuessWhoGame() {
     return player ? player.name : "";
   };
 
+  // Verificar se há um vencedor após eliminação
+  const checkForWinner = useCallback((remainingPlayers: string[]) => {
+    if (remainingPlayers.length === 1) {
+      setWinner(remainingPlayers[0]);
+      setShowWinScreen(true);
+      setPortraitMode();
+      return true;
+    }
+    return false;
+  }, []);
+
   // Efeito de inicialização
   useEffect(() => {
     const storedPlayers = localStorage.getItem("guessWhoPlayers");
@@ -179,6 +190,17 @@ export default function GuessWhoGame() {
     setReadyToStart(false);
   }, [currentPlayerIndex, players, eliminated, setLocation, winner]);
 
+  const handleEliminatePlayer = () => {
+    const newEliminated = [...eliminated, players[currentPlayerIndex]];
+    setEliminated(newEliminated);
+
+    // Verifica se restou apenas um jogador
+    const remainingPlayers = players.filter(id => !newEliminated.includes(id));
+    if (checkForWinner(remainingPlayers)) return;
+
+    handleNextPlayer();
+  };
+
   const handleGuess = () => {
     const currentPlayerId = players[currentPlayerIndex];
     const currentItem = playerItems[currentPlayerId];
@@ -226,7 +248,7 @@ export default function GuessWhoGame() {
             </Button>
             <Button
               size="lg"
-              onClick={() => setLocation("/game-modes")}
+              onClick={handleEliminatePlayer}
               className="bg-white/20 hover:bg-white/30 text-white"
             >
               Sair do Jogo
@@ -287,7 +309,7 @@ export default function GuessWhoGame() {
         <Button
           variant="ghost"
           className="text-white hover:bg-white/20"
-          onClick={() => setLocation("/guess-who/theme")}
+          onClick={() => setLocation("/guess-who/players")}
         >
           <ChevronLeft className="h-6 w-6" />
         </Button>
