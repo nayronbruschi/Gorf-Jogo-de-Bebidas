@@ -89,7 +89,7 @@ export default function Dashboard() {
           >
             <CarouselContent className="-ml-4">
               {decks.map((deck) => (
-                <CarouselItem key={deck.id} className="pl-4 basis-1/3 md:basis-1/4 lg:basis-[18%]">
+                <CarouselItem key={deck.id} className="pl-4 basis-1/4 md:basis-1/4 lg:basis-[22%]">
                   <div 
                     className="flex flex-col items-center gap-2 p-4 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => navigate(`/${deck.id}/players`)}
