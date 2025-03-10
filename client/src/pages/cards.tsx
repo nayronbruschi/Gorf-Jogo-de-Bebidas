@@ -2,7 +2,7 @@ import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid } from "lucide-react";
+import { LayoutGrid, UserPlus } from "lucide-react";
 import { cardRules, type Card } from "@/lib/cards-data";
 import {
   AlertDialog,
@@ -45,16 +45,16 @@ export default function Cards() {
       setCurrentCard(drawnCard);
       setRemainingCards(newRemainingCards);
       setIsDrawing(false);
-
-      if (drawnCard.specialAction) {
-        setShowDialog(true);
-      }
     }, 1000);
   };
 
   const resetDeck = () => {
     setRemainingCards([...cardRules]);
     setCurrentCard(null);
+  };
+
+  const handleOpenDialog = () => {
+    setShowDialog(true);
   };
 
   const handleAddPermission = () => {
@@ -129,7 +129,7 @@ export default function Cards() {
           </AnimatePresence>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col gap-4 items-center">
           <Button
             size="lg"
             onClick={drawCard}
@@ -139,6 +139,18 @@ export default function Cards() {
             <LayoutGrid className="mr-2 h-5 w-5" />
             {isDrawing ? "Virando..." : "Virar uma carta"}
           </Button>
+
+          {currentCard?.specialAction && (
+            <Button
+              size="lg"
+              onClick={handleOpenDialog}
+              variant="outline"
+              className="border-purple-700 text-purple-700 hover:bg-purple-50 px-8 py-6"
+            >
+              <UserPlus className="mr-2 h-5 w-5" />
+              Registrar jogador que ganhou a carta
+            </Button>
+          )}
 
           {remainingCards.length === 0 && (
             <Button
