@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getItemsByTheme, type ThemeId } from "@/lib/guess-who-data";
 import { ChevronLeft, Timer, User2, RotateCcw, Home } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 interface ScreenOrientation {
   lock(orientation: OrientationLockType): Promise<void>;
@@ -23,12 +24,16 @@ declare global {
   }
 }
 
+interface PlayerItem {
+  [playerId: string]: string;
+}
+
 export default function GuessWhoGame() {
   const [, setLocation] = useLocation();
   const [players, setPlayers] = useState<string[]>([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [items, setItems] = useState<string[]>([]);
-  const [currentItem, setCurrentItem] = useState("");
+  const [playerItems, setPlayerItems] = useState<PlayerItem>({});
   const [timeLeft, setTimeLeft] = useState(30);
   const [showItem, setShowItem] = useState(false);
   const [guess, setGuess] = useState("");
@@ -53,9 +58,16 @@ export default function GuessWhoGame() {
 
     const themeItems = getItemsByTheme(theme);
     setItems(themeItems.map(item => item.name));
-    setCurrentItem(themeItems[0].name);
 
-    // Força rotação para paisagem via CSS
+    // Inicializa os itens para cada jogador
+    const initialPlayerItems: PlayerItem = {};
+    playerList.forEach((playerId: string) => {
+      const randomItem = themeItems[Math.floor(Math.random() * themeItems.length)].name;
+      initialPlayerItems[playerId] = randomItem;
+    });
+    setPlayerItems(initialPlayerItems);
+    setCurrentItem(initialPlayerItems[playerList[0]]);
+
     setLandscapeMode();
 
     return () => {
@@ -131,23 +143,24 @@ export default function GuessWhoGame() {
     }
 
     setCurrentPlayerIndex(nextIndex);
-    const randomItem = items[Math.floor(Math.random() * items.length)];
-    setCurrentItem(randomItem);
+    const nextPlayerId = players[nextIndex];
+    setCurrentItem(playerItems[nextPlayerId]);
     setSetupTime(5);
     setIsSetup(true);
     setShowItem(false);
     setGuess("");
     setLandscapeMode();
-  }, [currentPlayerIndex, players, eliminated, items, setLocation]);
+  }, [currentPlayerIndex, players, eliminated, playerItems, setLocation]);
 
   const handleGuess = () => {
-    if (guess.toLowerCase().trim() === currentItem.toLowerCase().trim()) {
+    const currentPlayerId = players[currentPlayerIndex];
+    if (guess.toLowerCase().trim() === playerItems[currentPlayerId].toLowerCase().trim()) {
       // Jogador venceu
-      setWinner(players[currentPlayerIndex]);
+      setWinner(currentPlayerId);
       setShowWinScreen(true);
     } else {
       // Jogador eliminado
-      setEliminated([...eliminated, players[currentPlayerIndex]]);
+      setEliminated([...eliminated, currentPlayerId]);
       if (eliminated.length + 1 >= players.length - 1) {
         // Jogo acabou, todos eliminados
         setLocation("/game-modes");
@@ -159,14 +172,28 @@ export default function GuessWhoGame() {
 
   if (players.length === 0) return null;
 
-  const currentPlayer = players[currentPlayerIndex];
+  const currentPlayerId = players[currentPlayerIndex];
+  const currentItem = playerItems[currentPlayerId];
+
+  // Buscar os nomes dos jogadores - Assumindo useQuery está configurado corretamente
+  const { data: playersData = [] } = useQuery({
+    queryKey: ["/api/players"],
+  });
+
+  const getPlayerName = (playerId: string) => {
+    const player = playersData.find((p: any) => p.id === Number(playerId));
+    return player ? player.name : playerId;
+  };
+
+  const currentPlayerName = getPlayerName(currentPlayerId);
+  const winnerName = winner ? getPlayerName(winner) : "";
 
   if (showWinScreen) {
     return (
       <div className="fixed inset-0 bg-gradient-to-br from-purple-900 to-purple-800 flex items-center justify-center">
         <div className="text-center space-y-8">
           <h1 className="text-4xl font-bold text-white mb-8">
-            🎉 Parabéns {winner}! 🎉
+            🎉 Parabéns {winnerName}! 🎉
           </h1>
           <p className="text-2xl text-white/80 mb-12">
             Você acertou!
@@ -210,7 +237,7 @@ export default function GuessWhoGame() {
           <div className="flex items-center gap-2 text-white">
             <User2 className="w-6 h-6" />
             <span className="text-xl font-medium">
-              {currentPlayer}
+              {currentPlayerName}
             </span>
           </div>
         </div>
@@ -228,7 +255,7 @@ export default function GuessWhoGame() {
               className="text-center space-y-6"
             >
               <h2 className="text-4xl font-bold text-white">
-                É a vez de {currentPlayer}
+                É a vez de {currentPlayerName}
               </h2>
               <p className="text-xl text-white/80">
                 Coloque o celular de lado na testa
@@ -292,7 +319,7 @@ export default function GuessWhoGame() {
       {/* Lista de Eliminados */}
       {eliminated.length > 0 && (
         <div className="absolute bottom-4 left-0 right-0 text-white/60 text-center">
-          <p>Eliminados: {eliminated.join(", ")}</p>
+          <p>Eliminados: {eliminated.map(id => getPlayerName(id)).join(", ")}</p>
         </div>
       )}
     </div>
