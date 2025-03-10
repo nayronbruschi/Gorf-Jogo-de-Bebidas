@@ -43,7 +43,6 @@ export default function ManagePlayers() {
       await apiRequest("POST", "/api/players", { name });
     },
     onSuccess: () => {
-      // Apenas invalidar a query de players, não a de settings
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       form.reset();
       toast({
@@ -71,12 +70,10 @@ export default function ManagePlayers() {
       const player = players.find(p => p.id === id);
       if (!player) return;
 
-      // Distribuir pontos entre os jogadores restantes
       const remainingPlayers = players.filter(p => p.id !== id);
       if (remainingPlayers.length > 0 && player.points > 0) {
         const pointsPerPlayer = Math.floor(player.points / remainingPlayers.length);
         if (pointsPerPlayer > 0) {
-          // Atualizar pontos dos jogadores restantes
           for (const p of remainingPlayers) {
             await apiRequest("PATCH", `/api/players/${p.id}/points`, {
               points: pointsPerPlayer,
@@ -86,7 +83,6 @@ export default function ManagePlayers() {
         }
       }
 
-      // Remover o jogador
       await apiRequest("DELETE", `/api/players/${id}`);
     },
     onSuccess: () => {
@@ -107,20 +103,15 @@ export default function ManagePlayers() {
   });
 
   const handleBackToGame = () => {
-    // Garantir que as configurações estejam atualizadas antes de voltar
-    if (settings?.maxPoints) {
-      navigate("/classic/play");
-    }
+    navigate("/classic/play");
   };
 
 
-  // Ordenar jogadores por pontuação
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
   const hasPoints = sortedPlayers.some(player => player.points > 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500">
-      {/* Botão Voltar */}
       <Button
         variant="ghost"
         size="icon"
@@ -133,7 +124,6 @@ export default function ManagePlayers() {
       <div className="max-w-4xl mx-auto p-8">
         <h2 className="text-2xl font-bold text-white mb-8 text-center">Jogadores e pontuação</h2>
 
-        {/* Pontuação Máxima */}
         <div className="bg-white/10 p-6 rounded-xl mb-8">
           <h3 className="text-lg font-semibold text-white mb-4">Pontuação máxima</h3>
           <form onSubmit={onUpdateMaxPoints} className="flex items-center gap-4">
@@ -154,6 +144,7 @@ export default function ManagePlayers() {
                 type="number"
                 min="10"
                 max="1000"
+                defaultValue={settings?.maxPoints}
                 className="text-center bg-white/10 border-white/20 text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 {...maxPointsForm.register("maxPoints")}
               />
@@ -179,7 +170,6 @@ export default function ManagePlayers() {
           </form>
         </div>
 
-        {/* Lista de Jogadores */}
         <div className="bg-white/10 p-6 rounded-xl mb-8">
           <h3 className="text-lg font-semibold text-white mb-4">Jogadores</h3>
           <div className="space-y-4">
@@ -227,7 +217,6 @@ export default function ManagePlayers() {
           </div>
         </div>
 
-        {/* Adicionar Jogador */}
         <div className="mb-8">
           <h3 className="text-lg font-semibold text-white mb-4">Adicionar um novo jogador</h3>
           <form onSubmit={onSubmit} className="flex gap-2">

@@ -28,7 +28,6 @@ export default function ClassicMode() {
   const [hasDrunk, setHasDrunk] = useState(false);
   const [roundPoints, setRoundPoints] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [maxPoints, setMaxPoints] = useState(100);
   const { play } = useSound();
   const { toast } = useToast();
   const maxPointsForm = useForm({
@@ -47,11 +46,9 @@ export default function ClassicMode() {
     queryKey: ["/api/settings"],
     onSuccess: (data) => {
       if (data?.maxPoints) {
-        setMaxPoints(data.maxPoints);
         maxPointsForm.setValue("maxPoints", data.maxPoints);
       }
     },
-    refetchOnMount: true, // Garante que os dados sejam recarregados ao montar o componente
   });
 
   const updatePoints = useMutation({
@@ -70,8 +67,7 @@ export default function ClassicMode() {
     mutationFn: async (maxPoints: number) => {
       await apiRequest("PATCH", "/api/settings", { maxPoints });
     },
-    onSuccess: (_, maxPoints) => {
-      setMaxPoints(maxPoints); // Atualiza o estado local
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
       setDialogOpen(false);
       toast({
@@ -163,7 +159,7 @@ export default function ClassicMode() {
   };
 
   // Verificar se alguém ganhou
-  const winner = players.find(player => player.points >= maxPoints);
+  const winner = players.find(player => player.points >= (settings?.maxPoints || 100));
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
   if (winner && topDrinker) {
@@ -171,7 +167,7 @@ export default function ClassicMode() {
       <WinnerScreen
         winner={{ name: winner.name, points: winner.points }}
         topDrinker={{ name: topDrinker.name, drinks: topDrinker.drinksCompleted }}
-        maxPoints={maxPoints}
+        maxPoints={settings?.maxPoints || 100}
         onPlayAgain={handlePlayAgain}
       />
     );
@@ -262,7 +258,7 @@ export default function ClassicMode() {
             </Button>
 
             <div className="text-sm text-purple-900 text-center">
-              Objetivo: {maxPoints} pontos{" "}
+              Objetivo: {settings?.maxPoints || 100} pontos{" "}
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger className="text-purple-700 underline hover:text-purple-800 ml-1">
                   alterar &gt;
@@ -308,9 +304,7 @@ export default function ClassicMode() {
                     className="w-full mt-4 bg-purple-700 hover:bg-purple-800 text-white"
                     onClick={() => {
                       const newMaxPoints = maxPointsForm.getValues("maxPoints");
-                      updateMaxPoints.mutate(newMaxPoints);
-                      setMaxPoints(newMaxPoints);
-                      setDialogOpen(false);
+                      updateMaxPoints.mutate(Number(newMaxPoints));
                     }}
                   >
                     Salvar

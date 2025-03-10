@@ -152,6 +152,7 @@ export class MemStorage implements IStorage {
     this.players.clear();
     this.settings.currentPlayerId = undefined;
     this.playerIdCounter = 1;
+    // Não resetar maxPoints ao remover jogadores
   }
 
   async resetPlayersPoints(): Promise<void> {
