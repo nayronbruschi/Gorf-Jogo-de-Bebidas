@@ -272,10 +272,10 @@ export default function RouletteMode() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-6">
-            <p className="text-center text-lg font-semibold text-purple-700">
+            <p className="text-center text-2xl font-bold text-purple-700">
               Que coisa feia!
             </p>
-            <p className="text-center">
+            <p className="text-center text-xl text-purple-900">
               Por isso você deve:
             </p>
             {currentPunishment && (
@@ -286,10 +286,13 @@ export default function RouletteMode() {
                 </p>
               </div>
             )}
+            <div className="text-center text-sm text-purple-600">
+              Goles acumulados neste desafio: {selectedPlayer?.drinksCompleted || 0}
+            </div>
             <div className="flex flex-col gap-2">
               <Button
                 onClick={handlePunishmentComplete}
-                className="bg-purple-700 hover:bg-purple-800 text-white"
+                className="bg-purple-700 hover:bg-purple-800 text-white text-xl py-6"
               >
                 Fez o desafio
               </Button>
