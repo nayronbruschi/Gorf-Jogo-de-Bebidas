@@ -44,33 +44,58 @@ export default function RouletteMode() {
     queryKey: ["/api/players"],
   });
 
+  // Verificar vitória para todos os jogadores
+  const checkAllPlayersForWin = async () => {
+    const maxPoints = Number(localStorage.getItem("maxPoints"));
+    console.log('Pontuação máxima:', maxPoints);
+
+    if (!players || players.length === 0) return false;
+
+    for (const player of players) {
+      console.log('Verificando jogador:', {
+        nome: player.name,
+        pontos: player.points,
+        maximoPontos: maxPoints
+      });
+
+      if (player.points >= maxPoints) {
+        console.log('VITÓRIA ENCONTRADA! Redirecionando...');
+        navigate(`/roulette/winner?playerId=${player.id}`);
+        return true;
+      }
+    }
+    return false;
+  };
+
   // Mutation para atualizar pontos
   const updatePoints = useMutation({
     mutationFn: async (data: { playerId: number; points: number }) => {
-      // Primeiro, buscar os pontos atuais do jogador
-      const currentPlayerData = await apiRequest("GET", `/api/players/${data.playerId}`);
-      const currentPoints = currentPlayerData.points || 0;
-
-      // Calcular novo total
-      const newTotal = currentPoints + data.points;
-
-      console.log('Atualizando pontos:', {
-        pontosAtuais: currentPoints,
-        pontosSomados: data.points,
-        novoTotal: newTotal
-      });
-
-      // Atualizar com o novo total
-      return await apiRequest("PATCH", `/api/players/${data.playerId}/points`, {
+      const result = await apiRequest("PATCH", `/api/players/${data.playerId}/points`, {
         type: "drink",
-        points: newTotal //Corrected to update with the new total
+        points: data.points
       });
+      return result;
+    },
+    onSuccess: async (_, variables) => {
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+
+      // Verificar vitória após atualização de pontos
+      const hasWinner = await checkAllPlayersForWin();
+      if (!hasWinner) {
+        setAction(null);
+        setShowPunishment(false);
+        selectRandomPlayer();
+      }
     }
   });
 
   // Selecionar jogador aleatório
-  const selectRandomPlayer = () => {
+  const selectRandomPlayer = async () => {
     if (isSelecting) return;
+
+    // Verificar vitória antes de iniciar nova rodada
+    const hasWinner = await checkAllPlayersForWin();
+    if (hasWinner) return;
 
     setIsSelecting(true);
     setAction(null);
@@ -109,37 +134,10 @@ export default function RouletteMode() {
 
     try {
       const pointsToAdd = action === "drink" ? numDrinks : punishmentDrinks;
-      const maxPoints = Number(localStorage.getItem("maxPoints"));
-
-      // 1. Atualizar pontos
       await updatePoints.mutateAsync({
         playerId: selectedPlayer.id,
         points: pointsToAdd
       });
-
-      // 2. Forçar atualização do cache
-      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-
-      // 3. Buscar dados atualizados do jogador
-      const playerData = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
-
-      console.log('Verificando vitória:', {
-        jogador: selectedPlayer.name,
-        pontosAtuais: playerData.points,
-        pontosParaVencer: maxPoints
-      });
-
-      // 4. Verificar vitória imediatamente
-      if (playerData.points >= maxPoints) {
-        console.log('VITÓRIA! Redirecionando para tela de vencedor...');
-        navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
-        return;
-      }
-
-      // 5. Se não houver vitória, continuar o jogo
-      setShowPunishment(false);
-      setAction(null);
-      selectRandomPlayer();
     } catch (error) {
       console.error('Erro ao processar a rodada:', error);
     }
