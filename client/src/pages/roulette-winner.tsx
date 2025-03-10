@@ -13,8 +13,13 @@ export default function RouletteWinner() {
   const playerId = params.get("playerId");
   const gameMode = localStorage.getItem("rouletteMode") || "goles";
 
-  const { data: winner } = useQuery({
-    queryKey: ["/api/players", playerId],
+  // Buscar dados do jogador vencedor
+  const { data: winner, isLoading } = useQuery({
+    queryKey: [`/api/players/${playerId}`],
+    queryFn: async () => {
+      if (!playerId) return null;
+      return await apiRequest("GET", `/api/players/${playerId}`);
+    },
     enabled: !!playerId,
     refetchOnWindowFocus: false
   });
@@ -30,7 +35,10 @@ export default function RouletteWinner() {
     }
   };
 
-  if (!winner) return null;
+  // Mostrar loading ou retornar null se não tiver dados
+  if (isLoading || !winner) return null;
+
+  console.log('Dados do vencedor:', winner);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 relative overflow-hidden">
@@ -55,7 +63,8 @@ export default function RouletteWinner() {
               d: [
                 "M0,0 L100,0 L100,20 Q50,40 0,20 Z",
                 "M0,0 L100,0 L100,30 Q75,60 50,45 Q25,30 0,30 Z",
-                "M0,0 L100,0 L100,40 Q80,70 60,55 Q40,40 20,55 Q0,70 0,40 Z"
+                "M0,0 L100,0 L100,40 Q80,70 60,55 Q40,40 20,55 Q0,70 0,40 Z",
+                "M0,0 L100,0 L100,50 Q90,80 70,65 Q50,50 30,65 Q10,80 0,50 Z"
               ]
             }}
             transition={{
@@ -88,13 +97,13 @@ export default function RouletteWinner() {
               className="space-y-6"
             >
               <h1 className="text-4xl font-bold text-purple-900">
-                {winner.name} deu Gorf!
+                {winner?.name} deu Gorf!
               </h1>
 
               <div className="flex items-center justify-center gap-2 text-2xl text-purple-700">
                 <Beer className="h-8 w-8" />
                 <span>
-                  Bebeu {winner.points} {winner.points === 1 ? 
+                  Bebeu {winner?.points} {winner?.points === 1 ? 
                     (gameMode === "shots" ? "shot" : "gole") : 
                     (gameMode === "shots" ? "shots" : "goles")}!
                 </span>
