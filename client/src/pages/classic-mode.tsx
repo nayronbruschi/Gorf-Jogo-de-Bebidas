@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { decks } from "@/lib/game-data";
 import { useSound } from "@/hooks/use-sound";
-import { User, Beer, Target, ArrowRight, Award, Crown, Plus, Minus } from "lucide-react";
+import { User, Beer, Target, ArrowRight, Award, Crown, Plus, Minus, Users } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { createElement } from "react";
+import { useLocation } from "wouter";
 
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
@@ -30,6 +31,7 @@ export default function ClassicMode() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { play } = useSound();
   const { toast } = useToast();
+  const [, navigate] = useLocation();
   const maxPointsForm = useForm({
     defaultValues: { maxPoints: 100 },
   });
@@ -74,16 +76,12 @@ export default function ClassicMode() {
   });
 
   const generateChallenge = () => {
-    // Recuperar os decks selecionados do localStorage
     const selectedDeckIds = JSON.parse(localStorage.getItem("selectedDecks") || '["classic"]');
-
-    // Filtrar os desafios dos decks selecionados
     const availableChallenges = decks
       .filter(deck => selectedDeckIds.includes(deck.id))
       .flatMap(deck => deck.challenges);
-
     const challenge = availableChallenges[Math.floor(Math.random() * availableChallenges.length)];
-    const points = Math.floor(Math.random() * 9) + 2; // 2-10 pontos
+    const points = Math.floor(Math.random() * 9) + 2; 
 
     setCurrentChallenge(challenge.text);
     setCurrentIcon(challenge.icon);
@@ -92,27 +90,20 @@ export default function ClassicMode() {
 
   const handlePlayAgain = async () => {
     try {
-      // Resetar pontuações mantendo os jogadores
       await apiRequest("POST", "/api/players/reset", {});
-
-      // Atualizar o estado local
       setCompletedChallenge(false);
       setHasDrunk(false);
       setCurrentChallenge("");
       setCurrentIcon(null);
       setRoundPoints(0);
-
-      // Atualizar os dados
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
-
       generateChallenge();
     } catch (error) {
       console.error('Erro ao reiniciar o jogo:', error);
     }
   };
 
-  // Gerar desafio inicial se ainda não existe
   if (!currentChallenge) {
     generateChallenge();
   }
@@ -128,7 +119,6 @@ export default function ClassicMode() {
     }
 
     try {
-      // Contabilizar pontos do jogador atual
       if (currentPlayer) {
         if (completedChallenge) {
           await updatePoints.mutateAsync({
@@ -145,15 +135,9 @@ export default function ClassicMode() {
           });
         }
       }
-
-      // Passar para o próximo jogador
       await nextPlayer.mutateAsync();
-
-      // Atualizar a lista de jogadores
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
-
-      // Resetar estados e gerar novo desafio
       setCompletedChallenge(false);
       setHasDrunk(false);
       generateChallenge();
@@ -163,7 +147,6 @@ export default function ClassicMode() {
     }
   };
 
-  // Verificar se alguém ganhou
   const winner = players.find(player => player.points >= (settings?.maxPoints || 100));
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
@@ -178,15 +161,12 @@ export default function ClassicMode() {
     );
   }
 
-  // Ordenar jogadores por pontuação para o ranking
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
 
   return (
     <GameLayout title="">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Box do Jogo */}
         <div className="bg-white rounded-xl p-6 space-y-8">
-          {/* Jogador Atual */}
           <div className="flex items-center gap-4 text-purple-900">
             <User className="h-6 w-6" />
             <span className="text-xl">
@@ -198,7 +178,6 @@ export default function ClassicMode() {
             </span>
           </div>
 
-          {/* Desafio Atual */}
           <AnimatePresence mode="wait">
             {currentChallenge && (
               <motion.div
@@ -223,7 +202,6 @@ export default function ClassicMode() {
             )}
           </AnimatePresence>
 
-          {/* Botões de Ação */}
           <div className="space-y-4">
             <button
               onClick={() => setCompletedChallenge(!completedChallenge)}
@@ -250,7 +228,6 @@ export default function ClassicMode() {
             </button>
           </div>
 
-          {/* Botão Próximo */}
           <div className="space-y-4">
             <Button
               size="lg"
@@ -320,12 +297,21 @@ export default function ClassicMode() {
           </div>
         </div>
 
-        {/* Box do Ranking */}
         <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
-          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-            <Award className="h-5 w-5" />
-            Ranking
-          </h3>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-white" />
+              <h3 className="text-xl font-bold text-white">Ranking</h3>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/manage-players")}
+              className="text-white hover:text-white/80"
+            >
+              <Users className="h-5 w-5" />
+            </Button>
+          </div>
           <div className="space-y-3">
             {sortedPlayers.map((player, index) => (
               <div
