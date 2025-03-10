@@ -9,8 +9,19 @@ import { queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserPlus, X } from "lucide-react";
 
-export function PlayerList() {
-  const { data: players = [] } = useQuery({
+interface Player {
+  id: number;
+  name: string;
+  points?: number;
+}
+
+interface PlayerListProps {
+  selectedPlayers?: string[];
+  onSelectedPlayersChange?: (players: string[]) => void;
+}
+
+export function PlayerList({ selectedPlayers, onSelectedPlayersChange }: PlayerListProps) {
+  const { data: players = [] } = useQuery<Player[]>({
     queryKey: ["/api/players"],
   });
 

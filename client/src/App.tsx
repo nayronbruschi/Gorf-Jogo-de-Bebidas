@@ -18,6 +18,9 @@ import TouchGame from "@/pages/touch-game";
 import SpinBottle from "@/pages/spin-bottle";
 import CoinFlip from "@/pages/coin-flip";
 import Cards from "@/pages/cards";
+import GuessWhoPlayers from "@/pages/guess-who-players";
+import GuessWhoTheme from "@/pages/guess-who-theme";
+import GuessWhoGame from "@/pages/guess-who-game";
 
 function Router() {
   return (
@@ -33,11 +36,14 @@ function Router() {
       <Route path="/roulette/winner" component={RouletteWinner} />
       <Route path="/truth-or-dare" component={TruthOrDare} />
       <Route path="/manage-players" component={ManagePlayers} />
-      {/* Novas rotas */}
       <Route path="/touch-game" component={TouchGame} />
       <Route path="/spin-bottle" component={SpinBottle} />
       <Route path="/coin-flip" component={CoinFlip} />
       <Route path="/cards" component={Cards} />
+      {/* Novas rotas do Guess Who */}
+      <Route path="/guess-who/players" component={GuessWhoPlayers} />
+      <Route path="/guess-who/theme" component={GuessWhoTheme} />
+      <Route path="/guess-who/play" component={GuessWhoGame} />
       <Route component={NotFound} />
     </Switch>
   );

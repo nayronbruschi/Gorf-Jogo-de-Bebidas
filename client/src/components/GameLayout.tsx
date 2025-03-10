@@ -8,9 +8,10 @@ interface GameLayoutProps {
   children: React.ReactNode;
   title: string;
   className?: string;
+  showPlayers?: boolean;
 }
 
-export function GameLayout({ children, title, className }: GameLayoutProps) {
+export function GameLayout({ children, title, className, showPlayers = true }: GameLayoutProps) {
   const [, navigate] = useLocation();
 
   return (

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { GameCard } from "@/components/GameCard";
-import { Dices, CircleDot, MessageSquareQuote, Hand, Wine, Coins, LayoutGrid } from "lucide-react";
+import { Dices, CircleDot, Brain, Hand, Wine, Coins, LayoutGrid } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 
@@ -46,10 +46,10 @@ export default function GameModes() {
           href="/classic"
         />
         <GameCard
-          title="Verdade ou Desafio"
-          description="Escolha entre revelar seus segredos ou enfrentar desafios ousados."
-          icon={<MessageSquareQuote className="h-8 w-8 text-purple-500" />}
-          href="/truth-or-dare"
+          title="Quem Sou Eu?"
+          description="Descubra qual personagem, animal ou objeto você é fazendo perguntas!"
+          icon={<Brain className="h-8 w-8 text-purple-500" />}
+          href="/guess-who/players"
         />
         <GameCard
           title="Toque na Sorte"
