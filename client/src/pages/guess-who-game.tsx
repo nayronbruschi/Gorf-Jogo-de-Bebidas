@@ -104,36 +104,42 @@ export default function GuessWhoGame() {
 
   // Timer de preparação
   useEffect(() => {
-    if (!isSetup || setupTime <= 0) return;
+    if (!isSetup) return;
 
     const timer = setInterval(() => {
-      setSetupTime(prev => prev - 1);
+      setSetupTime(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setIsSetup(false);
+          setShowItem(true);
+          setTimeLeft(30);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
-    if (setupTime === 0) {
-      setIsSetup(false);
-      setShowItem(true);
-      setTimeLeft(30);
-    }
-
     return () => clearInterval(timer);
-  }, [setupTime, isSetup]);
+  }, [isSetup]);
 
   // Timer principal
   useEffect(() => {
-    if (isSetup || !showItem || timeLeft <= 0) return;
+    if (!showItem || timeLeft <= 0) return;
 
     const timer = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setShowItem(false);
+          setPortraitMode();
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
-    if (timeLeft === 0) {
-      setShowItem(false);
-      setPortraitMode();
-    }
-
     return () => clearInterval(timer);
-  }, [timeLeft, showItem, isSetup]);
+  }, [showItem]);
 
   const handleNextPlayer = useCallback(() => {
     let nextIndex = currentPlayerIndex;
