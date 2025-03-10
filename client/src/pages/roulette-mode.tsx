@@ -51,7 +51,10 @@ export default function RouletteMode() {
 
     if (!players || players.length === 0) return false;
 
-    for (const player of players) {
+    // Buscar dados atualizados dos jogadores
+    const updatedPlayers = await apiRequest("GET", "/api/players");
+
+    for (const player of updatedPlayers) {
       console.log('Verificando jogador:', {
         nome: player.name,
         pontos: player.points,
@@ -70,32 +73,19 @@ export default function RouletteMode() {
   // Mutation para atualizar pontos
   const updatePoints = useMutation({
     mutationFn: async (data: { playerId: number; points: number }) => {
-      const result = await apiRequest("PATCH", `/api/players/${data.playerId}/points`, {
+      return await apiRequest("PATCH", `/api/players/${data.playerId}/points`, {
         type: "drink",
         points: data.points
       });
-      return result;
     },
-    onSuccess: async (_, variables) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-
-      // Verificar vitória após atualização de pontos
-      const hasWinner = await checkAllPlayersForWin();
-      if (!hasWinner) {
-        setAction(null);
-        setShowPunishment(false);
-        selectRandomPlayer();
-      }
     }
   });
 
   // Selecionar jogador aleatório
-  const selectRandomPlayer = async () => {
+  const selectRandomPlayer = () => {
     if (isSelecting) return;
-
-    // Verificar vitória antes de iniciar nova rodada
-    const hasWinner = await checkAllPlayersForWin();
-    if (hasWinner) return;
 
     setIsSelecting(true);
     setAction(null);
@@ -134,10 +124,25 @@ export default function RouletteMode() {
 
     try {
       const pointsToAdd = action === "drink" ? numDrinks : punishmentDrinks;
+
+      // Atualizar pontos
       await updatePoints.mutateAsync({
         playerId: selectedPlayer.id,
         points: pointsToAdd
       });
+
+      // Aguardar atualização do cache
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+
+      // Verificar vitória imediatamente após a atualização
+      const hasWinner = await checkAllPlayersForWin();
+
+      // Só continuar se não houver vencedor
+      if (!hasWinner) {
+        setAction(null);
+        setShowPunishment(false);
+        selectRandomPlayer();
+      }
     } catch (error) {
       console.error('Erro ao processar a rodada:', error);
     }
