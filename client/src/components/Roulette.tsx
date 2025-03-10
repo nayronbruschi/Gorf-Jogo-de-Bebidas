@@ -68,7 +68,7 @@ export function Roulette({ options, onSpinEnd }: RouletteProps) {
       </AnimatePresence>
 
       {/* Seta indicadora */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-4 w-0 h-0 border-x-[15px] border-x-transparent border-t-[30px] border-t-purple-700 z-20" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-4 w-0 h-0 border-x-[15px] border-x-transparent border-b-[30px] border-b-purple-700 z-20" />
 
       {/* Efeito de brilho em volta da roleta */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-xl animate-pulse" />
@@ -82,6 +82,7 @@ export function Roulette({ options, onSpinEnd }: RouletteProps) {
       >
         {options.map((option, index) => {
           const rotation = (index * 360) / options.length;
+          const segmentAngle = 360 / options.length;
           return (
             <div
               key={index}
@@ -93,15 +94,19 @@ export function Roulette({ options, onSpinEnd }: RouletteProps) {
               <div
                 className="absolute top-0 left-0 w-1/2 h-full origin-right"
                 style={{
-                  transform: `rotate(${360 / options.length}deg)`,
+                  transform: `rotate(${segmentAngle}deg)`,
                   backgroundColor: option.color,
                 }}
               >
                 <div
                   className={cn(
-                    "absolute left-8 top-1/2 -translate-y-1/2 text-white font-bold text-base whitespace-nowrap transform rotate-[270deg] origin-left",
+                    "absolute left-8 top-1/2 -translate-y-1/2 text-white font-bold text-base whitespace-nowrap",
                     isSpinning && "blur-sm"
                   )}
+                  style={{
+                    transform: `rotate(${90 + segmentAngle/2}deg)`,
+                    transformOrigin: "left center"
+                  }}
                 >
                   {option.text}
                 </div>
