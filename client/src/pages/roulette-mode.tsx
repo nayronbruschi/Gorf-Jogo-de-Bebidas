@@ -108,6 +108,9 @@ export default function RouletteMode() {
     if (!selectedPlayer || !action) return;
 
     try {
+      let totalPoints = 0;
+      const maxPoints = Number(localStorage.getItem("maxPoints")) || 100;
+
       if (action === "drink") {
         // Atualizar pontos do jogador
         await updatePoints.mutateAsync({
@@ -116,50 +119,39 @@ export default function RouletteMode() {
           points: numDrinks
         });
 
-        // Verificar se o jogador ganhou
-        const playerData = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
-        const maxPoints = Number(localStorage.getItem("maxPoints")) || 100;
-
-        console.log('Checking win condition:', {
-          player: playerData,
-          currentPoints: playerData.points,
-          maxPoints,
-        });
-
-        if (playerData.points >= maxPoints) {
-          console.log('Winner found! Navigating to winner screen...');
-          navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
-          return;
-        }
+        totalPoints = numDrinks;
       } else if (action === "refuse" && punishmentDrinks > 0) {
-        // Atualizar pontos do desafio
+        // Atualizar pontos do desafio e dos drinks
         await updatePoints.mutateAsync({
           playerId: selectedPlayer.id,
           type: "challenge",
           points: punishmentDrinks
         });
-        // Atualizar pontos dos drinks
         await updatePoints.mutateAsync({
           playerId: selectedPlayer.id,
           type: "drink",
           points: punishmentDrinks
         });
 
-        // Verificar se o jogador ganhou
-        const playerData = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
-        const maxPoints = Number(localStorage.getItem("maxPoints")) || 100;
+        totalPoints = punishmentDrinks * 2;
+      }
 
-        console.log('Checking win condition:', {
-          player: playerData,
-          currentPoints: playerData.points,
-          maxPoints,
-        });
+      // Atualizar cache e pegar dados atualizados
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      const playerData = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
 
-        if (playerData.points >= maxPoints) {
-          console.log('Winner found! Navigating to winner screen...');
-          navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
-          return;
-        }
+      console.log('Verificando condição de vitória:', {
+        jogador: playerData.name,
+        pontosAtuais: playerData.points,
+        pontosDessaRodada: totalPoints,
+        pontosParaVencer: maxPoints,
+      });
+
+      // Verificar se o jogador ganhou usando maior ou igual
+      if (playerData.points >= maxPoints) {
+        console.log('Vencedor encontrado! Redirecionando para tela de vitória...');
+        navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
+        return;
       }
 
       setShowPunishment(false);
