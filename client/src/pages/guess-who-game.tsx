@@ -167,6 +167,7 @@ export default function GuessWhoGame() {
     if (guess.toLowerCase().trim() === currentItem?.toLowerCase().trim()) {
       setWinner(currentPlayerId);
       setShowWinScreen(true);
+      setPortraitMode(); // Volta orientação normal para tela de vitória
     } else {
       setEliminated([...eliminated, currentPlayerId]);
       if (eliminated.length + 1 >= players.length - 1) {
@@ -205,11 +206,19 @@ export default function GuessWhoGame() {
             </Button>
             <Button
               size="lg"
-              onClick={() => setLocation("/game-modes")}
+              onClick={() => setLocation("/guess-who/theme")}
               className="w-full bg-white/20 hover:bg-white/30 text-white"
             >
+              <RotateCcw className="mr-2 h-5 w-5" />
+              Escolher Outra Categoria
+            </Button>
+            <Button
+              size="lg"
+              onClick={() => setLocation("/game-modes")}
+              className="w-full bg-white/10 hover:bg-white/20 text-white"
+            >
               <Home className="mr-2 h-5 w-5" />
-              Voltar ao Menu
+              Escolher Outro Jogo
             </Button>
           </div>
         </div>
