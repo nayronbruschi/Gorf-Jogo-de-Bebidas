@@ -104,6 +104,16 @@ export default function Cards() {
                       <p className="text-xl font-medium text-purple-900">
                         {currentCard.rule}
                       </p>
+                      {currentCard.specialAction && (
+                        <Button
+                          onClick={handleOpenDialog}
+                          variant="outline"
+                          className="mt-4 border-purple-700 text-purple-700 hover:bg-purple-50"
+                        >
+                          <UserPlus className="mr-2 h-5 w-5" />
+                          Registrar jogador que ganhou a carta
+                        </Button>
+                      )}
                     </div>
                   </div>
 
@@ -139,18 +149,6 @@ export default function Cards() {
             <LayoutGrid className="mr-2 h-5 w-5" />
             {isDrawing ? "Virando..." : "Virar uma carta"}
           </Button>
-
-          {currentCard?.specialAction && (
-            <Button
-              size="lg"
-              onClick={handleOpenDialog}
-              variant="outline"
-              className="border-purple-700 text-purple-700 hover:bg-purple-50 px-8 py-6"
-            >
-              <UserPlus className="mr-2 h-5 w-5" />
-              Registrar jogador que ganhou a carta
-            </Button>
-          )}
 
           {remainingCards.length === 0 && (
             <Button

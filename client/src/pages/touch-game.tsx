@@ -20,21 +20,24 @@ export default function TouchGame() {
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
   const [selecting, setSelecting] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<TouchPoint | null>(null);
+  const [countdown, setCountdown] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const touchPointsRef = useRef<TouchPoint[]>([]);
+  const lastTouchTime = useRef<number>(0);
 
   const handleTouch = (e: TouchEvent) => {
     e.preventDefault();
+    const now = Date.now();
 
     // Se não houver toques, resetar tudo
     if (e.touches.length === 0) {
-      if (selectedPoint) {
-        setTouchPoints([]);
-        setSelectedPoint(null);
-        touchPointsRef.current = [];
-        return;
-      }
+      lastTouchTime.current = now;
+      setTouchPoints([]);
+      setSelectedPoint(null);
+      setCountdown(null);
+      touchPointsRef.current = [];
+      return;
     }
 
     // Se estiver selecionando, ignorar novos toques
@@ -60,13 +63,34 @@ export default function TouchGame() {
     // Reset timer
     if (timerRef.current) {
       clearTimeout(timerRef.current);
+      setCountdown(null);
     }
 
     // Start new timer if there are points
     if (newPoints.length > 0) {
-      timerRef.current = setTimeout(() => {
-        selectRandom();
+      lastTouchTime.current = now;
+      // Iniciar contagem regressiva
+      setCountdown(3);
+
+      // Atualizar contagem a cada segundo
+      const updateCountdown = () => {
+        setCountdown((prev) => {
+          if (prev === null || prev <= 1) {
+            selectRandom();
+            return null;
+          }
+          return prev - 1;
+        });
+      };
+
+      // Criar intervalos para a contagem regressiva
+      const countdown1 = setTimeout(updateCountdown, 1000);
+      const countdown2 = setTimeout(updateCountdown, 2000);
+      const countdown3 = setTimeout(() => {
+        updateCountdown();
       }, 3000);
+
+      timerRef.current = countdown3;
     }
   };
 
@@ -86,6 +110,15 @@ export default function TouchGame() {
         const randomPoint = touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)];
         setSelectedPoint(randomPoint);
         setSelecting(false);
+
+        // Auto-limpar após 2 segundos
+        setTimeout(() => {
+          if (Date.now() - lastTouchTime.current > 1500) {
+            setTouchPoints([]);
+            setSelectedPoint(null);
+            touchPointsRef.current = [];
+          }
+        }, 2000);
       } else {
         setSelectedPoint(touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)]);
       }
@@ -123,6 +156,22 @@ export default function TouchGame() {
           ref={containerRef}
           className="w-full aspect-[3/4] bg-white/10 backdrop-blur-sm rounded-xl relative touch-none"
         >
+          {/* Contador regressivo */}
+          <AnimatePresence>
+            {countdown !== null && (
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 1.5, opacity: 0 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <span className="text-8xl font-bold text-white/90">
+                  {countdown}
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <AnimatePresence>
             {touchPoints.map((point) => (
               <motion.div
@@ -143,10 +192,10 @@ export default function TouchGame() {
                 }}
                 style={{
                   position: "absolute",
-                  left: point.x - 40,
-                  top: point.y - 40,
-                  width: 80,
-                  height: 80,
+                  left: point.x - 50, // Aumentado para mais tolerância
+                  top: point.y - 50, // Aumentado para mais tolerância
+                  width: 100, // Aumentado o tamanho
+                  height: 100, // Aumentado o tamanho
                   borderRadius: "50%",
                   opacity: 0.8,
                   border: "3px solid rgba(255, 255, 255, 0.8)"
