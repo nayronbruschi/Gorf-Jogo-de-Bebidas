@@ -4,25 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getItemsByTheme, type ThemeId } from "@/lib/guess-who-data";
-import { ChevronLeft, Timer, User2, RotateCcw, Home } from "lucide-react";
+import { ChevronLeft, User2, RotateCcw, Home } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-
-interface ScreenOrientation {
-  lock(orientation: OrientationLockType): Promise<void>;
-  unlock(): void;
-  type: OrientationType;
-  angle: number;
-}
-
-interface Screen extends Screen {
-  orientation?: ScreenOrientation;
-}
-
-declare global {
-  interface Window {
-    screen: Screen;
-  }
-}
 
 interface PlayerItem {
   [playerId: string]: string;
@@ -66,7 +49,6 @@ export default function GuessWhoGame() {
       initialPlayerItems[playerId] = randomItem;
     });
     setPlayerItems(initialPlayerItems);
-    setCurrentItem(initialPlayerItems[playerList[0]]);
 
     setLandscapeMode();
 
@@ -143,18 +125,18 @@ export default function GuessWhoGame() {
     }
 
     setCurrentPlayerIndex(nextIndex);
-    const nextPlayerId = players[nextIndex];
-    setCurrentItem(playerItems[nextPlayerId]);
     setSetupTime(5);
     setIsSetup(true);
     setShowItem(false);
     setGuess("");
     setLandscapeMode();
-  }, [currentPlayerIndex, players, eliminated, playerItems, setLocation]);
+  }, [currentPlayerIndex, players, eliminated, setLocation]);
 
   const handleGuess = () => {
     const currentPlayerId = players[currentPlayerIndex];
-    if (guess.toLowerCase().trim() === playerItems[currentPlayerId].toLowerCase().trim()) {
+    const currentItem = playerItems[currentPlayerId];
+
+    if (guess.toLowerCase().trim() === currentItem?.toLowerCase().trim()) {
       // Jogador venceu
       setWinner(currentPlayerId);
       setShowWinScreen(true);
@@ -175,14 +157,14 @@ export default function GuessWhoGame() {
   const currentPlayerId = players[currentPlayerIndex];
   const currentItem = playerItems[currentPlayerId];
 
-  // Buscar os nomes dos jogadores - Assumindo useQuery está configurado corretamente
+  // Buscar os nomes dos jogadores
   const { data: playersData = [] } = useQuery({
     queryKey: ["/api/players"],
   });
 
   const getPlayerName = (playerId: string) => {
     const player = playersData.find((p: any) => p.id === Number(playerId));
-    return player ? player.name : playerId;
+    return player ? player.name : "";
   };
 
   const currentPlayerName = getPlayerName(currentPlayerId);
