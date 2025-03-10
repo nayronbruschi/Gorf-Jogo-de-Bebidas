@@ -37,8 +37,8 @@ export default function RouletteStart() {
   const handleStartGame = () => {
     // Salvar o modo selecionado no localStorage
     localStorage.setItem("rouletteMode", selectedMode);
-    // Ir para a página do jogo
-    navigate("/roulette/play");
+    // Ir para a página de configuração de jogadores
+    navigate("/roulette/players");
   };
 
   return (
@@ -87,13 +87,13 @@ export default function RouletteStart() {
             onClick={handleStartGame}
             disabled={players.length < 2}
             className={`px-8 py-6 flex items-center justify-center ${
-              players.length >= 2 
+              players.length >= 2
                 ? "bg-purple-700 hover:bg-purple-800 text-white"
                 : "bg-white/20 hover:bg-white/30 text-white"
             }`}
           >
             <Play className="mr-2 h-6 w-6" />
-            {players.length < 2 
+            {players.length < 2
               ? "Mínimo 2 jogadores"
               : "Vamos começar!"}
           </Button>

@@ -4,32 +4,29 @@ import { PlayerList } from "@/components/PlayerList";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSound } from "@/hooks/use-sound";
-import { Beer, X, Award, Users, Activity, Cat, Mic2, Dumbbell, Flower2, Music, Drama, Trophy, Heart, PartyPopper } from "lucide-react";
+import { Beer, X, Award, Users } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
+import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 
 const punishmentChallenges = [
-  { text: "Dançar 'I'm a Little Teapot' com gestos", icon: Activity },
-  { text: "Imitar um animal por 30 segundos", icon: Cat },
-  { text: "Cantar 'Parabéns pra Você' em ópera", icon: Mic2 },
-  { text: "Fazer 10 polichinelos contando em alemão", icon: Dumbbell },
-  { text: "Declarar seu amor para uma planta", icon: Flower2 },
-  { text: "Inventar uma música sobre bebida", icon: Music },
-  { text: "Fazer uma pose de balé por 30 segundos", icon: Drama },
-  { text: "Imitar um jogador de futebol comemorando", icon: Trophy },
-  { text: "Fazer uma declaração dramática", icon: Heart },
-  { text: "Dançar como se estivesse nos anos 80", icon: PartyPopper }
+  { text: "Dançar 'I'm a Little Teapot' com gestos", icon: Beer },
+  { text: "Imitar um animal por 30 segundos", icon: Beer },
+  { text: "Cantar 'Parabéns pra Você' em ópera", icon: Beer },
+  { text: "Fazer 10 polichinelos contando em alemão", icon: Beer },
+  { text: "Declarar seu amor para uma planta", icon: Beer },
+  { text: "Inventar uma música sobre bebida", icon: Beer },
+  { text: "Fazer uma pose de balé por 30 segundos", icon: Beer },
+  { text: "Imitar um jogador de futebol comemorando", icon: Beer },
+  { text: "Fazer uma declaração dramática", icon: Beer },
+  { text: "Dançar como se estivesse nos anos 80", icon: Beer }
 ];
 
 export default function RouletteMode() {
+  const [, navigate] = useLocation();
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
   const [isSelecting, setIsSelecting] = useState(false);
   const [numDrinks, setNumDrinks] = useState(0);
@@ -49,7 +46,7 @@ export default function RouletteMode() {
     queryKey: ["/api/players"],
   });
 
-  const updateDrinks = useMutation({
+  const updatePoints = useMutation({
     mutationFn: async ({ playerId, type, points }: { playerId: number; type: "challenge" | "drink"; points: number }) => {
       await apiRequest("PATCH", `/api/players/${playerId}/points`, { type, points });
     },
@@ -112,23 +109,41 @@ export default function RouletteMode() {
     if (!selectedPlayer || !action) return;
 
     try {
+      const maxPoints = localStorage.getItem("maxPoints") || "100";
+
       if (action === "drink") {
-        await updateDrinks.mutateAsync({
+        await updatePoints.mutateAsync({
           playerId: selectedPlayer.id,
           type: "drink",
           points: numDrinks
         });
+
+        // Verificar se o jogador atingiu o máximo
+        const updatedPlayer = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
+        if (updatedPlayer.drinksCompleted >= parseInt(maxPoints)) {
+          // Redirecionar para a tela de vitória
+          navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
+          return;
+        }
       } else if (action === "refuse" && punishmentDrinks > 0) {
-        await updateDrinks.mutateAsync({
+        await updatePoints.mutateAsync({
           playerId: selectedPlayer.id,
           type: "challenge",
           points: punishmentDrinks
         });
-        await updateDrinks.mutateAsync({
+        await updatePoints.mutateAsync({
           playerId: selectedPlayer.id,
           type: "drink",
           points: punishmentDrinks
         });
+
+        // Verificar se o jogador atingiu o máximo
+        const updatedPlayer = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
+        if (updatedPlayer.drinksCompleted >= parseInt(maxPoints)) {
+          // Redirecionar para a tela de vitória
+          navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
+          return;
+        }
       }
       setShowPunishment(false);
       selectRandomPlayer();
