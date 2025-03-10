@@ -15,10 +15,10 @@ export function TutorialOverlay({ onClose }: TutorialOverlay) {
       title: "Ajuste a Pontuação",
       text: "Configure quantos pontos são necessários para vencer o jogo através do botão 'alterar' abaixo do objetivo.",
       image: (
-        <svg className="w-full h-32 mb-4" viewBox="0 0 300 100">
-          <rect x="50" y="20" width="200" height="60" rx="8" fill="#F3E8FF" stroke="#7E22CE" strokeWidth="2"/>
-          <text x="70" y="45" fill="#581C87" fontSize="14">Objetivo: 100 pontos</text>
-          <text x="70" y="65" fill="#7E22CE" fontSize="14" textDecoration="underline">alterar &gt;</text>
+        <svg className="w-full h-32 mb-4" viewBox="0 0 300 60">
+          <rect x="20" y="10" width="260" height="40" rx="8" fill="#F3E8FF" stroke="#7E22CE" strokeWidth="2"/>
+          <text x="40" y="35" fill="#581C87" fontSize="14">Objetivo: 100 pontos</text>
+          <text x="180" y="35" fill="#7E22CE" fontSize="14" textDecoration="underline">alterar &gt;</text>
         </svg>
       )
     },
@@ -30,8 +30,9 @@ export function TutorialOverlay({ onClose }: TutorialOverlay) {
         <svg className="w-full h-32 mb-4" viewBox="0 0 300 100">
           <rect x="20" y="10" width="260" height="80" rx="8" fill="#F3E8FF" stroke="#7E22CE" strokeWidth="2"/>
           <text x="40" y="40" fill="#581C87" fontSize="16" fontWeight="bold">Ranking</text>
-          <circle cx="240" cy="35" r="15" fill="#7E22CE"/>
-          <path d="M235 35 h10 M240 30 v10" stroke="white" strokeWidth="2"/>
+          {/* Award icon path */}
+          <path d="M240 25 h-10 a5,5 0 0,0 20,0 h-10 v15 l-5,5 l-5,-5 z" fill="#7E22CE"/>
+          <path d="M235 45 h20" stroke="#7E22CE" strokeWidth="2"/>
         </svg>
       )
     },
@@ -88,27 +89,21 @@ export function TutorialOverlay({ onClose }: TutorialOverlay) {
           </div>
 
           <div className="space-y-6 mb-8">
-            {tutorialSteps.map((step, index) => (
+            <AnimatePresence mode="wait">
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ 
-                  opacity: currentStep === index ? 1 : 0.5,
-                  y: 0
-                }}
-                className={`p-4 rounded-lg ${
-                  currentStep === index
-                    ? 'bg-purple-50 border-2 border-purple-700'
-                    : 'bg-gray-50'
-                }`}
+                key={currentStep}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="p-4 rounded-lg bg-purple-50 border-2 border-purple-700"
               >
                 <div className="bg-white rounded-lg p-2 mb-4 shadow-sm">
-                  {step.image}
+                  {tutorialSteps[currentStep].image}
                 </div>
-                <h4 className="font-semibold text-purple-900 mb-2">{step.title}</h4>
-                <p className="text-gray-700">{step.text}</p>
+                <h4 className="font-semibold text-purple-900 mb-2">{tutorialSteps[currentStep].title}</h4>
+                <p className="text-gray-700">{tutorialSteps[currentStep].text}</p>
               </motion.div>
-            ))}
+            </AnimatePresence>
           </div>
 
           <div className="flex justify-between items-center">
