@@ -135,15 +135,29 @@ export default function RouletteMode() {
       // Aguardar atualização do cache
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
 
-      // 2. Verificar se atingiu pontuação máxima
-      const hasWinner = await checkAllPlayersForWin();
+      // 2. Buscar dados atualizados do jogador
+      const updatedPlayer = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
+      const maxPoints = Number(localStorage.getItem("maxPoints"));
 
-      // 3. Se não houver vencedor, gerar nova rodada
-      if (!hasWinner) {
-        setShowPunishment(false);
-        setAction(null);
-        selectRandomPlayer();
+      console.log('Verificando vitória:', {
+        jogador: selectedPlayer.name,
+        pontosAnteriores: selectedPlayer.points,
+        pontosAdicionados: pointsToAdd,
+        pontosAtualizados: updatedPlayer.points,
+        pontosMaximos: maxPoints
+      });
+
+      // 3. Verificar se atingiu pontuação máxima com os pontos atualizados
+      if (updatedPlayer.points >= maxPoints) {
+        console.log('VITÓRIA! Redirecionando para tela de vencedor...');
+        navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
+        return;
       }
+
+      // 4. Se não houver vencedor, gerar nova rodada
+      setShowPunishment(false);
+      setAction(null);
+      selectRandomPlayer();
     } catch (error) {
       console.error('Erro ao processar a rodada:', error);
     }
