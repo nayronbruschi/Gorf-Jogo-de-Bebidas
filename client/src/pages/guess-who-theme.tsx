@@ -22,15 +22,30 @@ export default function GuessWhoTheme() {
 
   // Verificar se existem jogadores selecionados
   useEffect(() => {
-    const players = localStorage.getItem("guessWhoPlayers");
-    if (!players) {
+    try {
+      const storedPlayers = localStorage.getItem("guessWhoPlayers");
+      if (!storedPlayers) {
+        setLocation("/guess-who/players");
+        return;
+      }
+
+      const players = JSON.parse(storedPlayers);
+      if (!Array.isArray(players) || players.length < 2) {
+        setLocation("/guess-who/players");
+      }
+    } catch (error) {
+      console.error("Erro ao verificar jogadores:", error);
       setLocation("/guess-who/players");
     }
   }, [setLocation]);
 
   const handleSelectTheme = (themeId: ThemeId) => {
-    localStorage.setItem("guessWhoTheme", themeId);
-    setLocation("/guess-who/play");
+    try {
+      localStorage.setItem("guessWhoTheme", themeId);
+      setLocation("/guess-who/play");
+    } catch (error) {
+      console.error("Erro ao selecionar tema:", error);
+    }
   };
 
   return (

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useLocation } from "wouter";
 import { GameLayout } from "@/components/GameLayout";
 import { PlayerList } from "@/components/PlayerList";
@@ -6,9 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
+interface Player {
+  id: number;
+  name: string;
+  points?: number;
+}
+
 export default function GuessWhoPlayers() {
   const [, setLocation] = useLocation();
-  const { data: players = [] } = useQuery({
+  const { data: players = [] } = useQuery<Player[]>({
     queryKey: ["/api/players"],
   });
 
@@ -32,7 +37,7 @@ export default function GuessWhoPlayers() {
         </div>
 
         <div className="w-full max-w-md">
-          <PlayerList /> {/*Retained this line as it's in the edited code and is likely needed despite original code having different implementation*/}
+          <PlayerList />
         </div>
 
         <Button
