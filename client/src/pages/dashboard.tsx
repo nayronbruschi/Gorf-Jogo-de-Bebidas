@@ -76,7 +76,7 @@ export default function Dashboard() {
           >
             <CarouselContent className="-ml-4">
               {games.map((game) => (
-                <CarouselItem key={game.id} className="pl-4 basis-[18%] md:basis-[18%] lg:basis-[18%]">
+                <CarouselItem key={game.id} className="pl-4 basis-[22%] md:basis-[22%] lg:basis-[22%]">
                   <div 
                     className="flex flex-col items-center gap-2 p-4 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => navigate(game.route)}

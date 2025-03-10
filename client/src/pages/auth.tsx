@@ -39,10 +39,6 @@ export default function Auth() {
         return 'Login com Google cancelado';
       case 'auth/cancelled-popup-request':
         return 'Operação cancelada';
-      case 'auth/unauthorized-domain':
-        return 'Domínio não autorizado. Por favor, adicione o domínio do Replit no console do Firebase: Authentication > Settings > Authorized domains';
-      case 'auth/configuration-not-found':
-        return 'Erro de configuração do Firebase';
       default:
         return 'Ocorreu um erro. Tente novamente.';
     }
@@ -89,7 +85,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -97,7 +93,7 @@ export default function Auth() {
       >
         <div className="bg-white/10 backdrop-blur-lg rounded-lg p-8 shadow-xl">
           <h1 className="text-3xl font-bold text-white text-center mb-8">
-            {isLogin ? "Bem-vindo de volta!" : "Crie sua conta"}
+            {isLogin ? "Bem-vindo" : "Crie sua conta"}
           </h1>
 
           <form onSubmit={handleEmailAuth} className="space-y-4">
@@ -128,7 +124,7 @@ export default function Auth() {
 
             <Button
               type="submit"
-              className="w-full bg-white text-purple-600 hover:bg-white/90"
+              className="w-full bg-purple-700 hover:bg-purple-800 text-white"
               size="lg"
               disabled={isLoading}
             >
@@ -140,7 +136,7 @@ export default function Auth() {
             <Button
               onClick={handleGoogleLogin}
               variant="outline"
-              className="w-full bg-white text-gray-800 hover:bg-white/90"
+              className="w-full bg-white/10 text-white hover:bg-white/20"
               size="lg"
               disabled={isLoading}
             >
@@ -149,11 +145,11 @@ export default function Auth() {
             </Button>
           </div>
 
-          <p className="text-white text-center mt-6">
+          <p className="text-white/80 text-center mt-6">
             {isLogin ? "Não tem uma conta?" : "Já tem uma conta?"}{" "}
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="text-white underline hover:text-white/80"
+              className="text-purple-400 hover:text-purple-300"
               disabled={isLoading}
             >
               {isLogin ? "Criar conta" : "Fazer login"}
