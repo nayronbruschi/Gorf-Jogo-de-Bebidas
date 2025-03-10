@@ -97,12 +97,17 @@ export default function TouchGame() {
       if (timeElapsed >= duration) {
         clearInterval(flash);
         const randomPoint = touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)];
-        // Limpar todos os pontos e mostrar apenas o vencedor
-        touchPointsRef.current = [randomPoint];
-        setTouchPoints([randomPoint]);
-        setSelectedPoint(randomPoint);
+
+        // Primeiro, parar todas as animações
         setSelecting(false);
-        setGameEnded(true);
+
+        // Depois, mostrar apenas o ponto vencedor sem animação
+        setTimeout(() => {
+          touchPointsRef.current = [randomPoint];
+          setSelectedPoint(randomPoint);
+          setTouchPoints([randomPoint]);
+          setGameEnded(true);
+        }, 100);
       } else {
         // Durante a animação, todos os pontos piscam
         setTouchPoints([...touchPointsRef.current]);
@@ -194,7 +199,7 @@ export default function TouchGame() {
                   height: 100,
                   borderRadius: "50%",
                   backgroundColor: point.color,
-                  opacity: 0.8,
+                  opacity: gameEnded ? 1 : 0.8,
                   border: "3px solid rgba(255, 255, 255, 0.8)"
                 }}
               />
@@ -202,7 +207,7 @@ export default function TouchGame() {
           </AnimatePresence>
         </div>
 
-        {gameEnded && (
+        {gameEnded && !selecting && (
           <Button
             size="lg"
             onClick={resetGame}
