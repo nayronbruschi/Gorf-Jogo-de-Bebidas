@@ -1,17 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { Roulette } from "@/components/Roulette";
 import { useSound } from "@/hooks/use-sound";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings2, Beer, Brain, Flame, Sparkles } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
 type GameMode = "classic" | "hardcore" | "custom" | "noAlcohol";
 
@@ -31,12 +24,12 @@ const modes: Record<GameMode, {
     description: "Desafios clássicos e divertidos!",
     icon: Sparkles,
     options: [
-      { text: "Beba 2 Goles", color: "#ef4444" },
-      { text: "Escolha Alguém", color: "#3b82f6" },
-      { text: "Passe a Vez", color: "#eab308" },
-      { text: "Todos Bebem", color: "#84cc16" },
-      { text: "Invente uma Regra", color: "#8b5cf6" },
-      { text: "Beba 1 Gole", color: "#ec4899" }
+      { text: "Beba 2 Goles", color: "#7e22ce" },
+      { text: "Escolha Alguém", color: "#9333ea" },
+      { text: "Passe a Vez", color: "#a855f7" },
+      { text: "Todos Bebem", color: "#c084fc" },
+      { text: "Invente uma Regra", color: "#d946ef" },
+      { text: "Beba 1 Gole", color: "#e879f9" }
     ]
   },
   hardcore: {
@@ -44,12 +37,12 @@ const modes: Record<GameMode, {
     description: "Desafios mais intensos e ousados!",
     icon: Flame,
     options: [
-      { text: "Shot!", color: "#dc2626" },
+      { text: "Shot!", color: "#7e22ce" },
       { text: "2 Shots!", color: "#9333ea" },
-      { text: "Vire o Copo", color: "#ea580c" },
-      { text: "Todos Tomam Shot", color: "#059669" },
-      { text: "Desafio + Shot", color: "#2563eb" },
-      { text: "Shot ou Desafio", color: "#db2777" }
+      { text: "Vire o Copo", color: "#a855f7" },
+      { text: "Todos Tomam Shot", color: "#c084fc" },
+      { text: "Desafio + Shot", color: "#d946ef" },
+      { text: "Shot ou Desafio", color: "#e879f9" }
     ]
   },
   noAlcohol: {
@@ -57,12 +50,12 @@ const modes: Record<GameMode, {
     description: "Diversão sem bebida!",
     icon: Brain,
     options: [
-      { text: "Dance 30s", color: "#f97316" },
-      { text: "Conte uma Piada", color: "#84cc16" },
-      { text: "Imite Alguém", color: "#06b6d4" },
-      { text: "Faça 10 Flexões", color: "#8b5cf6" },
-      { text: "Cante uma Música", color: "#ec4899" },
-      { text: "Invente uma Dança", color: "#f43f5e" }
+      { text: "Dance 30s", color: "#7e22ce" },
+      { text: "Conte uma Piada", color: "#9333ea" },
+      { text: "Imite Alguém", color: "#a855f7" },
+      { text: "Faça 10 Flexões", color: "#c084fc" },
+      { text: "Cante uma Música", color: "#d946ef" },
+      { text: "Invente uma Dança", color: "#e879f9" }
     ]
   },
   custom: {
@@ -70,12 +63,12 @@ const modes: Record<GameMode, {
     description: "Crie seus próprios desafios!",
     icon: Settings2,
     options: [
-      { text: "Desafio 1", color: "#ef4444" },
-      { text: "Desafio 2", color: "#3b82f6" },
-      { text: "Desafio 3", color: "#eab308" },
-      { text: "Desafio 4", color: "#84cc16" },
-      { text: "Desafio 5", color: "#8b5cf6" },
-      { text: "Desafio 6", color: "#ec4899" }
+      { text: "Desafio 1", color: "#7e22ce" },
+      { text: "Desafio 2", color: "#9333ea" },
+      { text: "Desafio 3", color: "#a855f7" },
+      { text: "Desafio 4", color: "#c084fc" },
+      { text: "Desafio 5", color: "#d946ef" },
+      { text: "Desafio 6", color: "#e879f9" }
     ]
   }
 };
@@ -108,6 +101,7 @@ export default function RouletteMode() {
               <div className="flex flex-col items-center gap-2">
                 <mode.icon className="h-6 w-6" />
                 <span className="font-semibold">{mode.name}</span>
+                <span className="text-sm opacity-80">{mode.description}</span>
               </div>
             </button>
           ))}
