@@ -44,20 +44,25 @@ export default function RouletteMode() {
     queryKey: ["/api/players"],
   });
 
-  // Verificar se um jogador venceu
-  const checkVictory = async (playerId: number) => {
-    const playerData = await apiRequest("GET", `/api/players/${playerId}`);
+  // Verificar vitória para todos os jogadores
+  const checkAllPlayersForWin = async () => {
+    const maxPoints = Number(localStorage.getItem("maxPoints"));
+    console.log('Pontuação máxima:', maxPoints);
 
-    console.log('Verificando vitória:', {
-      jogador: playerData.name,
-      pontosAtuais: playerData.points,
-      pontosMaximos: maxPoints
-    });
+    if (!players || players.length === 0) return false;
 
-    if (playerData.points >= maxPoints) {
-      console.log('VITÓRIA! Redirecionando para tela de vencedor...');
-      navigate(`/roulette/winner?playerId=${playerId}`);
-      return true;
+    for (const player of players) {
+      console.log('Verificando jogador:', {
+        nome: player.name,
+        pontos: player.points,
+        maximoPontos: maxPoints
+      });
+
+      if (player.points >= maxPoints) {
+        console.log('VITÓRIA ENCONTRADA! Redirecionando...');
+        navigate(`/roulette/winner?playerId=${player.id}`);
+        return true;
+      }
     }
     return false;
   };
@@ -73,9 +78,10 @@ export default function RouletteMode() {
     },
     onSuccess: async (_, variables) => {
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-      const hasWon = await checkVictory(variables.playerId);
 
-      if (!hasWon) {
+      // Verificar vitória após atualização de pontos
+      const hasWinner = await checkAllPlayersForWin();
+      if (!hasWinner) {
         setAction(null);
         setShowPunishment(false);
         selectRandomPlayer();
@@ -84,8 +90,12 @@ export default function RouletteMode() {
   });
 
   // Selecionar jogador aleatório
-  const selectRandomPlayer = () => {
+  const selectRandomPlayer = async () => {
     if (isSelecting) return;
+
+    // Verificar vitória antes de iniciar nova rodada
+    const hasWinner = await checkAllPlayersForWin();
+    if (hasWinner) return;
 
     setIsSelecting(true);
     setAction(null);
