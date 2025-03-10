@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/card";
 import { GamepadIcon, Trophy, Users, Clock } from "lucide-react";
 import { PromotionalBanner } from "@/components/PromotionalBanner";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { decks } from "@/lib/game-data";
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
@@ -65,6 +67,32 @@ export default function Dashboard() {
       <div className="container mx-auto p-4 space-y-8">
         <section className="pb-4">
           <PromotionalBanner />
+        </section>
+
+        <section className="pb-4 overflow-x-visible">
+          <Carousel 
+            className="w-full"
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+          >
+            <CarouselContent className="-ml-4">
+              {decks.map((deck) => (
+                <CarouselItem key={deck.id} className="pl-4 md:basis-1/4 lg:basis-1/6">
+                  <div 
+                    className="flex flex-col items-center gap-2 p-4 cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => navigate(`/${deck.id}`)}
+                  >
+                    <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
+                      <deck.icon className="h-8 w-8 text-white" />
+                    </div>
+                    <span className="text-sm text-white text-center">{deck.name}</span>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </section>
 
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">

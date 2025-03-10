@@ -6,27 +6,21 @@ import { auth } from "@/lib/firebase";
 const bannerImages = [
   {
     src: "/banner/banner1.jpg",
-    alt: "Sueca Card Game",
-    title: "Sueca Card Game",
-    description: "Jogue o clássico jogo de cartas português"
+    alt: "Promoção 99Pay"
   },
   {
     src: "/banner/banner2.jpg",
-    alt: "Roulette Mode",
-    title: "Roulette Mode",
-    description: "Gire a roleta e descubra seu destino"
+    alt: "Promoção 99Pay"
   },
   {
     src: "/banner/banner3.jpg",
-    alt: "Guess Who Game",
-    title: "Guess Who Game",
-    description: "Teste sua memória e diversão garantida"
+    alt: "Promoção 99Pay"
   }
 ];
 
 export function PromotionalBanner() {
   return (
-    <Carousel className="w-full max-w-screen-xl mx-auto">
+    <Carousel className="w-full max-w-screen-xl mx-auto" opts={{ loop: true }}>
       <CarouselContent>
         {bannerImages.map((image, index) => (
           <CarouselItem key={index}>
@@ -37,10 +31,6 @@ export function PromotionalBanner() {
                   alt={image.alt}
                   className="w-full h-full object-cover rounded-lg"
                 />
-                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent text-white rounded-b-lg">
-                  <h3 className="text-xl font-bold">{image.title}</h3>
-                  <p className="text-sm text-white/80">{image.description}</p>
-                </div>
               </CardContent>
             </Card>
           </CarouselItem>

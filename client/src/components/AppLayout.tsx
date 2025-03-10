@@ -47,7 +47,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                   </AvatarFallback>
                 </Avatar>
               </SheetTrigger>
-              <SheetContent side="left" className="w-80 bg-white p-0">
+              <SheetContent side="right" className="w-80 bg-white p-0">
                 <div className="flex flex-col h-full">
                   <div className="p-6 border-b">
                     <div className="flex items-center gap-4">
