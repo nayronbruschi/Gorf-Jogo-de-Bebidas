@@ -103,16 +103,20 @@ export default function GuessWhoGame() {
     }
   };
 
-  // Força o modo paisagem usando a API de tela cheia
+  // Força o modo paisagem e tela cheia
   useEffect(() => {
     const setLandscape = async () => {
       try {
-        // Solicita tela cheia se disponível
+        // Força rotação para paisagem via CSS
+        document.documentElement.style.setProperty('--vh', '100vh');
+
+        // Solicita tela cheia
         const elem = document.documentElement;
         if (elem.requestFullscreen) {
           await elem.requestFullscreen();
         }
-        // Tenta travar a orientação se disponível
+
+        // Tenta travar orientação
         if (window.screen.orientation) {
           await window.screen.orientation.lock("landscape");
         }
@@ -123,10 +127,14 @@ export default function GuessWhoGame() {
 
     setLandscape();
     return () => {
-      // Limpa tela cheia ao sair
+      // Remove CSS customizado
+      document.documentElement.style.removeProperty('--vh');
+
+      // Sai da tela cheia
       if (document.fullscreenElement) {
         document.exitFullscreen().catch(console.error);
       }
+
       // Libera orientação
       if (window.screen.orientation) {
         window.screen.orientation.unlock();
@@ -137,19 +145,18 @@ export default function GuessWhoGame() {
   if (players.length === 0) return null;
 
   return (
-    <div className="h-screen bg-gradient-to-br from-purple-900 to-purple-800 p-4">
-      {/* Botão Voltar */}
-      <Button
-        variant="ghost"
-        className="absolute top-4 left-4 text-white hover:bg-white/20"
-        onClick={() => setLocation("/game-modes")}
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </Button>
+    <div className="fixed inset-0 bg-gradient-to-br from-purple-900 to-purple-800 overflow-hidden">
+      {/* Barra Superior */}
+      <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between">
+        <Button
+          variant="ghost"
+          className="text-white hover:bg-white/20"
+          onClick={() => setLocation("/game-modes")}
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </Button>
 
-      <div className="flex flex-col items-center justify-center h-full">
-        {/* Info do Jogador e Tempo */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-white">
             <User2 className="w-6 h-6" />
             <span className="text-xl font-medium">
@@ -161,9 +168,11 @@ export default function GuessWhoGame() {
             <span className="text-xl font-medium">{timeLeft}s</span>
           </div>
         </div>
+      </div>
 
-        {/* Área Principal */}
-        <div className="w-full max-w-2xl mx-auto">
+      {/* Área Principal */}
+      <div className="absolute inset-0 mt-16 flex items-center justify-center p-8">
+        <div className="w-full max-w-2xl">
           <AnimatePresence mode="wait">
             {showItem ? (
               <motion.div
@@ -171,7 +180,7 @@ export default function GuessWhoGame() {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
-                className="text-4xl font-bold text-white text-center mb-8"
+                className="text-4xl font-bold text-white text-center"
               >
                 {currentItem}
               </motion.div>
@@ -188,12 +197,12 @@ export default function GuessWhoGame() {
                   placeholder="Quem você acha que é?"
                   value={guess}
                   onChange={(e) => setGuess(e.target.value)}
-                  className="text-lg p-6"
+                  className="text-lg p-6 w-full max-w-md"
                 />
                 <div className="flex gap-4">
                   <Button
                     onClick={handleGuess}
-                    className="bg-green-600 hover:bg-green-700"
+                    className="bg-purple-700 hover:bg-purple-800 text-white"
                     size="lg"
                   >
                     Chutar
@@ -202,6 +211,7 @@ export default function GuessWhoGame() {
                     onClick={handleNextPlayer}
                     variant="outline"
                     size="lg"
+                    className="text-white border-white hover:bg-white/20"
                   >
                     Próximo Jogador
                   </Button>
@@ -210,14 +220,14 @@ export default function GuessWhoGame() {
             )}
           </AnimatePresence>
         </div>
-
-        {/* Lista de Jogadores Eliminados */}
-        {eliminated.length > 0 && (
-          <div className="mt-8 text-white/60 text-center">
-            <p>Eliminados: {eliminated.join(", ")}</p>
-          </div>
-        )}
       </div>
+
+      {/* Lista de Eliminados */}
+      {eliminated.length > 0 && (
+        <div className="absolute bottom-4 left-0 right-0 text-white/60 text-center">
+          <p>Eliminados: {eliminated.join(", ")}</p>
+        </div>
+      )}
     </div>
   );
 }
