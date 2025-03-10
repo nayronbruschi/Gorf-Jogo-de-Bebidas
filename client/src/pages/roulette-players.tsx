@@ -25,14 +25,20 @@ export default function RoulettePlayers() {
   });
 
   const handleStartGame = () => {
+    // Converter para números e garantir valores mínimos
+    const maxPerRoundNumber = Math.max(gameMode === "shots" ? 1 : 2, Number(maxPerRound));
+    const maxToWinNumber = Math.max(10, Number(maxToWin));
+
     // Salvar configurações no localStorage
-    localStorage.setItem("maxPerRound", maxPerRound);
-    localStorage.setItem("maxPoints", maxToWin);
+    localStorage.setItem("maxPerRound", String(maxPerRoundNumber));
+    localStorage.setItem("maxPoints", String(maxToWinNumber));
+
     console.log('Configurações salvas:', {
-      maxPerRound,
-      maxToWin,
+      maxPerRound: maxPerRoundNumber,
+      maxToWin: maxToWinNumber,
       gameMode
     });
+
     // Ir para a página do jogo
     navigate("/roulette/play");
   };

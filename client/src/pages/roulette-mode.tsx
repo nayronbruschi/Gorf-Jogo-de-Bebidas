@@ -48,7 +48,7 @@ export default function RouletteMode() {
 
   const updatePoints = useMutation({
     mutationFn: async ({ playerId, type, points }: { playerId: number; type: "challenge" | "drink"; points: number }) => {
-      await apiRequest("PATCH", `/api/players/${playerId}/points`, { type, points });
+      return await apiRequest("PATCH", `/api/players/${playerId}/points`, { type, points });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
@@ -107,11 +107,11 @@ export default function RouletteMode() {
     if (!selectedPlayer || !action) return;
 
     try {
-      // Buscar pontuação máxima configurada
+      // Buscar a pontuação máxima configurada
       const maxPoints = Number(localStorage.getItem("maxPoints"));
       console.log('Pontuação máxima configurada:', maxPoints);
 
-      let addedPoints = 0;
+      let pointsToAdd = 0;
 
       // Atualizar pontos baseado na ação
       if (action === "drink") {
@@ -120,7 +120,7 @@ export default function RouletteMode() {
           type: "drink",
           points: numDrinks
         });
-        addedPoints = numDrinks;
+        pointsToAdd = numDrinks;
       } else if (action === "refuse" && punishmentDrinks > 0) {
         // Pontos do desafio
         await updatePoints.mutateAsync({
@@ -134,20 +134,25 @@ export default function RouletteMode() {
           type: "drink",
           points: punishmentDrinks
         });
-        addedPoints = punishmentDrinks * 2;
+        pointsToAdd = punishmentDrinks * 2;
       }
 
+      // Forçar atualização do cache
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+
       // Buscar dados atualizados do jogador
-      const updatedPlayer = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
+      const response = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
+      const updatedPoints = response.points;
+
       console.log('Verificando vitória:', {
         jogador: selectedPlayer.name,
-        pontosAtuais: updatedPlayer.points,
-        pontosSomados: addedPoints,
+        pontosAtuais: updatedPoints,
+        pontosSomados: pointsToAdd,
         maximoDePontos: maxPoints
       });
 
-      // Se atingiu ou ultrapassou o máximo, redirecionar para tela de vitória
-      if (updatedPlayer.points >= maxPoints) {
+      // Verificar se o jogador atingiu a pontuação máxima
+      if (updatedPoints >= maxPoints) {
         console.log('VITÓRIA! Redirecionando para tela de vencedor...');
         navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
         return;
