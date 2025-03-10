@@ -38,6 +38,7 @@ export default function RouletteMode() {
   const [showPlayerList, setShowPlayerList] = useState(false);
   const [action, setAction] = useState<"drink" | "refuse" | null>(null);
   const [punishmentDrinks, setPunishmentDrinks] = useState(0);
+  const [isGeneratingChallenge, setIsGeneratingChallenge] = useState(false);
   const { play } = useSound();
 
   const gameMode = localStorage.getItem("rouletteMode") || "goles";
@@ -51,7 +52,6 @@ export default function RouletteMode() {
   const updateDrinks = useMutation({
     mutationFn: async ({ playerId, drinks }: { playerId: number; drinks: number }) => {
       await apiRequest("PATCH", `/api/players/${playerId}/drinks`, { drinks });
-      await apiRequest("PATCH", `/api/players/${playerId}/points`, { type: "drink", points: drinks });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
@@ -76,7 +76,7 @@ export default function RouletteMode() {
     }, 2000);
   };
 
-  const handleDrink = async () => {
+  const handleDrink = () => {
     if (!selectedPlayer) return;
     setAction("drink");
   };
@@ -89,19 +89,24 @@ export default function RouletteMode() {
   };
 
   const generateNewPunishment = async () => {
-    if (!selectedPlayer) return;
+    if (!selectedPlayer || isGeneratingChallenge) return;
 
+    setIsGeneratingChallenge(true);
     try {
-      setPunishmentDrinks(prev => prev + 1);
       await updateDrinks.mutateAsync({
         playerId: selectedPlayer.id,
         drinks: 1
       });
+      setPunishmentDrinks(prev => prev + 1);
 
-      const randomPunishment = punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)];
-      setCurrentPunishment(randomPunishment);
+      setTimeout(() => {
+        const randomPunishment = punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)];
+        setCurrentPunishment(randomPunishment);
+        setIsGeneratingChallenge(false);
+      }, 1000);
     } catch (error) {
       console.error('Erro ao atualizar goles:', error);
+      setIsGeneratingChallenge(false);
     }
   };
 
@@ -251,7 +256,7 @@ export default function RouletteMode() {
             <Button
               size="lg"
               onClick={handleNextPlayer}
-              disabled={isSelecting || !action}
+              disabled={isSelecting}
               className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl w-full"
             >
               Sortear Próximo Jogador
@@ -296,9 +301,14 @@ export default function RouletteMode() {
               <Button
                 variant="outline"
                 onClick={generateNewPunishment}
+                disabled={isGeneratingChallenge}
                 className="border-purple-700 text-purple-700 hover:bg-purple-50"
               >
-                Beba mais um {drinkText} para gerar outro desafio
+                {isGeneratingChallenge ? (
+                  "Gerando outro desafio..."
+                ) : (
+                  <>Beba mais um {drinkText} para gerar outro desafio</>
+                )}
               </Button>
             </div>
           </div>
