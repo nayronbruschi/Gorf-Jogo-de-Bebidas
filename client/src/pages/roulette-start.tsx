@@ -5,36 +5,31 @@ import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Sparkles, Brain, Flame } from "lucide-react";
+import { Beer, Flame } from "lucide-react";
 
-type GameMode = "classic" | "hardcore" | "noAlcohol";
+type GameMode = "goles" | "shots";
 
 const modes: Record<GameMode, {
   name: string;
   description: string;
   icon: any;
 }> = {
-  classic: {
-    name: "Modo Clássico",
-    description: "Desafios clássicos e divertidos!",
-    icon: Sparkles,
+  goles: {
+    name: "Goles",
+    description: "Se você vai jogar bebendo um drink, uma cerveja ou algo mais tranquilo essa é a opção para você.",
+    icon: Beer,
   },
-  hardcore: {
-    name: "Modo Hardcore",
-    description: "Desafios mais intensos e ousados!",
+  shots: {
+    name: "Shots!",
+    description: "Se você é hardcore e vai jogar com shots (vodka, tequila, entre outros), essa é a opção a se escolher.",
     icon: Flame,
-  },
-  noAlcohol: {
-    name: "Sem Álcool",
-    description: "Diversão sem bebida!",
-    icon: Brain,
   }
 };
 
 export default function RouletteStart() {
   const [, navigate] = useLocation();
-  const [selectedMode, setSelectedMode] = useState<GameMode>("classic");
-  
+  const [selectedMode, setSelectedMode] = useState<GameMode>("goles");
+
   const { data: players = [] } = useQuery({
     queryKey: ["/api/players"],
   });
@@ -64,7 +59,7 @@ export default function RouletteStart() {
           <h2 className="text-2xl font-bold text-white text-center mb-6">
             Modo de Jogo
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {(Object.entries(modes) as [GameMode, typeof modes[GameMode]][]).map(([key, mode]) => (
               <button
                 key={key}

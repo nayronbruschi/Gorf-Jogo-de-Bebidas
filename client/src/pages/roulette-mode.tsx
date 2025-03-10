@@ -38,6 +38,8 @@ export default function RouletteMode() {
   const [hasDrunk, setHasDrunk] = useState(false);
   const { play } = useSound();
 
+  const gameMode = localStorage.getItem("rouletteMode") || "goles";
+
   const { data: players = [] } = useQuery({
     queryKey: ["/api/players"],
   });
@@ -45,6 +47,7 @@ export default function RouletteMode() {
   const updateDrinks = useMutation({
     mutationFn: async ({ playerId, drinks }: { playerId: number; drinks: number }) => {
       await apiRequest("PATCH", `/api/players/${playerId}/drinks`, { drinks });
+      await apiRequest("PATCH", `/api/players/${playerId}/points`, { type: "drink", points: drinks });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
@@ -58,7 +61,8 @@ export default function RouletteMode() {
 
     setTimeout(() => {
       const randomPlayer = players[Math.floor(Math.random() * players.length)];
-      const randomDrinks = Math.floor(Math.random() * 10) + 1;
+      const maxDrinks = gameMode === "shots" ? 3 : 10;
+      const randomDrinks = Math.floor(Math.random() * maxDrinks) + 1;
       setSelectedPlayer(randomPlayer);
       setNumDrinks(randomDrinks);
       setIsSelecting(false);
@@ -90,7 +94,6 @@ export default function RouletteMode() {
     if (!selectedPlayer) return;
 
     try {
-      // Adicionar um gole ao contador
       await updateDrinks.mutateAsync({
         playerId: selectedPlayer.id,
         drinks: 1
@@ -155,7 +158,11 @@ export default function RouletteMode() {
                 </h3>
                 <div className="bg-purple-50 rounded-lg p-6 mb-6">
                   <p className="text-purple-700 text-4xl font-bold">
-                    Beba {numDrinks} {numDrinks === 1 ? 'gole' : 'goles'}!
+                    {gameMode === "shots" ? (
+                      <>Tome {numDrinks} {numDrinks === 1 ? 'shot' : 'shots'}!</>
+                    ) : (
+                      <>Beba {numDrinks} {numDrinks === 1 ? 'gole' : 'goles'}!</>
+                    )}
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -210,7 +217,7 @@ export default function RouletteMode() {
                   <span className="text-white">{player.name}</span>
                   <div className="flex items-center gap-1 text-white/80">
                     <Beer className="h-4 w-4" />
-                    <span>{player.drinksCompleted} goles</span>
+                    <span>{player.drinksCompleted} {gameMode === "shots" ? "shots" : "goles"}</span>
                   </div>
                 </div>
               </div>
@@ -235,6 +242,7 @@ export default function RouletteMode() {
         </div>
       )}
 
+      {/* Popup de Desafio */}
       <Dialog open={showPunishment} onOpenChange={setShowPunishment}>
         <DialogContent className="bg-white rounded-xl">
           <DialogHeader>
@@ -269,17 +277,18 @@ export default function RouletteMode() {
                 onClick={generateNewPunishment}
                 className="border-purple-700 text-purple-700 hover:bg-purple-50"
               >
-                Beba mais um gole para gerar outro desafio
+                Beba mais um {gameMode === "shots" ? "shot" : "gole"} para gerar outro desafio
               </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
+      {/* Popup de Gerenciar Jogadores */}
       <Dialog open={showPlayerList} onOpenChange={setShowPlayerList}>
         <DialogContent className="bg-white rounded-xl">
           <DialogHeader>
-            <DialogTitle>Gerenciar Jogadores</DialogTitle>
+            <DialogTitle className="text-purple-900">Gerenciar Jogadores</DialogTitle>
           </DialogHeader>
           <PlayerList />
         </DialogContent>
