@@ -30,9 +30,11 @@ export default function GuessWhoGame() {
   const [items, setItems] = useState<string[]>([]);
   const [currentItem, setCurrentItem] = useState("");
   const [timeLeft, setTimeLeft] = useState(30);
-  const [showItem, setShowItem] = useState(true);
+  const [showItem, setShowItem] = useState(false);
   const [guess, setGuess] = useState("");
   const [eliminated, setEliminated] = useState<string[]>([]);
+  const [setupTime, setSetupTime] = useState(5);
+  const [isSetup, setIsSetup] = useState(true);
 
   // Inicialização do jogo
   useEffect(() => {
@@ -50,20 +52,57 @@ export default function GuessWhoGame() {
     const themeItems = getItemsByTheme(theme);
     setItems(themeItems.map(item => item.name));
     setCurrentItem(themeItems[0].name);
+
+    // Força rotação para paisagem via CSS
+    document.documentElement.style.setProperty('transform', 'rotate(-90deg)');
+    document.documentElement.style.setProperty('transform-origin', 'left top');
+    document.documentElement.style.setProperty('width', '100vh');
+    document.documentElement.style.setProperty('height', '100vw');
+    document.documentElement.style.setProperty('overflow', 'hidden');
+    document.documentElement.style.setProperty('position', 'absolute');
+    document.documentElement.style.setProperty('top', '100%');
+    document.documentElement.style.setProperty('left', '0');
+
+    return () => {
+      // Remove CSS de rotação
+      document.documentElement.style.removeProperty('transform');
+      document.documentElement.style.removeProperty('transform-origin');
+      document.documentElement.style.removeProperty('width');
+      document.documentElement.style.removeProperty('height');
+      document.documentElement.style.removeProperty('overflow');
+      document.documentElement.style.removeProperty('position');
+      document.documentElement.style.removeProperty('top');
+      document.documentElement.style.removeProperty('left');
+    };
   }, [setLocation]);
 
-  // Temporizador
+  // Timer de preparação
   useEffect(() => {
-    if (timeLeft > 0 && showItem) {
+    if (isSetup && setupTime > 0) {
+      const timer = setInterval(() => {
+        setSetupTime(prev => prev - 1);
+      }, 1000);
+
+      return () => clearInterval(timer);
+    } else if (isSetup && setupTime === 0) {
+      setIsSetup(false);
+      setShowItem(true);
+      setTimeLeft(30);
+    }
+  }, [setupTime, isSetup]);
+
+  // Timer principal
+  useEffect(() => {
+    if (!isSetup && timeLeft > 0 && showItem) {
       const timer = setInterval(() => {
         setTimeLeft(prev => prev - 1);
       }, 1000);
 
       return () => clearInterval(timer);
-    } else if (timeLeft === 0 && showItem) {
+    } else if (!isSetup && timeLeft === 0 && showItem) {
       setShowItem(false);
     }
-  }, [timeLeft, showItem]);
+  }, [timeLeft, showItem, isSetup]);
 
   const handleNextPlayer = useCallback(() => {
     let nextIndex = currentPlayerIndex;
@@ -80,22 +119,21 @@ export default function GuessWhoGame() {
     setCurrentPlayerIndex(nextIndex);
     const randomItem = items[Math.floor(Math.random() * items.length)];
     setCurrentItem(randomItem);
-    setTimeLeft(30);
-    setShowItem(true);
+    setSetupTime(5);
+    setIsSetup(true);
+    setShowItem(false);
     setGuess("");
   }, [currentPlayerIndex, players, eliminated, items, setLocation]);
 
   const handleGuess = () => {
     if (guess.toLowerCase().trim() === currentItem.toLowerCase().trim()) {
       // Jogador venceu
-      alert(`Parabéns ${players[currentPlayerIndex]}! Você acertou!`);
       setLocation("/game-modes");
     } else {
       // Jogador eliminado
       setEliminated([...eliminated, players[currentPlayerIndex]]);
       if (eliminated.length + 1 >= players.length - 1) {
         // Jogo acabou, todos eliminados
-        alert("Fim de jogo! Ninguém acertou!");
         setLocation("/game-modes");
       } else {
         handleNextPlayer();
@@ -103,46 +141,9 @@ export default function GuessWhoGame() {
     }
   };
 
-  // Força o modo paisagem e tela cheia
-  useEffect(() => {
-    const setLandscape = async () => {
-      try {
-        // Força rotação para paisagem via CSS
-        document.documentElement.style.setProperty('--vh', '100vh');
-
-        // Solicita tela cheia
-        const elem = document.documentElement;
-        if (elem.requestFullscreen) {
-          await elem.requestFullscreen();
-        }
-
-        // Tenta travar orientação
-        if (window.screen.orientation) {
-          await window.screen.orientation.lock("landscape");
-        }
-      } catch (error) {
-        console.error("Não foi possível travar a orientação:", error);
-      }
-    };
-
-    setLandscape();
-    return () => {
-      // Remove CSS customizado
-      document.documentElement.style.removeProperty('--vh');
-
-      // Sai da tela cheia
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(console.error);
-      }
-
-      // Libera orientação
-      if (window.screen.orientation) {
-        window.screen.orientation.unlock();
-      }
-    };
-  }, []);
-
   if (players.length === 0) return null;
+
+  const currentPlayer = players[currentPlayerIndex];
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-purple-900 to-purple-800 overflow-hidden">
@@ -160,66 +161,83 @@ export default function GuessWhoGame() {
           <div className="flex items-center gap-2 text-white">
             <User2 className="w-6 h-6" />
             <span className="text-xl font-medium">
-              {players[currentPlayerIndex]}
+              {currentPlayer}
             </span>
-          </div>
-          <div className="flex items-center gap-2 text-white">
-            <Timer className="w-6 h-6" />
-            <span className="text-xl font-medium">{timeLeft}s</span>
           </div>
         </div>
       </div>
 
       {/* Área Principal */}
       <div className="absolute inset-0 mt-16 flex items-center justify-center p-8">
-        <div className="w-full max-w-2xl">
-          <AnimatePresence mode="wait">
-            {showItem ? (
-              <motion.div
-                key="item"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
-                className="text-4xl font-bold text-white text-center"
-              >
+        <AnimatePresence mode="wait">
+          {isSetup ? (
+            <motion.div
+              key="setup"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="text-center space-y-6"
+            >
+              <h2 className="text-4xl font-bold text-white">
+                É a vez de {currentPlayer}
+              </h2>
+              <p className="text-xl text-white/80">
+                Coloque o celular de lado na testa
+              </p>
+              <div className="text-8xl font-bold text-white">
+                {setupTime}
+              </div>
+            </motion.div>
+          ) : showItem ? (
+            <motion.div
+              key="item"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="text-center space-y-8"
+            >
+              <div className="text-4xl font-bold text-white">
                 {currentItem}
-              </motion.div>
-            ) : (
-              <motion.div
-                key="guess"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
-                className="flex flex-col items-center gap-4"
-              >
-                <Input
-                  type="text"
-                  placeholder="Quem você acha que é?"
-                  value={guess}
-                  onChange={(e) => setGuess(e.target.value)}
-                  className="text-lg p-6 w-full max-w-md"
-                />
-                <div className="flex gap-4">
-                  <Button
-                    onClick={handleGuess}
-                    className="bg-purple-700 hover:bg-purple-800 text-white"
-                    size="lg"
-                  >
-                    Chutar
-                  </Button>
-                  <Button
-                    onClick={handleNextPlayer}
-                    variant="outline"
-                    size="lg"
-                    className="text-white border-white hover:bg-white/20"
-                  >
-                    Próximo Jogador
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+              </div>
+              <div className="text-8xl font-bold text-white">
+                {timeLeft}
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="guess"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="flex flex-col items-center gap-4"
+            >
+              <Input
+                type="text"
+                placeholder="Quem você acha que é?"
+                value={guess}
+                onChange={(e) => setGuess(e.target.value)}
+                className="text-lg p-6 w-full max-w-md"
+              />
+              <div className="flex gap-4">
+                <Button
+                  onClick={handleGuess}
+                  className="bg-purple-700 hover:bg-purple-800 text-white"
+                  size="lg"
+                >
+                  Chutar
+                </Button>
+                <Button
+                  onClick={handleNextPlayer}
+                  variant="outline"
+                  size="lg"
+                  className="text-white border-white hover:bg-white/20"
+                >
+                  Próximo Jogador
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Lista de Eliminados */}
