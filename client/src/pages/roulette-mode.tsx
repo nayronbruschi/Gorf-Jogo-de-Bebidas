@@ -51,7 +51,7 @@ export default function RouletteMode() {
 
   const updateDrinks = useMutation({
     mutationFn: async ({ playerId, type, points }: { playerId: number; type: "challenge" | "drink"; points: number }) => {
-      await apiRequest("PATCH", `/api/players/${playerId}/drinks`, { drinks: points });
+      await apiRequest("PATCH", `/api/players/${playerId}/points`, { type, points });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
@@ -121,7 +121,7 @@ export default function RouletteMode() {
       } else if (action === "refuse" && punishmentDrinks > 0) {
         await updateDrinks.mutateAsync({
           playerId: selectedPlayer.id,
-          type: "drink",
+          type: "challenge",
           points: punishmentDrinks
         });
       }
