@@ -77,13 +77,14 @@ export default function RouletteWinner() {
                 "M0,0 L100,0 L100,20 Q50,40 0,20 Z",
                 "M0,0 L100,0 L100,30 Q75,60 50,45 Q25,30 0,30 Z",
                 "M0,0 L100,0 L100,40 Q80,70 60,55 Q40,40 20,55 Q0,70 0,40 Z",
-                "M0,0 L100,0 L100,50 Q90,80 70,65 Q50,50 30,65 Q10,80 0,50 Z"
+                "M0,0 L100,0 L100,50 Q90,80 70,65 Q50,50 30,65 Q10,80 0,50 Z",
+                "M0,0 L100,0 L100,20 Q50,40 0,20 Z"  // Retorna ao início suavemente
               ]
             }}
             transition={{
-              duration: 4,
+              duration: 8,
               repeat: Infinity,
-              repeatType: "reverse",
+              repeatType: "loop",
               ease: "easeInOut"
             }}
           />
@@ -110,15 +111,17 @@ export default function RouletteWinner() {
               className="space-y-6"
             >
               <h1 className="text-4xl font-bold text-purple-900">
-                {winner?.name} deu Gorf!
+                {players.find(p => p.id === Number(playerId))?.name} deu Gorf!
               </h1>
 
               <div className="flex items-center justify-center gap-2 text-2xl text-purple-700">
                 <Beer className="h-8 w-8" />
                 <span>
-                  Bebeu {winner?.points} {winner?.points === 1 ?
-                    (gameMode === "shots" ? "shot" : "gole") :
-                    (gameMode === "shots" ? "shots" : "goles")}!
+                  Foi um total de {players.find(p => p.id === Number(playerId))?.points} {
+                    players.find(p => p.id === Number(playerId))?.points === 1
+                    ? (gameMode === "shots" ? "shot" : "gole")
+                    : (gameMode === "shots" ? "shots" : "goles")
+                  }!
                 </span>
               </div>
 
