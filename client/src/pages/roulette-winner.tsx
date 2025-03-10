@@ -22,8 +22,7 @@ export default function RouletteWinner() {
       console.log('Dados do vencedor:', response);
       return response;
     },
-    enabled: !!playerId,
-    refetchOnWindowFocus: false
+    enabled: !!playerId
   });
 
   const handlePlayAgain = async () => {
@@ -45,8 +44,6 @@ export default function RouletteWinner() {
       </div>
     );
   }
-
-  console.log('Dados do vencedor:', winner);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 relative overflow-hidden">
@@ -105,13 +102,13 @@ export default function RouletteWinner() {
               className="space-y-6"
             >
               <h1 className="text-4xl font-bold text-purple-900">
-                {winner.name} deu Gorf!
+                {winner?.name} deu Gorf!
               </h1>
 
               <div className="flex items-center justify-center gap-2 text-2xl text-purple-700">
                 <Beer className="h-8 w-8" />
                 <span>
-                  Bebeu {winner.points} {winner.points === 1 ?
+                  Bebeu {winner?.points} {winner?.points === 1 ?
                     (gameMode === "shots" ? "shot" : "gole") :
                     (gameMode === "shots" ? "shots" : "goles")}!
                 </span>
