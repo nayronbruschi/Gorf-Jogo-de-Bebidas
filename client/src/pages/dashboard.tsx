@@ -13,7 +13,7 @@ import {
 import { GamepadIcon, Trophy, Users, Clock } from "lucide-react";
 import { PromotionalBanner } from "@/components/PromotionalBanner";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import { decks } from "@/lib/game-data";
+import { games } from "@/lib/game-data";
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
@@ -63,12 +63,11 @@ export default function Dashboard() {
   ];
 
   const getGamePath = (gameName: string) => {
-    const gameRoutes: { [key: string]: string } = {
-      "Roleta": "/roulette",
-      "Quem Sou Eu?": "/guess-who/players",
-      "Verdade ou Desafio": "/truth-or-dare"
-    };
-    return gameRoutes[gameName] || "/game-modes";
+    const gameMap = games.reduce((acc, game) => ({
+      ...acc,
+      [game.name]: game.route
+    }), {});
+    return gameMap[gameName] || "/game-modes";
   };
 
   return (
@@ -88,16 +87,16 @@ export default function Dashboard() {
             }}
           >
             <CarouselContent className="-ml-4">
-              {decks.map((deck) => (
-                <CarouselItem key={deck.id} className="pl-4 basis-1/4 md:basis-1/4 lg:basis-[22%]">
+              {games.map((game) => (
+                <CarouselItem key={game.id} className="pl-4 basis-1/4 md:basis-1/4 lg:basis-[22%]">
                   <div 
                     className="flex flex-col items-center gap-2 p-4 cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => navigate(`/${deck.id}/players`)}
+                    onClick={() => navigate(game.route)}
                   >
                     <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
-                      <deck.icon className="h-8 w-8 text-white" />
+                      <game.icon className="h-8 w-8 text-white" />
                     </div>
-                    <span className="text-sm text-white text-center">{deck.name}</span>
+                    <span className="text-sm text-white text-center">{game.name}</span>
                   </div>
                 </CarouselItem>
               ))}

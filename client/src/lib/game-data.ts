@@ -6,7 +6,7 @@ import {
   Gamepad2, Cookie, Baby, Rocket, Crown, HeartHandshake,
   Glasses, Hand, Shirt, Umbrella, Wine, Soup, Coffee,
   Flame, Candy, Snowflake, IceCream, Utensils, UtensilsCrossed,
-  Cake
+  Cake, GamepadIcon, HandMetal, Spade
 } from "lucide-react";
 
 interface Challenge {
@@ -22,11 +22,19 @@ interface DeckType {
   challenges: Challenge[];
 }
 
+interface GameType {
+  id: string;
+  name: string;
+  description: string;
+  icon: LucideIcon;
+  route: string;
+}
+
 // Desafios clássicos - Foco em diversão geral e socialização
 const classicChallenges: Challenge[] = [
   { text: "Faça 10 polichinelos", icon: Dumbbell },
   { text: "Imite alguém do grupo", icon: UserRound },
-  { text: "Dance por 30 segundos", icon: Activity }, 
+  { text: "Dance por 30 segundos", icon: Activity },
   { text: "Conte uma história engraçada", icon: MessageSquare },
   { text: "Faça uma mímica", icon: Drama },
   { text: "Cante uma música", icon: Music },
@@ -226,6 +234,51 @@ export const decks: DeckType[] = [
     description: "Desafios mais ousados e sensuais!",
     icon: Flame,
     challenges: spicyChallenges
+  }
+];
+
+export const games: GameType[] = [
+  {
+    id: "classic",
+    name: "Modo Clássico",
+    description: "Desafios divertidos e clássicos para todos!",
+    icon: GamepadIcon,
+    route: "/classic"
+  },
+  {
+    id: "guess-who",
+    name: "Quem sou eu",
+    description: "Adivinhe quem você é neste jogo divertido!",
+    icon: Brain,
+    route: "/guess-who/players"
+  },
+  {
+    id: "touch-game",
+    name: "Toque na Sorte",
+    description: "Teste sua sorte neste jogo interativo!",
+    icon: HandMetal,
+    route: "/touch-game"
+  },
+  {
+    id: "spin-bottle",
+    name: "Garrafa Giratória",
+    description: "Gire a garrafa e descubra seu destino!",
+    icon: Wine,
+    route: "/spin-bottle"
+  },
+  {
+    id: "coin-flip",
+    name: "Cara ou Coroa",
+    description: "Faça sua escolha e teste sua sorte!",
+    icon: Sparkles,
+    route: "/coin-flip"
+  },
+  {
+    id: "cards",
+    name: "Sueca",
+    description: "Jogue o clássico jogo de cartas português!",
+    icon: Spade,
+    route: "/cards"
   }
 ];
 
