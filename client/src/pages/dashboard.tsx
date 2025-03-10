@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useLocation } from "wouter";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
-import { auth } from "@/lib/firebase";
 import {
   Card,
   CardContent,
@@ -18,39 +17,28 @@ import { games } from "@/lib/game-data";
 export default function Dashboard() {
   const [, navigate] = useLocation();
 
-  // Proteger rota
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (!user) {
-        navigate("/auth");
-      }
-    });
-
-    return () => unsubscribe();
-  }, [navigate]);
-
   const stats = [
     {
       title: "Jogos Jogados",
-      value: "24",
+      value: "0",
       description: "Total de partidas",
       icon: GamepadIcon,
     },
     {
       title: "Vitórias",
-      value: "12",
+      value: "0",
       description: "Jogos vencidos",
       icon: Trophy,
     },
     {
       title: "Jogadores",
-      value: "48",
+      value: "0",
       description: "Participantes únicos",
       icon: Users,
     },
     {
       title: "Tempo Total",
-      value: "8h",
+      value: "0h",
       description: "De diversão",
       icon: Clock,
     },

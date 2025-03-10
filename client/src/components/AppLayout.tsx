@@ -47,9 +47,9 @@ export function AppLayout({ children }: AppLayoutProps) {
                   </AvatarFallback>
                 </Avatar>
               </SheetTrigger>
-              <SheetContent side="right" className="w-80 bg-white p-0">
+              <SheetContent side="right" className="w-80 bg-gray-900 p-0 border-none">
                 <div className="flex flex-col h-full">
-                  <div className="p-6 border-b">
+                  <div className="p-6 border-b border-white/10">
                     <div className="flex items-center gap-4">
                       <Avatar className="h-12 w-12">
                         <AvatarImage src={user?.photoURL || ""} />
@@ -58,8 +58,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium">{user?.displayName || "Usuário"}</p>
-                        <p className="text-sm text-gray-500">{user?.email}</p>
+                        <p className="font-medium text-white">{user?.displayName || "Usuário"}</p>
+                        <p className="text-sm text-white/60">{user?.email}</p>
                       </div>
                     </div>
                   </div>
@@ -70,7 +70,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                         <li key={item.href}>
                           <Button
                             variant="ghost"
-                            className="w-full justify-start gap-2"
+                            className="w-full justify-start gap-2 text-white hover:bg-white/10"
                             onClick={() => {
                               navigate(item.href);
                               setOpen(false);
@@ -84,10 +84,10 @@ export function AppLayout({ children }: AppLayoutProps) {
                     </ul>
                   </nav>
 
-                  <div className="p-4 border-t">
+                  <div className="p-4 border-t border-white/10">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="w-full justify-start gap-2 text-red-400 hover:text-red-300 hover:bg-red-400/10"
                       onClick={handleSignOut}
                     >
                       <LogOut className="h-5 w-5" />

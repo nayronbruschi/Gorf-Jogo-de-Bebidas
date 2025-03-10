@@ -1,11 +1,16 @@
 import { useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { GameCard } from "@/components/GameCard";
-import { Dices, CircleDot, Brain, Hand, Wine, Coins, LayoutGrid } from "lucide-react";
+import { CircleDot, Brain, Hand, Wine, Coins, LayoutGrid, GamepadIcon } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 
 export default function GameModes() {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Limpar dados ao entrar na página de modos
   useEffect(() => {
     const cleanupData = async () => {
@@ -42,7 +47,7 @@ export default function GameModes() {
         <GameCard
           title="Modo Clássico"
           description="Desafios e perguntas para todos os jogadores beberem conforme as regras."
-          icon={<Dices className="h-8 w-8 text-purple-500" />}
+          icon={<GamepadIcon className="h-8 w-8 text-purple-500" />}
           href="/classic"
         />
         <GameCard
