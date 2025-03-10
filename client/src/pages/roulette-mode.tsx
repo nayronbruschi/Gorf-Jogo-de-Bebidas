@@ -110,7 +110,18 @@ export default function RouletteMode() {
     }
   };
 
-  const handlePunishmentComplete = () => {
+  const handlePunishmentComplete = async () => {
+    // Garantir que os goles do desafio sejam somados antes de fechar
+    if (punishmentDrinks > 0) {
+      try {
+        await updateDrinks.mutateAsync({
+          playerId: selectedPlayer.id,
+          drinks: punishmentDrinks
+        });
+      } catch (error) {
+        console.error('Erro ao atualizar goles do desafio:', error);
+      }
+    }
     setShowPunishment(false);
     selectRandomPlayer();
   };
