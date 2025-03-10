@@ -6,7 +6,15 @@ interface TouchPoint {
   id: number;
   x: number;
   y: number;
+  color: string;
 }
+
+// Array de cores vibrantes para os círculos
+const colors = [
+  "#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEEAD",
+  "#D4A5A5", "#9B59B6", "#3498DB", "#E67E22", "#2ECC71",
+  "#E74C3C", "#1ABC9C", "#F1C40F", "#9B59B6", "#34495E"
+];
 
 export default function TouchGame() {
   const [touchPoints, setTouchPoints] = useState<TouchPoint[]>([]);
@@ -14,6 +22,7 @@ export default function TouchGame() {
   const [selectedPoint, setSelectedPoint] = useState<TouchPoint | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef<number | null>(null);
 
   const handleTouch = (e: TouchEvent) => {
     e.preventDefault();
@@ -28,21 +37,25 @@ export default function TouchGame() {
       newPoints.push({
         id: i,
         x: touch.clientX - rect.left,
-        y: touch.clientY - rect.top
+        y: touch.clientY - rect.top,
+        color: colors[i]
       });
     }
     setTouchPoints(newPoints);
 
-    // Reset timer
+    // Reset timer and start time
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
 
     // Start new timer if there are points
     if (newPoints.length > 0) {
+      startTimeRef.current = Date.now();
       timerRef.current = setTimeout(() => {
         selectRandom();
       }, 3000);
+    } else {
+      startTimeRef.current = null;
     }
   };
 
@@ -106,7 +119,9 @@ export default function TouchGame() {
                 initial={{ scale: 0 }}
                 animate={{
                   scale: selectedPoint?.id === point.id ? [1, 1.2, 1] : 1,
-                  backgroundColor: selectedPoint?.id === point.id ? "rgba(255, 255, 255, 0.9)" : "rgba(255, 255, 255, 0.3)"
+                  backgroundColor: selectedPoint?.id === point.id 
+                    ? "rgba(255, 255, 255, 0.9)" 
+                    : point.color
                 }}
                 exit={{ scale: 0 }}
                 transition={{
@@ -117,12 +132,13 @@ export default function TouchGame() {
                 }}
                 style={{
                   position: "absolute",
-                  left: point.x - 25,
-                  top: point.y - 25,
-                  width: 50,
-                  height: 50,
+                  left: point.x - 40, // Aumentado para círculos maiores
+                  top: point.y - 40, // Aumentado para círculos maiores
+                  width: 80, // Aumentado o tamanho
+                  height: 80, // Aumentado o tamanho
                   borderRadius: "50%",
-                  border: "2px solid rgba(255, 255, 255, 0.8)"
+                  opacity: 0.8,
+                  border: "3px solid rgba(255, 255, 255, 0.8)"
                 }}
               />
             ))}
