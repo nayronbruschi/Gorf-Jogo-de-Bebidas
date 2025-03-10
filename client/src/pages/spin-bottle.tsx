@@ -10,12 +10,12 @@ export default function SpinBottle() {
 
   const spinBottle = () => {
     if (isSpinning) return;
-    
+
     setIsSpinning(true);
     const spins = 5 + Math.random() * 5; // Entre 5 e 10 voltas completas
     const newRotation = rotation + (spins * 360) + Math.random() * 360;
     setRotation(newRotation);
-    
+
     setTimeout(() => {
       setIsSpinning(false);
     }, 3000);
@@ -41,7 +41,7 @@ export default function SpinBottle() {
             }}
           >
             <img
-              src="/attached_assets/garraa roxa.webp"
+              src="/attached_assets/garraa%20roxa.webp"
               alt="Garrafa"
               className="w-full h-full object-contain"
             />

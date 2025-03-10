@@ -38,7 +38,7 @@ export default function Cards() {
       <div className="flex flex-col items-center gap-8">
         <div className="text-center mb-4">
           <p className="text-white/80">
-            Compre uma carta e siga a regra! Restam {remainingCards.length} cartas.
+            Vire uma carta e siga a regra! Restam {remainingCards.length} cartas.
           </p>
         </div>
 
@@ -99,7 +99,7 @@ export default function Cards() {
             className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl"
           >
             <LayoutGrid className="mr-2 h-5 w-5" />
-            {isDrawing ? "Comprando..." : "Comprar Carta"}
+            {isDrawing ? "Virando..." : "Virar uma carta"}
           </Button>
 
           {remainingCards.length === 0 && (

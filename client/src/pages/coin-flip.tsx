@@ -2,7 +2,7 @@ import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Coins } from "lucide-react";
+import { Coins, CircleDot, Crown } from "lucide-react";
 
 export default function CoinFlip() {
   const [isFlipping, setIsFlipping] = useState(false);
@@ -10,14 +10,14 @@ export default function CoinFlip() {
 
   const flipCoin = () => {
     if (isFlipping) return;
-    
+
     setIsFlipping(true);
     setResult(null);
-    
+
     setTimeout(() => {
       setResult(Math.random() < 0.5 ? "cara" : "coroa");
       setIsFlipping(false);
-    }, 3000);
+    }, 1500); // Reduzido para 1.5 segundos
   };
 
   return (
@@ -29,27 +29,33 @@ export default function CoinFlip() {
           </p>
         </div>
 
-        <div className="relative w-64 h-64">
+        <div className="relative w-32 h-32"> {/* Reduzido o tamanho */}
           <motion.div
             className="w-full h-full"
             animate={isFlipping ? {
               rotateX: [0, 720 + (Math.random() < 0.5 ? 180 : 0)],
-              scale: [1, 1.2, 1]
+              y: [0, -150, 0], // Adicionado movimento vertical para simular o arremesso
+              scale: [1, 1.1, 1]
             } : {}}
             transition={{
-              duration: 3,
-              ease: "easeOut"
+              duration: 1.5,
+              times: [0, 0.5, 1], // Controla o timing da animação
+              y: {
+                type: "spring",
+                stiffness: 200,
+                damping: 15
+              }
             }}
           >
             <div className="relative w-full h-full perspective-1000">
               <div className={`absolute w-full h-full rounded-full transition-transform duration-500 ${isFlipping ? "animate-flip" : ""}`}>
                 {/* Cara */}
-                <div className="absolute w-full h-full rounded-full bg-purple-600 flex items-center justify-center transform-style-3d backface-hidden">
-                  <span className="text-4xl font-bold text-white">C</span>
+                <div className="absolute w-full h-full rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center transform-style-3d backface-hidden border-4 border-yellow-300">
+                  <CircleDot className="w-12 h-12 text-yellow-200" />
                 </div>
                 {/* Coroa */}
-                <div className="absolute w-full h-full rounded-full bg-pink-600 flex items-center justify-center transform rotateY-180 transform-style-3d backface-hidden">
-                  <span className="text-4xl font-bold text-white">♛</span>
+                <div className="absolute w-full h-full rounded-full bg-gradient-to-br from-yellow-500 to-yellow-700 flex items-center justify-center transform rotateY-180 transform-style-3d backface-hidden border-4 border-yellow-300">
+                  <Crown className="w-12 h-12 text-yellow-200" />
                 </div>
               </div>
             </div>
