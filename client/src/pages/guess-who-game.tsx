@@ -12,7 +12,6 @@ interface PlayerItem {
 }
 
 export default function GuessWhoGame() {
-  // Hooks são chamados primeiro
   const [, setLocation] = useLocation();
   const { data: playersData = [] } = useQuery({
     queryKey: ["/api/players"],
@@ -33,7 +32,6 @@ export default function GuessWhoGame() {
   const [winner, setWinner] = useState("");
   const [readyToStart, setReadyToStart] = useState(false);
 
-  // Helpers
   const setLandscapeMode = () => {
     document.documentElement.style.setProperty('transform', 'rotate(-90deg)');
     document.documentElement.style.setProperty('transform-origin', 'left top');
@@ -65,7 +63,6 @@ export default function GuessWhoGame() {
     return player ? player.name : "";
   };
 
-  // Verificar se há um vencedor após eliminação
   const checkForWinner = useCallback((remainingPlayers: string[]) => {
     if (remainingPlayers.length === 1) {
       setWinner(remainingPlayers[0]);
@@ -76,7 +73,6 @@ export default function GuessWhoGame() {
     return false;
   }, []);
 
-  // Efeito de inicialização
   useEffect(() => {
     const storedPlayers = localStorage.getItem("guessWhoPlayers");
     const theme = localStorage.getItem("guessWhoTheme") as ThemeId;
@@ -97,7 +93,6 @@ export default function GuessWhoGame() {
       const themeItems = getItemsByTheme(theme);
       setItems(themeItems.map(item => item.name));
 
-      // Inicializa os itens para cada jogador
       const initialPlayerItems: PlayerItem = {};
       playerList.forEach((playerId: string) => {
         const randomItem = themeItems[Math.floor(Math.random() * themeItems.length)].name;
@@ -115,7 +110,6 @@ export default function GuessWhoGame() {
     return resetOrientation;
   }, [setLocation]);
 
-  // Timer de preparação
   useEffect(() => {
     if (!isSetup || !readyToStart || setupTime <= 0) return;
 
@@ -135,7 +129,6 @@ export default function GuessWhoGame() {
     return () => clearInterval(timer);
   }, [isSetup, readyToStart]);
 
-  // Timer principal
   useEffect(() => {
     if (!showItem || timeLeft <= 0) return;
 
@@ -145,9 +138,8 @@ export default function GuessWhoGame() {
           clearInterval(timer);
           setShowItem(false);
           setPortraitMode();
-          // Vibrar quando o tempo acabar
           if ('vibrate' in navigator) {
-            navigator.vibrate([200, 100, 200]); // Padrão mais perceptível: vibra-pausa-vibra
+            navigator.vibrate([200, 100, 200]);
           }
           return 0;
         }
@@ -159,7 +151,6 @@ export default function GuessWhoGame() {
   }, [showItem]);
 
   const handleNextPlayer = useCallback(() => {
-    // Se houver um vencedor, remove ele dos jogadores ativos
     const remainingPlayers = winner 
       ? players.filter(id => id !== winner)
       : players;
@@ -174,7 +165,6 @@ export default function GuessWhoGame() {
       return;
     }
 
-    // Atualiza a lista de jogadores se necessário
     if (winner) {
       setPlayers(remainingPlayers);
     }
@@ -194,11 +184,28 @@ export default function GuessWhoGame() {
     const newEliminated = [...eliminated, players[currentPlayerIndex]];
     setEliminated(newEliminated);
 
-    // Verifica se restou apenas um jogador
     const remainingPlayers = players.filter(id => !newEliminated.includes(id));
-    if (checkForWinner(remainingPlayers)) return;
 
-    handleNextPlayer();
+    if (remainingPlayers.length === 1) {
+      setWinner(remainingPlayers[0]);
+      setShowWinScreen(true);
+      setPortraitMode();
+      return;
+    }
+
+    setShowLoseScreen(false);
+    let nextIndex = currentPlayerIndex;
+    do {
+      nextIndex = (nextIndex + 1) % players.length;
+    } while (newEliminated.includes(players[nextIndex]));
+
+    setCurrentPlayerIndex(nextIndex);
+    setSetupTime(5);
+    setIsSetup(true);
+    setShowItem(false);
+    setGuess("");
+    setLandscapeMode();
+    setReadyToStart(false);
   };
 
   const handleGuess = () => {
@@ -222,7 +229,6 @@ export default function GuessWhoGame() {
   const currentPlayerName = getPlayerName(currentPlayerId);
   const winnerName = winner ? getPlayerName(winner) : "";
 
-  // Verifica se tem mais de 2 jogadores para mostrar o botão de continuar
   const canContinueGame = players.length > 2;
 
   if (showLoseScreen) {
@@ -304,7 +310,6 @@ export default function GuessWhoGame() {
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-purple-900 to-purple-800 overflow-hidden">
-      {/* Barra Superior */}
       <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between">
         <Button
           variant="ghost"
@@ -321,7 +326,6 @@ export default function GuessWhoGame() {
         </div>
       </div>
 
-      {/* Área Principal */}
       <div className="absolute inset-0 flex items-center justify-center">
         <AnimatePresence mode="wait">
           {isSetup ? (
@@ -408,7 +412,6 @@ export default function GuessWhoGame() {
         </AnimatePresence>
       </div>
 
-      {/* Lista de Eliminados */}
       {eliminated.length > 0 && (
         <div className="absolute bottom-4 left-0 right-0 text-white/60 text-center">
           <p>Eliminados: {eliminated.map(id => getPlayerName(id)).join(", ")}</p>
