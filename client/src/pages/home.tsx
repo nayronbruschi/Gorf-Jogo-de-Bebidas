@@ -25,7 +25,7 @@ export default function Home() {
       >
         <Button
           size="lg"
-          onClick={() => navigate("/game-modes")}
+          onClick={() => navigate("/auth")}
           className="bg-white/20 hover:bg-white/30 text-white text-xl px-8 py-6"
         >
           <Play className="mr-2 h-6 w-6" />

@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
+import Auth from "@/pages/auth";
 import GameModes from "@/pages/game-modes";
 import ClassicStart from "@/pages/classic-start";
 import ClassicPlayers from "@/pages/classic-players";
@@ -26,6 +27,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/auth" component={Auth} />
       <Route path="/game-modes" component={GameModes} />
       <Route path="/classic" component={ClassicStart} />
       <Route path="/classic/players" component={ClassicPlayers} />
@@ -40,7 +42,6 @@ function Router() {
       <Route path="/spin-bottle" component={SpinBottle} />
       <Route path="/coin-flip" component={CoinFlip} />
       <Route path="/cards" component={Cards} />
-      {/* Novas rotas do Guess Who */}
       <Route path="/guess-who/players" component={GuessWhoPlayers} />
       <Route path="/guess-who/theme" component={GuessWhoTheme} />
       <Route path="/guess-who/play" component={GuessWhoGame} />
