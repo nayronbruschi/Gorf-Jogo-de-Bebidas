@@ -36,19 +36,29 @@ export default function GuessWhoGame() {
       return;
     }
 
-    const playerList = JSON.parse(storedPlayers);
-    setPlayers(playerList);
+    try {
+      const playerList = JSON.parse(storedPlayers);
+      if (!Array.isArray(playerList) || playerList.length < 2) {
+        setLocation("/guess-who/players");
+        return;
+      }
+      setPlayers(playerList);
 
-    const themeItems = getItemsByTheme(theme);
-    setItems(themeItems.map(item => item.name));
+      const themeItems = getItemsByTheme(theme);
+      setItems(themeItems.map(item => item.name));
 
-    // Inicializa os itens para cada jogador
-    const initialPlayerItems: PlayerItem = {};
-    playerList.forEach((playerId: string) => {
-      const randomItem = themeItems[Math.floor(Math.random() * themeItems.length)].name;
-      initialPlayerItems[playerId] = randomItem;
-    });
-    setPlayerItems(initialPlayerItems);
+      // Inicializa os itens para cada jogador
+      const initialPlayerItems: PlayerItem = {};
+      playerList.forEach((playerId: string) => {
+        const randomItem = themeItems[Math.floor(Math.random() * themeItems.length)].name;
+        initialPlayerItems[playerId] = randomItem;
+      });
+      setPlayerItems(initialPlayerItems);
+    } catch (error) {
+      console.error('Erro ao inicializar o jogo:', error);
+      setLocation("/guess-who/players");
+      return;
+    }
 
     setLandscapeMode();
 
