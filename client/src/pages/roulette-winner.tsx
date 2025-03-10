@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Beer, Home } from "lucide-react";
+import { Beer, Home, Award } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 
@@ -14,7 +14,7 @@ export default function RouletteWinner() {
   const gameMode = localStorage.getItem("rouletteMode") || "goles";
 
   // Buscar dados do jogador vencedor
-  const { data: winner, isLoading } = useQuery({
+  const { data: winner, isLoading: isLoadingWinner } = useQuery({
     queryKey: [`/api/players/${playerId}`],
     queryFn: async () => {
       if (!playerId) return null;
@@ -23,6 +23,11 @@ export default function RouletteWinner() {
       return response;
     },
     enabled: !!playerId
+  });
+
+  // Buscar todos os jogadores para o ranking
+  const { data: players = [] } = useQuery({
+    queryKey: ["/api/players"],
   });
 
   const handlePlayAgain = async () => {
@@ -37,13 +42,16 @@ export default function RouletteWinner() {
   };
 
   // Mostrar loading ou retornar null se não tiver dados
-  if (isLoading || !winner) {
+  if (isLoadingWinner || !winner) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
         <div className="text-white text-2xl">Carregando...</div>
       </div>
     );
   }
+
+  // Ordenar jogadores por pontuação
+  const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 relative overflow-hidden">
@@ -112,6 +120,28 @@ export default function RouletteWinner() {
                     (gameMode === "shots" ? "shot" : "gole") :
                     (gameMode === "shots" ? "shots" : "goles")}!
                 </span>
+              </div>
+
+              {/* Ranking Section */}
+              <div className="mt-8 bg-purple-50 rounded-lg p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Award className="h-5 w-5 text-purple-700" />
+                  <h3 className="text-lg font-semibold text-purple-900">Ranking Final</h3>
+                </div>
+                <div className="space-y-3">
+                  {sortedPlayers.map((player) => (
+                    <div
+                      key={player.id}
+                      className="bg-white/50 p-3 rounded-lg flex items-center justify-between"
+                    >
+                      <span className="text-purple-900">{player.name}</span>
+                      <div className="flex items-center gap-1 text-purple-700">
+                        <Beer className="h-4 w-4" />
+                        <span>{player.points} {gameMode === "shots" ? "shots" : "goles"}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="flex flex-col gap-4 mt-8">
