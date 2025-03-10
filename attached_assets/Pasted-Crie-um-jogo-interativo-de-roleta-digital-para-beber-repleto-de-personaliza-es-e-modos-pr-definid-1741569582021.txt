@@ -1,0 +1,28 @@
+Crie um jogo interativo de roleta digital para beber, repleto de personalizações e modos pré-definidos. A experiência deve ser vibrante, divertida e visualmente envolvente, garantindo que cada rodada seja única e imprevisível.
+
+🎨 Aparência e Design:
+Roleta Animada: Uma roda colorida, girando com efeitos de brilho e partículas. Pode ter diferentes temas, como Neon, Vintage, Minimalista, Psicodélico e Dark Mode.
+Sons Dinâmicos: Efeitos de "giro", aplausos ao ganhar, vaias ao perder e até frases engraçadas ao cair em certos desafios.
+Avatares ou Emojis Personalizáveis: Cada jogador pode escolher um avatar, um emoji ou até tirar uma selfie para ser representado na roleta.
+Animações de Impacto: Quando alguém cai em um desafio, uma animação especial aparece na tela (exemplo: uma explosão de confetes, um trovão ou um alerta de perigo 🚨).
+🕹️ Modos de Jogo:
+1️⃣ Modo Clássico: A roleta tem desafios já definidos, como "Beba 2 goles", "Passe sua vez", "Invente uma Regra", "Todos bebem", "Escolha alguém para beber", etc.
+2️⃣ Modo Hardcore: Desafios mais ousados e insanos, incluindo regras complexas e até "Castigos" (exemplo: "Beba um shot e imite um animal").
+3️⃣ Modo Personalizado: O usuário pode editar os desafios e criar uma roleta do jeito que quiser! Pode definir textos, cores e até sons personalizados para cada casa.
+4️⃣ Modo Equipes: Cada jogador pertence a um time e a roleta define quem da equipe deve beber ou realizar desafios especiais.
+5️⃣ Modo Sem Álcool: Em vez de bebidas, a roleta traz desafios como "Dance por 30 segundos", "Conte uma história engraçada", "Faça um elogio para alguém", etc.
+6️⃣ Modo Roleta Russa: Apenas algumas casas contêm desafios, enquanto outras são "salvas". Se cair em uma casa especial, a pessoa deve beber DUAS VEZES!
+
+⚙️ Recursos e Configurações:
+✅ Número de Jogadores Personalizável: De 2 a 20 jogadores, podendo inserir nomes e avatares.
+✅ Criador de Roletas: O usuário pode editar qualquer casa da roleta, mudar cores e até importar desafios prontos.
+✅ Opção de “Chance de Beber”: O jogador pode definir a frequência de desafios na roleta (mais leves ou mais extremos).
+✅ Timer de Rodadas: Para garantir que ninguém fique sem jogar, o app pode ter um cronômetro para rodadas automáticas.
+✅ Modo Streamer: Para quem quiser transmitir o jogo em lives, com gráficos interativos e chat integrado.
+
+🔗 Extras e Integrações:
+Compartilhamento em Redes Sociais: Envie capturas de tela dos desafios e das reações dos amigos.
+Histórico de Rodadas: Para quem quiser relembrar os desafios que já saíram.
+Ranking de Sobrevivência: Contagem de quem bebeu mais e quem conseguiu escapar mais vezes.
+Conexão Online: Opção de jogar remotamente com amigos via link.
+🎯 Objetivo: Criar a roleta de bebedeira mais completa, personalizável e divertida do mercado, garantindo que cada festa seja única e inesquecível.
