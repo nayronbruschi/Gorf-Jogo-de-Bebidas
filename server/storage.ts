@@ -158,6 +158,8 @@ export class MemStorage implements IStorage {
 
   async resetPlayersPoints(): Promise<void> {
     // Manter os jogadores mas resetar seus pontos
+    console.log('Resetando pontos - Jogadores antes:', Array.from(this.players.values()));
+
     for (const [id, player] of this.players.entries()) {
       const resetPlayer = {
         ...player,
@@ -167,9 +169,12 @@ export class MemStorage implements IStorage {
       };
       this.players.set(id, resetPlayer);
     }
+
     // Resetar o jogador atual para o primeiro da lista
     const firstPlayer = Array.from(this.players.values())[0];
     this.settings.currentPlayerId = firstPlayer?.id;
+
+    console.log('Resetando pontos - Jogadores depois:', Array.from(this.players.values()));
   }
 
   async setFirstPlayer(): Promise<Player | undefined> {
@@ -181,7 +186,9 @@ export class MemStorage implements IStorage {
     return firstPlayer;
   }
   async getPlayer(id: number): Promise<Player | undefined> {
-    return this.players.get(id);
+    const player = this.players.get(id);
+    console.log('GetPlayer - ID:', id, 'Player found:', player);
+    return player;
   }
 }
 

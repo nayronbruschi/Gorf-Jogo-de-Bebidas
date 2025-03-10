@@ -10,14 +10,18 @@ export default function GameModes() {
   useEffect(() => {
     const cleanupData = async () => {
       try {
-        // Limpar localStorage
-        localStorage.clear();
+        // Não limpar localStorage nem dados se estiver vindo da página de vencedor
+        const fromWinner = window.location.pathname.includes('winner');
+        if (!fromWinner) {
+          // Limpar localStorage
+          localStorage.clear();
 
-        // Limpar todos os jogadores
-        await apiRequest("DELETE", "/api/players/all", {});
+          // Limpar todos os jogadores
+          await apiRequest("DELETE", "/api/players/all", {});
 
-        // Invalidar queries para forçar recarregamento dos dados
-        await queryClient.invalidateQueries();
+          // Invalidar queries para forçar recarregamento dos dados
+          await queryClient.invalidateQueries();
+        }
       } catch (error) {
         console.error('Erro ao limpar dados:', error);
       }

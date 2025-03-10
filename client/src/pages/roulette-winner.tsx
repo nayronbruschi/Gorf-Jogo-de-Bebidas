@@ -46,6 +46,8 @@ export default function RouletteWinner() {
     );
   }
 
+  console.log('Dados do vencedor:', winner);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 relative overflow-hidden">
       {/* Animação de gosma com múltiplas pontas */}
@@ -109,8 +111,8 @@ export default function RouletteWinner() {
               <div className="flex items-center justify-center gap-2 text-2xl text-purple-700">
                 <Beer className="h-8 w-8" />
                 <span>
-                  Bebeu {winner.points} {winner.points === 1 ? 
-                    (gameMode === "shots" ? "shot" : "gole") : 
+                  Bebeu {winner.points} {winner.points === 1 ?
+                    (gameMode === "shots" ? "shot" : "gole") :
                     (gameMode === "shots" ? "shots" : "goles")}!
                 </span>
               </div>
