@@ -41,10 +41,19 @@ export default function GuessWhoTheme() {
 
   const handleSelectTheme = (themeId: ThemeId) => {
     try {
+      // Validar os dados antes de prosseguir
+      const storedPlayers = localStorage.getItem("guessWhoPlayers");
+      if (!storedPlayers) {
+        setLocation("/guess-who/players");
+        return;
+      }
+
+      // Salvar tema e ir para o jogo
       localStorage.setItem("guessWhoTheme", themeId);
       setLocation("/guess-who/play");
     } catch (error) {
       console.error("Erro ao selecionar tema:", error);
+      setLocation("/guess-who/players");
     }
   };
 

@@ -20,9 +20,14 @@ export default function GuessWhoPlayers() {
   const handleStartGame = () => {
     if (players.length < 2) return;
 
-    // Salvar os IDs dos jogadores no localStorage
-    localStorage.setItem("guessWhoPlayers", JSON.stringify(players.map(p => p.id)));
-    setLocation("/guess-who/theme");
+    try {
+      // Salvar os IDs dos jogadores como números
+      const playerIds = players.map(p => p.id);
+      localStorage.setItem("guessWhoPlayers", JSON.stringify(playerIds));
+      setLocation("/guess-who/theme");
+    } catch (error) {
+      console.error('Erro ao salvar jogadores:', error);
+    }
   };
 
   return (
