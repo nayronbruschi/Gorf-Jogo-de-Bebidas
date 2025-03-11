@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 
-// Helper para acessar variáveis de ambiente em ambos os ambientes
+// Helper para acessar variáveis de ambiente
 const getEnvVar = (key: string): string => {
   if (typeof window !== 'undefined' && import.meta?.env) {
     return import.meta.env[key] || '';
@@ -22,6 +22,7 @@ const firebaseConfig = {
 console.log('Firebase Config:', {
   projectId: firebaseConfig.projectId,
   authDomain: firebaseConfig.authDomain,
+  storageBucket: firebaseConfig.storageBucket,
   hasApiKey: !!firebaseConfig.apiKey,
   hasAppId: !!firebaseConfig.appId
 });
