@@ -4,24 +4,39 @@ import { Button } from "@/components/ui/button";
 import { ImageUploader } from "@/components/ImageUploader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function BannerUploader() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [selectedBanner, setSelectedBanner] = useState<string>("1");
   const [bannerUrls, setBannerUrls] = useState<Record<string, string>>({});
   const [isPublishing, setIsPublishing] = useState(false);
+
+  // Carregar banners existentes
+  const { data: existingBanners = {} } = useQuery({
+    queryKey: ["/api/banners"],
+    onSuccess: (data) => {
+      setBannerUrls(data);
+    },
+  });
 
   const handleUploadComplete = (url: string) => {
     setBannerUrls(prev => ({
       ...prev,
       [selectedBanner]: url
     }));
+
+    toast({
+      title: "Imagem carregada",
+      description: `Banner ${selectedBanner} foi atualizado com sucesso!`,
+    });
   };
 
   const handlePublish = async () => {
     try {
       setIsPublishing(true);
-      await fetch('/api/banners', {
+      const response = await fetch('/api/banners', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -31,11 +46,19 @@ export function BannerUploader() {
         })
       });
 
+      if (!response.ok) {
+        throw new Error('Falha ao publicar banners');
+      }
+
+      // Atualizar cache do React Query
+      await queryClient.invalidateQueries({ queryKey: ["/api/banners"] });
+
       toast({
         title: "Banners publicados",
         description: "Os banners foram atualizados com sucesso!",
       });
     } catch (error) {
+      console.error('Erro ao publicar:', error);
       toast({
         title: "Erro ao publicar",
         description: "Não foi possível publicar os banners.",

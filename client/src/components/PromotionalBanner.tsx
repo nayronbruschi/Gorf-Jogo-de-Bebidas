@@ -13,14 +13,21 @@ export function PromotionalBanner() {
     queryKey: ["/api/banners"],
   });
 
-  const bannerUrls = Object.values(banners);
+  // Garantir que os banners são mostrados em ordem
+  const orderedBanners = ["1", "2", "3"].map(key => banners[key]).filter(Boolean);
 
-  if (bannerUrls.length === 0) return null;
+  if (orderedBanners.length === 0) return null;
 
   return (
-    <Carousel className="w-full max-w-screen-xl mx-auto" opts={{ loop: true }}>
+    <Carousel 
+      className="w-full max-w-screen-xl mx-auto" 
+      opts={{ 
+        loop: true,
+        align: "start"
+      }}
+    >
       <CarouselContent>
-        {bannerUrls.map((url, index) => (
+        {orderedBanners.map((url, index) => (
           <CarouselItem key={index}>
             <Card className="border-none">
               <CardContent className="relative aspect-[21/9] p-0">
