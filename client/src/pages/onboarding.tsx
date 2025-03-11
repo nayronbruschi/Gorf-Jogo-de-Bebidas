@@ -11,13 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { genderOptions, socialNetworkOptions } from "@shared/schema";
 
@@ -41,7 +34,7 @@ export default function Onboarding() {
 
   const handleNext = async () => {
     const currentIndex = steps.indexOf(currentStep);
-    
+
     // Validar campo atual
     if (!formData[currentStep as keyof typeof formData]) {
       toast({
@@ -80,158 +73,152 @@ export default function Onboarding() {
     switch (currentStep) {
       case "name":
         return (
-          <>
-            <CardHeader>
-              <CardTitle className="text-2xl">Qual é o seu nome?</CardTitle>
-              <CardDescription>
+          <div className="space-y-8">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-white mb-2">Qual é o seu nome?</h2>
+              <p className="text-white/60">
                 Como você gostaria de ser chamado no jogo
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => updateField("name", e.target.value)}
-                    placeholder="Seu nome"
-                  />
-                </div>
-                <Button onClick={handleNext} className="w-full">
-                  Continuar
-                </Button>
-              </div>
-            </CardContent>
-          </>
+              </p>
+            </div>
+            <div className="space-y-6">
+              <Input
+                value={formData.name}
+                onChange={(e) => updateField("name", e.target.value)}
+                placeholder="Seu nome"
+                className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 placeholder:text-white/40 focus-visible:ring-0 focus-visible:border-white"
+              />
+              <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90">
+                Continuar
+              </Button>
+            </div>
+          </div>
         );
 
       case "birthDate":
         return (
-          <>
-            <CardHeader>
-              <CardTitle className="text-2xl">Quando você nasceu?</CardTitle>
-              <CardDescription>
+          <div className="space-y-8">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-white mb-2">Quando você nasceu?</h2>
+              <p className="text-white/60">
                 Precisamos saber sua data de nascimento
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="birthDate">Data de Nascimento</Label>
-                  <Input
-                    id="birthDate"
-                    type="date"
-                    value={formData.birthDate}
-                    onChange={(e) => updateField("birthDate", e.target.value)}
-                  />
-                </div>
-                <Button onClick={handleNext} className="w-full">
-                  Continuar
-                </Button>
-              </div>
-            </CardContent>
-          </>
+              </p>
+            </div>
+            <div className="space-y-6">
+              <Input
+                type="date"
+                value={formData.birthDate}
+                onChange={(e) => updateField("birthDate", e.target.value)}
+                className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 focus-visible:ring-0 focus-visible:border-white"
+              />
+              <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90">
+                Continuar
+              </Button>
+            </div>
+          </div>
         );
 
       case "gender":
         return (
-          <>
-            <CardHeader>
-              <CardTitle className="text-2xl">Qual é seu gênero?</CardTitle>
-              <CardDescription>
+          <div className="space-y-8">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-white mb-2">Qual é seu gênero?</h2>
+              <p className="text-white/60">
                 Como você se identifica
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="gender">Gênero</Label>
-                  <Select
-                    value={formData.gender}
-                    onValueChange={(value) => updateField("gender", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione seu gênero" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {genderOptions.map((gender) => (
-                        <SelectItem key={gender} value={gender}>
-                          {gender}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button onClick={handleNext} className="w-full">
-                  Continuar
-                </Button>
-              </div>
-            </CardContent>
-          </>
+              </p>
+            </div>
+            <div className="space-y-6">
+              <Select
+                value={formData.gender}
+                onValueChange={(value) => updateField("gender", value)}
+              >
+                <SelectTrigger className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 focus:ring-0">
+                  <SelectValue placeholder="Selecione seu gênero" />
+                </SelectTrigger>
+                <SelectContent>
+                  {genderOptions.map((gender) => (
+                    <SelectItem key={gender} value={gender}>
+                      {gender}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90">
+                Continuar
+              </Button>
+            </div>
+          </div>
         );
 
       case "social":
         return (
-          <>
-            <CardHeader>
-              <CardTitle className="text-2xl">Rede social favorita</CardTitle>
-              <CardDescription>
+          <div className="space-y-8">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-white mb-2">Rede social favorita</h2>
+              <p className="text-white/60">
                 Qual rede social você mais usa?
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="social">Rede Social</Label>
-                  <Select
-                    value={formData.favoriteSocialNetwork}
-                    onValueChange={(value) => updateField("favoriteSocialNetwork", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione sua rede social favorita" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {socialNetworkOptions.map((social) => (
-                        <SelectItem key={social} value={social}>
-                          {social}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button onClick={handleNext} className="w-full">
-                  Continuar
-                </Button>
-              </div>
-            </CardContent>
-          </>
+              </p>
+            </div>
+            <div className="space-y-6">
+              <Select
+                value={formData.favoriteSocialNetwork}
+                onValueChange={(value) => updateField("favoriteSocialNetwork", value)}
+              >
+                <SelectTrigger className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 focus:ring-0">
+                  <SelectValue placeholder="Selecione sua rede social favorita" />
+                </SelectTrigger>
+                <SelectContent>
+                  {socialNetworkOptions.map((social) => (
+                    <SelectItem key={social} value={social}>
+                      {social}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90">
+                Continuar
+              </Button>
+            </div>
+          </div>
         );
 
       case "finish":
         return (
-          <>
-            <CardHeader>
-              <CardTitle className="text-2xl">Tudo pronto!</CardTitle>
-              <CardDescription>
+          <div className="space-y-8">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-white mb-2">Tudo pronto!</h2>
+              <p className="text-white/60">
                 Agora você pode começar a jogar
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button onClick={handleNext} className="w-full">
-                Vamos lá!
-              </Button>
-            </CardContent>
-          </>
+              </p>
+            </div>
+            <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90">
+              Vamos lá!
+            </Button>
+          </div>
         );
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 to-purple-800 flex flex-col items-center justify-between p-4">
+      <div className="w-full max-w-md mt-20">
         {renderStep()}
-      </Card>
+      </div>
+
+      {/* Step bubbles */}
+      <div className="flex gap-2 mb-8">
+        {steps.map((step) => (
+          <div
+            key={step}
+            className={`w-2 h-2 rounded-full transition-colors ${
+              steps.indexOf(step) === steps.indexOf(currentStep)
+                ? "bg-white"
+                : steps.indexOf(step) < steps.indexOf(currentStep)
+                ? "bg-white/60"
+                : "bg-white/20"
+            }`}
+          />
+        ))}
+      </div>
     </div>
   );
 }
