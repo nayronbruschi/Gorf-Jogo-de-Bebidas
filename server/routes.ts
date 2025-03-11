@@ -9,6 +9,8 @@ import path from "path";
 // Configurar o multer para armazenar os arquivos temporariamente
 const upload = multer({ dest: 'tmp/uploads/' });
 
+const BUCKET_PATH = "replit-objstore-40b80319-33b5-4913-8c43-e847afc83215";
+
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
 
@@ -20,10 +22,17 @@ export async function registerRoutes(app: Express) {
       }
 
       const file = req.file;
-      const destPath = `BucketGorf/${file.originalname}`;
+      const destPath = path.join(BUCKET_PATH, file.originalname);
+
+      // Garantir que o diretório existe
+      const dir = path.dirname(destPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
 
       // Mover o arquivo para o bucket
       fs.renameSync(file.path, destPath);
+      console.log('Arquivo movido para:', destPath);
 
       // Retornar a URL do arquivo
       const url = `/api/images/${file.originalname}`;
@@ -37,7 +46,7 @@ export async function registerRoutes(app: Express) {
   // Rota para servir as imagens
   app.get("/api/images/:filename", (req, res) => {
     const filename = req.params.filename;
-    const filePath = path.join("BucketGorf", filename);
+    const filePath = path.join(BUCKET_PATH, filename);
 
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ message: "Imagem não encontrada" });
@@ -49,8 +58,16 @@ export async function registerRoutes(app: Express) {
   // Rota para salvar os banners ativos
   app.post("/api/banners", async (req, res) => {
     try {
-      const bannersPath = path.join("BucketGorf", "active_banners.json");
+      const bannersPath = path.join(BUCKET_PATH, "active_banners.json");
+
+      // Garantir que o diretório existe
+      const dir = path.dirname(bannersPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+
       fs.writeFileSync(bannersPath, JSON.stringify(req.body.banners, null, 2));
+      console.log('Banners salvos em:', bannersPath);
       res.json({ message: "Banners atualizados com sucesso" });
     } catch (error) {
       console.error('Erro ao salvar banners:', error);
@@ -61,7 +78,7 @@ export async function registerRoutes(app: Express) {
   // Rota para obter os banners ativos
   app.get("/api/banners", (req, res) => {
     try {
-      const bannersPath = path.join("BucketGorf", "active_banners.json");
+      const bannersPath = path.join(BUCKET_PATH, "active_banners.json");
       if (fs.existsSync(bannersPath)) {
         const banners = JSON.parse(fs.readFileSync(bannersPath, 'utf-8'));
         res.json(banners);
