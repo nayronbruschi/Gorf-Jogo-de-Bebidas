@@ -128,10 +128,7 @@ export async function registerRoutes(app: Express) {
 
   app.delete("/api/players/:id", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "ID inválido" });
-      }
+      const id = req.params.id; // Removida a conversão para número
       await storage.removePlayer(id);
       res.status(204).end();
     } catch (error) {

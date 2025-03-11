@@ -91,14 +91,26 @@ export class FirestoreStorage implements IStorage {
         drinksCompleted: 0,
       };
 
-      await setDoc(docRef, newPlayer);
+      // Primeiro, verifica se já existe algum jogador
+      const settingsDoc = await getDoc(this.settingsRef);
+      const isFirstPlayer = !settingsDoc.exists();
 
-      // Se for o primeiro jogador, define como jogador atual
-      const players = await this.getPlayers();
-      if (players.length === 1) {
-        await this.updateGameSettings(100); // Mantém maxPoints padrão
-        await updateDoc(this.settingsRef, { currentPlayerId: docRef.id });
+      // Operações em batch para melhor performance
+      const batch = writeBatch(db);
+
+      // Adiciona o jogador
+      batch.set(docRef, newPlayer);
+
+      // Se for o primeiro jogador, inicializa as configurações
+      if (isFirstPlayer) {
+        batch.set(this.settingsRef, {
+          maxPoints: 100,
+          currentPlayerId: docRef.id
+        });
       }
+
+      // Executa todas as operações de uma vez
+      await batch.commit();
 
       return newPlayer;
     } catch (error) {
