@@ -151,8 +151,6 @@ export default function ClassicMode() {
         }
       }
 
-      await nextPlayer.mutateAsync();
-
       // Refetch data to check for winner
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
@@ -165,9 +163,11 @@ export default function ClassicMode() {
       if (winner) {
         const topDrinker = [...updatedPlayers].sort((a: any, b: any) => b.drinksCompleted - a.drinksCompleted)[0];
         await updateGameStatistics(winner.name);
+        setHasUpdatedStats(true);
         return;
       }
 
+      await nextPlayer.mutateAsync();
       setCompletedChallenge(false);
       setHasDrunk(false);
       generateChallenge(setCurrentChallenge, setCurrentIcon, setRoundPoints);
@@ -179,7 +179,6 @@ export default function ClassicMode() {
 
   const maxPoints = settings?.maxPoints || 100;
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
-  //const winner = sortedPlayers.find(player => player.points >= maxPoints); // Removed redundant winner check
   const topDrinker = sortedPlayers[0];
 
   const updateGameStatistics = async (winner?: string) => {
