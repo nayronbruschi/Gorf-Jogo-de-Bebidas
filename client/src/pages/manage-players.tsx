@@ -11,12 +11,23 @@ import { Award, Crown, Beer, Target, UserPlus, X, Plus, Minus, ArrowLeft } from 
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import * as z from 'zod';
+import type { Player } from "@shared/schema";
 
 export default function ManagePlayers() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const { data: players = [] } = useQuery({
+
+  // Adiciona tipagem explícita para players
+  const { data: players = [], isError, error } = useQuery<Player[]>({
     queryKey: ["/api/players"],
+    onError: (err) => {
+      console.error("Erro ao carregar jogadores:", err);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar os jogadores. Tente novamente.",
+        variant: "destructive"
+      });
+    }
   });
 
   const { data: settings } = useQuery({
@@ -40,9 +51,11 @@ export default function ManagePlayers() {
 
   const addPlayer = useMutation({
     mutationFn: async (name: string) => {
+      console.log("Tentando adicionar jogador:", name);
       await apiRequest("POST", "/api/players", { name });
     },
     onSuccess: () => {
+      console.log("Jogador adicionado com sucesso");
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       form.reset();
       toast({
@@ -50,6 +63,14 @@ export default function ManagePlayers() {
         description: "Um novo jogador foi adicionado com sucesso.",
       });
     },
+    onError: (error) => {
+      console.error("Erro ao adicionar jogador:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível adicionar o jogador. Tente novamente.",
+        variant: "destructive"
+      });
+    }
   });
 
   const updateMaxPoints = useMutation({
@@ -62,7 +83,8 @@ export default function ManagePlayers() {
   });
 
   const removePlayer = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: string) => {
+      console.log("Tentando remover jogador:", id);
       const player = players.find(p => p.id === id);
       if (!player) return;
 
@@ -82,15 +104,25 @@ export default function ManagePlayers() {
       await apiRequest("DELETE", `/api/players/${id}`);
     },
     onSuccess: () => {
+      console.log("Jogador removido com sucesso");
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       toast({
         title: "Jogador removido",
         description: "Os pontos foram distribuídos entre os jogadores restantes.",
       });
     },
+    onError: (error) => {
+      console.error("Erro ao remover jogador:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível remover o jogador. Tente novamente.",
+        variant: "destructive"
+      });
+    }
   });
 
   const onSubmit = form.handleSubmit((data) => {
+    console.log("Submetendo formulário:", data);
     addPlayer.mutate(data.name);
   });
 
@@ -102,6 +134,9 @@ export default function ManagePlayers() {
     navigate("/classic/play");
   };
 
+  if (isError) {
+    console.error("Erro na query de jogadores:", error);
+  }
 
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
   const hasPoints = sortedPlayers.some(player => player.points > 0);
@@ -140,7 +175,6 @@ export default function ManagePlayers() {
                 type="number"
                 min="10"
                 max="1000"
-                defaultValue={settings?.maxPoints}
                 className="text-center bg-white/10 border-white/20 text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 {...maxPointsForm.register("maxPoints")}
               />
