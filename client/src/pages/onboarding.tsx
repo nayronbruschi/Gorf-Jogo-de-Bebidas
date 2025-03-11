@@ -13,23 +13,46 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { genderOptions, socialNetworkOptions } from "@shared/schema";
+import { SiInstagram, SiTiktok, SiFacebook } from "react-icons/si";
+import { FaXTwitter } from "react-icons/fa6";
+import { ChevronLeft } from "lucide-react";
 
 const steps = ["name", "birthDate", "gender", "social", "finish"] as const;
 type Step = typeof steps[number];
 
+const SOCIAL_ICONS = {
+  instagram: SiInstagram,
+  tiktok: SiTiktok,
+  X: FaXTwitter,
+  facebook: SiFacebook,
+};
+
+const GENDER_LABELS = {
+  "homem": "Masculino",
+  "mulher": "Feminino",
+  "não-binário": "Não-binário"
+};
+
 export default function Onboarding() {
-  const [, navigate] = useLocation();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState<Step>("name");
   const [formData, setFormData] = useState({
     name: auth.currentUser?.displayName || "",
     birthDate: "",
     gender: "",
-    favoriteSocialNetwork: "",
+    favoriteSocialNetwork: [] as string[],
   });
 
-  const updateField = (field: string, value: string) => {
+  const updateField = (field: string, value: string | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleBack = () => {
+    const currentIndex = steps.indexOf(currentStep);
+    if (currentIndex > 0) {
+      setCurrentStep(steps[currentIndex - 1]);
+    }
   };
 
   const handleNext = async () => {
@@ -53,7 +76,7 @@ export default function Onboarding() {
         }
 
         await createUserProfile(auth.currentUser.uid, formData);
-        navigate("/dashboard");
+        setLocation("/dashboard");
       } catch (error) {
         console.error("Erro ao salvar perfil:", error);
         toast({
@@ -67,6 +90,15 @@ export default function Onboarding() {
 
     // Avançar para o próximo passo
     setCurrentStep(steps[currentIndex + 1]);
+  };
+
+  const toggleSocialNetwork = (network: string) => {
+    const current = formData.favoriteSocialNetwork;
+    if (current.includes(network)) {
+      updateField("favoriteSocialNetwork", current.filter(n => n !== network));
+    } else if (current.length < 2) {
+      updateField("favoriteSocialNetwork", [...current, network]);
+    }
   };
 
   const renderStep = () => {
@@ -85,9 +117,9 @@ export default function Onboarding() {
                 value={formData.name}
                 onChange={(e) => updateField("name", e.target.value)}
                 placeholder="Seu nome"
-                className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 placeholder:text-white/40 focus-visible:ring-0 focus-visible:border-white"
+                className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 text-center placeholder:text-white/40 focus-visible:ring-0 focus-visible:border-white hover:border-white/40"
               />
-              <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90">
+              <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90 py-7">
                 Continuar
               </Button>
             </div>
@@ -106,11 +138,12 @@ export default function Onboarding() {
             <div className="space-y-6">
               <Input
                 type="date"
+                inputMode="numeric"
                 value={formData.birthDate}
                 onChange={(e) => updateField("birthDate", e.target.value)}
-                className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 focus-visible:ring-0 focus-visible:border-white"
+                className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 text-center focus-visible:ring-0 focus-visible:border-white hover:border-white/40 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
               />
-              <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90">
+              <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90 py-7">
                 Continuar
               </Button>
             </div>
@@ -131,18 +164,18 @@ export default function Onboarding() {
                 value={formData.gender}
                 onValueChange={(value) => updateField("gender", value)}
               >
-                <SelectTrigger className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 focus:ring-0">
+                <SelectTrigger className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 text-center focus:ring-0 hover:border-white/40">
                   <SelectValue placeholder="Selecione seu gênero" />
                 </SelectTrigger>
                 <SelectContent>
                   {genderOptions.map((gender) => (
                     <SelectItem key={gender} value={gender}>
-                      {gender}
+                      {GENDER_LABELS[gender]}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90">
+              <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90 py-7">
                 Continuar
               </Button>
             </div>
@@ -153,28 +186,36 @@ export default function Onboarding() {
         return (
           <div className="space-y-8">
             <div className="text-center">
-              <h2 className="text-3xl font-bold text-white mb-2">Rede social favorita</h2>
+              <h2 className="text-3xl font-bold text-white mb-2">Redes sociais favoritas</h2>
               <p className="text-white/60">
-                Qual rede social você mais usa?
+                Selecione até duas redes sociais
               </p>
             </div>
             <div className="space-y-6">
-              <Select
-                value={formData.favoriteSocialNetwork}
-                onValueChange={(value) => updateField("favoriteSocialNetwork", value)}
+              <div className="grid grid-cols-2 gap-4">
+                {socialNetworkOptions.map((social) => {
+                  const Icon = SOCIAL_ICONS[social];
+                  const isSelected = formData.favoriteSocialNetwork.includes(social);
+                  return (
+                    <button
+                      key={social}
+                      onClick={() => toggleSocialNetwork(social)}
+                      className={`p-6 rounded-lg border-2 transition-colors ${
+                        isSelected
+                          ? 'border-white bg-white/10'
+                          : 'border-white/20 hover:border-white/40'
+                      }`}
+                    >
+                      <Icon className="w-8 h-8 text-white mx-auto" />
+                    </button>
+                  );
+                })}
+              </div>
+              <Button 
+                onClick={handleNext} 
+                className="w-full bg-white text-purple-700 hover:bg-white/90 py-7"
+                disabled={formData.favoriteSocialNetwork.length === 0}
               >
-                <SelectTrigger className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 focus:ring-0">
-                  <SelectValue placeholder="Selecione sua rede social favorita" />
-                </SelectTrigger>
-                <SelectContent>
-                  {socialNetworkOptions.map((social) => (
-                    <SelectItem key={social} value={social}>
-                      {social}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90">
                 Continuar
               </Button>
             </div>
@@ -190,7 +231,7 @@ export default function Onboarding() {
                 Agora você pode começar a jogar
               </p>
             </div>
-            <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90">
+            <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90 py-7">
               Vamos lá!
             </Button>
           </div>
@@ -200,25 +241,39 @@ export default function Onboarding() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 to-purple-800 flex flex-col items-center justify-between p-4">
-      <div className="w-full max-w-md mt-20">
+      <div className="flex-1" />
+      <div className="w-full max-w-md">
         {renderStep()}
       </div>
 
-      {/* Step bubbles */}
-      <div className="flex gap-2 mb-8">
-        {steps.map((step) => (
-          <div
-            key={step}
-            className={`w-2 h-2 rounded-full transition-colors ${
-              steps.indexOf(step) === steps.indexOf(currentStep)
-                ? "bg-white"
-                : steps.indexOf(step) < steps.indexOf(currentStep)
-                ? "bg-white/60"
-                : "bg-white/20"
-            }`}
-          />
-        ))}
+      {/* Step bubbles and back button */}
+      <div className="flex flex-col items-center gap-4 mt-8">
+        <div className="flex gap-2">
+          {steps.map((step) => (
+            <div
+              key={step}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                steps.indexOf(step) === steps.indexOf(currentStep)
+                  ? "bg-white"
+                  : steps.indexOf(step) < steps.indexOf(currentStep)
+                  ? "bg-white/60"
+                  : "bg-white/20"
+              }`}
+            />
+          ))}
+        </div>
+        {currentStep !== "name" && (
+          <Button
+            variant="ghost"
+            onClick={handleBack}
+            className="text-white/60 hover:text-white hover:bg-white/10"
+          >
+            <ChevronLeft className="w-4 h-4 mr-2" />
+            Voltar
+          </Button>
+        )}
       </div>
+      <div className="flex-1" />
     </div>
   );
 }
