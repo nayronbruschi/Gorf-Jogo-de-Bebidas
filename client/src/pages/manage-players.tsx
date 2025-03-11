@@ -10,12 +10,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Award, Crown, Beer, Target, UserPlus, X, Plus, Minus, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import { auth } from "@/lib/firebase";
 import * as z from 'zod';
 import type { Player } from "@shared/schema";
 
 export default function ManagePlayers() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+
+  // Verificar se o usuário está autenticado
+  if (!auth.currentUser) {
+    navigate("/");
+    toast({
+      title: "Acesso negado",
+      description: "Você precisa estar logado para gerenciar jogadores.",
+      variant: "destructive"
+    });
+    return null;
+  }
 
   // Adiciona tipagem explícita para players
   const { data: players = [], isError, error } = useQuery<Player[]>({

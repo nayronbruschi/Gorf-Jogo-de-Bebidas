@@ -70,31 +70,41 @@ export class FirestoreStorage implements IStorage {
   private readonly customGamesRef = collection(db, 'customGames');
 
   async getPlayers(): Promise<Player[]> {
-    const snapshot = await getDocs(this.playersRef);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Player));
+    try {
+      const snapshot = await getDocs(this.playersRef);
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Player));
+    } catch (error) {
+      console.error('Erro ao buscar jogadores:', error);
+      throw error;
+    }
   }
 
   async addPlayer(player: InsertPlayer): Promise<Player> {
-    const docRef = doc(this.playersRef);
-    const newPlayer: Player = {
-      id: docRef.id,
-      name: player.name,
-      points: 0,
-      isActive: true,
-      challengesCompleted: 0,
-      drinksCompleted: 0,
-    };
+    try {
+      const docRef = doc(this.playersRef);
+      const newPlayer: Player = {
+        id: docRef.id,
+        name: player.name,
+        points: 0,
+        isActive: true,
+        challengesCompleted: 0,
+        drinksCompleted: 0,
+      };
 
-    await setDoc(docRef, newPlayer);
+      await setDoc(docRef, newPlayer);
 
-    // Se for o primeiro jogador, define como jogador atual
-    const players = await this.getPlayers();
-    if (players.length === 1) {
-      await this.updateGameSettings(100); // Mantém maxPoints padrão
-      await updateDoc(this.settingsRef, { currentPlayerId: docRef.id });
+      // Se for o primeiro jogador, define como jogador atual
+      const players = await this.getPlayers();
+      if (players.length === 1) {
+        await this.updateGameSettings(100); // Mantém maxPoints padrão
+        await updateDoc(this.settingsRef, { currentPlayerId: docRef.id });
+      }
+
+      return newPlayer;
+    } catch (error) {
+      console.error('Erro ao adicionar jogador:', error);
+      throw error;
     }
-
-    return newPlayer;
   }
 
   async updatePlayerPoints(id: string, points: number, type: "challenge" | "drink"): Promise<Player> {
