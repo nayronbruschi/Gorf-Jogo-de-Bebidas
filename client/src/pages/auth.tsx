@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { auth, googleProvider } from "@/lib/firebase";
+import { auth, googleProvider, getUserProfile } from "@/lib/firebase";
 import {
   signInWithPopup,
   createUserWithEmailAndPassword,
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Auth() {
   const [, setLocation] = useLocation();
@@ -18,6 +19,7 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const getErrorMessage = (code: string) => {
     switch (code) {
@@ -44,13 +46,19 @@ export default function Auth() {
     }
   };
 
+  const checkUserProfile = async (userId: string) => {
+    const profile = await getUserProfile(userId);
+    return profile !== null;
+  };
+
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
       setError("");
       const result = await signInWithPopup(auth, googleProvider);
       if (result.user) {
-        setLocation("/onboarding");  
+        const hasProfile = await checkUserProfile(result.user.uid);
+        setLocation(hasProfile ? "/dashboard" : "/onboarding");
       }
     } catch (error: any) {
       console.error("Error signing in with Google:", error);
@@ -71,8 +79,9 @@ export default function Auth() {
       setIsLoading(true);
       setError("");
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
-        setLocation("/dashboard");
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        const hasProfile = await checkUserProfile(result.user.uid);
+        setLocation(hasProfile ? "/dashboard" : "/onboarding");
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
         setLocation("/onboarding");
@@ -114,16 +123,29 @@ export default function Auth() {
               autoComplete="email"
               enterKeyHint="next"
             />
-            <Input
-              type="password"
-              placeholder="Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="bg-white/20 text-white placeholder:text-white/60 border-none"
-              disabled={isLoading}
-              autoComplete={isLogin ? "current-password" : "new-password"}
-              enterKeyHint="done"
-            />
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="bg-white/20 text-white placeholder:text-white/60 border-none pr-10"
+                disabled={isLoading}
+                autoComplete={isLogin ? "current-password" : "new-password"}
+                enterKeyHint="done"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
 
             {error && (
               <p className="text-red-300 text-sm text-center">{error}</p>

@@ -63,6 +63,13 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
       uniquePlayers: 0,
       totalPlayTime: 0,
     });
+
+    // Inicializar jogos recentes
+    const recentGamesRef = doc(db, 'recentGames', userId);
+    await setDoc(recentGamesRef, {
+      userId,
+      games: []
+    });
   }
 }
 
