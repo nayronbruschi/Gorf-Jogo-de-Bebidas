@@ -116,7 +116,7 @@ export function TutorialOverlay({ onClose }: TutorialOverlay) {
                 <Button
                   variant="outline"
                   onClick={handleBack}
-                  className="text-purple-700 border-purple-700 hover:bg-purple-50"
+                  className="text-white bg-purple-700 hover:bg-purple-800 border-purple-700"
                 >
                   Voltar
                 </Button>

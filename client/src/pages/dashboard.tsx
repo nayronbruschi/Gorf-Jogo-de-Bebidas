@@ -21,14 +21,14 @@ import { doc, getDoc } from "firebase/firestore";
 export default function Dashboard() {
   const [, navigate] = useLocation();
 
-  // Buscar estatísticas do usuário
+  // Fetch user stats from Firebase
   const { data: userStats } = useQuery({
     queryKey: ['userStats'],
     queryFn: getUserStats
   });
 
-  // Buscar jogos recentes
-  const { data: recentGames = [] } = useQuery({
+  // Fetch recent games from Firebase
+  const { data: recentGames } = useQuery({
     queryKey: ['recentGames'],
     queryFn: async () => {
       if (!auth.currentUser) return [];
@@ -41,19 +41,13 @@ export default function Dashboard() {
   const stats = [
     {
       title: "Jogos Jogados",
-      value: userStats?.totalGamesPlayed.toString() || "0",
+      value: userStats?.totalGamesPlayed?.toString() || "0",
       description: "Total de partidas",
       icon: GamepadIcon,
     },
     {
-      title: "Vitórias",
-      value: userStats?.totalVictories.toString() || "0",
-      description: "Jogos vencidos",
-      icon: Trophy,
-    },
-    {
       title: "Jogadores",
-      value: userStats?.uniquePlayers.toString() || "0",
+      value: userStats?.uniquePlayers?.toString() || "0",
       description: "Participantes únicos",
       icon: Users,
     },
@@ -65,8 +59,8 @@ export default function Dashboard() {
     },
   ];
 
-  const getGamePath = (gameName: string) => {
-    const gameMap = games.reduce((acc, game) => ({
+  const getGamePath = (gameName: string): string => {
+    const gameMap: Record<string, string> = games.reduce((acc, game) => ({
       ...acc,
       [game.name]: game.route
     }), {});
@@ -119,7 +113,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-4">
-                {recentGames.length > 0 ? (
+                {recentGames && recentGames.length > 0 ? (
                   <div className="p-4 rounded-lg bg-white/5">
                     <h3 className="text-lg font-medium text-white mb-2">{recentGames[0].name}</h3>
                     <p className="text-sm text-white/60 mb-4">{recentGames[0].date}</p>
@@ -173,7 +167,7 @@ export default function Dashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {stats.map((stat) => (
                 <div key={stat.title} className="flex items-center gap-4 p-4 rounded-lg bg-white/5">
                   <stat.icon className="h-8 w-8 text-white/60" />
@@ -195,9 +189,9 @@ export default function Dashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {recentGames.length > 0 ? (
+            {recentGames && recentGames.length > 0 ? (
               <div className="space-y-4">
-                {recentGames.map((game, i) => (
+                {recentGames.map((game: any, i: number) => (
                   <div
                     key={i}
                     className="flex items-center justify-between p-4 rounded-lg bg-white/5"
@@ -206,7 +200,7 @@ export default function Dashboard() {
                       <p className="text-white font-medium">{game.name}</p>
                       <p className="text-sm text-white/60">{game.date}</p>
                       <p className="text-sm text-white/60">
-                        {game.players} jogadores • Vencedor: {game.winner}
+                        {game.players} jogadores 
                       </p>
                     </div>
                     <Button

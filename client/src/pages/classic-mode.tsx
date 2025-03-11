@@ -11,18 +11,13 @@ import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { WinnerScreen } from "@/components/WinnerScreen";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { createElement } from "react";
 import { useLocation } from "wouter";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { updateGameStats, useGameTimer } from "@/lib/stats";
+import { auth, updateRecentGames } from "@/lib/firebase";
 
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
@@ -163,31 +158,47 @@ export default function ClassicMode() {
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
   const getPlayTime = useGameTimer();
+  const [gameStartTime2] = useState<number>(Date.now()); //Removed redundant declaration
 
+
+  // Function to update game statistics
+  const updateGameStatistics = async (winner?: string) => {
+    if (!auth.currentUser) return;
+
+    const endTime = Date.now();
+    const playTimeInMinutes = Math.floor((endTime - gameStartTime2) / (1000 * 60));
+
+    try {
+      // Update game stats
+      await updateGameStats({
+        gameType: "classic",
+        playTime: playTimeInMinutes,
+        playerCount: players.length
+      });
+
+      // Update recent games
+      await updateRecentGames(auth.currentUser.uid, {
+        name: "Modo Clássico",
+        date: new Date().toISOString(),
+        players: players.length,
+        winner: winner || "-"
+      });
+    } catch (error) {
+      console.error('Error updating game statistics:', error);
+    }
+  };
+
+  // Call updateGameStatistics when component unmounts
   useEffect(() => {
     return () => {
-      if (completedChallenge || hasDrunk) {
-        updateGameStats({
-          gameType: "classic",
-          playTime: getPlayTime(),
-          playerCount: players.length
-        });
+      if (auth.currentUser) {
+        updateGameStatistics();
       }
     };
   }, []);
 
-
   if (winner && topDrinker) {
-    const gameEndTime = Date.now();
-    const playTimeInMinutes = Math.floor((gameEndTime - gameStartTime) / (1000 * 60));
-
-    updateGameStats({
-      gameType: "classic",
-      playTime: playTimeInMinutes,
-      isVictory: true,
-      playerCount: players.length
-    });
-
+    updateGameStatistics(winner.name);
     return (
       <WinnerScreen
         winner={{ name: winner.name, points: winner.points }}
