@@ -79,12 +79,14 @@ export default function Dashboard() {
             className="w-full"
             opts={{
               align: "start",
-              loop: true,
+              dragFree: true,
+              containScroll: "trimSnaps",
+              inViewThreshold: 1,
             }}
           >
             <CarouselContent className="-ml-4">
               {games.map((game) => (
-                <CarouselItem key={game.id} className="pl-4 basis-[22%] md:basis-[22%] lg:basis-[22%]">
+                <CarouselItem key={game.id} className="pl-4 basis-[22%] md:basis-[22%] lg:basis-[22%] min-w-[120px]">
                   <div 
                     className="flex flex-col items-center gap-2 p-4 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => navigate(game.route)}
