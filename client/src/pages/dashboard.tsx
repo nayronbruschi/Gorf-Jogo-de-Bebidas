@@ -15,6 +15,8 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carouse
 import { games } from "@/lib/game-data";
 import { getUserStats } from "@/lib/stats";
 import { useQuery } from "@tanstack/react-query";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
@@ -23,6 +25,17 @@ export default function Dashboard() {
   const { data: userStats } = useQuery({
     queryKey: ['userStats'],
     queryFn: getUserStats
+  });
+
+  // Buscar jogos recentes
+  const { data: recentGames = [] } = useQuery({
+    queryKey: ['recentGames'],
+    queryFn: async () => {
+      if (!auth.currentUser) return [];
+      const recentGamesRef = doc(db, 'recentGames', auth.currentUser.uid);
+      const recentGamesDoc = await getDoc(recentGamesRef);
+      return recentGamesDoc.exists() ? recentGamesDoc.data().games : [];
+    }
   });
 
   const stats = [
@@ -52,12 +65,6 @@ export default function Dashboard() {
     },
   ];
 
-  const recentGames = [
-    { name: "Roleta", date: "Hoje", players: 4, winner: "João" },
-    { name: "Quem Sou Eu?", date: "Ontem", players: 3, winner: "Maria" },
-    { name: "Verdade ou Desafio", date: "2 dias atrás", players: 5, winner: "-" },
-  ];
-
   const getGamePath = (gameName: string) => {
     const gameMap = games.reduce((acc, game) => ({
       ...acc,
@@ -79,14 +86,12 @@ export default function Dashboard() {
             className="w-full"
             opts={{
               align: "start",
-              dragFree: true,
-              containScroll: "trimSnaps",
-              inViewThreshold: 1,
+              inViewThreshold: 0.6,
             }}
           >
             <CarouselContent className="-ml-4">
               {games.map((game) => (
-                <CarouselItem key={game.id} className="pl-4 basis-[22%] md:basis-[22%] lg:basis-[22%] min-w-[120px]">
+                <CarouselItem key={game.id} className="pl-4 basis-1/4 md:basis-1/4 lg:basis-1/4">
                   <div 
                     className="flex flex-col items-center gap-2 p-4 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => navigate(game.route)}
@@ -112,16 +117,28 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-4">
-                <div className="p-4 rounded-lg bg-white/5">
-                  <h3 className="text-lg font-medium text-white mb-2">Roleta</h3>
-                  <p className="text-sm text-white/60 mb-4">Jogado há 2 horas</p>
-                  <Button 
-                    onClick={() => navigate("/roulette")}
-                    className="w-full bg-purple-700 hover:bg-purple-800 text-white"
-                  >
-                    Jogar Novamente
-                  </Button>
-                </div>
+                {recentGames.length > 0 ? (
+                  <div className="p-4 rounded-lg bg-white/5">
+                    <h3 className="text-lg font-medium text-white mb-2">{recentGames[0].name}</h3>
+                    <p className="text-sm text-white/60 mb-4">{recentGames[0].date}</p>
+                    <Button 
+                      onClick={() => navigate(getGamePath(recentGames[0].name))}
+                      className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                    >
+                      Jogar Novamente
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-white/60 mb-4">Você ainda não jogou nenhuma partida</p>
+                    <Button
+                      onClick={() => navigate("/game-modes")}
+                      className="bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                      Jogar Agora
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -176,29 +193,41 @@ export default function Dashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {recentGames.map((game, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between p-4 rounded-lg bg-white/5"
-                >
-                  <div>
-                    <p className="text-white font-medium">{game.name}</p>
-                    <p className="text-sm text-white/60">{game.date}</p>
-                    <p className="text-sm text-white/60">
-                      {game.players} jogadores • Vencedor: {game.winner}
-                    </p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    className="shrink-0 text-white hover:bg-white/10"
-                    onClick={() => navigate(getGamePath(game.name))}
+            {recentGames.length > 0 ? (
+              <div className="space-y-4">
+                {recentGames.map((game, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-4 rounded-lg bg-white/5"
                   >
-                    Jogar Novamente
-                  </Button>
-                </div>
-              ))}
-            </div>
+                    <div>
+                      <p className="text-white font-medium">{game.name}</p>
+                      <p className="text-sm text-white/60">{game.date}</p>
+                      <p className="text-sm text-white/60">
+                        {game.players} jogadores • Vencedor: {game.winner}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      className="shrink-0 text-white hover:bg-white/10"
+                      onClick={() => navigate(getGamePath(game.name))}
+                    >
+                      Jogar Novamente
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-white/60 mb-4">Você ainda não jogou nenhuma partida</p>
+                <Button
+                  onClick={() => navigate("/game-modes")}
+                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                >
+                  Jogar Agora
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
