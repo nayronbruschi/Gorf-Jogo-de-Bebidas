@@ -112,13 +112,6 @@ export async function updateGameStats(data: GameUpdateData) {
     // Get unique players count from the current game
     const uniquePlayerCount = new Set(data.playerNames).size;
 
-    // Get existing unique players from stats
-    const existingPlayers = new Set<string>();
-    // Add logic here to track existing players if needed
-
-    // Count only new unique players
-    const newUniquePlayers = Array.from(new Set(data.playerNames)).filter(name => !existingPlayers.has(name)).length;
-
     // Update game specific stats
     const gameTimeSpent = stats.gameStats[data.gameType].timeSpent || "00:00:00";
     const updatedGameTime = addTimes(gameTimeSpent, newPlayTime);
@@ -135,7 +128,7 @@ export async function updateGameStats(data: GameUpdateData) {
       // Update general stats
       totalGamesPlayed: increment(1),
       totalPlayTime: updatedTotalTime,
-      uniquePlayers: increment(newUniquePlayers)
+      uniquePlayers: increment(uniquePlayerCount)
     });
   } catch (error) {
     console.error('Erro ao atualizar estatísticas:', error);
@@ -143,12 +136,7 @@ export async function updateGameStats(data: GameUpdateData) {
 }
 
 // Hook para rastrear o tempo de jogo
-export function useGameTimer() {
+export function createGameTimer() {
   const startTime = Date.now();
-
-  return () => {
-    const endTime = Date.now();
-    const playTimeInSeconds = Math.floor((endTime - startTime) / 1000);
-    return playTimeInSeconds;
-  };
+  return () => Math.floor((Date.now() - startTime) / 1000);
 }

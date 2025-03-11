@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { createElement } from "react";
 import { useLocation } from "wouter";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
-import { updateGameStats, useGameTimer } from "@/lib/stats";
+import { updateGameStats, createGameTimer } from "@/lib/stats";
 import { auth, updateRecentGames } from "@/lib/firebase";
 
 export default function ClassicMode() {
@@ -32,7 +32,7 @@ export default function ClassicMode() {
   });
   const [hasUpdatedStats, setHasUpdatedStats] = useState(false);
   const [hasStartedGame, setHasStartedGame] = useState(false);
-  const getPlayTime = useGameTimer(); 
+  const [getPlayTime, setGetPlayTime] = useState(() => createGameTimer());
 
   const { play } = useSound();
   const { toast } = useToast();
