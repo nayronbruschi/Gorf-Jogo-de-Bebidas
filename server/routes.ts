@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
-import { insertPlayerSchema, insertCustomGameSchema, updatePlayerPointsSchema, gameSettingsSchema } from "@shared/schema";
+import { insertPlayerSchema, updatePlayerPointsSchema, gameSettingsSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -41,6 +41,7 @@ export async function registerRoutes(app: Express) {
       if (!player) {
         return res.status(404).json({ message: "Nenhum jogador atual" });
       }
+      console.log("Jogador atual:", player); // Debug log
       res.json(player);
     } catch (error) {
       console.error('Erro ao buscar jogador atual:', error);
@@ -54,6 +55,7 @@ export async function registerRoutes(app: Express) {
       if (!player) {
         return res.status(404).json({ message: "Nenhum jogador disponível" });
       }
+      console.log("Primeiro jogador definido:", player); // Debug log
       res.json(player);
     } catch (error) {
       console.error('Erro ao definir primeiro jogador:', error);
@@ -67,6 +69,7 @@ export async function registerRoutes(app: Express) {
       if (!player) {
         return res.status(404).json({ message: "Nenhum jogador disponível" });
       }
+      console.log("Próximo jogador definido:", player); // Debug log
       res.json(player);
     } catch (error) {
       console.error('Erro ao definir próximo jogador:', error);
@@ -74,7 +77,6 @@ export async function registerRoutes(app: Express) {
     }
   });
 
-  // Importante: Colocar a rota "all" antes da rota com :id
   app.delete("/api/players/all", async (_req, res) => {
     try {
       await storage.removeAllPlayers();
@@ -85,27 +87,6 @@ export async function registerRoutes(app: Express) {
     }
   });
 
-  app.get("/api/players/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "ID inválido" });
-      }
-
-      const player = await storage.getPlayer(id);
-      console.log('Retornando dados do jogador:', player);
-
-      if (!player) {
-        return res.status(404).json({ message: "Jogador não encontrado" });
-      }
-
-      res.json(player);
-    } catch (error) {
-      console.error('Erro ao buscar jogador:', error);
-      res.status(500).json({ message: "Erro ao buscar jogador" });
-    }
-  });
-
   app.patch("/api/players/:id/points", async (req, res) => {
     try {
       const result = updatePlayerPointsSchema.safeParse(req.body);
@@ -113,12 +94,9 @@ export async function registerRoutes(app: Express) {
         return res.status(400).json({ message: "Dados inválidos" });
       }
 
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "ID inválido" });
-      }
-
+      const id = req.params.id;
       const player = await storage.updatePlayerPoints(id, result.data.points, result.data.type);
+      console.log("Pontos atualizados para o jogador:", player); // Debug log
       res.json(player);
     } catch (error) {
       console.error('Erro ao atualizar pontos do jogador:', error);
@@ -128,7 +106,7 @@ export async function registerRoutes(app: Express) {
 
   app.delete("/api/players/:id", async (req, res) => {
     try {
-      const id = req.params.id; // Removida a conversão para número
+      const id = req.params.id;
       await storage.removePlayer(id);
       res.status(204).end();
     } catch (error) {
@@ -137,7 +115,6 @@ export async function registerRoutes(app: Express) {
     }
   });
 
-  // Game players routes
   app.post("/api/players/reset", async (_req, res) => {
     try {
       await storage.resetPlayersPoints();
@@ -148,7 +125,6 @@ export async function registerRoutes(app: Express) {
     }
   });
 
-  // Game Settings routes
   app.get("/api/settings", async (_req, res) => {
     try {
       const settings = await storage.getGameSettings();
@@ -170,62 +146,6 @@ export async function registerRoutes(app: Express) {
     } catch (error) {
       console.error('Erro ao atualizar configurações do jogo:', error);
       res.status(500).json({ message: "Erro ao atualizar configurações do jogo" });
-    }
-  });
-
-  // Custom game routes
-  app.get("/api/custom-games", async (_req, res) => {
-    try {
-      const games = await storage.getCustomGames();
-      res.json(games);
-    } catch (error) {
-      console.error('Erro ao buscar jogos customizados:', error);
-      res.status(500).json({ message: "Erro ao buscar jogos customizados" });
-    }
-  });
-
-  app.post("/api/custom-games", async (req, res) => {
-    try {
-      const result = insertCustomGameSchema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ message: "Dados do jogo inválidos" });
-      }
-      const game = await storage.addCustomGame(result.data);
-      res.json(game);
-    } catch (error) {
-      console.error('Erro ao adicionar jogo customizado:', error);
-      res.status(500).json({ message: "Erro ao adicionar jogo customizado" });
-    }
-  });
-
-  app.get("/api/custom-games/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "ID inválido" });
-      }
-      const game = await storage.getCustomGame(id);
-      if (!game) {
-        return res.status(404).json({ message: "Jogo não encontrado" });
-      }
-      res.json(game);
-    } catch (error) {
-      console.error('Erro ao buscar jogo customizado:', error);
-      res.status(500).json({ message: "Erro ao buscar jogo customizado" });
-    }
-  });
-
-  app.delete("/api/custom-games/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "ID inválido" });
-      }
-      await storage.deleteCustomGame(id);
-      res.status(204).end();
-    } catch (error) {
-      console.error('Erro ao remover jogo customizado:', error);
-      res.status(404).json({ message: "Jogo não encontrado" });
     }
   });
 

@@ -71,7 +71,9 @@ class MemStorage implements IStorage {
 
   async getCurrentPlayer(): Promise<Player | undefined> {
     if (!this.settings.currentPlayerId) return undefined;
-    return this.players.find(p => p.id === this.settings.currentPlayerId);
+    const currentPlayer = this.players.find(p => p.id === this.settings.currentPlayerId);
+    console.log('Current player:', currentPlayer); // Debug log
+    return currentPlayer;
   }
 
   async setNextPlayer(): Promise<Player | undefined> {
@@ -82,6 +84,7 @@ class MemStorage implements IStorage {
     const nextPlayer = this.players[nextIndex];
 
     this.settings.currentPlayerId = nextPlayer.id;
+    console.log('Next player set to:', nextPlayer); // Debug log
     return nextPlayer;
   }
 
@@ -119,7 +122,9 @@ class MemStorage implements IStorage {
     if (this.players.length === 0) return undefined;
 
     this.settings.currentPlayerId = this.players[0].id;
-    return this.players[0];
+    const firstPlayer = this.players[0];
+    console.log('First player set to:', firstPlayer); // Debug log
+    return firstPlayer;
   }
 
   async getPlayer(id: string): Promise<Player | undefined> {
