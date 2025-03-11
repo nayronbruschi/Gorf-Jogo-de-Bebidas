@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, browserLocalPersistence, setPersistence } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import type { UserProfile, UserGameStats } from "@shared/schema";
 
@@ -24,6 +24,12 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
+
+// Enable persistent login
+setPersistence(auth, browserLocalPersistence)
+  .catch((error) => {
+    console.error("Error setting persistence:", error);
+  });
 
 // Configurações adicionais para o provedor Google
 googleProvider.setCustomParameters({

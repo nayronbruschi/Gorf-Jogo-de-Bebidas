@@ -95,6 +95,7 @@ interface GameUpdateData {
   gameType: GameType;
   playTimeInSeconds: number;
   playerNames: string[]; // Array of unique player names
+  isInitializing?: boolean; // New flag to indicate if this is the initial game setup
 }
 
 export async function updateGameStats(data: GameUpdateData) {
@@ -120,22 +121,25 @@ export async function updateGameStats(data: GameUpdateData) {
     const totalPlayTime = stats.totalPlayTime || "00:00:00";
     const updatedTotalTime = addTimes(totalPlayTime, newPlayTime);
 
-    await updateDoc(userStatsRef, {
-      [`gameStats.${data.gameType}.gamesPlayed`]: increment(1),
+    // Only increment game count and unique players if this is not initialization
+    const updates: any = {
       [`gameStats.${data.gameType}.timeSpent`]: updatedGameTime,
       [`gameStats.${data.gameType}.lastPlayed`]: new Date().toISOString(),
-
-      // Update general stats
-      totalGamesPlayed: increment(1),
       totalPlayTime: updatedTotalTime,
-      uniquePlayers: increment(uniquePlayerCount)
-    });
+    };
+
+    if (!data.isInitializing) {
+      updates[`gameStats.${data.gameType}.gamesPlayed`] = increment(1);
+      updates.totalGamesPlayed = increment(1);
+      updates.uniquePlayers = increment(uniquePlayerCount);
+    }
+
+    await updateDoc(userStatsRef, updates);
   } catch (error) {
     console.error('Erro ao atualizar estatísticas:', error);
   }
 }
 
-// Hook para rastrear o tempo de jogo
 export function createGameTimer() {
   const startTime = Date.now();
   return () => Math.floor((Date.now() - startTime) / 1000);

@@ -90,7 +90,8 @@ export default function ClassicMode() {
           await updateGameStats({
             gameType: "classic",
             playTimeInSeconds: 0,
-            playerNames
+            playerNames,
+            isInitializing: true // Add this flag for initialization
           });
           setHasStartedGame(true);
         } catch (error) {
