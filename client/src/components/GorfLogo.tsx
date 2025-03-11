@@ -11,7 +11,7 @@ export function GorfLogo({ size = "large" }: { size?: "small" | "large" }) {
       className="flex flex-col items-center gap-4"
     >
       <motion.img
-        src="/LOGOGORF.png"
+        src="/images/LOGOGORF.png"
         alt="Gorf Logo"
         className={`${logoSize} object-contain`}
         initial={{ y: 20, opacity: 0 }}
