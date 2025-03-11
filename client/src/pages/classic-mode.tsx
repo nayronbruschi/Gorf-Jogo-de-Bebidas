@@ -19,6 +19,23 @@ import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { updateGameStats } from "@/lib/stats";
 import { auth, updateRecentGames } from "@/lib/firebase";
 
+function generateChallenge(
+  setCurrentChallenge: (challenge: string) => void,
+  setCurrentIcon: (icon: any) => void,
+  setRoundPoints: (points: number) => void
+) {
+  const selectedDeckIds = JSON.parse(localStorage.getItem("selectedDecks") || '["classic"]');
+  const availableChallenges = decks
+    .filter(deck => selectedDeckIds.includes(deck.id))
+    .flatMap(deck => deck.challenges);
+  const challenge = availableChallenges[Math.floor(Math.random() * availableChallenges.length)];
+  const points = Math.floor(Math.random() * 9) + 2;
+
+  setCurrentChallenge(challenge.text);
+  setCurrentIcon(challenge.icon);
+  setRoundPoints(points);
+}
+
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
   const [currentIcon, setCurrentIcon] = useState<any>();
@@ -40,6 +57,12 @@ export default function ClassicMode() {
   const maxPointsForm = useForm({
     defaultValues: { maxPoints: 100 },
   });
+
+  useEffect(() => {
+    if (!currentChallenge) {
+      generateChallenge(setCurrentChallenge, setCurrentIcon, setRoundPoints);
+    }
+  }, [currentChallenge, setCurrentChallenge, setCurrentIcon, setRoundPoints]);
 
   const { data: currentPlayer } = useQuery({
     queryKey: ["/api/players/current"],
@@ -91,7 +114,7 @@ export default function ClassicMode() {
       setHasStartedGame(false);
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
-      generateChallenge();
+      generateChallenge(setCurrentChallenge, setCurrentIcon, setRoundPoints);
     } catch (error) {
       console.error('Erro ao reiniciar o jogo:', error);
     }
@@ -102,9 +125,6 @@ export default function ClassicMode() {
     setShowTutorial(false);
   };
 
-  if (!currentChallenge) {
-    generateChallenge();
-  }
 
   const handleNextPlayer = async () => {
     if (!completedChallenge && !hasDrunk) {
@@ -138,7 +158,7 @@ export default function ClassicMode() {
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
       setCompletedChallenge(false);
       setHasDrunk(false);
-      generateChallenge();
+      generateChallenge(setCurrentChallenge, setCurrentIcon, setRoundPoints);
       play("click");
     } catch (error) {
       console.error('Erro ao processar a rodada:', error);
@@ -200,18 +220,6 @@ export default function ClassicMode() {
     navigate("/manage-players");
   };
 
-  const generateChallenge = () => {
-    const selectedDeckIds = JSON.parse(localStorage.getItem("selectedDecks") || '["classic"]');
-    const availableChallenges = decks
-      .filter(deck => selectedDeckIds.includes(deck.id))
-      .flatMap(deck => deck.challenges);
-    const challenge = availableChallenges[Math.floor(Math.random() * availableChallenges.length)];
-    const points = Math.floor(Math.random() * 9) + 2;
-
-    setCurrentChallenge(challenge.text);
-    setCurrentIcon(challenge.icon);
-    setRoundPoints(points);
-  };
 
   const updatePoints = useMutation({
     mutationFn: async ({ playerId, type, points }: { playerId: number; type: "challenge" | "drink"; points: number }) => {
