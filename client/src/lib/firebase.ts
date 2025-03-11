@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 
 // Helper para acessar variáveis de ambiente em ambos os ambientes
 const getEnvVar = (key: string): string => {
@@ -33,6 +33,15 @@ export const googleProvider = new GoogleAuthProvider();
 // Configurações adicionais para o provedor Google
 googleProvider.setCustomParameters({
   prompt: 'select_account'
+});
+
+// Observar mudanças no estado de autenticação
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    localStorage.setItem('currentUserId', user.uid);
+  } else {
+    localStorage.removeItem('currentUserId');
+  }
 });
 
 console.log('Firebase initialized successfully');
