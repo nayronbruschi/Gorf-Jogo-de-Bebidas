@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { createElement } from "react";
 import { useLocation } from "wouter";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
-import { updateGameStats, createGameTimer } from "@/lib/stats";
+import { updateGameStats } from "@/lib/stats";
 import { auth, updateRecentGames } from "@/lib/firebase";
 
 export default function ClassicMode() {
@@ -32,7 +32,7 @@ export default function ClassicMode() {
   });
   const [hasUpdatedStats, setHasUpdatedStats] = useState(false);
   const [hasStartedGame, setHasStartedGame] = useState(false);
-  const [getPlayTime, setGetPlayTime] = useState(() => createGameTimer());
+  const [startTime] = useState(() => Date.now());
 
   const { play } = useSound();
   const { toast } = useToast();
@@ -88,7 +88,7 @@ export default function ClassicMode() {
       setCurrentIcon(null);
       setRoundPoints(0);
       setHasUpdatedStats(false);
-      setHasStartedGame(false); // Reset the game start flag
+      setHasStartedGame(false);
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
       generateChallenge();
@@ -148,13 +148,12 @@ export default function ClassicMode() {
   const winner = players.find(player => player.points >= (settings?.maxPoints || 100));
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
-
   const updateGameStatistics = async (winner?: string) => {
     if (!auth.currentUser || hasUpdatedStats) return;
 
     try {
       const playerNames = players.map(player => player.name);
-      const playTimeInSeconds = getPlayTime();
+      const playTimeInSeconds = Math.floor((Date.now() - startTime) / 1000);
 
       await updateGameStats({
         gameType: "classic",
