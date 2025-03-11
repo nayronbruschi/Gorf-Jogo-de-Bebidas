@@ -50,7 +50,7 @@ export default function Auth() {
       setError("");
       const result = await signInWithPopup(auth, googleProvider);
       if (result.user) {
-        setLocation("/dashboard");  
+        setLocation("/onboarding");  
       }
     } catch (error: any) {
       console.error("Error signing in with Google:", error);
@@ -72,10 +72,11 @@ export default function Auth() {
       setError("");
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
+        setLocation("/dashboard");
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
+        setLocation("/onboarding");
       }
-      setLocation("/dashboard");  
     } catch (error: any) {
       console.error("Error with email auth:", error);
       setError(getErrorMessage(error.code));
