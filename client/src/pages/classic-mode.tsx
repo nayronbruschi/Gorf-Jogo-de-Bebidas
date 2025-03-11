@@ -36,15 +36,6 @@ function generateChallenge(
   setRoundPoints(points);
 }
 
-interface Player {
-  id: string;
-  name: string;
-  points: number;
-  isActive: boolean;
-  challengesCompleted: number;
-  drinksCompleted: number;
-}
-
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
   const [currentIcon, setCurrentIcon] = useState<any>();
@@ -64,20 +55,16 @@ export default function ClassicMode() {
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const maxPointsForm = useForm({
-    defaultValues: { maxPoints: 100 },
+    defaultValues: {
+      maxPoints: 100,
+    },
   });
 
-  useEffect(() => {
-    if (!currentChallenge) {
-      generateChallenge(setCurrentChallenge, setCurrentIcon, setRoundPoints);
-    }
-  }, [currentChallenge]);
-
-  const { data: currentPlayer } = useQuery<Player>({
+  const { data: currentPlayer } = useQuery({
     queryKey: ["/api/players/current"],
   });
 
-  const { data: players = [] } = useQuery<Player[]>({
+  const { data: players = [] } = useQuery({
     queryKey: ["/api/players"],
   });
 
@@ -106,6 +93,12 @@ export default function ClassicMode() {
 
     initializeGame();
   }, [hasStartedGame, players, auth.currentUser]);
+
+  useEffect(() => {
+    if (!currentChallenge) {
+      generateChallenge(setCurrentChallenge, setCurrentIcon, setRoundPoints);
+    }
+  }, [currentChallenge]);
 
   const handlePlayAgain = async () => {
     try {
@@ -143,21 +136,21 @@ export default function ClassicMode() {
     try {
       if (currentPlayer) {
         if (completedChallenge) {
-          await updatePoints.mutateAsync({
+          await updatePoints.mutate({
             playerId: currentPlayer.id,
             type: "challenge",
             points: roundPoints
           });
         }
         if (hasDrunk) {
-          await updatePoints.mutateAsync({
+          await updatePoints.mutate({
             playerId: currentPlayer.id,
             type: "drink",
             points: roundPoints
           });
         }
       }
-      await nextPlayer.mutateAsync();
+      await nextPlayer.mutate();
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
       setCompletedChallenge(false);
@@ -169,10 +162,10 @@ export default function ClassicMode() {
     }
   };
 
-  // Check for winner before rendering main game content
   const maxPoints = settings?.maxPoints || 100;
-  const winner = players.find(player => player.points >= maxPoints);
-  const topDrinker = players.length > 0 ? [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0] : null;
+  const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
+  const winner = sortedPlayers.find(player => player.points >= maxPoints);
+  const topDrinker = sortedPlayers[0];
 
   const updateGameStatistics = async (winner?: string) => {
     if (!auth.currentUser || hasUpdatedStats) return;
@@ -221,12 +214,6 @@ export default function ClassicMode() {
     );
   }
 
-  const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
-
-  const handleBackToGame = () => {
-    navigate("/manage-players");
-  };
-
   const updatePoints = useMutation({
     mutationFn: async ({ playerId, type, points }: { playerId: string; type: "challenge" | "drink"; points: number }) => {
       await apiRequest("PATCH", `/api/players/${playerId}/points`, { type, points });
@@ -248,6 +235,10 @@ export default function ClassicMode() {
       setDialogOpen(false);
     },
   });
+
+  const handleBackToGame = () => {
+    navigate("/manage-players");
+  };
 
   return (
     <>
