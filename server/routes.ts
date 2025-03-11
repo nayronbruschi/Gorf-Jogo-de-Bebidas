@@ -2,9 +2,49 @@ import type { Express } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
 import { insertPlayerSchema, updatePlayerPointsSchema, gameSettingsSchema } from "@shared/schema";
+import multer from "multer";
+import fs from "fs";
+import path from "path";
+
+// Configurar o multer para armazenar os arquivos temporariamente
+const upload = multer({ dest: 'tmp/uploads/' });
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
+
+  // Rota de upload de imagens
+  app.post("/api/upload", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "Nenhum arquivo enviado" });
+      }
+
+      const file = req.file;
+      const destPath = `BucketGorf/${file.originalname}`;
+
+      // Mover o arquivo para o bucket
+      fs.renameSync(file.path, destPath);
+
+      // Retornar a URL do arquivo
+      const url = `/api/images/${file.originalname}`;
+      res.json({ url });
+    } catch (error) {
+      console.error('Erro no upload:', error);
+      res.status(500).json({ message: "Erro ao fazer upload do arquivo" });
+    }
+  });
+
+  // Rota para servir as imagens
+  app.get("/api/images/:filename", (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join("BucketGorf", filename);
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ message: "Imagem não encontrada" });
+    }
+
+    res.sendFile(filePath, { root: process.cwd() });
+  });
 
   // Player routes
   app.get("/api/players", async (_req, res) => {

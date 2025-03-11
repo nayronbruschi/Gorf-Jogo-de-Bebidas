@@ -1,7 +1,4 @@
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { app } from "./firebase";
-
-const storage = getStorage(app);
 
 export async function uploadImage(file: File, path: string): Promise<string> {
   try {
@@ -12,23 +9,25 @@ export async function uploadImage(file: File, path: string): Promise<string> {
       name: file.name
     });
 
-    // Criar uma referência para o arquivo no Storage com o caminho completo
-    const storageRef = ref(storage, `banners/${path}`);
-    console.log('Storage reference criada:', storageRef.fullPath);
+    // Criar FormData para enviar o arquivo
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('path', path);
 
-    // Fazer o upload do arquivo
-    const snapshot = await uploadBytes(storageRef, file);
-    console.log('Upload concluído:', {
-      bytesTransferred: snapshot.bytesTransferred,
-      totalBytes: snapshot.totalBytes,
-      fullPath: snapshot.ref.fullPath
+    // Fazer o upload para o bucket do Replit
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData
     });
 
-    // Obter a URL de download
-    const downloadURL = await getDownloadURL(snapshot.ref);
-    console.log('URL de download disponível:', downloadURL);
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.statusText}`);
+    }
 
-    return downloadURL;
+    const data = await response.json();
+    console.log('Upload concluído:', data);
+
+    return data.url;
   } catch (error) {
     console.error('Erro no upload:', error);
     if (error instanceof Error) {
@@ -43,6 +42,10 @@ export async function uploadImage(file: File, path: string): Promise<string> {
 }
 
 export async function getImageUrl(path: string): Promise<string> {
-  const storageRef = ref(storage, path);
-  return getDownloadURL(storageRef);
+  const response = await fetch(`/api/images/${path}`);
+  if (!response.ok) {
+    throw new Error('Failed to get image URL');
+  }
+  const data = await response.json();
+  return data.url;
 }
