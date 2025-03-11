@@ -136,23 +136,38 @@ export default function ClassicMode() {
     try {
       if (currentPlayer) {
         if (completedChallenge) {
-          await updatePoints.mutate({
+          await updatePoints.mutateAsync({
             playerId: currentPlayer.id,
             type: "challenge",
             points: roundPoints
           });
         }
         if (hasDrunk) {
-          await updatePoints.mutate({
+          await updatePoints.mutateAsync({
             playerId: currentPlayer.id,
             type: "drink",
             points: roundPoints
           });
         }
       }
-      await nextPlayer.mutate();
+
+      await nextPlayer.mutateAsync();
+
+      // Refetch data to check for winner
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
+
+      // Check for winner after points update
+      const updatedPlayers = await queryClient.fetchQuery({ queryKey: ["/api/players"] });
+      const maxPoints = settings?.maxPoints || 100;
+      const winner = updatedPlayers.find((player: any) => player.points >= maxPoints);
+
+      if (winner) {
+        const topDrinker = [...updatedPlayers].sort((a: any, b: any) => b.drinksCompleted - a.drinksCompleted)[0];
+        await updateGameStatistics(winner.name);
+        return;
+      }
+
       setCompletedChallenge(false);
       setHasDrunk(false);
       generateChallenge(setCurrentChallenge, setCurrentIcon, setRoundPoints);
@@ -164,7 +179,7 @@ export default function ClassicMode() {
 
   const maxPoints = settings?.maxPoints || 100;
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
-  const winner = sortedPlayers.find(player => player.points >= maxPoints);
+  //const winner = sortedPlayers.find(player => player.points >= maxPoints); // Removed redundant winner check
   const topDrinker = sortedPlayers[0];
 
   const updateGameStatistics = async (winner?: string) => {
@@ -201,7 +216,8 @@ export default function ClassicMode() {
     };
   }, [hasUpdatedStats]);
 
-  // Show winner screen if game is complete
+  // Show winner screen if game is complete - simplified logic
+  const winner = sortedPlayers.find(player => player.points >= maxPoints);
   if (winner && topDrinker && !hasUpdatedStats) {
     updateGameStatistics(winner.name);
     return (
