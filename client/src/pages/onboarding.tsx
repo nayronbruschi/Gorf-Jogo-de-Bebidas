@@ -55,10 +55,25 @@ export default function Onboarding() {
   };
 
   const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, 8);
-    if (value.length <= 8) {
-      const formattedDate = new Date(value).toISOString().split('T')[0];
-      updateField("birthDate", formattedDate);
+    const value = e.target.value;
+    const cleanValue = value.replace(/\D/g, '');
+
+    // Only allow up to 8 digits
+    if (cleanValue.length <= 8) {
+      try {
+        // Format yyyy-mm-dd for HTML date input
+        const year = cleanValue.slice(0, 4);
+        const month = cleanValue.slice(4, 6);
+        const day = cleanValue.slice(6, 8);
+
+        // Validate year
+        if (year && parseInt(year) >= 1900 && parseInt(year) <= new Date().getFullYear()) {
+          const dateStr = `${year}${month ? `-${month}` : ''}${day ? `-${day}` : ''}`;
+          updateField("birthDate", dateStr);
+        }
+      } catch (error) {
+        console.error('Error formatting date:', error);
+      }
     }
   };
 
@@ -157,10 +172,9 @@ export default function Onboarding() {
             <div className="space-y-6">
               <Input
                 type="date"
-                inputMode="numeric"
                 value={formData.birthDate}
                 onChange={handleBirthDateChange}
-                className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 text-center focus-visible:ring-0 focus-visible:border-white hover:border-white/40 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
+                className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 text-center placeholder:text-white/40 focus-visible:ring-0 focus-visible:border-white hover:border-white/40 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
               />
               <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90 py-7">
                 Continuar
@@ -183,8 +197,8 @@ export default function Onboarding() {
                 value={formData.gender}
                 onValueChange={(value) => updateField("gender", value)}
               >
-                <SelectTrigger className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 text-center focus:ring-0 hover:border-white/40">
-                  <SelectValue placeholder="Selecione seu gênero" />
+                <SelectTrigger className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 text-center focus:ring-0 focus-visible:ring-0 focus-visible:border-white hover:border-white/40">
+                  <SelectValue placeholder="Selecione seu gênero" className="text-center" />
                 </SelectTrigger>
                 <SelectContent>
                   {genderOptions.map((gender) => (
@@ -285,7 +299,7 @@ export default function Onboarding() {
           <Button
             variant="ghost"
             onClick={handleBack}
-            className="text-white/60 hover:text-white hover:bg-white/10"
+            className="text-white hover:text-white hover:bg-white/10"
           >
             <ChevronLeft className="w-4 h-4 mr-2" />
             Voltar
