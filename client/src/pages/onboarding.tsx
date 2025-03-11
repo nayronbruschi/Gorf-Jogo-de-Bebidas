@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { auth, createUserProfile } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -58,21 +57,23 @@ export default function Onboarding() {
   const handleNext = async () => {
     const currentIndex = steps.indexOf(currentStep);
 
-    // Validar campo atual
-    if (currentStep === "social" && formData.favoriteSocialNetwork.length === 0) {
-      toast({
-        title: "Campo obrigatório",
-        description: "Por favor, selecione pelo menos uma rede social.",
-        variant: "destructive",
-      });
-      return;
-    } else if (currentStep !== "social" && !formData[currentStep as keyof typeof formData]) {
-      toast({
-        title: "Campo obrigatório",
-        description: "Por favor, preencha o campo antes de continuar.",
-        variant: "destructive",
-      });
-      return;
+    // Validar campo atual apenas se não estiver no passo final
+    if (currentStep !== "finish") {
+      if (currentStep === "social" && formData.favoriteSocialNetwork.length === 0) {
+        toast({
+          title: "Campo obrigatório",
+          description: "Por favor, selecione pelo menos uma rede social.",
+          variant: "destructive",
+        });
+        return;
+      } else if (currentStep !== "social" && !formData[currentStep as keyof typeof formData]) {
+        toast({
+          title: "Campo obrigatório",
+          description: "Por favor, preencha o campo antes de continuar.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     // Se for o último passo, salvar dados
