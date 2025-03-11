@@ -158,22 +158,24 @@ export default function ClassicMode() {
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
   const getPlayTime = useGameTimer();
-  const [gameStartTime2] = useState<number>(Date.now()); //Removed redundant declaration
+  const [gameStartTime2] = useState<number>(Date.now());
 
-
-  // Function to update game statistics
+  // Update the updateGameStatistics function in classic-mode.tsx
   const updateGameStatistics = async (winner?: string) => {
     if (!auth.currentUser) return;
 
     const endTime = Date.now();
-    const playTimeInMinutes = Math.floor((endTime - gameStartTime2) / (1000 * 60));
+    const playTimeInSeconds = Math.floor((endTime - gameStartTime2) / 1000);
 
     try {
+      // Get unique player names
+      const playerNames = players.map(player => player.name);
+
       // Update game stats
       await updateGameStats({
         gameType: "classic",
-        playTime: playTimeInMinutes,
-        playerCount: players.length
+        playTimeInSeconds,
+        playerNames
       });
 
       // Update recent games
