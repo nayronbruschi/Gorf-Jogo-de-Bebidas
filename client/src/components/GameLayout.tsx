@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { auth } from "@/lib/firebase";
+import { GorfLogo } from "./GorfLogo";
 
 interface GameLayoutProps {
   children: React.ReactNode;
@@ -35,9 +36,9 @@ export function GameLayout({ children, title, className, showPlayers = true }: G
         >
           <Home className="h-6 w-6" />
         </Button>
-        <h1 className="text-2xl font-bold text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          Gorf
-        </h1>
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <GorfLogo size="small" />
+        </div>
         <Sheet>
           <SheetTrigger asChild>
             <Avatar className="h-10 w-10 cursor-pointer hover:opacity-90 transition-opacity">
