@@ -160,12 +160,12 @@ export default function ClassicMode() {
   const getPlayTime = useGameTimer();
   const [gameStartTime2] = useState<number>(Date.now());
 
-  // Update the updateGameStatistics function in classic-mode.tsx
+  // Function to update game statistics
   const updateGameStatistics = async (winner?: string) => {
     if (!auth.currentUser) return;
 
     const endTime = Date.now();
-    const playTimeInSeconds = Math.floor((endTime - gameStartTime2) / 1000);
+    const playTimeInSeconds = Math.floor((endTime - gameStartTime) / 1000);
 
     try {
       // Get unique player names
@@ -190,15 +190,7 @@ export default function ClassicMode() {
     }
   };
 
-  // Call updateGameStatistics when component unmounts
-  useEffect(() => {
-    return () => {
-      if (auth.currentUser) {
-        updateGameStatistics();
-      }
-    };
-  }, []);
-
+  // Only update stats when game ends with a winner
   if (winner && topDrinker) {
     updateGameStatistics(winner.name);
     return (
