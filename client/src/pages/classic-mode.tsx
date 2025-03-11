@@ -31,6 +31,7 @@ export default function ClassicMode() {
     return !hasSeenTutorial;
   });
   const [hasUpdatedStats, setHasUpdatedStats] = useState(false);
+  const [hasStartedGame, setHasStartedGame] = useState(false);
   const getPlayTime = useGameTimer(); 
 
   const { play } = useSound();
@@ -57,40 +58,26 @@ export default function ClassicMode() {
     }
   });
 
-  const updatePoints = useMutation({
-    mutationFn: async ({ playerId, type, points }: { playerId: number; type: "challenge" | "drink"; points: number }) => {
-      await apiRequest("PATCH", `/api/players/${playerId}/points`, { type, points });
-    },
-  });
+  // Effect to handle game start statistics
+  useEffect(() => {
+    const initializeGame = async () => {
+      if (!hasStartedGame && auth.currentUser && players.length > 0) {
+        try {
+          const playerNames = players.map(player => player.name);
+          await updateGameStats({
+            gameType: "classic",
+            playTimeInSeconds: 0,
+            playerNames
+          });
+          setHasStartedGame(true);
+        } catch (error) {
+          console.error('Error initializing game stats:', error);
+        }
+      }
+    };
 
-  const nextPlayer = useMutation({
-    mutationFn: async () => {
-      await apiRequest("POST", "/api/players/next", {});
-    },
-  });
-
-  const updateMaxPoints = useMutation({
-    mutationFn: async (maxPoints: number) => {
-      await apiRequest("PATCH", "/api/settings", { maxPoints });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
-      setDialogOpen(false);
-    },
-  });
-
-  const generateChallenge = () => {
-    const selectedDeckIds = JSON.parse(localStorage.getItem("selectedDecks") || '["classic"]');
-    const availableChallenges = decks
-      .filter(deck => selectedDeckIds.includes(deck.id))
-      .flatMap(deck => deck.challenges);
-    const challenge = availableChallenges[Math.floor(Math.random() * availableChallenges.length)];
-    const points = Math.floor(Math.random() * 9) + 2;
-
-    setCurrentChallenge(challenge.text);
-    setCurrentIcon(challenge.icon);
-    setRoundPoints(points);
-  };
+    initializeGame();
+  }, [hasStartedGame, players, auth.currentUser]);
 
   const handlePlayAgain = async () => {
     try {
@@ -100,7 +87,8 @@ export default function ClassicMode() {
       setCurrentChallenge("");
       setCurrentIcon(null);
       setRoundPoints(0);
-      setHasUpdatedStats(false); 
+      setHasUpdatedStats(false);
+      setHasStartedGame(false); // Reset the game start flag
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
       generateChallenge();
@@ -212,6 +200,41 @@ export default function ClassicMode() {
   const handleBackToGame = () => {
     navigate("/manage-players");
   };
+
+  const generateChallenge = () => {
+    const selectedDeckIds = JSON.parse(localStorage.getItem("selectedDecks") || '["classic"]');
+    const availableChallenges = decks
+      .filter(deck => selectedDeckIds.includes(deck.id))
+      .flatMap(deck => deck.challenges);
+    const challenge = availableChallenges[Math.floor(Math.random() * availableChallenges.length)];
+    const points = Math.floor(Math.random() * 9) + 2;
+
+    setCurrentChallenge(challenge.text);
+    setCurrentIcon(challenge.icon);
+    setRoundPoints(points);
+  };
+
+  const updatePoints = useMutation({
+    mutationFn: async ({ playerId, type, points }: { playerId: number; type: "challenge" | "drink"; points: number }) => {
+      await apiRequest("PATCH", `/api/players/${playerId}/points`, { type, points });
+    },
+  });
+
+  const nextPlayer = useMutation({
+    mutationFn: async () => {
+      await apiRequest("POST", "/api/players/next", {});
+    },
+  });
+
+  const updateMaxPoints = useMutation({
+    mutationFn: async (maxPoints: number) => {
+      await apiRequest("PATCH", "/api/settings", { maxPoints });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
+      setDialogOpen(false);
+    },
+  });
 
   return (
     <>
