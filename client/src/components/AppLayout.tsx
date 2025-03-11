@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Home, GamepadIcon, BarChart2, LogOut } from "lucide-react";
+import { Home, GamepadIcon, BarChart2, LogOut, UserCircle } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 
@@ -28,7 +28,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const menuItems = [
     { icon: Home, label: "Início", href: "/dashboard" },
     { icon: GamepadIcon, label: "Jogos", href: "/game-modes" },
-    { icon: BarChart2, label: "Estatísticas", href: "/stats" },
+    { icon: UserCircle, label: "Perfil e Estatísticas", href: "/profile" },
   ];
 
   return (

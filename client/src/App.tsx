@@ -2,9 +2,7 @@ import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { useState, useEffect } from "react";
 import NotFound from "@/pages/not-found";
-import Home from "@/pages/home";
 import Auth from "@/pages/auth";
 import Dashboard from "@/pages/dashboard";
 import Stats from "@/pages/stats";
@@ -27,17 +25,19 @@ import Cards from "@/pages/cards";
 import GuessWhoPlayers from "@/pages/guess-who-players";
 import GuessWhoTheme from "@/pages/guess-who-theme";
 import GuessWhoGame from "@/pages/guess-who-game";
+import Profile from "@/pages/profile";
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={Auth} />
       <Route path="/auth" component={Auth} />
       <Route path="/onboarding" component={Onboarding} /> 
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/stats" component={Stats} />
       <Route path="/game-modes" component={GameModes} />
       <Route path="/admin" component={Admin} />
+      <Route path="/profile" component={Profile} />
       <Route path="/classic" component={ClassicStart} />
       <Route path="/classic/players" component={ClassicPlayers} />
       <Route path="/classic/play" component={ClassicMode} />

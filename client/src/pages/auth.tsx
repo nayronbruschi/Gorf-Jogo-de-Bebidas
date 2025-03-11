@@ -86,12 +86,18 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-800 to-purple-900 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold text-white mb-2">Gorf</h1>
+          <p className="text-white/60">Bora jogar?</p>
+        </div>
+
         <div className="bg-white/10 backdrop-blur-lg rounded-lg p-8 shadow-xl">
           <h1 className="text-3xl font-bold text-white text-center mb-8">
             {isLogin ? "Bem-vindo" : "Crie sua conta"}
