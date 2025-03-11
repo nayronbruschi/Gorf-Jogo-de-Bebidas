@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { createElement } from "react";
 import { useLocation } from "wouter";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
-import { updateGameStats, useGameTimer } from "@/lib/stats";
+import { updateGameStats } from "@/lib/stats";
 import { auth, updateRecentGames } from "@/lib/firebase";
 
 export default function ClassicMode() {
@@ -31,6 +31,7 @@ export default function ClassicMode() {
     return !hasSeenTutorial;
   });
   const [gameStartTime] = useState<number>(Date.now());
+  const [hasUpdatedStats, setHasUpdatedStats] = useState(false);
   const { play } = useSound();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -98,6 +99,7 @@ export default function ClassicMode() {
       setCurrentChallenge("");
       setCurrentIcon(null);
       setRoundPoints(0);
+      setHasUpdatedStats(false); // Reset hasUpdatedStats for a new game
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
       generateChallenge();
@@ -157,12 +159,12 @@ export default function ClassicMode() {
   const winner = players.find(player => player.points >= (settings?.maxPoints || 100));
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
-  const getPlayTime = useGameTimer();
+  const getPlayTime = useGameTimer;
   const [gameStartTime2] = useState<number>(Date.now());
 
   // Function to update game statistics
   const updateGameStatistics = async (winner?: string) => {
-    if (!auth.currentUser) return;
+    if (!auth.currentUser || hasUpdatedStats) return;
 
     const endTime = Date.now();
     const playTimeInSeconds = Math.floor((endTime - gameStartTime) / 1000);
@@ -185,13 +187,24 @@ export default function ClassicMode() {
         players: players.length,
         winner: winner || "-"
       });
+
+      setHasUpdatedStats(true);
     } catch (error) {
       console.error('Error updating game statistics:', error);
     }
   };
 
-  // Only update stats when game ends with a winner
-  if (winner && topDrinker) {
+  // Only update stats when leaving the game without a winner
+  useEffect(() => {
+    return () => {
+      if (!hasUpdatedStats) {
+        updateGameStatistics();
+      }
+    };
+  }, [hasUpdatedStats]);
+
+  // Update stats when game ends with a winner
+  if (winner && topDrinker && !hasUpdatedStats) {
     updateGameStatistics(winner.name);
     return (
       <WinnerScreen
