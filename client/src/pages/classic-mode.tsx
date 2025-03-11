@@ -16,25 +16,8 @@ import { useForm } from "react-hook-form";
 import { createElement } from "react";
 import { useLocation } from "wouter";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
-import { updateGameStats } from "@/lib/stats";
+import { updateGameStats, useGameTimer } from "@/lib/stats";
 import { auth, updateRecentGames } from "@/lib/firebase";
-
-function generateChallenge(
-  setCurrentChallenge: (challenge: string) => void,
-  setCurrentIcon: (icon: any) => void,
-  setRoundPoints: (points: number) => void
-) {
-  const selectedDeckIds = JSON.parse(localStorage.getItem("selectedDecks") || '["classic"]');
-  const availableChallenges = decks
-    .filter(deck => selectedDeckIds.includes(deck.id))
-    .flatMap(deck => deck.challenges);
-  const challenge = availableChallenges[Math.floor(Math.random() * availableChallenges.length)];
-  const points = Math.floor(Math.random() * 9) + 2;
-
-  setCurrentChallenge(challenge.text);
-  setCurrentIcon(challenge.icon);
-  setRoundPoints(points);
-}
 
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
@@ -47,17 +30,12 @@ export default function ClassicMode() {
     const hasSeenTutorial = localStorage.getItem("hasSeenTutorial");
     return !hasSeenTutorial;
   });
-  const [hasUpdatedStats, setHasUpdatedStats] = useState(false);
-  const [hasStartedGame, setHasStartedGame] = useState(false);
-  const [startTime] = useState(() => Date.now());
-
+  const [gameStartTime] = useState<number>(Date.now());
   const { play } = useSound();
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const maxPointsForm = useForm({
-    defaultValues: {
-      maxPoints: 100,
-    },
+    defaultValues: { maxPoints: 100 },
   });
 
   const { data: currentPlayer } = useQuery({
@@ -70,35 +48,47 @@ export default function ClassicMode() {
 
   const { data: settings } = useQuery({
     queryKey: ["/api/settings"],
+    onSuccess: (data) => {
+      if (data?.maxPoints) {
+        maxPointsForm.setValue("maxPoints", data.maxPoints);
+      }
+    }
   });
 
-  // Effect to handle game start statistics
-  useEffect(() => {
-    const initializeGame = async () => {
-      if (!hasStartedGame && auth.currentUser && players.length > 0) {
-        try {
-          const playerNames = players.map(player => player.name);
-          await updateGameStats({
-            gameType: "classic",
-            playTimeInSeconds: 0,
-            playerNames,
-            isInitializing: true
-          });
-          setHasStartedGame(true);
-        } catch (error) {
-          console.error('Error initializing game stats:', error);
-        }
-      }
-    };
+  const updatePoints = useMutation({
+    mutationFn: async ({ playerId, type, points }: { playerId: number; type: "challenge" | "drink"; points: number }) => {
+      await apiRequest("PATCH", `/api/players/${playerId}/points`, { type, points });
+    },
+  });
 
-    initializeGame();
-  }, [hasStartedGame, players, auth.currentUser]);
+  const nextPlayer = useMutation({
+    mutationFn: async () => {
+      await apiRequest("POST", "/api/players/next", {});
+    },
+  });
 
-  useEffect(() => {
-    if (!currentChallenge) {
-      generateChallenge(setCurrentChallenge, setCurrentIcon, setRoundPoints);
-    }
-  }, [currentChallenge]);
+  const updateMaxPoints = useMutation({
+    mutationFn: async (maxPoints: number) => {
+      await apiRequest("PATCH", "/api/settings", { maxPoints });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
+      setDialogOpen(false);
+    },
+  });
+
+  const generateChallenge = () => {
+    const selectedDeckIds = JSON.parse(localStorage.getItem("selectedDecks") || '["classic"]');
+    const availableChallenges = decks
+      .filter(deck => selectedDeckIds.includes(deck.id))
+      .flatMap(deck => deck.challenges);
+    const challenge = availableChallenges[Math.floor(Math.random() * availableChallenges.length)];
+    const points = Math.floor(Math.random() * 9) + 2;
+
+    setCurrentChallenge(challenge.text);
+    setCurrentIcon(challenge.icon);
+    setRoundPoints(points);
+  };
 
   const handlePlayAgain = async () => {
     try {
@@ -108,11 +98,9 @@ export default function ClassicMode() {
       setCurrentChallenge("");
       setCurrentIcon(null);
       setRoundPoints(0);
-      setHasUpdatedStats(false);
-      setHasStartedGame(false);
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
-      generateChallenge(setCurrentChallenge, setCurrentIcon, setRoundPoints);
+      generateChallenge();
     } catch (error) {
       console.error('Erro ao reiniciar o jogo:', error);
     }
@@ -122,6 +110,10 @@ export default function ClassicMode() {
     localStorage.setItem("hasSeenTutorial", "true");
     setShowTutorial(false);
   };
+
+  if (!currentChallenge) {
+    generateChallenge();
+  }
 
   const handleNextPlayer = async () => {
     if (!completedChallenge && !hasDrunk) {
@@ -150,106 +142,76 @@ export default function ClassicMode() {
           });
         }
       }
-
-      // Refetch data to check for winner
+      await nextPlayer.mutateAsync();
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
-
-      // Check for winner after points update
-      const updatedPlayers = await queryClient.fetchQuery({ queryKey: ["/api/players"] });
-      const maxPoints = settings?.maxPoints || 100;
-      const winner = updatedPlayers.find((player: any) => player.points >= maxPoints);
-
-      if (winner) {
-        const topDrinker = [...updatedPlayers].sort((a: any, b: any) => b.drinksCompleted - a.drinksCompleted)[0];
-        await updateGameStatistics(winner.name);
-        setHasUpdatedStats(true);
-        return;
-      }
-
-      await nextPlayer.mutateAsync();
       setCompletedChallenge(false);
       setHasDrunk(false);
-      generateChallenge(setCurrentChallenge, setCurrentIcon, setRoundPoints);
+      generateChallenge();
       play("click");
     } catch (error) {
       console.error('Erro ao processar a rodada:', error);
     }
   };
 
-  const maxPoints = settings?.maxPoints || 100;
-  const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
-  const topDrinker = sortedPlayers[0];
+  const winner = players.find(player => player.points >= (settings?.maxPoints || 100));
+  const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
+  const getPlayTime = useGameTimer();
+  const [gameStartTime2] = useState<number>(Date.now());
+
+  // Update the updateGameStatistics function in classic-mode.tsx
   const updateGameStatistics = async (winner?: string) => {
-    if (!auth.currentUser || hasUpdatedStats) return;
+    if (!auth.currentUser) return;
+
+    const endTime = Date.now();
+    const playTimeInSeconds = Math.floor((endTime - gameStartTime2) / 1000);
 
     try {
+      // Get unique player names
       const playerNames = players.map(player => player.name);
-      const playTimeInSeconds = Math.floor((Date.now() - startTime) / 1000);
 
+      // Update game stats
       await updateGameStats({
         gameType: "classic",
         playTimeInSeconds,
         playerNames
       });
 
+      // Update recent games
       await updateRecentGames(auth.currentUser.uid, {
         name: "Modo Clássico",
         date: new Date().toISOString(),
         players: players.length,
         winner: winner || "-"
       });
-
-      setHasUpdatedStats(true);
     } catch (error) {
       console.error('Error updating game statistics:', error);
     }
   };
 
+  // Call updateGameStatistics when component unmounts
   useEffect(() => {
     return () => {
-      if (!hasUpdatedStats) {
+      if (auth.currentUser) {
         updateGameStatistics();
       }
     };
-  }, [hasUpdatedStats]);
+  }, []);
 
-  // Show winner screen if game is complete - simplified logic
-  const winner = sortedPlayers.find(player => player.points >= maxPoints);
-  if (winner && topDrinker && !hasUpdatedStats) {
+  if (winner && topDrinker) {
     updateGameStatistics(winner.name);
     return (
       <WinnerScreen
         winner={{ name: winner.name, points: winner.points }}
         topDrinker={{ name: topDrinker.name, drinks: topDrinker.drinksCompleted }}
-        maxPoints={maxPoints}
+        maxPoints={settings?.maxPoints || 100}
         onPlayAgain={handlePlayAgain}
       />
     );
   }
 
-  const updatePoints = useMutation({
-    mutationFn: async ({ playerId, type, points }: { playerId: string; type: "challenge" | "drink"; points: number }) => {
-      await apiRequest("PATCH", `/api/players/${playerId}/points`, { type, points });
-    },
-  });
-
-  const nextPlayer = useMutation({
-    mutationFn: async () => {
-      await apiRequest("POST", "/api/players/next", {});
-    },
-  });
-
-  const updateMaxPoints = useMutation({
-    mutationFn: async (maxPoints: number) => {
-      await apiRequest("PATCH", "/api/settings", { maxPoints });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
-      setDialogOpen(false);
-    },
-  });
+  const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
 
   const handleBackToGame = () => {
     navigate("/manage-players");
@@ -338,7 +300,7 @@ export default function ClassicMode() {
               </Button>
 
               <div className="text-sm text-purple-900 text-center">
-                Objetivo: {maxPoints} pontos{" "}
+                Objetivo: {settings?.maxPoints || 100} pontos{" "}
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger className="text-purple-700 underline hover:text-purple-800 ml-1">
                     alterar &gt;

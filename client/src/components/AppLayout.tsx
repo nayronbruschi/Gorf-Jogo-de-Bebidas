@@ -6,7 +6,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Home, GamepadIcon, BarChart2, LogOut, UserCircle } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
-import { motion } from "framer-motion";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -37,14 +36,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-lg">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex-1" />
-          <motion.img 
-            src="/LOGOGORF.png"
-            alt="Gorf Logo"
-            className="h-8 w-auto"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          />
+          <h1 className="text-3xl font-bold text-white text-center">Gorf</h1>
           <div className="flex-1 flex justify-end">
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>

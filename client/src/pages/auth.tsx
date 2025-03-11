@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 import { Eye, EyeOff } from "lucide-react";
-import { GorfLogo } from "@/components/GorfLogo";
 
 export default function Auth() {
   const [, setLocation] = useLocation();
@@ -103,9 +102,9 @@ export default function Auth() {
         className="w-full max-w-md"
       >
         {/* Logo */}
-        <div className="mb-12">
-          <GorfLogo />
-          <p className="text-white/60 text-center mt-4">Bora jogar?</p>
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold text-white mb-2">Gorf</h1>
+          <p className="text-white/60">Bora jogar?</p>
         </div>
 
         <div className="bg-white/10 backdrop-blur-lg rounded-lg p-8 shadow-xl">
