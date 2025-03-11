@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 
 export function GorfLogo({ size = "large" }: { size?: "small" | "large" }) {
-  const logoSize = size === "small" ? "h-8 w-8" : "h-32 w-32";
+  const logoSize = size === "small" ? "h-8" : "h-32";
 
   return (
     <motion.div
