@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import type { UserProfile, UserGameStats } from "@shared/schema";
 
 // Helper para acessar variáveis de ambiente
@@ -19,15 +19,6 @@ const firebaseConfig = {
   storageBucket: `${getEnvVar('VITE_FIREBASE_PROJECT_ID')}.appspot.com`,
   appId: getEnvVar('VITE_FIREBASE_APP_ID'),
 };
-
-// Log para debug da configuração
-console.log('Firebase Config:', {
-  projectId: firebaseConfig.projectId,
-  authDomain: firebaseConfig.authDomain,
-  storageBucket: firebaseConfig.storageBucket,
-  hasApiKey: !!firebaseConfig.apiKey,
-  hasAppId: !!firebaseConfig.appId
-});
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
@@ -59,7 +50,6 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
       userId,
       lastGamePlayed: null,
       totalGamesPlayed: 0,
-      victories: 0,
       uniquePlayers: 0,
       totalPlayTime: 0,
     });
@@ -85,6 +75,28 @@ export async function getUserStats(userId: string): Promise<UserGameStats | null
   return statsDoc.exists() ? statsDoc.data() as UserGameStats : null;
 }
 
+export async function updateRecentGames(userId: string, gameData: {
+  name: string;
+  date: string;
+  players: number;
+  winner: string;
+}) {
+  const recentGamesRef = doc(db, 'recentGames', userId);
+  const recentGamesDoc = await getDoc(recentGamesRef);
+
+  if (recentGamesDoc.exists()) {
+    const currentGames = recentGamesDoc.data().games || [];
+    const newGames = [gameData, ...currentGames.slice(0, 2)]; // Keep only last 3 games
+    await updateDoc(recentGamesRef, { games: newGames });
+  }
+
+  // Update last game played in stats
+  const statsRef = doc(db, 'userStats', userId);
+  await updateDoc(statsRef, {
+    lastGamePlayed: gameData.date
+  });
+}
+
 // Observar mudanças no estado de autenticação
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -96,5 +108,4 @@ onAuthStateChanged(auth, (user) => {
 
 console.log('Firebase initialized successfully');
 
-// Exporta o app para uso em outros módulos
 export { app };

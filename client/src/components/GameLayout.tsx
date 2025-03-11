@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Home } from "lucide-react";
+import { Home, UserCircle, GamepadIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,6 +17,12 @@ interface GameLayoutProps {
 export function GameLayout({ children, title, className, showPlayers = true }: GameLayoutProps) {
   const [, navigate] = useLocation();
   const user = auth.currentUser;
+
+  const menuItems = [
+    { icon: Home, label: "Início", href: "/dashboard" },
+    { icon: UserCircle, label: "Perfil e Estatísticas", href: "/profile" },
+    { icon: GamepadIcon, label: "Todos os Jogos", href: "/game-modes" },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 to-purple-800">
@@ -55,6 +61,21 @@ export function GameLayout({ children, title, className, showPlayers = true }: G
                     <p className="font-medium text-white">{user?.displayName || "Usuário"}</p>
                     <p className="text-sm text-white/60">{user?.email}</p>
                   </div>
+                </div>
+              </div>
+              <div className="flex-1 p-4">
+                <div className="space-y-2">
+                  {menuItems.map((item) => (
+                    <Button
+                      key={item.href}
+                      variant="ghost"
+                      className="w-full justify-start text-white hover:bg-white/10"
+                      onClick={() => navigate(item.href)}
+                    >
+                      <item.icon className="mr-2 h-5 w-5" />
+                      {item.label}
+                    </Button>
+                  ))}
                 </div>
               </div>
             </div>

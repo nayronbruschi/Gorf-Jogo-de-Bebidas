@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { decks } from "@/lib/game-data";
 import { useSound } from "@/hooks/use-sound";
-import { User, Beer, Target, ArrowRight, Award, Crown, Plus, Minus, Users, ArrowLeft } from "lucide-react";
+import { User, Beer, Target, ArrowRight, Award, Crown, Plus, Minus, Users, ArrowLeft, ChevronLeft } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
