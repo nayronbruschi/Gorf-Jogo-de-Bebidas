@@ -36,6 +36,15 @@ function generateChallenge(
   setRoundPoints(points);
 }
 
+interface Player {
+  id: string;
+  name: string;
+  points: number;
+  isActive: boolean;
+  challengesCompleted: number;
+  drinksCompleted: number;
+}
+
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
   const [currentIcon, setCurrentIcon] = useState<any>();
@@ -62,23 +71,18 @@ export default function ClassicMode() {
     if (!currentChallenge) {
       generateChallenge(setCurrentChallenge, setCurrentIcon, setRoundPoints);
     }
-  }, [currentChallenge, setCurrentChallenge, setCurrentIcon, setRoundPoints]);
+  }, [currentChallenge]);
 
-  const { data: currentPlayer } = useQuery({
+  const { data: currentPlayer } = useQuery<Player>({
     queryKey: ["/api/players/current"],
   });
 
-  const { data: players = [] } = useQuery({
+  const { data: players = [] } = useQuery<Player[]>({
     queryKey: ["/api/players"],
   });
 
   const { data: settings } = useQuery({
     queryKey: ["/api/settings"],
-    onSuccess: (data) => {
-      if (data?.maxPoints) {
-        maxPointsForm.setValue("maxPoints", data.maxPoints);
-      }
-    }
   });
 
   // Effect to handle game start statistics
@@ -91,7 +95,7 @@ export default function ClassicMode() {
             gameType: "classic",
             playTimeInSeconds: 0,
             playerNames,
-            isInitializing: true // Add this flag for initialization
+            isInitializing: true
           });
           setHasStartedGame(true);
         } catch (error) {
@@ -125,7 +129,6 @@ export default function ClassicMode() {
     localStorage.setItem("hasSeenTutorial", "true");
     setShowTutorial(false);
   };
-
 
   const handleNextPlayer = async () => {
     if (!completedChallenge && !hasDrunk) {
@@ -166,8 +169,10 @@ export default function ClassicMode() {
     }
   };
 
-  const winner = players.find(player => player.points >= (settings?.maxPoints || 100));
-  const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
+  // Check for winner before rendering main game content
+  const maxPoints = settings?.maxPoints || 100;
+  const winner = players.find(player => player.points >= maxPoints);
+  const topDrinker = players.length > 0 ? [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0] : null;
 
   const updateGameStatistics = async (winner?: string) => {
     if (!auth.currentUser || hasUpdatedStats) return;
@@ -203,13 +208,14 @@ export default function ClassicMode() {
     };
   }, [hasUpdatedStats]);
 
+  // Show winner screen if game is complete
   if (winner && topDrinker && !hasUpdatedStats) {
     updateGameStatistics(winner.name);
     return (
       <WinnerScreen
         winner={{ name: winner.name, points: winner.points }}
         topDrinker={{ name: topDrinker.name, drinks: topDrinker.drinksCompleted }}
-        maxPoints={settings?.maxPoints || 100}
+        maxPoints={maxPoints}
         onPlayAgain={handlePlayAgain}
       />
     );
@@ -221,9 +227,8 @@ export default function ClassicMode() {
     navigate("/manage-players");
   };
 
-
   const updatePoints = useMutation({
-    mutationFn: async ({ playerId, type, points }: { playerId: number; type: "challenge" | "drink"; points: number }) => {
+    mutationFn: async ({ playerId, type, points }: { playerId: string; type: "challenge" | "drink"; points: number }) => {
       await apiRequest("PATCH", `/api/players/${playerId}/points`, { type, points });
     },
   });
@@ -327,7 +332,7 @@ export default function ClassicMode() {
               </Button>
 
               <div className="text-sm text-purple-900 text-center">
-                Objetivo: {settings?.maxPoints || 100} pontos{" "}
+                Objetivo: {maxPoints} pontos{" "}
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger className="text-purple-700 underline hover:text-purple-800 ml-1">
                     alterar &gt;
