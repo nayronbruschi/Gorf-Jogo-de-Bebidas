@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
 
 // Helper para acessar variáveis de ambiente em ambos os ambientes
 const getEnvVar = (key: string): string => {
@@ -29,7 +28,6 @@ console.log('Firebase Config:', {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
 
 // Configurações adicionais para o provedor Google
@@ -38,3 +36,6 @@ googleProvider.setCustomParameters({
 });
 
 console.log('Firebase initialized successfully');
+
+// Exporta o app para uso em outros módulos
+export { app };

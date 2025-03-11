@@ -7,9 +7,31 @@ import {
   deleteDoc, 
   getDoc,
   increment,
-  writeBatch
+  writeBatch,
+  getFirestore
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { initializeApp } from "firebase/app";
+
+// Helper para acessar variáveis de ambiente
+const getEnvVar = (key: string): string => {
+  if (typeof window !== 'undefined' && import.meta?.env) {
+    return import.meta.env[key] || '';
+  }
+  return process.env[key] || '';
+};
+
+// Configuração do Firebase
+const firebaseConfig = {
+  apiKey: getEnvVar('VITE_FIREBASE_API_KEY'),
+  authDomain: `${getEnvVar('VITE_FIREBASE_PROJECT_ID')}.firebaseapp.com`,
+  projectId: getEnvVar('VITE_FIREBASE_PROJECT_ID'),
+  storageBucket: `${getEnvVar('VITE_FIREBASE_PROJECT_ID')}.appspot.com`,
+  appId: getEnvVar('VITE_FIREBASE_APP_ID'),
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 import type { 
   Player, 
   InsertPlayer, 

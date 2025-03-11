@@ -1,5 +1,9 @@
-import { db, auth } from '@/lib/firebase';
-import { collection, doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore';
+import { auth } from '@/lib/firebase';
+import { app } from '@/lib/firebase';
+
+// Inicializa o Firestore
+const db = getFirestore(app);
 
 export interface GameStats {
   gamesPlayed: number;
