@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { createElement } from "react";
 import { useLocation } from "wouter";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
-import { updateGameStats } from "@/lib/stats";
+import { updateGameStats, useGameTimer } from "@/lib/stats";
 import { auth, updateRecentGames } from "@/lib/firebase";
 
 export default function ClassicMode() {
@@ -30,8 +30,9 @@ export default function ClassicMode() {
     const hasSeenTutorial = localStorage.getItem("hasSeenTutorial");
     return !hasSeenTutorial;
   });
-  const [gameStartTime] = useState<number>(Date.now());
   const [hasUpdatedStats, setHasUpdatedStats] = useState(false);
+  const getPlayTime = useGameTimer(); 
+
   const { play } = useSound();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -99,7 +100,7 @@ export default function ClassicMode() {
       setCurrentChallenge("");
       setCurrentIcon(null);
       setRoundPoints(0);
-      setHasUpdatedStats(false); // Reset hasUpdatedStats for a new game
+      setHasUpdatedStats(false); 
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
       generateChallenge();
@@ -159,28 +160,20 @@ export default function ClassicMode() {
   const winner = players.find(player => player.points >= (settings?.maxPoints || 100));
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
-  const getPlayTime = useGameTimer;
-  const [gameStartTime2] = useState<number>(Date.now());
 
-  // Function to update game statistics
   const updateGameStatistics = async (winner?: string) => {
     if (!auth.currentUser || hasUpdatedStats) return;
 
-    const endTime = Date.now();
-    const playTimeInSeconds = Math.floor((endTime - gameStartTime) / 1000);
-
     try {
-      // Get unique player names
       const playerNames = players.map(player => player.name);
+      const playTimeInSeconds = getPlayTime();
 
-      // Update game stats
       await updateGameStats({
         gameType: "classic",
         playTimeInSeconds,
         playerNames
       });
 
-      // Update recent games
       await updateRecentGames(auth.currentUser.uid, {
         name: "Modo Clássico",
         date: new Date().toISOString(),
@@ -194,7 +187,6 @@ export default function ClassicMode() {
     }
   };
 
-  // Only update stats when leaving the game without a winner
   useEffect(() => {
     return () => {
       if (!hasUpdatedStats) {
@@ -203,7 +195,6 @@ export default function ClassicMode() {
     };
   }, [hasUpdatedStats]);
 
-  // Update stats when game ends with a winner
   if (winner && topDrinker && !hasUpdatedStats) {
     updateGameStatistics(winner.name);
     return (
