@@ -59,7 +59,14 @@ export default function Onboarding() {
     const currentIndex = steps.indexOf(currentStep);
 
     // Validar campo atual
-    if (!formData[currentStep as keyof typeof formData]) {
+    if (currentStep === "social" && formData.favoriteSocialNetwork.length === 0) {
+      toast({
+        title: "Campo obrigatório",
+        description: "Por favor, selecione pelo menos uma rede social.",
+        variant: "destructive",
+      });
+      return;
+    } else if (currentStep !== "social" && !formData[currentStep as keyof typeof formData]) {
       toast({
         title: "Campo obrigatório",
         description: "Por favor, preencha o campo antes de continuar.",
@@ -75,7 +82,13 @@ export default function Onboarding() {
           throw new Error("Usuário não autenticado");
         }
 
-        await createUserProfile(auth.currentUser.uid, formData);
+        // Get the first selected social network for the profile
+        const profileData = {
+          ...formData,
+          favoriteSocialNetwork: formData.favoriteSocialNetwork[0],
+        };
+
+        await createUserProfile(auth.currentUser.uid, profileData);
         setLocation("/dashboard");
       } catch (error) {
         console.error("Erro ao salvar perfil:", error);
