@@ -9,6 +9,7 @@ import Auth from "@/pages/auth";
 import Dashboard from "@/pages/dashboard";
 import Stats from "@/pages/stats";
 import GameModes from "@/pages/game-modes";
+import Admin from "@/pages/admin"; // Nova importação
 import ClassicStart from "@/pages/classic-start";
 import ClassicPlayers from "@/pages/classic-players";
 import ClassicMode from "@/pages/classic-mode";
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/stats" component={Stats} />
       <Route path="/game-modes" component={GameModes} />
+      <Route path="/admin" component={Admin} /> {/* Nova rota */}
       <Route path="/classic" component={ClassicStart} />
       <Route path="/classic/players" component={ClassicPlayers} />
       <Route path="/classic/play" component={ClassicMode} />
