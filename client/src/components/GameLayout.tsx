@@ -19,7 +19,7 @@ export function GameLayout({ children, title, className, showPlayers = true }: G
   const user = auth.currentUser;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-purple-800">
       <nav className="p-4 flex items-center justify-between relative bg-black/20 backdrop-blur-sm">
         <Button 
           variant="ghost" 

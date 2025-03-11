@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ import { useForm } from "react-hook-form";
 import { createElement } from "react";
 import { useLocation } from "wouter";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
-import { updateGameStats } from "@/lib/stats";
+import { updateGameStats, useGameTimer } from "@/lib/stats";
 
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
@@ -162,6 +162,21 @@ export default function ClassicMode() {
   const winner = players.find(player => player.points >= (settings?.maxPoints || 100));
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
+  const getPlayTime = useGameTimer();
+
+  useEffect(() => {
+    return () => {
+      if (completedChallenge || hasDrunk) {
+        updateGameStats({
+          gameType: "classic",
+          playTime: getPlayTime(),
+          playerCount: players.length
+        });
+      }
+    };
+  }, []);
+
+
   if (winner && topDrinker) {
     const gameEndTime = Date.now();
     const playTimeInMinutes = Math.floor((gameEndTime - gameStartTime) / (1000 * 60));
@@ -198,7 +213,7 @@ export default function ClassicMode() {
       </AnimatePresence>
       <GameLayout title="">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white rounded-xl p-6 space-y-8">
+          <div className="bg-white/80 rounded-xl p-6 space-y-8">
             <div className="flex items-center gap-4 text-purple-900">
               <User className="h-6 w-6" />
               <span className="text-xl">
@@ -329,7 +344,7 @@ export default function ClassicMode() {
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
+          <div className="bg-white/20 backdrop-blur-lg rounded-xl p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <Award className="h-5 w-5 text-white" />

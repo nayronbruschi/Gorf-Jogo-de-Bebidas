@@ -1,4 +1,4 @@
-import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore';
 import { auth } from '@/lib/firebase';
 import { app } from '@/lib/firebase';
 
@@ -7,14 +7,12 @@ const db = getFirestore(app);
 
 export interface GameStats {
   gamesPlayed: number;
-  victories: number;
   timeSpent: number; // em minutos
   lastPlayed: string;
 }
 
 export interface UserStats {
   totalGamesPlayed: number;
-  totalVictories: number;
   uniquePlayers: number;
   totalPlayTime: number; // em minutos
   gameStats: {
@@ -30,14 +28,12 @@ export interface UserStats {
 
 const DEFAULT_GAME_STATS: GameStats = {
   gamesPlayed: 0,
-  victories: 0,
   timeSpent: 0,
   lastPlayed: new Date().toISOString()
 };
 
 const DEFAULT_STATS: UserStats = {
   totalGamesPlayed: 0,
-  totalVictories: 0,
   uniquePlayers: 0,
   totalPlayTime: 0,
   gameStats: {
@@ -77,7 +73,6 @@ export type GameType = keyof UserStats['gameStats'];
 interface GameUpdateData {
   gameType: GameType;
   playTime: number; // em minutos
-  isVictory: boolean;
   playerCount: number;
 }
 
@@ -91,17 +86,26 @@ export async function updateGameStats(data: GameUpdateData) {
     // Atualiza estatísticas específicas do jogo
     await updateDoc(userStatsRef, {
       [`gameStats.${data.gameType}.gamesPlayed`]: increment(1),
-      [`gameStats.${data.gameType}.victories`]: increment(data.isVictory ? 1 : 0),
       [`gameStats.${data.gameType}.timeSpent`]: increment(data.playTime),
       [`gameStats.${data.gameType}.lastPlayed`]: new Date().toISOString(),
 
       // Atualiza estatísticas gerais
       totalGamesPlayed: increment(1),
-      totalVictories: increment(data.isVictory ? 1 : 0),
       totalPlayTime: increment(data.playTime),
       uniquePlayers: increment(data.playerCount)
     });
   } catch (error) {
     console.error('Erro ao atualizar estatísticas:', error);
   }
+}
+
+// Hook para rastrear o tempo de jogo
+export function useGameTimer() {
+  const startTime = new Date().getTime();
+
+  return () => {
+    const endTime = new Date().getTime();
+    const playTimeInMinutes = Math.floor((endTime - startTime) / (1000 * 60));
+    return playTimeInMinutes;
+  };
 }
