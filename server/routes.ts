@@ -46,6 +46,34 @@ export async function registerRoutes(app: Express) {
     res.sendFile(filePath, { root: process.cwd() });
   });
 
+  // Rota para salvar os banners ativos
+  app.post("/api/banners", async (req, res) => {
+    try {
+      const bannersPath = path.join("BucketGorf", "active_banners.json");
+      fs.writeFileSync(bannersPath, JSON.stringify(req.body.banners, null, 2));
+      res.json({ message: "Banners atualizados com sucesso" });
+    } catch (error) {
+      console.error('Erro ao salvar banners:', error);
+      res.status(500).json({ message: "Erro ao salvar banners" });
+    }
+  });
+
+  // Rota para obter os banners ativos
+  app.get("/api/banners", (req, res) => {
+    try {
+      const bannersPath = path.join("BucketGorf", "active_banners.json");
+      if (fs.existsSync(bannersPath)) {
+        const banners = JSON.parse(fs.readFileSync(bannersPath, 'utf-8'));
+        res.json(banners);
+      } else {
+        res.json({}); // Retorna objeto vazio se não houver banners salvos
+      }
+    } catch (error) {
+      console.error('Erro ao obter banners:', error);
+      res.status(500).json({ message: "Erro ao obter banners" });
+    }
+  });
+
   // Player routes
   app.get("/api/players", async (_req, res) => {
     try {
