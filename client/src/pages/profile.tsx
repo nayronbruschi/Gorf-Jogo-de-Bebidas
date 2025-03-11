@@ -4,11 +4,14 @@ import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserProfile, UserGameStats } from "@shared/schema";
 import { Loader2, Clock, Trophy, Users, GamepadIcon, History } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useLocation } from "wouter";
 
 export default function Profile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [stats, setStats] = useState<UserGameStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [, navigate] = useLocation();
 
   useEffect(() => {
     async function loadUserData() {
@@ -81,33 +84,45 @@ export default function Profile() {
               <CardTitle className="text-2xl text-white">Estatísticas de Jogo</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <StatCard
-                  icon={History}
-                  label="Último Jogo"
-                  value={stats?.lastGamePlayed ? new Date(stats.lastGamePlayed).toLocaleDateString('pt-BR') : 'Nenhum'}
-                />
-                <StatCard
-                  icon={GamepadIcon}
-                  label="Jogos Jogados"
-                  value={stats?.totalGamesPlayed || 0}
-                />
-                <StatCard
-                  icon={Trophy}
-                  label="Vitórias"
-                  value={stats?.victories || 0}
-                />
-                <StatCard
-                  icon={Users}
-                  label="Jogadores"
-                  value={stats?.uniquePlayers || 0}
-                />
-                <StatCard
-                  icon={Clock}
-                  label="Tempo Total"
-                  value={`${stats?.totalPlayTime || 0} min`}
-                />
-              </div>
+              {stats?.totalGamesPlayed === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-white/60 mb-4">Você ainda não jogou nenhuma partida</p>
+                  <Button
+                    onClick={() => navigate("/game-modes")}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    Jogar Agora
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <StatCard
+                    icon={History}
+                    label="Último Jogo"
+                    value={stats?.lastGamePlayed ? new Date(stats.lastGamePlayed).toLocaleDateString('pt-BR') : 'Nenhum'}
+                  />
+                  <StatCard
+                    icon={GamepadIcon}
+                    label="Jogos Jogados"
+                    value={stats?.totalGamesPlayed || 0}
+                  />
+                  <StatCard
+                    icon={Trophy}
+                    label="Vitórias"
+                    value={stats?.victories || 0}
+                  />
+                  <StatCard
+                    icon={Users}
+                    label="Jogadores"
+                    value={stats?.uniquePlayers || 0}
+                  />
+                  <StatCard
+                    icon={Clock}
+                    label="Tempo Total"
+                    value={`${stats?.totalPlayTime || 0} min`}
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

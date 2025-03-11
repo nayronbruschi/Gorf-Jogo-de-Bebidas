@@ -54,6 +54,14 @@ export default function Onboarding() {
     }
   };
 
+  const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (value.length <= 8) {
+      const formattedDate = new Date(value).toISOString().split('T')[0];
+      updateField("birthDate", formattedDate);
+    }
+  };
+
   const handleNext = async () => {
     const currentIndex = steps.indexOf(currentStep);
 
@@ -83,13 +91,10 @@ export default function Onboarding() {
           throw new Error("Usuário não autenticado");
         }
 
-        // Get the first selected social network for the profile
-        const profileData = {
+        await createUserProfile(auth.currentUser.uid, {
           ...formData,
-          favoriteSocialNetwork: formData.favoriteSocialNetwork[0],
-        };
-
-        await createUserProfile(auth.currentUser.uid, profileData);
+          favoriteSocialNetwork: formData.favoriteSocialNetwork,
+        });
         setLocation("/dashboard");
       } catch (error) {
         console.error("Erro ao salvar perfil:", error);
@@ -154,7 +159,7 @@ export default function Onboarding() {
                 type="date"
                 inputMode="numeric"
                 value={formData.birthDate}
-                onChange={(e) => updateField("birthDate", e.target.value)}
+                onChange={handleBirthDateChange}
                 className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 text-center focus-visible:ring-0 focus-visible:border-white hover:border-white/40 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
               />
               <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90 py-7">
