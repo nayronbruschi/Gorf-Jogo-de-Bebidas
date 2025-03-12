@@ -37,13 +37,13 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
 
   if (!userDoc.exists()) {
     const now = new Date().toISOString();
-    // Create default profile
+    // Criar perfil apenas com dados essenciais
     const defaultProfile: UserProfile = {
       id: userId,
       name: profile.name || auth.currentUser?.displayName || "Usuário",
-      birthDate: profile.birthDate || now,
-      gender: "homem",
-      favoriteSocialNetwork: "instagram",
+      birthDate: "", // Deixar vazio para o usuário preencher
+      gender: "", // Deixar vazio para o usuário preencher
+      favoriteSocialNetwork: "", // Deixar vazio para o usuário preencher
       createdAt: now,
       updatedAt: now,
     };
