@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { auth, createUserProfile, updateUserProfile } from "@/lib/firebase";
+import { auth, createUserProfile, updateUserProfile, getUserProfile } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LoadingScreen } from "@/components/LoadingScreen";
 import {
   Select,
   SelectContent,
@@ -36,6 +37,7 @@ export default function Onboarding() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState<Step>("name");
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     birthDate: "",
@@ -50,7 +52,7 @@ export default function Onboarding() {
         return;
       }
 
-      const profile = await createUserProfile(auth.currentUser.uid);
+      const profile = await getUserProfile(auth.currentUser.uid);
 
       // Se já tem perfil completo, ir para dashboard
       if (profile && profile.name && profile.birthDate && profile.gender && profile.favoriteSocialNetwork) {
@@ -87,6 +89,15 @@ export default function Onboarding() {
     updateField("birthDate", e.target.value);
   };
 
+  const verifyProfileSaved = async (userId: string): Promise<boolean> => {
+    try {
+      const savedProfile = await getUserProfile(userId);
+      return !!(savedProfile?.name && savedProfile?.birthDate && savedProfile?.gender && savedProfile?.favoriteSocialNetwork);
+    } catch (error) {
+      return false;
+    }
+  };
+
   const handleNext = async () => {
     const currentIndex = steps.indexOf(currentStep);
 
@@ -97,6 +108,9 @@ export default function Onboarding() {
           throw new Error("Usuário não autenticado");
         }
 
+        setIsSaving(true);
+
+        // Atualizar perfil
         await updateUserProfile({
           ...formData,
           id: auth.currentUser.uid,
@@ -104,7 +118,14 @@ export default function Onboarding() {
           updatedAt: new Date().toISOString(),
         });
 
-        setLocation("/dashboard");
+        // Verificar se os dados foram salvos corretamente
+        const isProfileSaved = await verifyProfileSaved(auth.currentUser.uid);
+
+        if (isProfileSaved) {
+          setLocation("/dashboard");
+        } else {
+          throw new Error("Falha ao salvar o perfil");
+        }
       } catch (error) {
         console.error("Erro ao salvar perfil:", error);
         toast({
@@ -112,6 +133,8 @@ export default function Onboarding() {
           description: "Não foi possível salvar seu perfil. Tente novamente.",
           variant: "destructive",
         });
+      } finally {
+        setIsSaving(false);
       }
       return;
     }
@@ -135,6 +158,10 @@ export default function Onboarding() {
   const toggleSocialNetwork = (network: string) => {
     updateField("favoriteSocialNetwork", network);
   };
+
+  if (isSaving) {
+    return <LoadingScreen />;
+  }
 
   const renderStep = () => {
     switch (currentStep) {

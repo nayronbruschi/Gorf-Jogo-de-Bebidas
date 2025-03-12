@@ -39,17 +39,32 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
     return <LoadingScreen />;
   }
 
+  // Se não estiver autenticado e não estiver na página de auth, redirecionar
   if (!isAuthenticated && location !== "/auth") {
     setLocation("/auth");
     return null;
   }
 
-  // Verificar se precisa de onboarding
-  const needsOnboarding = profile && (!profile.name || !profile.birthDate || !profile.gender || !profile.favoriteSocialNetwork);
-
-  if (needsOnboarding && location !== "/onboarding") {
-    setLocation("/onboarding");
+  // Se estiver autenticado mas estiver na página de auth, redirecionar para dashboard
+  if (isAuthenticated && location === "/auth") {
+    setLocation("/dashboard");
     return null;
+  }
+
+  // Verificar se precisa de onboarding apenas se estiver autenticado
+  if (isAuthenticated) {
+    const needsOnboarding = profile && (!profile.name || !profile.birthDate || !profile.gender || !profile.favoriteSocialNetwork);
+    const isOnboardingPage = location === "/onboarding";
+
+    if (needsOnboarding && !isOnboardingPage) {
+      setLocation("/onboarding");
+      return null;
+    }
+
+    if (!needsOnboarding && isOnboardingPage) {
+      setLocation("/dashboard");
+      return null;
+    }
   }
 
   return <Component />;
