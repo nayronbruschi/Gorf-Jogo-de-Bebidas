@@ -33,7 +33,12 @@ const getBannerInfo = (key: string): BannerInfo => {
 export function PromotionalBanner() {
   const [api, setApi] = useState<any>();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    loop: true,
+    dragFree: false,
+    skipSnaps: false,
+    containScroll: "trimSnaps"
+  });
 
   // Fetch active banners
   const { data: banners = {} } = useQuery<BannerUrls>({
@@ -65,7 +70,7 @@ export function PromotionalBanner() {
 
       return () => {
         clearInterval(autoplayInterval);
-        emblaApi.off('select');
+        emblaApi.off('select', () => {});
       };
     }
   }, [emblaApi]);
@@ -74,30 +79,32 @@ export function PromotionalBanner() {
 
   return (
     <div className="relative">
-      <Carousel 
-        ref={emblaRef}
-        className="w-full max-w-screen-xl mx-auto"
-      >
-        <CarouselContent>
-          {orderedBanners.map((banner, index) => (
-            <CarouselItem key={index}>
-              <Card className="border-none">
-                <CardContent className="relative aspect-[21/9] p-0">
-                  <img
-                    src={banner.url}
-                    alt={`Banner ${index + 1}`}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                  <div className="absolute bottom-0 left-0 p-4 bg-gradient-to-t from-black/60 to-transparent w-full rounded-b-lg">
-                    <h3 className="text-white text-xl font-bold mb-1">{banner.title}</h3>
-                    <p className="text-white/80 text-sm">{banner.description}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+      <div className="overflow-hidden rounded-xl">
+        <Carousel 
+          ref={emblaRef}
+          className="w-full max-w-screen-xl mx-auto"
+        >
+          <CarouselContent>
+            {orderedBanners.map((banner, index) => (
+              <CarouselItem key={index}>
+                <Card className="border-none">
+                  <CardContent className="relative aspect-[21/9] p-0">
+                    <img
+                      src={banner.url}
+                      alt={`Banner ${index + 1}`}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                    <div className="absolute bottom-0 left-0 p-4 bg-gradient-to-t from-black/60 to-transparent w-full rounded-b-lg">
+                      <h3 className="text-white text-xl font-bold mb-1">{banner.title}</h3>
+                      <p className="text-white/80 text-sm">{banner.description}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </div>
 
       {/* Dots navigation */}
       <div className="absolute bottom-4 right-4 flex gap-2 z-10">
