@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Home, GamepadIcon, LogOut, UserCircle } from "lucide-react";
+import { Home, GamepadIcon, LogOut, UserCircle, Settings } from "lucide-react";
 import { GorfLogo } from "@/components/GorfLogo";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
@@ -15,7 +15,15 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   const [, navigate] = useLocation();
   const [open, setOpen] = useState(false);
+  const [displayName, setDisplayName] = useState("");
   const user = auth.currentUser;
+  const isAdmin = user?.email === "nayroncbruschi@hotmail.com";
+
+  useEffect(() => {
+    if (user) {
+      setDisplayName(user.displayName || user.email?.split('@')[0] || "Usuário");
+    }
+  }, [user]);
 
   const handleSignOut = async () => {
     try {
@@ -30,6 +38,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     { icon: Home, label: "Início", href: "/dashboard" },
     { icon: GamepadIcon, label: "Jogos", href: "/game-modes" },
     { icon: UserCircle, label: "Perfil e Estatísticas", href: "/profile" },
+    ...(isAdmin ? [{ icon: Settings, label: "Admin", href: "/admin" }] : []),
   ];
 
   return (
@@ -59,7 +68,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium text-white">{user?.displayName || "Usuário"}</p>
+                        <p className="font-medium text-white">{displayName}</p>
                         <p className="text-sm text-white/60">{user?.email}</p>
                       </div>
                     </div>
