@@ -37,26 +37,15 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
 
   if (!userDoc.exists()) {
     const now = new Date().toISOString();
-
-    // Usar mais dados do Google Auth
+    // Create default profile
     const defaultProfile: UserProfile = {
       id: userId,
-      // Tentar usar nome do Google, depois nome fornecido, depois email, depois padrão
-      name: auth.currentUser?.displayName || 
-            profile.name || 
-            auth.currentUser?.email?.split('@')[0] || 
-            "Usuário",
-      // Campos que o usuário deve preencher
-      birthDate: "",
-      gender: "",
-      favoriteSocialNetwork: "",
-      // Metadados
+      name: profile.name || auth.currentUser?.displayName || "Usuário",
+      birthDate: profile.birthDate || now,
+      gender: "homem",
+      favoriteSocialNetwork: "instagram",
       createdAt: now,
       updatedAt: now,
-      // Campos adicionais do Google
-      photoURL: auth.currentUser?.photoURL || "",
-      email: auth.currentUser?.email || "",
-      emailVerified: auth.currentUser?.emailVerified || false
     };
 
     await setDoc(userRef, defaultProfile);
@@ -69,8 +58,7 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
       totalGamesPlayed: 0,
       victories: 0,
       totalPlayTime: 0,
-      lastGameStartTime: null,
-      uniquePlayers: 0
+      lastGameStartTime: null
     });
 
     // Inicializar jogos recentes
@@ -191,8 +179,7 @@ export async function clearAllUsersGameData() {
       totalGamesPlayed: 0,
       victories: 0,
       totalPlayTime: 0,
-      lastGameStartTime: null,
-      uniquePlayers: 0 //Adding missing field
+      lastGameStartTime: null
     }, { merge: true });
 
     // Clear recent games

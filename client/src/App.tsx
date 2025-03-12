@@ -29,7 +29,6 @@ import GuessWhoPlayers from "@/pages/guess-who-players";
 import GuessWhoTheme from "@/pages/guess-who-theme";
 import GuessWhoGame from "@/pages/guess-who-game";
 import Profile from "@/pages/profile";
-import AIGameCreator from "@/pages/ai-game-creator";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading } = useAuth();
@@ -113,9 +112,6 @@ function Router() {
       </Route>
       <Route path="/guess-who/play">
         <ProtectedRoute component={GuessWhoGame} />
-      </Route>
-      <Route path="/ai-game-creator">
-        <ProtectedRoute component={AIGameCreator} />
       </Route>
       <Route component={NotFound} />
     </Switch>

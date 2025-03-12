@@ -44,8 +44,6 @@ export default function Auth() {
         return 'Login com Google cancelado';
       case 'auth/cancelled-popup-request':
         return 'Operação cancelada';
-      case 'auth/popup-blocked':
-        return 'Pop-up bloqueado. Por favor, permita pop-ups para fazer login com Google.';
       default:
         return 'Ocorreu um erro. Tente novamente.';
     }

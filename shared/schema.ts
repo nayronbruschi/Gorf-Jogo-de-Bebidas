@@ -36,10 +36,6 @@ export interface UserProfile {
   favoriteSocialNetwork: typeof socialNetworkOptions[number];
   createdAt: string;
   updatedAt: string;
-  // Campos adicionais do Google Auth
-  photoURL: string;
-  email: string;
-  emailVerified: boolean;
 }
 
 export interface UserGameStats {
@@ -79,9 +75,6 @@ export const userProfileSchema = z.object({
   birthDate: z.string(),
   gender: z.enum(genderOptions),
   favoriteSocialNetwork: z.enum(socialNetworkOptions),
-  photoURL: z.string(),
-  email: z.string().email(),
-  emailVerified: z.boolean(),
 });
 
 export const userGameStatsSchema = z.object({
