@@ -79,7 +79,7 @@ export default function Dashboard() {
 
   return (
     <AppLayout>
-      <div className="container mx-auto p-4 space-y-4 pb-32 min-h-[calc(100vh-4rem)]">
+      <div className="container mx-auto p-4 space-y-4 pb-32 min-h-screen">
         <section className="pb-2 overflow-hidden rounded-xl">
           <PromotionalBanner />
         </section>
