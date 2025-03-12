@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -33,24 +33,23 @@ import Profile from "@/pages/profile";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading, profile } = useAuth();
+  const [, setLocation] = useLocation();
 
   if (loading) {
     return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {
-    if (window.location.pathname !== "/auth") {
-      window.location.href = "/auth";
-    }
+    setLocation("/auth");
     return null;
   }
 
-  // Verificar se precisa de onboarding, exceto na própria página de onboarding
+  // Verificar se precisa de onboarding
   const needsOnboarding = !profile?.name || !profile?.birthDate || !profile?.gender || !profile?.favoriteSocialNetwork;
   const isOnboardingPage = window.location.pathname === "/onboarding";
 
   if (needsOnboarding && !isOnboardingPage) {
-    window.location.href = "/onboarding";
+    setLocation("/onboarding");
     return null;
   }
 
