@@ -140,7 +140,7 @@ export default function Dashboard() {
                 rotate: pullDistance > 50 ? 180 : 0
               }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-0 left-1/2 -translate-x-1/2 z-50 text-white flex items-center gap-2"
+              className="fixed top-20 left-1/2 -translate-x-1/2 z-50 text-white flex items-center gap-2 bg-black/50 rounded-full px-4 py-2"
             >
               <ArrowDown className="h-6 w-6" />
               <span className="text-sm">
@@ -151,7 +151,7 @@ export default function Dashboard() {
         </AnimatePresence>
 
         <div className="container mx-auto p-4 space-y-4 min-h-screen bg-gray-900/80">
-          <section className="pb-2">
+          <section className="pb-2 overflow-hidden rounded-lg">
             <PromotionalBanner />
           </section>
 
