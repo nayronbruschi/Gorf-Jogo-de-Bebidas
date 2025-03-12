@@ -8,20 +8,21 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       try {
         if (user) {
           setUser(user);
-          let userProfile = await getUserProfile(user.uid);
+          const userProfile = await getUserProfile(user.uid);
 
+          // Se não existe perfil, criar um novo
           if (!userProfile) {
-            userProfile = await createUserProfile(user.uid, {
+            const newProfile = await createUserProfile(user.uid, {
               name: user.displayName || "",
             });
+            setProfile(newProfile);
+          } else {
+            setProfile(userProfile);
           }
-
-          setProfile(userProfile);
         } else {
           setUser(null);
           setProfile(null);
