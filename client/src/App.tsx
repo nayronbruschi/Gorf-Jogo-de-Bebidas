@@ -51,22 +51,7 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
     return null;
   }
 
-  // Verificar se precisa de onboarding apenas se estiver autenticado
-  if (isAuthenticated) {
-    const needsOnboarding = profile && (!profile.name || !profile.birthDate || !profile.gender || !profile.favoriteSocialNetwork);
-    const isOnboardingPage = location === "/onboarding";
-
-    if (needsOnboarding && !isOnboardingPage) {
-      setLocation("/onboarding");
-      return null;
-    }
-
-    if (!needsOnboarding && isOnboardingPage) {
-      setLocation("/dashboard");
-      return null;
-    }
-  }
-
+  // Se estiver autenticado e tiver perfil completo, mostrar o componente
   return <Component />;
 }
 

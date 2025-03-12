@@ -53,14 +53,11 @@ export default function Onboarding() {
       }
 
       const profile = await getUserProfile(auth.currentUser.uid);
-
-      // Se já tem perfil completo, ir para dashboard
       if (profile && profile.name && profile.birthDate && profile.gender && profile.favoriteSocialNetwork) {
         setLocation("/dashboard");
         return;
       }
 
-      // Se tem perfil parcial, carregar dados existentes
       if (profile) {
         setFormData({
           name: profile.name || auth.currentUser.displayName || "",
@@ -89,15 +86,6 @@ export default function Onboarding() {
     updateField("birthDate", e.target.value);
   };
 
-  const verifyProfileSaved = async (userId: string): Promise<boolean> => {
-    try {
-      const savedProfile = await getUserProfile(userId);
-      return !!(savedProfile?.name && savedProfile?.birthDate && savedProfile?.gender && savedProfile?.favoriteSocialNetwork);
-    } catch (error) {
-      return false;
-    }
-  };
-
   const handleNext = async () => {
     const currentIndex = steps.indexOf(currentStep);
 
@@ -109,8 +97,6 @@ export default function Onboarding() {
         }
 
         setIsSaving(true);
-
-        // Atualizar perfil
         await updateUserProfile({
           ...formData,
           id: auth.currentUser.uid,
@@ -118,14 +104,9 @@ export default function Onboarding() {
           updatedAt: new Date().toISOString(),
         });
 
-        // Verificar se os dados foram salvos corretamente
-        const isProfileSaved = await verifyProfileSaved(auth.currentUser.uid);
-
-        if (isProfileSaved) {
-          setLocation("/dashboard");
-        } else {
-          throw new Error("Falha ao salvar o perfil");
-        }
+        // Redirecionar diretamente para o dashboard após salvar
+        window.location.href = "/dashboard";
+        return;
       } catch (error) {
         console.error("Erro ao salvar perfil:", error);
         toast({
@@ -133,7 +114,6 @@ export default function Onboarding() {
           description: "Não foi possível salvar seu perfil. Tente novamente.",
           variant: "destructive",
         });
-      } finally {
         setIsSaving(false);
       }
       return;
