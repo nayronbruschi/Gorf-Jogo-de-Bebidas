@@ -73,13 +73,14 @@ export function PlayerList({ selectedPlayers, onSelectedPlayersChange }: PlayerL
         </Button>
       </form>
 
-      <AnimatePresence>
+      <AnimatePresence mode="popLayout">
         {players.map((player) => (
           <motion.div
             key={player.id}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.8 }}
             className="bg-purple-50 p-3 rounded space-y-2"
           >
             <div className="flex items-center justify-between">
