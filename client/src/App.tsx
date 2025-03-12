@@ -2,6 +2,10 @@ import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
+import { useAuth } from "@/hooks/use-auth";
+import { Loader2 } from "lucide-react";
+
+// Pages
 import NotFound from "@/pages/not-found";
 import Auth from "@/pages/auth";
 import Dashboard from "@/pages/dashboard";
@@ -27,33 +31,100 @@ import GuessWhoTheme from "@/pages/guess-who-theme";
 import GuessWhoGame from "@/pages/guess-who-game";
 import Profile from "@/pages/profile";
 
+function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
+  const { isAuthenticated, loading, profile } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-white/60" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    window.location.href = "/auth";
+    return null;
+  }
+
+  // Se não tiver perfil completo, redirecionar para onboarding
+  if (!profile?.name || !profile?.gender || !profile?.favoriteSocialNetwork) {
+    window.location.href = "/onboarding";
+    return null;
+  }
+
+  return <Component />;
+}
+
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Auth} />
       <Route path="/auth" component={Auth} />
-      <Route path="/onboarding" component={Onboarding} /> 
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/stats" component={Stats} />
-      <Route path="/game-modes" component={GameModes} />
-      <Route path="/admin" component={Admin} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/classic" component={ClassicStart} />
-      <Route path="/classic/players" component={ClassicPlayers} />
-      <Route path="/classic/play" component={ClassicMode} />
-      <Route path="/roulette" component={RouletteStart} />
-      <Route path="/roulette/players" component={RoulettePlayers} />
-      <Route path="/roulette/play" component={RouletteMode} />
-      <Route path="/roulette/winner" component={RouletteWinner} />
-      <Route path="/truth-or-dare" component={TruthOrDare} />
-      <Route path="/manage-players" component={ManagePlayers} />
-      <Route path="/touch-game" component={TouchGame} />
-      <Route path="/spin-bottle" component={SpinBottle} />
-      <Route path="/coin-flip" component={CoinFlip} />
-      <Route path="/cards" component={Cards} />
-      <Route path="/guess-who/players" component={GuessWhoPlayers} />
-      <Route path="/guess-who/theme" component={GuessWhoTheme} />
-      <Route path="/guess-who/play" component={GuessWhoGame} />
+      <Route path="/onboarding" component={Onboarding} />
+      <Route path="/dashboard">
+        <ProtectedRoute component={Dashboard} />
+      </Route>
+      <Route path="/stats">
+        <ProtectedRoute component={Stats} />
+      </Route>
+      <Route path="/game-modes">
+        <ProtectedRoute component={GameModes} />
+      </Route>
+      <Route path="/admin">
+        <ProtectedRoute component={Admin} />
+      </Route>
+      <Route path="/profile">
+        <ProtectedRoute component={Profile} />
+      </Route>
+      <Route path="/classic">
+        <ProtectedRoute component={ClassicStart} />
+      </Route>
+      <Route path="/classic/players">
+        <ProtectedRoute component={ClassicPlayers} />
+      </Route>
+      <Route path="/classic/play">
+        <ProtectedRoute component={ClassicMode} />
+      </Route>
+      <Route path="/roulette">
+        <ProtectedRoute component={RouletteStart} />
+      </Route>
+      <Route path="/roulette/players">
+        <ProtectedRoute component={RoulettePlayers} />
+      </Route>
+      <Route path="/roulette/play">
+        <ProtectedRoute component={RouletteMode} />
+      </Route>
+      <Route path="/roulette/winner">
+        <ProtectedRoute component={RouletteWinner} />
+      </Route>
+      <Route path="/truth-or-dare">
+        <ProtectedRoute component={TruthOrDare} />
+      </Route>
+      <Route path="/manage-players">
+        <ProtectedRoute component={ManagePlayers} />
+      </Route>
+      <Route path="/touch-game">
+        <ProtectedRoute component={TouchGame} />
+      </Route>
+      <Route path="/spin-bottle">
+        <ProtectedRoute component={SpinBottle} />
+      </Route>
+      <Route path="/coin-flip">
+        <ProtectedRoute component={CoinFlip} />
+      </Route>
+      <Route path="/cards">
+        <ProtectedRoute component={Cards} />
+      </Route>
+      <Route path="/guess-who/players">
+        <ProtectedRoute component={GuessWhoPlayers} />
+      </Route>
+      <Route path="/guess-who/theme">
+        <ProtectedRoute component={GuessWhoTheme} />
+      </Route>
+      <Route path="/guess-who/play">
+        <ProtectedRoute component={GuessWhoGame} />
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );

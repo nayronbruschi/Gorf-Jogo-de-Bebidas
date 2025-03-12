@@ -31,18 +31,23 @@ googleProvider.setCustomParameters({
 });
 
 // Funções auxiliares para gerenciar dados do usuário
-export async function createUserProfile(userId: string, profile: Partial<UserProfile>) {
+export async function createUserProfile(userId: string, profile: Partial<UserProfile> = {}) {
   const userRef = doc(db, 'users', userId);
   const userDoc = await getDoc(userRef);
 
   if (!userDoc.exists()) {
     const now = new Date().toISOString();
-    await setDoc(userRef, {
-      ...profile,
+    const defaultProfile = {
       id: userId,
+      name: profile.name || auth.currentUser?.displayName || auth.currentUser?.email?.split('@')[0] || "Usuário",
+      birthDate: "",
+      gender: "homem",
+      favoriteSocialNetwork: "instagram",
       createdAt: now,
       updatedAt: now,
-    });
+    };
+
+    await setDoc(userRef, defaultProfile);
 
     // Inicializar estatísticas do jogador
     const statsRef = doc(db, 'userStats', userId);
@@ -61,7 +66,11 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
       userId,
       games: []
     });
+
+    return defaultProfile;
   }
+
+  return userDoc.data() as UserProfile;
 }
 
 export async function updateUserProfile(profile: UserProfile) {
