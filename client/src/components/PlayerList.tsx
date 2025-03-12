@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,9 +52,16 @@ export function PlayerList({ selectedPlayers, onSelectedPlayersChange }: PlayerL
     },
   });
 
-  const onSubmit = form.handleSubmit((data) => {
+  const onSubmit = useCallback(form.handleSubmit((data) => {
     addPlayer.mutate(data.name);
-  });
+  }), [addPlayer, form]);
+
+  const springAnimation = {
+    type: "spring",
+    stiffness: 500,
+    damping: 30,
+    mass: 0.8
+  };
 
   return (
     <div className="space-y-4 w-full">
@@ -80,7 +88,7 @@ export function PlayerList({ selectedPlayers, onSelectedPlayersChange }: PlayerL
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.8 }}
+            transition={springAnimation}
             className="bg-purple-50 p-3 rounded space-y-2"
           >
             <div className="flex items-center justify-between">

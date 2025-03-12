@@ -2,14 +2,11 @@ import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSound } from "@/hooks/use-sound";
 import { Beer, X, Award, Users } from "lucide-react";
-import { useQuery, useMutation } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { apiRequest } from "@/lib/queryClient";
-import { queryClient } from "@/lib/queryClient";
-import { useLocation } from "wouter";
+import { useRouletteGame } from "@/hooks/use-roulette-game";
 import { PlayerList } from "@/components/PlayerList";
+import { PunishmentDialog } from "@/components/PunishmentDialog";
 
 // Desafios de punição para quem se recusa a beber
 const punishmentChallenges = [
@@ -21,93 +18,33 @@ const punishmentChallenges = [
 ];
 
 export default function RouletteMode() {
-  // Estados do jogo
-  const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
-  const [isSelecting, setIsSelecting] = useState(false);
-  const [numDrinks, setNumDrinks] = useState(0);
-  const [showPunishment, setShowPunishment] = useState(false);
-  const [currentPunishment, setCurrentPunishment] = useState<{text: string, icon: any} | null>(null);
-  const [showPlayerList, setShowPlayerList] = useState(false);
-  const [action, setAction] = useState<"drink" | "refuse" | null>(null);
-  const [punishmentDrinks, setPunishmentDrinks] = useState(0);
+  const {
+    gameState: {
+      selectedPlayer,
+      isSelecting,
+      numDrinks,
+      showPunishment,
+      currentPunishment,
+      action,
+      punishmentDrinks,
+      gameMode,
+      players
+    },
+    actions: {
+      setShowPunishment,
+      setCurrentPunishment,
+      setAction,
+      setPunishmentDrinks,
+      selectRandomPlayer,
+      updatePoints,
+      checkAllPlayersForWin
+    }
+  } = useRouletteGame();
 
-  // Hooks e configurações
-  const [, navigate] = useLocation();
-  const { play } = useSound();
-  const gameMode = localStorage.getItem("rouletteMode") || "goles";
-  const maxPoints = Number(localStorage.getItem("maxPoints"));
+  const [showPlayerList, setShowPlayerList] = useState(false);
   const drinkText = gameMode === "shots" ? "shot" : "gole";
   const drinkTextPlural = gameMode === "shots" ? "shots" : "goles";
 
-  // Queries e Mutations
-  const { data: players = [] } = useQuery({
-    queryKey: ["/api/players"],
-  });
-
-  // Verificar vitória para todos os jogadores
-  const checkAllPlayersForWin = async () => {
-    const maxPoints = Number(localStorage.getItem("maxPoints"));
-    console.log('Pontuação máxima:', maxPoints);
-
-    if (!players || players.length === 0) return false;
-
-    for (const player of players) {
-      console.log('Verificando jogador:', {
-        nome: player.name,
-        pontos: player.points,
-        maximoPontos: maxPoints
-      });
-
-      if (player.points >= maxPoints) {
-        console.log('VITÓRIA ENCONTRADA! Redirecionando...');
-        navigate(`/roulette/winner?playerId=${player.id}`);
-        return true;
-      }
-    }
-    return false;
-  };
-
-  // Mutation para atualizar pontos
-  const updatePoints = useMutation({
-    mutationFn: async (data: { playerId: number; points: number }) => {
-      const result = await apiRequest("PATCH", `/api/players/${data.playerId}/points`, {
-        type: "drink",
-        points: data.points
-      });
-      return result;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-    }
-  });
-
-  // Selecionar jogador aleatório
-  const selectRandomPlayer = async () => {
-    if (isSelecting) return;
-
-    // Verificar vitória antes de iniciar nova rodada
-    const hasWinner = await checkAllPlayersForWin();
-    if (hasWinner) return;
-
-    setIsSelecting(true);
-    setAction(null);
-    setPunishmentDrinks(0);
-    play('spin');
-
-    setTimeout(() => {
-      const randomPlayer = players[Math.floor(Math.random() * players.length)];
-      const minDrinks = gameMode === "shots" ? 1 : 2;
-      const maxDrinks = Number(localStorage.getItem("maxPerRound")) || (gameMode === "shots" ? 5 : 15);
-      const randomDrinks = Math.floor(Math.random() * (maxDrinks - minDrinks + 1)) + minDrinks;
-
-      setSelectedPlayer(randomPlayer);
-      setNumDrinks(randomDrinks);
-      setIsSelecting(false);
-      play('tada');
-    }, 2000);
-  };
-
-  // Handlers
   const handleDrink = () => {
     if (!selectedPlayer) return;
     setAction("drink");
@@ -125,36 +62,13 @@ export default function RouletteMode() {
     if (!selectedPlayer || !action) return;
 
     try {
-      // 1. Atualizar pontuação no banco
       const pointsToAdd = action === "drink" ? numDrinks : punishmentDrinks;
       await updatePoints.mutateAsync({
         playerId: selectedPlayer.id,
         points: pointsToAdd
       });
 
-      // Aguardar atualização do cache
-      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
-
-      // 2. Buscar dados atualizados do jogador
-      const updatedPlayer = await apiRequest("GET", `/api/players/${selectedPlayer.id}`);
-      const maxPoints = Number(localStorage.getItem("maxPoints"));
-
-      console.log('Verificando vitória:', {
-        jogador: selectedPlayer.name,
-        pontosAnteriores: selectedPlayer.points,
-        pontosAdicionados: pointsToAdd,
-        pontosAtualizados: updatedPlayer.points,
-        pontosMaximos: maxPoints
-      });
-
-      // 3. Verificar se atingiu pontuação máxima com os pontos atualizados
-      if (updatedPlayer.points >= maxPoints) {
-        console.log('VITÓRIA! Redirecionando para tela de vencedor...');
-        navigate(`/roulette/winner?playerId=${selectedPlayer.id}`);
-        return;
-      }
-
-      // 4. Se não houver vencedor, gerar nova rodada
+      await checkAllPlayersForWin();
       setShowPunishment(false);
       setAction(null);
       selectRandomPlayer();
@@ -296,49 +210,17 @@ export default function RouletteMode() {
         </div>
       )}
 
-      <Dialog open={showPunishment} onOpenChange={setShowPunishment}>
-        <DialogContent className="bg-white rounded-xl">
-          <DialogHeader>
-            <DialogTitle className="text-center text-3xl text-purple-900">
-              Se recusando a beber, {selectedPlayer?.name}?
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-6">
-            <p className="text-center text-2xl font-bold text-purple-700">
-              Que coisa feia!
-            </p>
-            <p className="text-center text-xl text-purple-900">
-              Por isso você deve:
-            </p>
-            {currentPunishment && (
-              <div className="bg-purple-50 p-6 rounded-lg text-center">
-                <currentPunishment.icon className="h-12 w-12 mx-auto mb-4 text-purple-700" />
-                <p className="text-purple-700 text-2xl font-bold">
-                  {currentPunishment.text}
-                </p>
-              </div>
-            )}
-            <div className="text-center text-sm text-purple-600">
-              {drinkTextPlural} acumulados neste desafio: {punishmentDrinks}
-            </div>
-            <div className="flex flex-col gap-2">
-              <Button
-                onClick={handleNextPlayer}
-                className="bg-purple-700 hover:bg-purple-800 text-white text-xl py-6"
-              >
-                Fez o desafio
-              </Button>
-              <Button
-                variant="outline"
-                onClick={generateNewPunishment}
-                className="border-purple-700 text-purple-700 hover:bg-purple-50"
-              >
-                Beba mais um {drinkText} para gerar outro desafio
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <PunishmentDialog
+        open={showPunishment}
+        onOpenChange={setShowPunishment}
+        playerName={selectedPlayer?.name || ""}
+        punishment={currentPunishment}
+        punishmentDrinks={punishmentDrinks}
+        drinkText={drinkText}
+        drinkTextPlural={drinkTextPlural}
+        onAcceptPunishment={handleNextPlayer}
+        onGenerateNewPunishment={generateNewPunishment}
+      />
 
       <Dialog open={showPlayerList} onOpenChange={setShowPlayerList}>
         <DialogContent className="bg-white rounded-xl">

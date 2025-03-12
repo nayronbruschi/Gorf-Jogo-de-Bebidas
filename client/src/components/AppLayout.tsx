@@ -3,10 +3,11 @@ import { useLocation } from "wouter";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Home, GamepadIcon, LogOut, UserCircle, Settings } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { GorfLogo } from "@/components/GorfLogo";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
+import { useAuthMenu } from "@/hooks/use-auth-menu";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -17,8 +18,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [open, setOpen] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const user = auth.currentUser;
-  const isAdmin = user?.email === "nayroncbruschi@hotmail.com";
   const isDashboard = location === "/dashboard";
+  const { menuItems } = useAuthMenu();
 
   useEffect(() => {
     if (user) {
@@ -35,13 +36,6 @@ export function AppLayout({ children }: AppLayoutProps) {
     }
   };
 
-  const menuItems = [
-    { icon: Home, label: "Início", href: "/dashboard" },
-    { icon: GamepadIcon, label: "Jogos", href: "/game-modes" },
-    { icon: UserCircle, label: "Perfil e Estatísticas", href: "/profile" },
-    ...(isAdmin ? [{ icon: Settings, label: "Admin", href: "/admin" }] : []),
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-lg border-b border-white/5">
@@ -53,7 +47,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               className="text-white hover:bg-white/10"
               onClick={() => navigate("/dashboard")}
             >
-              <Home className="h-6 w-6" />
+              {menuItems[0]?.icon && <menuItems[0].icon size={24} />}
             </Button>
           ) : (
             <GorfLogo size="small" className="flex-shrink-0" />
@@ -97,7 +91,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                               setOpen(false);
                             }}
                           >
-                            <item.icon className="h-5 w-5" />
+                            {item.icon && <item.icon size={20} />}
                             {item.label}
                           </Button>
                         </li>

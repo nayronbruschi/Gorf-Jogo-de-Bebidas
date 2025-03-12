@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,12 @@ import { doc, getDoc } from "firebase/firestore";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+interface GameSession {
+  name: string;
+  date: string;
+  players: number;
+}
+
 export default function Dashboard() {
   const [, navigate] = useLocation();
 
@@ -29,7 +36,7 @@ export default function Dashboard() {
   });
 
   // Fetch recent games from Firebase
-  const { data: recentGames } = useQuery({
+  const { data: recentGames } = useQuery<GameSession[]>({
     queryKey: ['recentGames'],
     queryFn: async () => {
       if (!auth.currentUser) return [];
@@ -39,7 +46,8 @@ export default function Dashboard() {
     }
   });
 
-  const stats = [
+  // Memoize stats to prevent unnecessary recalculations
+  const stats = useMemo(() => [
     {
       title: "Jogos Jogados",
       value: userStats?.totalGamesPlayed?.toString() || "0",
@@ -54,18 +62,23 @@ export default function Dashboard() {
     },
     {
       title: "Tempo Total",
-      value: `${Math.floor((userStats?.totalPlayTime || 0) / 60)}h`,
+      value: `${Math.floor(Number(userStats?.totalPlayTime || 0) / 60)}h`,
       description: "De diversão",
       icon: Clock,
     },
-  ];
+  ], [userStats]);
 
-  const getGamePath = (gameName: string): string => {
-    const gameMap: Record<string, string> = games.reduce((acc, game) => ({
+  // Memoize game path mapping
+  const gamePathMap = useMemo(() => 
+    games.reduce((acc, game) => ({
       ...acc,
       [game.name]: game.route
-    }), {});
-    return gameMap[gameName] || "/game-modes";
+    }), {} as Record<string, string>),
+    []
+  );
+
+  const getGamePath = (gameName: string): string => {
+    return gamePathMap[gameName] || "/game-modes";
   };
 
   const formatDate = (dateString: string) => {
@@ -201,7 +214,7 @@ export default function Dashboard() {
           <CardContent>
             {recentGames && recentGames.length > 0 ? (
               <div className="space-y-4">
-                {recentGames.map((game: any, i: number) => (
+                {recentGames.map((game, i) => (
                   <div
                     key={i}
                     className="flex items-center justify-between p-4 rounded-lg bg-white/5"
