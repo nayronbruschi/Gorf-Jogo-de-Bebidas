@@ -97,7 +97,7 @@ export default function Dashboard() {
           >
             <CarouselContent className="-ml-4">
               {games.map((game) => (
-                <CarouselItem key={game.id} className="pl-4 basis-[22%]">
+                <CarouselItem key={game.id} className="pl-4 basis-[25%]">
                   <div 
                     className="flex flex-col items-center gap-1 p-3 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => navigate(game.route)}
@@ -105,7 +105,7 @@ export default function Dashboard() {
                     <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
                       <game.icon className="h-7 w-7 text-white" />
                     </div>
-                    <span className="text-xs text-white text-center mt-1 px-6 line-clamp-2 min-h-[2.5rem]">{game.name}</span>
+                    <span className="text-xs text-white text-center mt-1 px-6 line-clamp-2 min-h-[3rem]">{game.name}</span>
                   </div>
                 </CarouselItem>
               ))}
