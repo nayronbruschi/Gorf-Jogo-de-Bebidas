@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
+import { useLocation } from 'wouter'; // Import useLocation
 
 // Pages
 import NotFound from "@/pages/not-found";
@@ -33,6 +34,7 @@ import Profile from "@/pages/profile";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading, profile } = useAuth();
+  const [, setLocation] = useLocation();
 
   if (loading) {
     return (
@@ -43,18 +45,15 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   }
 
   if (!isAuthenticated) {
-    if (window.location.pathname !== "/auth") {
-      window.location.href = "/auth";
-    }
+    setLocation("/auth");
     return null;
   }
 
-  // Verificar se precisa de onboarding, exceto na própria página de onboarding
   const needsOnboarding = !profile?.name || !profile?.birthDate || !profile?.gender || !profile?.favoriteSocialNetwork;
   const isOnboardingPage = window.location.pathname === "/onboarding";
 
   if (needsOnboarding && !isOnboardingPage) {
-    window.location.href = "/onboarding";
+    setLocation("/onboarding");
     return null;
   }
 

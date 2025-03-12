@@ -53,10 +53,8 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
-      const result = await signInWithPopup(auth, googleProvider);
-      if (result.user) {
-        setLocation("/dashboard");
-      }
+      await signInWithPopup(auth, googleProvider);
+      // The ProtectedRoute will handle the redirection
     } catch (error: any) {
       console.error("Error signing in with Google:", error);
       setError(getErrorMessage(error.code));
@@ -80,7 +78,7 @@ export default function Auth() {
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
-      setLocation("/dashboard");
+      // The ProtectedRoute will handle the redirection
     } catch (error: any) {
       console.error("Error with email auth:", error);
       setError(getErrorMessage(error.code));

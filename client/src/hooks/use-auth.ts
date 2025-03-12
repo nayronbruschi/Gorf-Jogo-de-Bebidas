@@ -9,29 +9,21 @@ export function useAuth() {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      setUser(user);
+      try {
+        setUser(user);
 
-      if (user) {
-        try {
-          let userProfile = await getUserProfile(user.uid);
-
-          if (!userProfile) {
-            // Criar perfil mínimo para forçar onboarding
-            userProfile = await createUserProfile(user.uid, {
-              name: user.displayName || "",
-            });
-          }
-
+        if (user) {
+          const userProfile = await getUserProfile(user.uid);
           setProfile(userProfile);
-        } catch (error) {
-          console.error("Error loading user profile:", error);
+        } else {
           setProfile(null);
         }
-      } else {
+      } catch (error) {
+        console.error("Error in auth state change:", error);
         setProfile(null);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -41,6 +33,6 @@ export function useAuth() {
     user,
     profile,
     loading,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user
   };
 }
