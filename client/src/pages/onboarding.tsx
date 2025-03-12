@@ -51,11 +51,14 @@ export default function Onboarding() {
       }
 
       const profile = await createUserProfile(auth.currentUser.uid);
+
+      // Se já tem perfil completo, ir para dashboard
       if (profile && profile.name && profile.birthDate && profile.gender && profile.favoriteSocialNetwork) {
         setLocation("/dashboard");
         return;
       }
 
+      // Se tem perfil parcial, carregar dados existentes
       if (profile) {
         setFormData({
           name: profile.name || auth.currentUser.displayName || "",
@@ -114,13 +117,15 @@ export default function Onboarding() {
     }
 
     // Validar campos obrigatórios exceto para social e finish
-    if (currentStep !== "social" && currentStep !== "finish" && !formData[currentStep as keyof typeof formData]) {
-      toast({
-        title: "Campo obrigatório",
-        description: "Por favor, preencha o campo antes de continuar.",
-        variant: "destructive",
-      });
-      return;
+    if (currentStep !== "social" && currentStep !== "finish") {
+      if (!formData[currentStep as keyof typeof formData]) {
+        toast({
+          title: "Campo obrigatório",
+          description: "Por favor, preencha o campo antes de continuar.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     // Avançar para o próximo passo

@@ -33,30 +33,30 @@ import Profile from "@/pages/profile";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading, profile } = useAuth();
-  const [, setLocation] = useLocation();
-  const location = useLocation()[0];
+  const [location, setLocation] = useLocation();
 
   if (loading) {
     return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {
-    setLocation("/auth");
+    if (location !== "/auth") {
+      setLocation("/auth");
+    }
     return null;
   }
 
   // Verificar se precisa de onboarding
   const needsOnboarding = !profile?.name || !profile?.birthDate || !profile?.gender || !profile?.favoriteSocialNetwork;
-  const isOnboardingPage = location === "/onboarding";
 
-  // Se precisa de onboarding e não está na página de onboarding, redirecionar
-  if (needsOnboarding && !isOnboardingPage) {
+  // Se precisa de onboarding e não está na página de onboarding
+  if (needsOnboarding && location !== "/onboarding") {
     setLocation("/onboarding");
     return null;
   }
 
-  // Se não precisa de onboarding e está na página de onboarding, redirecionar para dashboard
-  if (!needsOnboarding && isOnboardingPage) {
+  // Se não precisa de onboarding e está na página de onboarding
+  if (!needsOnboarding && location === "/onboarding") {
     setLocation("/dashboard");
     return null;
   }
@@ -72,7 +72,6 @@ function Router() {
       <Route path="/onboarding">
         <ProtectedRoute component={Onboarding} />
       </Route>
-      {/* Outras rotas protegidas */}
       <Route path="/dashboard">
         <ProtectedRoute component={Dashboard} />
       </Route>
