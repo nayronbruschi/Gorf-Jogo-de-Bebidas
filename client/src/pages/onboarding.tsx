@@ -95,38 +95,36 @@ export default function Onboarding() {
         });
         return;
       }
+
+      // Avançar para o próximo passo
+      setCurrentStep(steps[currentIndex + 1]);
+      return;
     }
 
     // Se for o último passo, salvar dados
-    if (currentStep === "finish") {
-      try {
-        if (!auth.currentUser) {
-          throw new Error("Usuário não autenticado");
-        }
-
-        // Atualizar perfil
-        await updateUserProfile({
-          ...formData,
-          id: auth.currentUser.uid,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-
-        // Redirecionar para o dashboard após salvar
-        setLocation("/dashboard");
-        return;
-      } catch (error) {
-        console.error("Erro ao salvar perfil:", error);
-        toast({
-          title: "Erro",
-          description: "Não foi possível salvar seu perfil. Tente novamente.",
-          variant: "destructive",
-        });
+    try {
+      if (!auth.currentUser) {
+        throw new Error("Usuário não autenticado");
       }
-    }
 
-    // Avançar para o próximo passo
-    setCurrentStep(steps[currentIndex + 1]);
+      // Atualizar perfil
+      await updateUserProfile({
+        ...formData,
+        id: auth.currentUser.uid,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+
+      // Redirecionar para o dashboard
+      setLocation("/dashboard");
+    } catch (error) {
+      console.error("Erro ao salvar perfil:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível salvar seu perfil. Tente novamente.",
+        variant: "destructive",
+      });
+    }
   };
 
   const toggleSocialNetwork = (network: string) => {
