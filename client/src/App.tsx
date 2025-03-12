@@ -1,4 +1,4 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -33,25 +33,26 @@ import Profile from "@/pages/profile";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading, profile } = useAuth();
-  const [location, setLocation] = useLocation();
+  //const [location, setLocation] = useLocation(); // Removed because not used anymore
 
   if (loading) {
     return <LoadingScreen />;
   }
 
-  // Se não estiver autenticado e não estiver na página de auth, redirecionar
-  if (!isAuthenticated && location !== "/auth") {
-    setLocation("/auth");
-    return null;
+  // Se não estiver autenticado, redirecionar para auth
+  if (!isAuthenticated ) {
+    return <Route path="/auth" component={Auth} />;
   }
 
-  // Se estiver autenticado mas estiver na página de auth, redirecionar para dashboard
-  if (isAuthenticated && location === "/auth") {
-    setLocation("/dashboard");
-    return null;
+
+  // Se o usuário está autenticado mas precisa completar o onboarding
+  if (isAuthenticated && profile ) {
+    const needsOnboarding = !profile.name || !profile.birthDate || !profile.gender || !profile.favoriteSocialNetwork;
+    if (needsOnboarding) {
+      return <Route path="/onboarding" component={Onboarding} />;
+    }
   }
 
-  // Se estiver autenticado e tiver perfil completo, mostrar o componente
   return <Component />;
 }
 

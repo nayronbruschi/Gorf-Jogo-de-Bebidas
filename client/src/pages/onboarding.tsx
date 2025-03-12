@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
-import { auth, createUserProfile, updateUserProfile, getUserProfile } from "@/lib/firebase";
+import { auth, updateUserProfile } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -37,39 +37,13 @@ export default function Onboarding() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState<Step>("name");
-  const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
+    name: auth.currentUser?.displayName || "",
     birthDate: "",
-    gender: "",
+    gender: "homem",
     favoriteSocialNetwork: "",
   });
-
-  useEffect(() => {
-    const loadInitialData = async () => {
-      if (!auth.currentUser) {
-        setLocation("/auth");
-        return;
-      }
-
-      const profile = await getUserProfile(auth.currentUser.uid);
-      if (profile && profile.name && profile.birthDate && profile.gender && profile.favoriteSocialNetwork) {
-        setLocation("/dashboard");
-        return;
-      }
-
-      if (profile) {
-        setFormData({
-          name: profile.name || auth.currentUser.displayName || "",
-          birthDate: profile.birthDate || "",
-          gender: profile.gender || "",
-          favoriteSocialNetwork: profile.favoriteSocialNetwork || "",
-        });
-      }
-    };
-
-    loadInitialData();
-  }, [setLocation]);
 
   const updateField = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -82,10 +56,6 @@ export default function Onboarding() {
     }
   };
 
-  const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateField("birthDate", e.target.value);
-  };
-
   const handleNext = async () => {
     const currentIndex = steps.indexOf(currentStep);
 
@@ -96,7 +66,7 @@ export default function Onboarding() {
           throw new Error("Usuário não autenticado");
         }
 
-        setIsSaving(true);
+        setIsLoading(true);
         await updateUserProfile({
           ...formData,
           id: auth.currentUser.uid,
@@ -104,9 +74,8 @@ export default function Onboarding() {
           updatedAt: new Date().toISOString(),
         });
 
-        // Redirecionar diretamente para o dashboard após salvar
+        // Usar window.location para evitar problemas com router
         window.location.href = "/dashboard";
-        return;
       } catch (error) {
         console.error("Erro ao salvar perfil:", error);
         toast({
@@ -114,32 +83,26 @@ export default function Onboarding() {
           description: "Não foi possível salvar seu perfil. Tente novamente.",
           variant: "destructive",
         });
-        setIsSaving(false);
+        setIsLoading(false);
       }
       return;
     }
 
-    // Validar campos obrigatórios exceto para social e finish
-    if (currentStep !== "social" && currentStep !== "finish") {
-      if (!formData[currentStep as keyof typeof formData]) {
-        toast({
-          title: "Campo obrigatório",
-          description: "Por favor, preencha o campo antes de continuar.",
-          variant: "destructive",
-        });
-        return;
-      }
+    // Validar campos obrigatórios exceto para social
+    if (currentStep !== "social" && !formData[currentStep as keyof typeof formData]) {
+      toast({
+        title: "Campo obrigatório",
+        description: "Por favor, preencha o campo antes de continuar.",
+        variant: "destructive",
+      });
+      return;
     }
 
     // Avançar para o próximo passo
     setCurrentStep(steps[currentIndex + 1]);
   };
 
-  const toggleSocialNetwork = (network: string) => {
-    updateField("favoriteSocialNetwork", network);
-  };
-
-  if (isSaving) {
+  if (isLoading) {
     return <LoadingScreen />;
   }
 
@@ -181,7 +144,7 @@ export default function Onboarding() {
               <Input
                 type="date"
                 value={formData.birthDate}
-                onChange={handleBirthDateChange}
+                onChange={(e) => updateField("birthDate", e.target.value)}
                 className="bg-transparent border-0 border-b border-white/20 rounded-none text-white text-xl px-0 text-center placeholder:text-white/40 focus-visible:ring-0 focus-visible:border-white hover:border-white/40 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
               />
               <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90 py-7">
@@ -240,11 +203,11 @@ export default function Onboarding() {
                   return (
                     <button
                       key={social}
-                      onClick={() => toggleSocialNetwork(social)}
+                      onClick={() => updateField("favoriteSocialNetwork", social)}
                       className={`p-6 rounded-lg border-2 transition-colors ${
                         isSelected
-                          ? 'border-white bg-white/10'
-                          : 'border-white/20 hover:border-white/40'
+                          ? "border-white bg-white/10"
+                          : "border-white/20 hover:border-white/40"
                       }`}
                     >
                       <Icon className="w-8 h-8 text-white mx-auto" />
@@ -255,7 +218,6 @@ export default function Onboarding() {
               <Button
                 onClick={handleNext}
                 className="w-full bg-white text-purple-700 hover:bg-white/90 py-7"
-                disabled={!formData.favoriteSocialNetwork}
               >
                 Continuar
               </Button>
@@ -272,8 +234,12 @@ export default function Onboarding() {
                 Agora você pode começar a jogar
               </p>
             </div>
-            <Button onClick={handleNext} className="w-full bg-white text-purple-700 hover:bg-white/90 py-7">
-              Vamos lá!
+            <Button
+              onClick={handleNext}
+              className="w-full bg-white text-purple-700 hover:bg-white/90 py-7"
+              disabled={isLoading}
+            >
+              {isLoading ? "Salvando..." : "Vamos lá!"}
             </Button>
           </div>
         );
