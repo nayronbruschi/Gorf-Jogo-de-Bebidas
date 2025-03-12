@@ -8,6 +8,7 @@ import { GorfLogo } from "@/components/GorfLogo";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useAuthMenu } from "@/hooks/use-auth-menu";
+import { FloatingAIButton } from "@/components/FloatingAIButton";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -124,6 +125,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <main className="pt-16 relative h-[calc(100vh-4rem)] overflow-auto">
         {children}
       </main>
+      <FloatingAIButton />
     </div>
   );
 }
