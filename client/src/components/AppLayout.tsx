@@ -36,6 +36,8 @@ export function AppLayout({ children }: AppLayoutProps) {
     }
   };
 
+  const HomeIcon = menuItems[0]?.icon;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-lg border-b border-white/5">
@@ -47,7 +49,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               className="text-white hover:bg-white/10"
               onClick={() => navigate("/dashboard")}
             >
-              {menuItems[0]?.icon && <menuItems[0].icon size={24} />}
+              {HomeIcon && <HomeIcon size={24} />}
             </Button>
           ) : (
             <GorfLogo size="small" className="flex-shrink-0" />
@@ -81,21 +83,24 @@ export function AppLayout({ children }: AppLayoutProps) {
 
                   <nav className="flex-1 p-4">
                     <ul className="space-y-2">
-                      {menuItems.map((item) => (
-                        <li key={item.href}>
-                          <Button
-                            variant="ghost"
-                            className="w-full justify-start gap-2 text-white hover:bg-white/10"
-                            onClick={() => {
-                              navigate(item.href);
-                              setOpen(false);
-                            }}
-                          >
-                            {item.icon && <item.icon size={20} />}
-                            {item.label}
-                          </Button>
-                        </li>
-                      ))}
+                      {menuItems.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                          <li key={item.href}>
+                            <Button
+                              variant="ghost"
+                              className="w-full justify-start gap-2 text-white hover:bg-white/10"
+                              onClick={() => {
+                                navigate(item.href);
+                                setOpen(false);
+                              }}
+                            >
+                              {Icon && <Icon size={20} />}
+                              {item.label}
+                            </Button>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </nav>
 
