@@ -104,12 +104,17 @@ export default function Onboarding() {
           throw new Error("Usuário não autenticado");
         }
 
+        // Atualizar perfil
         await updateUserProfile({
           ...formData,
           id: auth.currentUser.uid,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         });
 
+        // Redirecionar para o dashboard após salvar
         setLocation("/dashboard");
+        return;
       } catch (error) {
         console.error("Erro ao salvar perfil:", error);
         toast({
@@ -118,7 +123,6 @@ export default function Onboarding() {
           variant: "destructive",
         });
       }
-      return;
     }
 
     // Avançar para o próximo passo
