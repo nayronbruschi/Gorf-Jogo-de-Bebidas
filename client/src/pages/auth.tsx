@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { auth, googleProvider } from "@/lib/firebase";
+import { auth, googleProvider, createUserProfile } from "@/lib/firebase";
 import {
   signInWithPopup,
   createUserWithEmailAndPassword,
@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 import { Eye, EyeOff } from "lucide-react";
 import { GorfLogo } from "@/components/GorfLogo";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Auth() {
   const [, setLocation] = useLocation();
@@ -21,6 +22,7 @@ export default function Auth() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { toast } = useToast();
 
   const getErrorMessage = (code: string) => {
     switch (code) {
@@ -47,13 +49,34 @@ export default function Auth() {
     }
   };
 
+  const handlePostAuth = async (userId: string) => {
+    try {
+      // Criar ou obter perfil do usuário
+      const userProfile = await createUserProfile(userId);
+
+      // Se o perfil não estiver completo, redirecionar para onboarding
+      if (!userProfile.name || !userProfile.gender || !userProfile.favoriteSocialNetwork) {
+        setLocation("/onboarding");
+      } else {
+        setLocation("/dashboard");
+      }
+    } catch (error) {
+      console.error("Erro ao processar perfil:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível criar seu perfil. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
       setError("");
       const result = await signInWithPopup(auth, googleProvider);
       if (result.user) {
-        setLocation("/dashboard");
+        await handlePostAuth(result.user.uid);
       }
     } catch (error: any) {
       console.error("Error signing in with Google:", error);
@@ -73,12 +96,17 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
+      let user;
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
-        setLocation("/dashboard");
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        user = result.user;
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
-        setLocation("/dashboard");
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        user = result.user;
+      }
+
+      if (user) {
+        await handlePostAuth(user.uid);
       }
     } catch (error: any) {
       console.error("Error with email auth:", error);

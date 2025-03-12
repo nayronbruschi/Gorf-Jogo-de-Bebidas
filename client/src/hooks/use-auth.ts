@@ -24,6 +24,7 @@ export function useAuth() {
           setProfile(userProfile);
         } catch (error) {
           console.error("Error loading user profile:", error);
+          setProfile(null);
         }
       } else {
         setProfile(null);
