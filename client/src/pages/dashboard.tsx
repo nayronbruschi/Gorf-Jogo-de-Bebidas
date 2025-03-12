@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -14,21 +14,25 @@ import { PromotionalBanner } from "@/components/PromotionalBanner";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { games } from "@/lib/game-data";
 import { getUserStats } from "@/lib/stats";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
+  const queryClient = useQueryClient();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isRefreshing = useRef(false);
+  const startY = useRef(0);
 
   // Fetch user stats from Firebase
-  const { data: userStats } = useQuery({
+  const { data: userStats, refetch: refetchStats } = useQuery({
     queryKey: ['userStats'],
     queryFn: getUserStats
   });
 
   // Fetch recent games from Firebase
-  const { data: recentGames } = useQuery({
+  const { data: recentGames, refetch: refetchGames } = useQuery({
     queryKey: ['recentGames'],
     queryFn: async () => {
       if (!auth.currentUser) return [];
@@ -37,6 +41,44 @@ export default function Dashboard() {
       return recentGamesDoc.exists() ? recentGamesDoc.data().games : [];
     }
   });
+
+  // Pull to refresh logic
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (container.scrollTop === 0) {
+        startY.current = e.touches[0].pageY;
+      }
+    };
+
+    const handleTouchMove = async (e: TouchEvent) => {
+      if (container.scrollTop === 0 && !isRefreshing.current) {
+        const currentY = e.touches[0].pageY;
+        const diff = currentY - startY.current;
+
+        if (diff > 50) {
+          isRefreshing.current = true;
+          // Refresh all queries
+          await Promise.all([
+            refetchStats(),
+            refetchGames(),
+            queryClient.invalidateQueries({ queryKey: ["/api/banners"] })
+          ]);
+          isRefreshing.current = false;
+        }
+      }
+    };
+
+    container.addEventListener('touchstart', handleTouchStart);
+    container.addEventListener('touchmove', handleTouchMove);
+
+    return () => {
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [queryClient, refetchStats, refetchGames]);
 
   const stats = [
     {
@@ -69,7 +111,10 @@ export default function Dashboard() {
 
   return (
     <AppLayout>
-      <div className="container mx-auto p-4 space-y-8 min-h-screen bg-gray-900/80">
+      <div 
+        ref={containerRef}
+        className="container mx-auto p-4 space-y-8 min-h-screen bg-gray-900/80 overflow-auto"
+      >
         <section className="pb-4">
           <PromotionalBanner />
         </section>
