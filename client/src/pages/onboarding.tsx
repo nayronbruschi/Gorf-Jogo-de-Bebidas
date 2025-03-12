@@ -125,12 +125,7 @@ export default function Onboarding() {
   };
 
   const toggleSocialNetwork = (network: string) => {
-    const current = formData.favoriteSocialNetwork;
-    if (current.includes(network)) {
-      updateField("favoriteSocialNetwork", current.replace(network, ""));
-    } else {
-      updateField("favoriteSocialNetwork", current + (current ? "," : "") + network);
-    }
+    updateField("favoriteSocialNetwork", network);
   };
 
   const renderStep = () => {
@@ -217,16 +212,16 @@ export default function Onboarding() {
         return (
           <div className="space-y-8">
             <div className="text-center">
-              <h2 className="text-3xl font-bold text-white mb-2">Redes sociais favoritas</h2>
+              <h2 className="text-3xl font-bold text-white mb-2">Rede social favorita</h2>
               <p className="text-white/60">
-                Selecione até duas redes sociais
+                Qual rede social você mais usa?
               </p>
             </div>
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 {socialNetworkOptions.map((social) => {
                   const Icon = SOCIAL_ICONS[social];
-                  const isSelected = formData.favoriteSocialNetwork.includes(social);
+                  const isSelected = formData.favoriteSocialNetwork === social;
                   return (
                     <button
                       key={social}
@@ -245,7 +240,7 @@ export default function Onboarding() {
               <Button
                 onClick={handleNext}
                 className="w-full bg-white text-purple-700 hover:bg-white/90 py-7"
-                disabled={formData.favoriteSocialNetwork.length === 0}
+                disabled={!formData.favoriteSocialNetwork}
               >
                 Continuar
               </Button>
