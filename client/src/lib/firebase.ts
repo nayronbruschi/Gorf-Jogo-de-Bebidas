@@ -37,15 +37,26 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
 
   if (!userDoc.exists()) {
     const now = new Date().toISOString();
-    // Criar perfil apenas com dados essenciais
+
+    // Usar mais dados do Google Auth
     const defaultProfile: UserProfile = {
       id: userId,
-      name: profile.name || auth.currentUser?.displayName || "Usuário",
-      birthDate: "", // Deixar vazio para o usuário preencher
-      gender: "", // Deixar vazio para o usuário preencher
-      favoriteSocialNetwork: "", // Deixar vazio para o usuário preencher
+      // Tentar usar nome do Google, depois nome fornecido, depois email, depois padrão
+      name: auth.currentUser?.displayName || 
+            profile.name || 
+            auth.currentUser?.email?.split('@')[0] || 
+            "Usuário",
+      // Campos que o usuário deve preencher
+      birthDate: "",
+      gender: "",
+      favoriteSocialNetwork: "",
+      // Metadados
       createdAt: now,
       updatedAt: now,
+      // Campos adicionais do Google
+      photoURL: auth.currentUser?.photoURL || "",
+      email: auth.currentUser?.email || "",
+      emailVerified: auth.currentUser?.emailVerified || false
     };
 
     await setDoc(userRef, defaultProfile);

@@ -3,10 +3,11 @@ import { auth, getUserProfile, getUserStats, updateUserProfile } from "@/lib/fir
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserProfile, UserGameStats } from "@shared/schema";
-import { Loader2, Clock, Trophy, Users, GamepadIcon, History, Edit } from "lucide-react";
+import { Loader2, Clock, Trophy, Users, GamepadIcon, History, Edit, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { ProfileEditDialog } from "@/components/ProfileEditDialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Profile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -43,6 +44,8 @@ export default function Profile() {
     setProfile(updatedProfile);
   };
 
+  const hasIncompleteProfile = profile && (!profile.birthDate || !profile.gender || !profile.favoriteSocialNetwork);
+
   if (loading) {
     return (
       <AppLayout>
@@ -57,7 +60,15 @@ export default function Profile() {
     <AppLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="space-y-8">
-          {/* Profile Information */}
+          {hasIncompleteProfile && (
+            <Alert variant="warning" className="bg-orange-500/10 text-orange-500 border-orange-500/20">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription className="ml-2">
+                Complete seu perfil para uma melhor experiência no Gorf. Clique no ícone de edição para atualizar suas informações.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <Card className="bg-white/10 backdrop-blur-lg border-none relative">
             <Button
               variant="ghost"
@@ -77,24 +88,27 @@ export default function Profile() {
                   <p className="text-white">{profile?.name}</p>
                 </div>
                 <div className="space-y-1">
+                  <p className="text-sm text-white/60">Email</p>
+                  <p className="text-white">{profile?.email}</p>
+                </div>
+                <div className="space-y-1">
                   <p className="text-sm text-white/60">Data de Nascimento</p>
                   <p className="text-white">
-                    {profile?.birthDate ? new Date(profile.birthDate).toLocaleDateString('pt-BR') : '-'}
+                    {profile?.birthDate ? new Date(profile.birthDate).toLocaleDateString('pt-BR') : 'Não informado'}
                   </p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm text-white/60">Gênero</p>
-                  <p className="text-white">{profile?.gender || '-'}</p>
+                  <p className="text-white">{profile?.gender || 'Não informado'}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm text-white/60">Rede Social Favorita</p>
-                  <p className="text-white">{profile?.favoriteSocialNetwork || '-'}</p>
+                  <p className="text-white">{profile?.favoriteSocialNetwork || 'Não informado'}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Game Statistics */}
           <Card className="bg-white/10 backdrop-blur-lg border-none">
             <CardHeader>
               <CardTitle className="text-2xl text-white">Estatísticas de Jogo</CardTitle>
