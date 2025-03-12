@@ -4,7 +4,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
-import { useLocation } from 'wouter';
 
 // Pages
 import NotFound from "@/pages/not-found";
@@ -34,7 +33,6 @@ import Profile from "@/pages/profile";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading, profile } = useAuth();
-  const [, setLocation] = useLocation();
 
   if (loading) {
     return (
@@ -45,15 +43,18 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   }
 
   if (!isAuthenticated) {
-    setLocation("/auth");
+    if (window.location.pathname !== "/auth") {
+      window.location.href = "/auth";
+    }
     return null;
   }
 
+  // Verificar se precisa de onboarding, exceto na própria página de onboarding
   const needsOnboarding = !profile?.name || !profile?.birthDate || !profile?.gender || !profile?.favoriteSocialNetwork;
   const isOnboardingPage = window.location.pathname === "/onboarding";
 
   if (needsOnboarding && !isOnboardingPage) {
-    setLocation("/onboarding");
+    window.location.href = "/onboarding";
     return null;
   }
 
@@ -68,6 +69,7 @@ function Router() {
       <Route path="/onboarding">
         <ProtectedRoute component={Onboarding} />
       </Route>
+      {/* Outras rotas protegidas */}
       <Route path="/dashboard">
         <ProtectedRoute component={Dashboard} />
       </Route>

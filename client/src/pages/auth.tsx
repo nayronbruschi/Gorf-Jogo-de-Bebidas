@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { auth, googleProvider } from "@/lib/firebase";
 import {
   signInWithPopup,
@@ -14,6 +15,7 @@ import { GorfLogo } from "@/components/GorfLogo";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Auth() {
+  const [, setLocation] = useLocation();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,8 +53,10 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
-      await signInWithPopup(auth, googleProvider);
-      // O ProtectedRoute cuidará do redirecionamento
+      const result = await signInWithPopup(auth, googleProvider);
+      if (result.user) {
+        setLocation("/dashboard");
+      }
     } catch (error: any) {
       console.error("Error signing in with Google:", error);
       setError(getErrorMessage(error.code));
@@ -76,7 +80,7 @@ export default function Auth() {
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
-      // O ProtectedRoute cuidará do redirecionamento
+      setLocation("/dashboard");
     } catch (error: any) {
       console.error("Error with email auth:", error);
       setError(getErrorMessage(error.code));
