@@ -112,8 +112,8 @@ export default function Onboarding() {
       return;
     }
 
-    // Validar campo atual apenas se não estiver no passo final
-    if (!formData[currentStep as keyof typeof formData]) {
+    // Validar campo atual apenas se não estiver no passo social ou final
+    if (currentStep !== "social" && !formData[currentStep as keyof typeof formData]) {
       toast({
         title: "Campo obrigatório",
         description: "Por favor, preencha o campo antes de continuar.",
