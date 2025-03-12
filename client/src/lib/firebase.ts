@@ -58,7 +58,8 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
       totalGamesPlayed: 0,
       victories: 0,
       totalPlayTime: 0,
-      lastGameStartTime: null
+      lastGameStartTime: null,
+      uniquePlayers: 0
     });
 
     // Inicializar jogos recentes
@@ -179,7 +180,8 @@ export async function clearAllUsersGameData() {
       totalGamesPlayed: 0,
       victories: 0,
       totalPlayTime: 0,
-      lastGameStartTime: null
+      lastGameStartTime: null,
+      uniquePlayers: 0 //Adding missing field
     }, { merge: true });
 
     // Clear recent games
