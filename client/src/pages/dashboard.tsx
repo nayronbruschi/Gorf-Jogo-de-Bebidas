@@ -73,7 +73,7 @@ export default function Dashboard() {
   ], [userStats]);
 
   // Memoize game path mapping
-  const gamePathMap = useMemo(() => 
+  const gamePathMap = useMemo(() =>
     games.reduce((acc, game) => ({
       ...acc,
       [game.name]: game.route
@@ -108,7 +108,7 @@ export default function Dashboard() {
 
         <section className="pb-2">
           <h2 className="text-white text-lg font-medium mb-2">Todos os Jogos</h2>
-          <Carousel 
+          <Carousel
             className="w-full"
             opts={{
               align: "start",
@@ -120,7 +120,7 @@ export default function Dashboard() {
             <CarouselContent className="-ml-4">
               {games.map((game) => (
                 <CarouselItem key={game.id} className="pl-4 basis-[22%]">
-                  <div 
+                  <div
                     className="flex flex-col items-center gap-1 p-3 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => navigate(game.route)}
                   >
@@ -149,7 +149,7 @@ export default function Dashboard() {
                   <div className="p-4 rounded-lg bg-white/5">
                     <h3 className="text-lg font-medium text-white mb-2">{recentGames[0].name}</h3>
                     <p className="text-sm text-white/60 mb-4">{formatDate(recentGames[0].date)}</p>
-                    <Button 
+                    <Button
                       onClick={() => navigate(getGamePath(recentGames[0].name))}
                       className="w-full bg-purple-700 hover:bg-purple-800 text-white"
                     >
@@ -232,7 +232,7 @@ export default function Dashboard() {
                       <p className="text-white font-medium">{game.name}</p>
                       <p className="text-sm text-white/60">{formatDate(game.date)}</p>
                       <p className="text-sm text-white/60">
-                        {game.players} jogadores 
+                        {game.players} jogadores
                       </p>
                     </div>
                     <Button

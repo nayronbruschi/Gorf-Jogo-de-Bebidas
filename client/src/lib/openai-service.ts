@@ -20,7 +20,7 @@ export interface GameRules {
 export async function generateGameRules(prompt: string): Promise<GameRules> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
+      model: "gpt-4o", 
       messages: [
         {
           role: "system",
@@ -34,9 +34,23 @@ export async function generateGameRules(prompt: string): Promise<GameRules> {
       response_format: { type: "json_object" }
     });
 
+    if (!response.choices[0].message.content) {
+      throw new Error("Resposta vazia da API");
+    }
+
     return JSON.parse(response.choices[0].message.content) as GameRules;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error generating game rules:", error);
-    throw new Error("Não foi possível gerar as regras do jogo. Tente novamente.");
+
+    // Mensagens de erro mais específicas
+    if (error?.error?.type === "insufficient_quota") {
+      throw new Error("Limite de requisições da API atingido. Por favor, tente novamente mais tarde.");
+    } else if (error?.error?.type === "invalid_request_error") {
+      throw new Error("Requisição inválida. Por favor, tente com uma descrição diferente.");
+    } else if (error.message.includes("JSON")) {
+      throw new Error("Erro ao processar a resposta. Por favor, tente novamente.");
+    }
+
+    throw new Error("Não foi possível gerar as regras do jogo. Por favor, tente novamente mais tarde.");
   }
 }
