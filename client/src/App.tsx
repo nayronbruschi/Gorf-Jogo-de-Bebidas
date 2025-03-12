@@ -12,7 +12,7 @@ import Dashboard from "@/pages/dashboard";
 import Stats from "@/pages/stats";
 import GameModes from "@/pages/game-modes";
 import Admin from "@/pages/admin";
-import Onboarding from "@/pages/onboarding"; 
+import Onboarding from "@/pages/onboarding";
 import ClassicStart from "@/pages/classic-start";
 import ClassicPlayers from "@/pages/classic-players";
 import ClassicMode from "@/pages/classic-mode";
@@ -34,6 +34,7 @@ import Profile from "@/pages/profile";
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading, profile } = useAuth();
   const [, setLocation] = useLocation();
+  const location = useLocation()[0]; // Get the current location
 
   if (loading) {
     return <LoadingScreen />;
@@ -46,10 +47,15 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
 
   // Verificar se precisa de onboarding
   const needsOnboarding = !profile?.name || !profile?.birthDate || !profile?.gender || !profile?.favoriteSocialNetwork;
-  const isOnboardingPage = window.location.pathname === "/onboarding";
+  const isOnboardingPage = location.pathname === "/onboarding";
 
   if (needsOnboarding && !isOnboardingPage) {
     setLocation("/onboarding");
+    return null;
+  }
+
+  if (!needsOnboarding && isOnboardingPage) {
+    setLocation("/dashboard");
     return null;
   }
 

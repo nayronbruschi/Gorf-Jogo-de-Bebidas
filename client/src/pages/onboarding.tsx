@@ -43,7 +43,6 @@ export default function Onboarding() {
     favoriteSocialNetwork: "",
   });
 
-  // Load user data on mount
   useEffect(() => {
     const loadInitialData = async () => {
       if (!auth.currentUser) {
@@ -51,7 +50,6 @@ export default function Onboarding() {
         return;
       }
 
-      // Try to get existing profile
       const profile = await createUserProfile(auth.currentUser.uid);
       if (profile) {
         setFormData({
@@ -91,7 +89,6 @@ export default function Onboarding() {
           throw new Error("Usuário não autenticado");
         }
 
-        // Atualizar perfil
         await updateUserProfile({
           ...formData,
           id: auth.currentUser.uid,
@@ -99,8 +96,8 @@ export default function Onboarding() {
           updatedAt: new Date().toISOString(),
         });
 
-        // Redirecionar para o dashboard
-        setLocation("/dashboard");
+        // Após salvar com sucesso, redirecionar para o dashboard
+        window.location.href = "/dashboard";
       } catch (error) {
         console.error("Erro ao salvar perfil:", error);
         toast({
@@ -112,8 +109,8 @@ export default function Onboarding() {
       return;
     }
 
-    // Validar campo atual apenas se não estiver no passo social ou final
-    if (currentStep !== "social" && !formData[currentStep as keyof typeof formData]) {
+    // Validar campos obrigatórios exceto para social e finish
+    if (currentStep !== "social" && currentStep !== "finish" && !formData[currentStep as keyof typeof formData]) {
       toast({
         title: "Campo obrigatório",
         description: "Por favor, preencha o campo antes de continuar.",
