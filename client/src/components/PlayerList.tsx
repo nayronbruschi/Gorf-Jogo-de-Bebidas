@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPlayerSchema } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
+import { motion, AnimatePresence } from "framer-motion";
 import { UserPlus, X } from "lucide-react";
 
 interface Player {
@@ -72,11 +73,15 @@ export function PlayerList({ selectedPlayers, onSelectedPlayersChange }: PlayerL
         </Button>
       </form>
 
-      <div className="space-y-2">
+      <AnimatePresence mode="popLayout">
         {players.map((player) => (
-          <div
+          <motion.div
             key={player.id}
-            className="bg-purple-50 p-3 rounded"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.8 }}
+            className="bg-purple-50 p-3 rounded space-y-2"
           >
             <div className="flex items-center justify-between">
               <span className="text-purple-900">{player.name}</span>
@@ -89,9 +94,9 @@ export function PlayerList({ selectedPlayers, onSelectedPlayersChange }: PlayerL
                 <X className="h-4 w-4" />
               </Button>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </AnimatePresence>
     </div>
   );
 }
