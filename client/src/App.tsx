@@ -43,16 +43,19 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   }
 
   if (!isAuthenticated) {
-    window.location.href = "/auth";
+    if (window.location.pathname !== "/auth") {
+      window.location.href = "/auth";
+    }
     return null;
   }
 
-  // Se não tiver perfil completo, redirecionar para onboarding
-  if (!profile?.name || !profile?.birthDate || !profile?.gender || !profile?.favoriteSocialNetwork) {
-    if (window.location.pathname !== "/onboarding") {
-      window.location.href = "/onboarding";
-      return null;
-    }
+  // Verificar se precisa de onboarding, exceto na própria página de onboarding
+  const needsOnboarding = !profile?.name || !profile?.birthDate || !profile?.gender || !profile?.favoriteSocialNetwork;
+  const isOnboardingPage = window.location.pathname === "/onboarding";
+
+  if (needsOnboarding && !isOnboardingPage) {
+    window.location.href = "/onboarding";
+    return null;
   }
 
   return <Component />;
@@ -66,6 +69,7 @@ function Router() {
       <Route path="/onboarding">
         <ProtectedRoute component={Onboarding} />
       </Route>
+      {/* Outras rotas protegidas */}
       <Route path="/dashboard">
         <ProtectedRoute component={Dashboard} />
       </Route>
