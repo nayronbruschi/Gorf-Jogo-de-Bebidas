@@ -51,6 +51,11 @@ export default function Onboarding() {
       }
 
       const profile = await createUserProfile(auth.currentUser.uid);
+      if (profile && profile.name && profile.birthDate && profile.gender && profile.favoriteSocialNetwork) {
+        setLocation("/dashboard");
+        return;
+      }
+
       if (profile) {
         setFormData({
           name: profile.name || auth.currentUser.displayName || "",
@@ -96,8 +101,7 @@ export default function Onboarding() {
           updatedAt: new Date().toISOString(),
         });
 
-        // Após salvar com sucesso, redirecionar para o dashboard
-        window.location.href = "/dashboard";
+        setLocation("/dashboard");
       } catch (error) {
         console.error("Erro ao salvar perfil:", error);
         toast({

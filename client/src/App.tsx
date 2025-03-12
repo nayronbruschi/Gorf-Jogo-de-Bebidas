@@ -34,7 +34,7 @@ import Profile from "@/pages/profile";
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading, profile } = useAuth();
   const [, setLocation] = useLocation();
-  const location = useLocation()[0]; // Get the current location
+  const location = useLocation()[0];
 
   if (loading) {
     return <LoadingScreen />;
@@ -47,13 +47,15 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
 
   // Verificar se precisa de onboarding
   const needsOnboarding = !profile?.name || !profile?.birthDate || !profile?.gender || !profile?.favoriteSocialNetwork;
-  const isOnboardingPage = location.pathname === "/onboarding";
+  const isOnboardingPage = location === "/onboarding";
 
+  // Se precisa de onboarding e não está na página de onboarding, redirecionar
   if (needsOnboarding && !isOnboardingPage) {
     setLocation("/onboarding");
     return null;
   }
 
+  // Se não precisa de onboarding e está na página de onboarding, redirecionar para dashboard
   if (!needsOnboarding && isOnboardingPage) {
     setLocation("/dashboard");
     return null;
