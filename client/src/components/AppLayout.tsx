@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Home, GamepadIcon, LogOut, UserCircle } from "lucide-react";
+import { GorfLogo } from "@/components/GorfLogo";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 
@@ -36,7 +37,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-lg border-b border-white/5">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex-1" />
-          <h1 className="text-3xl font-bold text-white text-center">Gorf</h1>
+          <GorfLogo size="small" className="flex-shrink-0" />
           <div className="flex-1 flex justify-end">
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>

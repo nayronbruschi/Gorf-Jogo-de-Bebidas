@@ -91,6 +91,46 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  // Adicionar nova rota para os textos dos banners
+  app.post("/api/banner-texts", async (req, res) => {
+    try {
+      const bannersTextPath = path.join(BUCKET_PATH, "banner_texts.json");
+
+      // Garantir que o diretório existe
+      const dir = path.dirname(bannersTextPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+
+      fs.writeFileSync(bannersTextPath, JSON.stringify(req.body.bannerTexts, null, 2));
+      console.log('Textos dos banners salvos em:', bannersTextPath);
+      res.json({ message: "Textos dos banners atualizados com sucesso" });
+    } catch (error) {
+      console.error('Erro ao salvar textos dos banners:', error);
+      res.status(500).json({ message: "Erro ao salvar textos dos banners" });
+    }
+  });
+
+  // Rota para obter os textos dos banners
+  app.get("/api/banner-texts", (req, res) => {
+    try {
+      const bannersTextPath = path.join(BUCKET_PATH, "banner_texts.json");
+      if (fs.existsSync(bannersTextPath)) {
+        const texts = JSON.parse(fs.readFileSync(bannersTextPath, 'utf-8'));
+        res.json(texts);
+      } else {
+        // Retorna textos padrão se o arquivo não existir
+        res.json({
+          "1": { title: "Bem-vindo ao Gorf", description: "O melhor app para suas festas" },
+          "2": { title: "Diversão Garantida", description: "Jogos para todos os momentos" }
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao obter textos dos banners:', error);
+      res.status(500).json({ message: "Erro ao obter textos dos banners" });
+    }
+  });
+
   // Player routes
   app.get("/api/players", async (_req, res) => {
     try {

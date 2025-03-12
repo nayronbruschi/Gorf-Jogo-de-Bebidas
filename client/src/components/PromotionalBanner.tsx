@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import useEmblaCarousel from "embla-carousel-react";
@@ -37,7 +36,8 @@ export function PromotionalBanner() {
     loop: true,
     dragFree: false,
     skipSnaps: false,
-    containScroll: "trimSnaps"
+    containScroll: "keepSnaps",
+    align: "center"
   });
 
   // Fetch active banners
@@ -78,15 +78,15 @@ export function PromotionalBanner() {
   if (orderedBanners.length === 0) return null;
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div className="overflow-hidden rounded-xl">
-        <Carousel 
-          ref={emblaRef}
-          className="w-full max-w-screen-xl mx-auto"
-        >
-          <CarouselContent>
+        <div className="mx-auto" ref={emblaRef}>
+          <div className="flex">
             {orderedBanners.map((banner, index) => (
-              <CarouselItem key={index}>
+              <div 
+                key={index} 
+                className="relative flex-[0_0_100%] min-w-0"
+              >
                 <Card className="border-none">
                   <CardContent className="relative aspect-[21/9] p-0">
                     <img
@@ -100,10 +100,10 @@ export function PromotionalBanner() {
                     </div>
                   </CardContent>
                 </Card>
-              </CarouselItem>
+              </div>
             ))}
-          </CarouselContent>
-        </Carousel>
+          </div>
+        </div>
       </div>
 
       {/* Dots navigation */}

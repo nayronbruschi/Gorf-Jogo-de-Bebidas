@@ -6,6 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
+
+interface BannerTexts {
+  title: string;
+  description: string;
+}
 
 export default function Admin() {
   const [, navigate] = useLocation();
@@ -13,6 +19,10 @@ export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [bannerTexts, setBannerTexts] = useState<Record<string, BannerTexts>>({
+    "1": { title: "Bem-vindo ao Gorf", description: "O melhor app para suas festas" },
+    "2": { title: "Diversão Garantida", description: "Jogos para todos os momentos" }
+  });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +36,29 @@ export default function Admin() {
       toast({
         title: "Erro no login",
         description: "Email ou senha incorretos",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdateBannerTexts = async () => {
+    try {
+      await fetch('/api/banner-texts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ bannerTexts }),
+      });
+
+      toast({
+        title: "Sucesso",
+        description: "Textos dos banners atualizados",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Falha ao atualizar textos dos banners",
         variant: "destructive",
       });
     }
@@ -72,6 +105,45 @@ export default function Admin() {
         <h1 className="text-2xl font-bold text-white mb-8">Administração</h1>
 
         <div className="grid grid-cols-1 gap-8">
+          <Card className="bg-white/10 backdrop-blur-lg border-none">
+            <CardHeader>
+              <CardTitle className="text-white">Textos dos Banners</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {Object.entries(bannerTexts).map(([key, texts]) => (
+                <div key={key} className="space-y-4">
+                  <h3 className="text-lg font-medium text-white">Banner {key}</h3>
+                  <div className="space-y-2">
+                    <Input
+                      value={texts.title}
+                      onChange={(e) => setBannerTexts(prev => ({
+                        ...prev,
+                        [key]: { ...prev[key], title: e.target.value }
+                      }))}
+                      placeholder="Título"
+                      className="bg-white/10 border-white/20 text-white"
+                    />
+                    <Textarea
+                      value={texts.description}
+                      onChange={(e) => setBannerTexts(prev => ({
+                        ...prev,
+                        [key]: { ...prev[key], description: e.target.value }
+                      }))}
+                      placeholder="Descrição"
+                      className="bg-white/10 border-white/20 text-white"
+                    />
+                  </div>
+                </div>
+              ))}
+              <Button 
+                onClick={handleUpdateBannerTexts}
+                className="w-full mt-4"
+              >
+                Salvar Textos
+              </Button>
+            </CardContent>
+          </Card>
+
           <BannerUploader />
         </div>
       </div>
