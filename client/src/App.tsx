@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
-import { useLocation } from 'wouter'; // Import useLocation
+import { useLocation } from 'wouter';
 
 // Pages
 import NotFound from "@/pages/not-found";
@@ -68,7 +68,6 @@ function Router() {
       <Route path="/onboarding">
         <ProtectedRoute component={Onboarding} />
       </Route>
-      {/* Outras rotas protegidas */}
       <Route path="/dashboard">
         <ProtectedRoute component={Dashboard} />
       </Route>

@@ -13,7 +13,14 @@ export function useAuth() {
         setUser(user);
 
         if (user) {
-          const userProfile = await getUserProfile(user.uid);
+          // Primeiro tenta obter o perfil existente
+          let userProfile = await getUserProfile(user.uid);
+
+          // Se não existir, cria um novo perfil vazio
+          if (!userProfile) {
+            userProfile = await createUserProfile(user.uid);
+          }
+
           setProfile(userProfile);
         } else {
           setProfile(null);
