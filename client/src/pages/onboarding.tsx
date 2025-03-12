@@ -84,47 +84,46 @@ export default function Onboarding() {
   const handleNext = async () => {
     const currentIndex = steps.indexOf(currentStep);
 
-    // Validar campo atual apenas se não estiver no passo final
-    if (currentStep !== "finish") {
-      // Não validar campo social aqui pois já é controlado pelo botão disabled
-      if (currentStep !== "social" && !formData[currentStep as keyof typeof formData]) {
+    // Se for o último passo, salvar dados
+    if (currentStep === "finish") {
+      try {
+        if (!auth.currentUser) {
+          throw new Error("Usuário não autenticado");
+        }
+
+        // Atualizar perfil
+        await updateUserProfile({
+          ...formData,
+          id: auth.currentUser.uid,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+
+        // Redirecionar para o dashboard
+        setLocation("/dashboard");
+      } catch (error) {
+        console.error("Erro ao salvar perfil:", error);
         toast({
-          title: "Campo obrigatório",
-          description: "Por favor, preencha o campo antes de continuar.",
+          title: "Erro",
+          description: "Não foi possível salvar seu perfil. Tente novamente.",
           variant: "destructive",
         });
-        return;
       }
-
-      // Avançar para o próximo passo
-      setCurrentStep(steps[currentIndex + 1]);
       return;
     }
 
-    // Se for o último passo, salvar dados
-    try {
-      if (!auth.currentUser) {
-        throw new Error("Usuário não autenticado");
-      }
-
-      // Atualizar perfil
-      await updateUserProfile({
-        ...formData,
-        id: auth.currentUser.uid,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
-
-      // Redirecionar para o dashboard
-      setLocation("/dashboard");
-    } catch (error) {
-      console.error("Erro ao salvar perfil:", error);
+    // Validar campo atual apenas se não estiver no passo final
+    if (!formData[currentStep as keyof typeof formData]) {
       toast({
-        title: "Erro",
-        description: "Não foi possível salvar seu perfil. Tente novamente.",
+        title: "Campo obrigatório",
+        description: "Por favor, preencha o campo antes de continuar.",
         variant: "destructive",
       });
+      return;
     }
+
+    // Avançar para o próximo passo
+    setCurrentStep(steps[currentIndex + 1]);
   };
 
   const toggleSocialNetwork = (network: string) => {
