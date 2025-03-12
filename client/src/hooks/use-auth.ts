@@ -10,15 +10,18 @@ export function useAuth() {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setUser(user);
+      setLoading(true);
 
       if (user) {
         try {
-          // Tentar obter perfil existente
           let userProfile = await getUserProfile(user.uid);
 
-          // Se não existir, criar um novo
           if (!userProfile) {
-            userProfile = await createUserProfile(user.uid);
+            // Criar um novo perfil com dados do Google se disponível
+            const defaultName = user.displayName || user.email?.split('@')[0] || '';
+            userProfile = await createUserProfile(user.uid, {
+              name: defaultName,
+            });
           }
 
           setProfile(userProfile);

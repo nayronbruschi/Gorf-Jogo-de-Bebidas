@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { auth, googleProvider, createUserProfile } from "@/lib/firebase";
+import { auth, googleProvider } from "@/lib/firebase";
 import {
   signInWithPopup,
   createUserWithEmailAndPassword,
@@ -49,34 +49,13 @@ export default function Auth() {
     }
   };
 
-  const handlePostAuth = async (userId: string) => {
-    try {
-      // Criar ou obter perfil do usuário
-      const userProfile = await createUserProfile(userId);
-
-      // Se o perfil não estiver completo, redirecionar para onboarding
-      if (!userProfile.name || !userProfile.gender || !userProfile.favoriteSocialNetwork) {
-        setLocation("/onboarding");
-      } else {
-        setLocation("/dashboard");
-      }
-    } catch (error) {
-      console.error("Erro ao processar perfil:", error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível criar seu perfil. Tente novamente.",
-        variant: "destructive",
-      });
-    }
-  };
-
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
       setError("");
       const result = await signInWithPopup(auth, googleProvider);
       if (result.user) {
-        await handlePostAuth(result.user.uid);
+        setLocation("/dashboard");
       }
     } catch (error: any) {
       console.error("Error signing in with Google:", error);
@@ -96,18 +75,12 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
-      let user;
       if (isLogin) {
-        const result = await signInWithEmailAndPassword(auth, email, password);
-        user = result.user;
+        await signInWithEmailAndPassword(auth, email, password);
       } else {
-        const result = await createUserWithEmailAndPassword(auth, email, password);
-        user = result.user;
+        await createUserWithEmailAndPassword(auth, email, password);
       }
-
-      if (user) {
-        await handlePostAuth(user.uid);
-      }
+      setLocation("/dashboard");
     } catch (error: any) {
       console.error("Error with email auth:", error);
       setError(getErrorMessage(error.code));
