@@ -57,7 +57,7 @@ export default function GameModes() {
           href="/guess-who/players"
         />
         <GameCard
-          title="Toque na&nbsp;Sorte"
+          title={<>Toque na<br/>Sorte</>}
           description="Toque na tela e veja quem será o escolhido pelo destino!"
           icon={<Hand className="h-8 w-8 text-purple-500" />}
           href="/touch-game"
@@ -69,7 +69,7 @@ export default function GameModes() {
           href="/spin-bottle"
         />
         <GameCard
-          title="Cara ou&nbsp;Coroa"
+          title={<>Cara ou<br/>Coroa</>}
           description="Deixe a sorte decidir quem vai beber!"
           icon={<Coins className="h-8 w-8 text-purple-500" />}
           href="/coin-flip"

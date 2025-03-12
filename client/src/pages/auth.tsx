@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { auth, googleProvider, getUserProfile } from "@/lib/firebase";
+import { auth, googleProvider } from "@/lib/firebase";
 import {
   signInWithPopup,
   createUserWithEmailAndPassword,
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 import { Eye, EyeOff } from "lucide-react";
+import { GorfLogo } from "@/components/GorfLogo";
 
 export default function Auth() {
   const [, setLocation] = useLocation();
@@ -46,19 +47,13 @@ export default function Auth() {
     }
   };
 
-  const checkUserProfile = async (userId: string) => {
-    const profile = await getUserProfile(userId);
-    return profile !== null;
-  };
-
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
       setError("");
       const result = await signInWithPopup(auth, googleProvider);
       if (result.user) {
-        const hasProfile = await checkUserProfile(result.user.uid);
-        setLocation(hasProfile ? "/dashboard" : "/onboarding");
+        setLocation("/dashboard");
       }
     } catch (error: any) {
       console.error("Error signing in with Google:", error);
@@ -79,12 +74,11 @@ export default function Auth() {
       setIsLoading(true);
       setError("");
       if (isLogin) {
-        const result = await signInWithEmailAndPassword(auth, email, password);
-        const hasProfile = await checkUserProfile(result.user.uid);
-        setLocation(hasProfile ? "/dashboard" : "/onboarding");
+        await signInWithEmailAndPassword(auth, email, password);
+        setLocation("/dashboard");
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
-        setLocation("/onboarding");
+        setLocation("/dashboard");
       }
     } catch (error: any) {
       console.error("Error with email auth:", error);
@@ -101,10 +95,8 @@ export default function Auth() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold text-white mb-2">Gorf</h1>
-          <p className="text-white/60">Bora jogar?</p>
+        <div className="mb-8">
+          <GorfLogo />
         </div>
 
         <div className="bg-white/10 backdrop-blur-lg rounded-lg p-8 shadow-xl">

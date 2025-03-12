@@ -214,8 +214,7 @@ export default function Dashboard() {
                       </p>
                     </div>
                     <Button
-                      variant="ghost"
-                      className="shrink-0 text-white hover:bg-white/10"
+                      className="shrink-0 bg-purple-700 hover:bg-purple-800 text-white"
                       onClick={() => navigate(getGamePath(game.name))}
                     >
                       Jogar Novamente
