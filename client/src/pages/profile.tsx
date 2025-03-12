@@ -3,7 +3,7 @@ import { auth, getUserProfile, getUserStats } from "@/lib/firebase";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserProfile, UserGameStats } from "@shared/schema";
-import { Loader2, Clock, Trophy, Users, GamepadIcon, History, Home } from "lucide-react";
+import { Loader2, Clock, Trophy, Users, GamepadIcon, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 
@@ -48,15 +48,6 @@ export default function Profile() {
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-20 left-4 text-white hover:bg-white/10"
-          onClick={() => navigate("/dashboard")}
-        >
-          <Home className="h-6 w-6" />
-        </Button>
-
         <div className="space-y-8">
           {/* Profile Information */}
           <Card className="bg-white/10 backdrop-blur-lg border-none">

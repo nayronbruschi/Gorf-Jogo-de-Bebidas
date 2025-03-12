@@ -13,11 +13,12 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const [open, setOpen] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const user = auth.currentUser;
   const isAdmin = user?.email === "nayroncbruschi@hotmail.com";
+  const isDashboard = location === "/dashboard";
 
   useEffect(() => {
     if (user) {
@@ -45,14 +46,17 @@ export function AppLayout({ children }: AppLayoutProps) {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-lg border-b border-white/5">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-white/10"
-            onClick={() => navigate("/dashboard")}
-          >
-            <Home className="h-6 w-6" />
-          </Button>
+          {!isDashboard && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/10"
+              onClick={() => navigate("/dashboard")}
+            >
+              <Home className="h-6 w-6" />
+            </Button>
+          )}
+          <div className={isDashboard ? "flex-1" : ""} />
           <GorfLogo size="small" className="flex-shrink-0" />
           <div className="flex-1 flex justify-end">
             <Sheet open={open} onOpenChange={setOpen}>
