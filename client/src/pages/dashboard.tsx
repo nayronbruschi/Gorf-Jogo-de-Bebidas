@@ -105,7 +105,7 @@ export default function Dashboard() {
                     <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
                       <game.icon className="h-7 w-7 text-white" />
                     </div>
-                    <span className="text-xs text-white text-center mt-1 px-4">{game.name}</span>
+                    <span className="text-xs text-white text-center mt-1 px-8">{game.name}</span>
                   </div>
                 </CarouselItem>
               ))}
