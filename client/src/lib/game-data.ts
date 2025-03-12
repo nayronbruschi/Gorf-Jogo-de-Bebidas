@@ -239,6 +239,13 @@ export const decks: DeckType[] = [
 
 export const games: GameType[] = [
   {
+    id: "gorf",
+    name: "Gorf",
+    description: "Esse modo é para começar ou terminar o rolê. Quer beber muito? Então clica aqui!",
+    icon: GamepadIcon,
+    route: "/roulette/start"
+  },
+  {
     id: "classic",
     name: "Modo Clássico",
     description: "Desafios divertidos e clássicos para todos!",
