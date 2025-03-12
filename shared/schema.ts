@@ -43,8 +43,8 @@ export interface UserGameStats {
   lastGamePlayed: string | null;
   totalGamesPlayed: number;
   victories: number;
-  uniquePlayers: number;
   totalPlayTime: number; // in minutes
+  lastGameStartTime: string | null;
 }
 
 // Schemas Zod para validação
@@ -81,8 +81,8 @@ export const userGameStatsSchema = z.object({
   lastGamePlayed: z.string().nullable(),
   totalGamesPlayed: z.number(),
   victories: z.number(),
-  uniquePlayers: z.number(),
   totalPlayTime: z.number(),
+  lastGameStartTime: z.string().nullable()
 });
 
 export type InsertPlayer = z.infer<typeof insertPlayerSchema>;

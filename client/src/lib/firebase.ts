@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, getDocs } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, getDocs, increment } from "firebase/firestore";
 import type { UserProfile, UserGameStats } from "@shared/schema";
 
 // Helper para acessar variáveis de ambiente
@@ -51,8 +51,8 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
       lastGamePlayed: null,
       totalGamesPlayed: 0,
       victories: 0,
-      uniquePlayers: 0,
       totalPlayTime: 0,
+      lastGameStartTime: null
     });
 
     // Inicializar jogos recentes
@@ -87,7 +87,35 @@ export async function getUserStats(userId: string): Promise<UserGameStats | null
 export async function getRecentGames(userId: string) {
   const recentGamesRef = doc(db, 'recentGames', userId);
   const recentGamesDoc = await getDoc(recentGamesRef);
-  return recentGamesDoc.exists() ? recentGamesDoc.data().games : [];
+  return recentGamesDoc.exists() ? recentGamesDoc.data().games.slice(0, 3) : [];
+}
+
+// Funções para gerenciar o tempo de jogo
+export async function startGameSession(userId: string) {
+  const statsRef = doc(db, 'userStats', userId);
+  const now = new Date().toISOString();
+
+  await updateDoc(statsRef, {
+    lastGameStartTime: now,
+    totalGamesPlayed: increment(1)
+  });
+}
+
+export async function endGameSession(userId: string) {
+  const statsRef = doc(db, 'userStats', userId);
+  const statsDoc = await getDoc(statsRef);
+  const stats = statsDoc.data();
+
+  if (stats?.lastGameStartTime) {
+    const startTime = new Date(stats.lastGameStartTime);
+    const endTime = new Date();
+    const playTimeInMinutes = Math.floor((endTime.getTime() - startTime.getTime()) / (1000 * 60));
+
+    await updateDoc(statsRef, {
+      lastGameStartTime: null,
+      totalPlayTime: increment(playTimeInMinutes)
+    });
+  }
 }
 
 export async function updateRecentGames(userId: string, gameData: {
@@ -95,22 +123,34 @@ export async function updateRecentGames(userId: string, gameData: {
   date: string;
   players: number;
   winner: string;
-}) {
+}, isNewGame: boolean = true) {
   const recentGamesRef = doc(db, 'recentGames', userId);
   const recentGamesDoc = await getDoc(recentGamesRef);
 
   if (recentGamesDoc.exists()) {
     const currentGames = recentGamesDoc.data().games || [];
-    const newGames = [gameData, ...currentGames.slice(0, 2)]; // Keep only last 3 games
-    await updateDoc(recentGamesRef, { games: newGames });
-  }
 
-  // Update last game played in stats
-  const statsRef = doc(db, 'userStats', userId);
-  await updateDoc(statsRef, {
-    lastGamePlayed: gameData.date,
-    totalGamesPlayed: arrayUnion(1)
-  });
+    // Verificar duplicidade nos últimos 5 segundos
+    const fiveSecondsAgo = new Date(Date.now() - 5000).toISOString();
+    const isDuplicate = currentGames.some(game =>
+      game.date > fiveSecondsAgo &&
+      game.name === gameData.name &&
+      game.winner === gameData.winner
+    );
+
+    if (!isDuplicate) {
+      const newGames = [gameData, ...currentGames.slice(0, 2)]; // Manter apenas os 3 últimos jogos
+      await updateDoc(recentGamesRef, { games: newGames });
+
+      // Atualizar último jogo jogado nas estatísticas apenas se for um novo jogo
+      if (isNewGame) {
+        const statsRef = doc(db, 'userStats', userId);
+        await updateDoc(statsRef, {
+          lastGamePlayed: gameData.date
+        });
+      }
+    }
+  }
 }
 
 // Limpar dados de jogos de todos os usuários
@@ -128,8 +168,8 @@ export async function clearAllUsersGameData() {
       lastGamePlayed: null,
       totalGamesPlayed: 0,
       victories: 0,
-      uniquePlayers: 0,
       totalPlayTime: 0,
+      lastGameStartTime: null
     }, { merge: true });
 
     // Clear recent games
