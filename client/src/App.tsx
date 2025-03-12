@@ -48,9 +48,11 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   }
 
   // Se não tiver perfil completo, redirecionar para onboarding
-  if (!profile?.name || !profile?.gender || !profile?.favoriteSocialNetwork) {
-    window.location.href = "/onboarding";
-    return null;
+  if (!profile?.name || !profile?.birthDate || !profile?.gender || !profile?.favoriteSocialNetwork) {
+    if (window.location.pathname !== "/onboarding") {
+      window.location.href = "/onboarding";
+      return null;
+    }
   }
 
   return <Component />;
@@ -61,7 +63,9 @@ function Router() {
     <Switch>
       <Route path="/" component={Auth} />
       <Route path="/auth" component={Auth} />
-      <Route path="/onboarding" component={Onboarding} />
+      <Route path="/onboarding">
+        <ProtectedRoute component={Onboarding} />
+      </Route>
       <Route path="/dashboard">
         <ProtectedRoute component={Dashboard} />
       </Route>

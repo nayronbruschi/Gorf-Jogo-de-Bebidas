@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { auth, createUserProfile } from "@/lib/firebase";
+import { auth, createUserProfile, updateUserProfile } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -37,13 +37,36 @@ export default function Onboarding() {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState<Step>("name");
   const [formData, setFormData] = useState({
-    name: auth.currentUser?.displayName || "",
+    name: "",
     birthDate: "",
     gender: "",
-    favoriteSocialNetwork: [] as string[],
+    favoriteSocialNetwork: "",
   });
 
-  const updateField = (field: string, value: string | string[]) => {
+  // Load user data on mount
+  useEffect(() => {
+    const loadInitialData = async () => {
+      if (!auth.currentUser) {
+        setLocation("/auth");
+        return;
+      }
+
+      // Try to get existing profile
+      const profile = await createUserProfile(auth.currentUser.uid);
+      if (profile) {
+        setFormData({
+          name: profile.name || auth.currentUser.displayName || "",
+          birthDate: profile.birthDate || "",
+          gender: profile.gender || "",
+          favoriteSocialNetwork: profile.favoriteSocialNetwork || "",
+        });
+      }
+    };
+
+    loadInitialData();
+  }, [setLocation]);
+
+  const updateField = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -55,26 +78,7 @@ export default function Onboarding() {
   };
 
   const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const cleanValue = value.replace(/\D/g, '');
-
-    // Only allow up to 8 digits
-    if (cleanValue.length <= 8) {
-      try {
-        // Format yyyy-mm-dd for HTML date input
-        const year = cleanValue.slice(0, 4);
-        const month = cleanValue.slice(4, 6);
-        const day = cleanValue.slice(6, 8);
-
-        // Validate year
-        if (year && parseInt(year) >= 1900 && parseInt(year) <= new Date().getFullYear()) {
-          const dateStr = `${year}${month ? `-${month}` : ''}${day ? `-${day}` : ''}`;
-          updateField("birthDate", dateStr);
-        }
-      } catch (error) {
-        console.error('Error formatting date:', error);
-      }
-    }
+    updateField("birthDate", e.target.value);
   };
 
   const handleNext = async () => {
@@ -82,14 +86,7 @@ export default function Onboarding() {
 
     // Validar campo atual apenas se não estiver no passo final
     if (currentStep !== "finish") {
-      if (currentStep === "social" && formData.favoriteSocialNetwork.length === 0) {
-        toast({
-          title: "Campo obrigatório",
-          description: "Por favor, selecione pelo menos uma rede social.",
-          variant: "destructive",
-        });
-        return;
-      } else if (currentStep !== "social" && !formData[currentStep as keyof typeof formData]) {
+      if (!formData[currentStep as keyof typeof formData]) {
         toast({
           title: "Campo obrigatório",
           description: "Por favor, preencha o campo antes de continuar.",
@@ -106,10 +103,11 @@ export default function Onboarding() {
           throw new Error("Usuário não autenticado");
         }
 
-        await createUserProfile(auth.currentUser.uid, {
+        await updateUserProfile({
           ...formData,
-          favoriteSocialNetwork: formData.favoriteSocialNetwork,
+          id: auth.currentUser.uid,
         });
+
         setLocation("/dashboard");
       } catch (error) {
         console.error("Erro ao salvar perfil:", error);
@@ -129,9 +127,9 @@ export default function Onboarding() {
   const toggleSocialNetwork = (network: string) => {
     const current = formData.favoriteSocialNetwork;
     if (current.includes(network)) {
-      updateField("favoriteSocialNetwork", current.filter(n => n !== network));
-    } else if (current.length < 2) {
-      updateField("favoriteSocialNetwork", [...current, network]);
+      updateField("favoriteSocialNetwork", current.replace(network, ""));
+    } else {
+      updateField("favoriteSocialNetwork", current + (current ? "," : "") + network);
     }
   };
 
@@ -244,8 +242,8 @@ export default function Onboarding() {
                   );
                 })}
               </div>
-              <Button 
-                onClick={handleNext} 
+              <Button
+                onClick={handleNext}
                 className="w-full bg-white text-purple-700 hover:bg-white/90 py-7"
                 disabled={formData.favoriteSocialNetwork.length === 0}
               >

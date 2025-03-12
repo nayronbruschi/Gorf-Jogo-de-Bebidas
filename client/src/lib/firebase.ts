@@ -37,12 +37,13 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
 
   if (!userDoc.exists()) {
     const now = new Date().toISOString();
+    // Create minimal profile to force onboarding
     const defaultProfile = {
       id: userId,
-      name: profile.name || auth.currentUser?.displayName || auth.currentUser?.email?.split('@')[0] || "Usuário",
+      name: "",
       birthDate: "",
-      gender: "homem",
-      favoriteSocialNetwork: "instagram",
+      gender: "",
+      favoriteSocialNetwork: "",
       createdAt: now,
       updatedAt: now,
     };
