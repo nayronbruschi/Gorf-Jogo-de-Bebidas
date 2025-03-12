@@ -62,45 +62,45 @@ export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdate
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white rounded-xl">
+      <DialogContent className="bg-gray-900 border-gray-800">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-purple-900">
+          <DialogTitle className="text-2xl text-white">
             Editar Perfil
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm text-gray-600">Nome</label>
+            <label className="text-sm text-gray-300">Nome</label>
             <Input
               value={formData.name}
               onChange={(e) => updateField("name", e.target.value)}
               placeholder="Seu nome"
-              className="bg-gray-50"
+              className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-gray-600">Data de Nascimento</label>
+            <label className="text-sm text-gray-300">Data de Nascimento</label>
             <Input
               type="date"
               value={formData.birthDate}
               onChange={(e) => updateField("birthDate", e.target.value)}
-              className="bg-gray-50"
+              className="bg-gray-800 border-gray-700 text-white [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-gray-600">Gênero</label>
+            <label className="text-sm text-gray-300">Gênero</label>
             <Select
               value={formData.gender}
               onValueChange={(value) => updateField("gender", value)}
             >
-              <SelectTrigger className="bg-gray-50">
+              <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                 <SelectValue placeholder="Selecione seu gênero" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-gray-800 border-gray-700">
                 {genderOptions.map((gender) => (
-                  <SelectItem key={gender} value={gender}>
+                  <SelectItem key={gender} value={gender} className="text-white hover:bg-gray-700">
                     {GENDER_LABELS[gender]}
                   </SelectItem>
                 ))}
@@ -109,17 +109,17 @@ export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdate
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-gray-600">Rede Social Favorita</label>
+            <label className="text-sm text-gray-300">Rede Social Favorita</label>
             <Select
               value={formData.favoriteSocialNetwork}
               onValueChange={(value) => updateField("favoriteSocialNetwork", value)}
             >
-              <SelectTrigger className="bg-gray-50">
+              <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                 <SelectValue placeholder="Selecione sua rede social favorita" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-gray-800 border-gray-700">
                 {socialNetworkOptions.map((social) => (
-                  <SelectItem key={social} value={social}>
+                  <SelectItem key={social} value={social} className="text-white hover:bg-gray-700">
                     {social.charAt(0).toUpperCase() + social.slice(1)}
                   </SelectItem>
                 ))}
@@ -129,7 +129,7 @@ export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdate
 
           <Button
             onClick={handleSave}
-            className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white"
           >
             Salvar Alterações
           </Button>

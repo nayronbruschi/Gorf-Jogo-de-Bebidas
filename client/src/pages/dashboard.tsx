@@ -13,10 +13,9 @@ import { GamepadIcon, Users, Clock } from "lucide-react";
 import { PromotionalBanner } from "@/components/PromotionalBanner";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { games } from "@/lib/game-data";
-import { getUserStats } from "@/lib/stats";
+import { getUserStats } from "@/lib/firebase";
 import { useQuery } from "@tanstack/react-query";
-import { auth, db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { auth, db, getRecentGames } from "@/lib/firebase";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -24,26 +23,31 @@ interface GameSession {
   name: string;
   date: string;
   players: number;
+  winner: string;
 }
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
+  const userId = auth.currentUser?.uid;
 
   // Fetch user stats from Firebase
   const { data: userStats } = useQuery({
-    queryKey: ['userStats'],
-    queryFn: getUserStats
+    queryKey: ['userStats', userId],
+    queryFn: async () => {
+      if (!userId) return null;
+      return await getUserStats(userId);
+    },
+    enabled: !!userId
   });
 
   // Fetch recent games from Firebase
   const { data: recentGames } = useQuery<GameSession[]>({
-    queryKey: ['recentGames'],
+    queryKey: ['recentGames', userId],
     queryFn: async () => {
-      if (!auth.currentUser) return [];
-      const recentGamesRef = doc(db, 'recentGames', auth.currentUser.uid);
-      const recentGamesDoc = await getDoc(recentGamesRef);
-      return recentGamesDoc.exists() ? recentGamesDoc.data().games : [];
-    }
+      if (!userId) return [];
+      return await getRecentGames(userId);
+    },
+    enabled: !!userId
   });
 
   // Memoize stats to prevent unnecessary recalculations
@@ -89,6 +93,11 @@ export default function Dashboard() {
       return dateString;
     }
   };
+
+  if (!userId) {
+    navigate("/auth");
+    return null;
+  }
 
   return (
     <AppLayout>
