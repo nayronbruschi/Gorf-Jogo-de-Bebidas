@@ -12,7 +12,6 @@ import Dashboard from "@/pages/dashboard";
 import Stats from "@/pages/stats";
 import GameModes from "@/pages/game-modes";
 import Admin from "@/pages/admin";
-import Onboarding from "@/pages/onboarding";
 import ClassicStart from "@/pages/classic-start";
 import ClassicPlayers from "@/pages/classic-players";
 import ClassicMode from "@/pages/classic-mode";
@@ -32,25 +31,15 @@ import GuessWhoGame from "@/pages/guess-who-game";
 import Profile from "@/pages/profile";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
-  const { isAuthenticated, loading, profile } = useAuth();
-  //const [location, setLocation] = useLocation(); // Removed because not used anymore
+  const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
     return <LoadingScreen />;
   }
 
   // Se não estiver autenticado, redirecionar para auth
-  if (!isAuthenticated ) {
+  if (!isAuthenticated) {
     return <Route path="/auth" component={Auth} />;
-  }
-
-
-  // Se o usuário está autenticado mas precisa completar o onboarding
-  if (isAuthenticated && profile ) {
-    const needsOnboarding = !profile.name || !profile.birthDate || !profile.gender || !profile.favoriteSocialNetwork;
-    if (needsOnboarding) {
-      return <Route path="/onboarding" component={Onboarding} />;
-    }
   }
 
   return <Component />;
@@ -61,9 +50,6 @@ function Router() {
     <Switch>
       <Route path="/" component={Auth} />
       <Route path="/auth" component={Auth} />
-      <Route path="/onboarding">
-        <ProtectedRoute component={Onboarding} />
-      </Route>
       <Route path="/dashboard">
         <ProtectedRoute component={Dashboard} />
       </Route>
