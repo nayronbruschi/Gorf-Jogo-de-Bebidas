@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
-import { auth, getUserProfile, getUserStats } from "@/lib/firebase";
+import { auth, getUserProfile, getUserStats, updateUserProfile } from "@/lib/firebase";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserProfile, UserGameStats } from "@shared/schema";
-import { Loader2, Clock, Trophy, Users, GamepadIcon, History } from "lucide-react";
+import { Loader2, Clock, Trophy, Users, GamepadIcon, History, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
+import { ProfileEditDialog } from "@/components/ProfileEditDialog";
 
 export default function Profile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [stats, setStats] = useState<UserGameStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [, navigate] = useLocation();
 
   useEffect(() => {
@@ -35,6 +37,12 @@ export default function Profile() {
     loadUserData();
   }, []);
 
+  const handleProfileUpdated = async () => {
+    if (!auth.currentUser) return;
+    const updatedProfile = await getUserProfile(auth.currentUser.uid);
+    setProfile(updatedProfile);
+  };
+
   if (loading) {
     return (
       <AppLayout>
@@ -50,7 +58,15 @@ export default function Profile() {
       <div className="container mx-auto px-4 py-8">
         <div className="space-y-8">
           {/* Profile Information */}
-          <Card className="bg-white/10 backdrop-blur-lg border-none">
+          <Card className="bg-white/10 backdrop-blur-lg border-none relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-4 right-4 text-white/60 hover:text-white hover:bg-white/10"
+              onClick={() => setShowEditDialog(true)}
+            >
+              <Edit className="h-5 w-5" />
+            </Button>
             <CardHeader>
               <CardTitle className="text-2xl text-white">Perfil</CardTitle>
             </CardHeader>
@@ -126,6 +142,13 @@ export default function Profile() {
             </CardContent>
           </Card>
         </div>
+
+        <ProfileEditDialog
+          open={showEditDialog}
+          onOpenChange={setShowEditDialog}
+          profile={profile}
+          onProfileUpdated={handleProfileUpdated}
+        />
       </div>
     </AppLayout>
   );
