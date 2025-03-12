@@ -86,7 +86,8 @@ export default function Onboarding() {
 
     // Validar campo atual apenas se não estiver no passo final
     if (currentStep !== "finish") {
-      if (!formData[currentStep as keyof typeof formData]) {
+      // Não validar campo social aqui pois já é controlado pelo botão disabled
+      if (currentStep !== "social" && !formData[currentStep as keyof typeof formData]) {
         toast({
           title: "Campo obrigatório",
           description: "Por favor, preencha o campo antes de continuar.",
