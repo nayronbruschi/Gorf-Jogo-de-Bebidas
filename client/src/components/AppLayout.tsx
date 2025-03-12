@@ -43,7 +43,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
+    <div className="min-h-screen h-full bg-gradient-to-br from-gray-900 to-black flex flex-col">
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-lg border-b border-white/5">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           {!isDashboard ? (
@@ -122,7 +122,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
       </header>
 
-      <main className="pt-16 relative h-[calc(100vh-4rem)] overflow-auto">
+      <main className="flex-1 pt-16 relative">
         {children}
       </main>
     </div>

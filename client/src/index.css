@@ -7,8 +7,26 @@
     @apply border-border;
   }
 
+  html, body {
+    @apply h-full antialiased overflow-hidden;
+  }
+
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans bg-background text-foreground;
+    min-height: 100vh;
+    /* Fallback para navegadores mais antigos */
+    min-height: -webkit-fill-available;
+    min-height: -moz-available;
+    min-height: stretch;
+  }
+
+  #root {
+    @apply h-full;
+    min-height: 100vh;
+    /* Fallback para navegadores mais antigos */
+    min-height: -webkit-fill-available;
+    min-height: -moz-available;
+    min-height: stretch;
   }
 
   /* Esconder barras de rolagem mas manter funcionalidade */
