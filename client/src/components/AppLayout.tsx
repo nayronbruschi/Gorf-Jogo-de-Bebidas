@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Home, GamepadIcon, BarChart2, LogOut, UserCircle } from "lucide-react";
+import { Home, GamepadIcon, LogOut, UserCircle } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 
@@ -33,7 +33,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-lg">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-lg border-b border-white/5">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex-1" />
           <h1 className="text-3xl font-bold text-white text-center">Gorf</h1>
@@ -101,7 +101,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
       </header>
 
-      <main className="pt-16">
+      <main className="pt-16 relative h-[calc(100vh-4rem)] overflow-auto">
         {children}
       </main>
     </div>
