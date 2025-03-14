@@ -8,13 +8,14 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
     iosScheme: 'https',
     cleartext: true,
-    hostname: 'app'
+    hostname: 'localhost'
   },
   ios: {
     scheme: 'Gorf',
     contentInset: 'automatic',
     backgroundColor: '#000000',
-    preferredContentMode: 'mobile'
+    preferredContentMode: 'mobile',
+    limitsNavigationsToAppBoundDomains: true
   }
 };
 
