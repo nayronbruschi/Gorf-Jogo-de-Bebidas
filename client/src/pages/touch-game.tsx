@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, ChevronLeft, Hand } from "lucide-react";
 import { useLocation } from "wouter";
+import { apiRequest } from "@/lib/queryClient";
 
 interface TouchPoint {
   id: number;
@@ -148,6 +149,8 @@ export default function TouchGame() {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
+      // Cleanup players when component unmounts
+      apiRequest('DELETE', '/api/players/all').catch(console.error);
     };
   }, [isPlaying, gameEnded]);
 
