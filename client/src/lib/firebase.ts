@@ -42,8 +42,8 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
       id: userId,
       name: profile.name || auth.currentUser?.displayName || "Usuário",
       birthDate: profile.birthDate || now,
-      gender: "homem",
-      favoriteSocialNetwork: "instagram",
+      gender: profile.gender || "homem",
+      favoriteSocialNetwork: profile.favoriteSocialNetwork || "instagram",
       createdAt: now,
       updatedAt: now,
     };
@@ -141,7 +141,7 @@ export async function updateRecentGames(userId: string, gameData: {
 
     // Verificar duplicidade nos últimos 5 segundos
     const fiveSecondsAgo = new Date(Date.now() - 5000).toISOString();
-    const isDuplicate = currentGames.some(game =>
+    const isDuplicate = currentGames.some((game: any) =>
       game.date > fiveSecondsAgo &&
       game.name === gameData.name &&
       game.winner === gameData.winner

@@ -12,19 +12,19 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { updateUserProfile } from "@/lib/firebase";
+import { createUserProfile } from "@/lib/firebase";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function Onboarding() {
   const [, setLocation] = useLocation();
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.displayName || "",
     birthDate: "",
-    gender: "homem",
-    favoriteSocialNetwork: "instagram"
+    gender: "homem" as const,
+    favoriteSocialNetwork: "instagram" as const
   });
 
   if (!user) {
@@ -37,12 +37,7 @@ export default function Onboarding() {
     setIsLoading(true);
 
     try {
-      await updateUserProfile({
-        ...formData,
-        id: user.uid,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      });
+      await createUserProfile(user.uid, formData);
 
       toast({
         title: "Perfil criado com sucesso!",
@@ -51,11 +46,11 @@ export default function Onboarding() {
 
       setLocation("/dashboard");
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error("Error creating profile:", error);
       toast({
         variant: "destructive",
         title: "Erro ao criar perfil",
-        description: "Tente novamente mais tarde"
+        description: "Por favor, tente novamente."
       });
     } finally {
       setIsLoading(false);
@@ -103,7 +98,7 @@ export default function Onboarding() {
               <Label className="text-white">Gênero</Label>
               <Select
                 value={formData.gender}
-                onValueChange={(value) => setFormData({ ...formData, gender: value })}
+                onValueChange={(value: "homem" | "mulher" | "não-binário") => setFormData({ ...formData, gender: value })}
               >
                 <SelectTrigger className="bg-white/20 text-white border-none">
                   <SelectValue />
@@ -111,7 +106,7 @@ export default function Onboarding() {
                 <SelectContent>
                   <SelectItem value="homem">Homem</SelectItem>
                   <SelectItem value="mulher">Mulher</SelectItem>
-                  <SelectItem value="outro">Outro</SelectItem>
+                  <SelectItem value="não-binário">Não-binário</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -120,7 +115,7 @@ export default function Onboarding() {
               <Label className="text-white">Rede Social Favorita</Label>
               <Select
                 value={formData.favoriteSocialNetwork}
-                onValueChange={(value) => setFormData({ ...formData, favoriteSocialNetwork: value })}
+                onValueChange={(value: "instagram" | "tiktok" | "facebook" | "twitter") => setFormData({ ...formData, favoriteSocialNetwork: value })}
               >
                 <SelectTrigger className="bg-white/20 text-white border-none">
                   <SelectValue />
