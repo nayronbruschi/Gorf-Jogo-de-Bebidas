@@ -41,43 +41,43 @@ export default function GameModes() {
         <GameCard
           title="Gorf"
           description="Esse modo é para começar ou terminar o rolê. Quer beber muito? Então clica aqui!"
-          icon={<CircleDot className="h-8 w-8 text-purple-500" />}
+          icon={CircleDot}
           href="/roulette"
         />
         <GameCard
           title="Modo Clássico"
           description="Desafios e perguntas para todos os jogadores beberem conforme as regras."
-          icon={<GamepadIcon className="h-8 w-8 text-purple-500" />}
+          icon={GamepadIcon}
           href="/classic"
         />
         <GameCard
           title="Quem Sou Eu?"
           description="Descubra qual personagem, animal ou objeto você é fazendo perguntas!"
-          icon={<Brain className="h-8 w-8 text-purple-500" />}
+          icon={Brain}
           href="/guess-who/players"
         />
         <GameCard
-          title={<>Toque na<br/>Sorte</>}
+          title="Toque na Sorte"
           description="Toque na tela e veja quem será o escolhido pelo destino!"
-          icon={<Hand className="h-8 w-8 text-purple-500" />}
+          icon={Hand}
           href="/touch-game"
         />
         <GameCard
           title="Garrafa Giratória"
           description="Gire a garrafa e descubra quem será o próximo a beber!"
-          icon={<Wine className="h-8 w-8 text-purple-500" />}
+          icon={Wine}
           href="/spin-bottle"
         />
         <GameCard
-          title={<>Cara ou<br/>Coroa</>}
+          title="Cara ou Coroa"
           description="Deixe a sorte decidir quem vai beber!"
-          icon={<Coins className="h-8 w-8 text-purple-500" />}
+          icon={Coins}
           href="/coin-flip"
         />
         <GameCard
           title="Sueca"
           description="Cada carta tem sua regra. Quem será o próximo a beber?"
-          icon={<LayoutGrid className="h-8 w-8 text-purple-500" />}
+          icon={LayoutGrid}
           href="/cards"
         />
       </div>
