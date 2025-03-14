@@ -150,8 +150,11 @@ export default function RouletteMode() {
 
   // Ordenar jogadores por pontos
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
-  const winner = sortedPlayers[0];
-  const topDrinker = winner;
+  const winner = showWinner ? sortedPlayers[0] : null;
+  const topDrinker = winner ? {
+    name: winner.name,
+    drinks: winner.points
+  } : null;
 
   return (
     <GameLayout title="">
@@ -210,7 +213,7 @@ export default function RouletteMode() {
                     variant={action === "drink" ? "outline" : "default"}
                     className={action === "drink"
                       ? "border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700 w-full sm:w-auto justify-center"
-                      : "bg-purple-700 hover:bg-purple-800 text-white w-full sm:w-auto justify-center"}
+                      : "bg-purple-900 hover:bg-purple-950 text-white hover:text-white w-full sm:w-auto justify-center"}
                   >
                     <Beer className="mr-2 h-5 w-5" />
                     Bebeu
@@ -268,7 +271,7 @@ export default function RouletteMode() {
               size="lg"
               onClick={handleNextPlayer}
               disabled={updatePoints.isPending}
-              className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl w-full"
+              className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white px-8 py-6 text-xl w-full"
             >
               Sortear Próximo Jogador
             </Button>
@@ -296,16 +299,13 @@ export default function RouletteMode() {
           <PlayerList />
         </DialogContent>
       </Dialog>
-      {showWinner && winner && (
+      {showWinner && winner && topDrinker && (
         <WinnerScreen
           winner={{
             name: winner.name,
             points: winner.points
           }}
-          topDrinker={{
-            name: topDrinker.name,
-            drinks: topDrinker.points
-          }}
+          topDrinker={topDrinker}
           maxPoints={maxPoints}
           onPlayAgain={resetGame}
         />

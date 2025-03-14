@@ -53,7 +53,7 @@ export function PunishmentDialog({
           <div className="flex flex-col gap-2">
             <Button
               onClick={onAcceptPunishment}
-              className="bg-purple-900 hover:bg-purple-950 text-white text-xl py-6"
+              className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white text-xl py-6"
             >
               Fez o desafio
             </Button>
