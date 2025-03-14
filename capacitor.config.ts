@@ -7,10 +7,14 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
     iosScheme: 'https',
-    cleartext: true
+    cleartext: true,
+    hostname: 'app'
   },
   ios: {
-    scheme: 'Gorf'
+    scheme: 'Gorf',
+    contentInset: 'automatic',
+    backgroundColor: '#000000',
+    preferredContentMode: 'mobile'
   }
 };
 
