@@ -42,7 +42,7 @@ export default function GameModes() {
           title="Gorf"
           description="Esse modo é para começar ou terminar o rolê. Quer beber muito? Então clica aqui!"
           icon={CircleDot}
-          href="/roulette"
+          href="/roulette/start"
         />
         <GameCard
           title="Modo Clássico"
