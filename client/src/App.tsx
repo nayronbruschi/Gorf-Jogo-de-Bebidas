@@ -37,7 +37,6 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
     return <LoadingScreen />;
   }
 
-  // Se não estiver autenticado, redirecionar para auth
   if (!isAuthenticated) {
     return <Route path="/auth" component={Auth} />;
   }
@@ -74,7 +73,7 @@ function Router() {
       <Route path="/classic/play">
         <ProtectedRoute component={ClassicMode} />
       </Route>
-      <Route path="/roulette">
+      <Route path="/roulette/start">
         <ProtectedRoute component={RouletteStart} />
       </Route>
       <Route path="/roulette/players">
