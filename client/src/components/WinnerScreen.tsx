@@ -6,19 +6,10 @@ import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 
 interface WinnerScreenProps {
-  winner: {
-    name: string;
-    points: number;
-  };
-  topDrinker: {
-    name: string;
-    drinks: number;
-  };
-  maxPoints: number;
   onPlayAgain: () => void;
 }
 
-export function WinnerScreen({ winner, topDrinker, maxPoints, onPlayAgain }: WinnerScreenProps) {
+export function WinnerScreen({ onPlayAgain }: WinnerScreenProps) {
   const [, navigate] = useLocation();
 
   const handleChooseNewGame = async () => {
@@ -28,9 +19,6 @@ export function WinnerScreen({ winner, topDrinker, maxPoints, onPlayAgain }: Win
 
       // Limpar todos os jogadores
       await apiRequest("DELETE", "/api/players/all", {});
-
-      // Resetar configurações do jogo
-      await apiRequest("PATCH", "/api/settings", { maxPoints: 100 });
 
       // Invalidar queries para forçar recarregamento dos dados
       await queryClient.invalidateQueries();
@@ -85,34 +73,17 @@ export function WinnerScreen({ winner, topDrinker, maxPoints, onPlayAgain }: Win
         <Trophy className="h-16 w-16 text-yellow-400 mx-auto mb-6" />
 
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          {winner.name} ganhou o jogo!
+          Alguém deu gorf!
         </h2>
 
-        <p className="text-gray-600 mb-4">
-          <span className="font-bold text-purple-600">{winner.name}</span> atingiu {maxPoints} pontos primeiro!
-        </p>
-
         <p className="text-gray-600 mb-6">
-          {topDrinker.name === winner.name ? (
-            <>
-              E ainda foi quem mais bebeu com <span className="font-bold text-purple-600">{topDrinker.drinks} goles</span>!
-            </>
-          ) : (
-            <>
-              Mas quem mais bebeu foi <span className="font-bold text-purple-600">{topDrinker.name}</span> com{" "}
-              <span className="font-bold text-purple-600">{topDrinker.drinks} goles</span>!
-            </>
-          )}
-        </p>
-
-        <p className="text-xl font-bold text-gray-900 mb-6">
-          Bora jogar de novo?
+          E parece que bebeu muito!
         </p>
 
         <div className="grid grid-cols-2 gap-4">
           <Button
             onClick={onPlayAgain}
-            className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white flex items-center justify-center"
+            className="bg-purple-700 hover:bg-purple-800 text-white hover:text-white flex items-center justify-center"
           >
             <Play className="h-4 w-4 mr-2" />
             Jogar de novo

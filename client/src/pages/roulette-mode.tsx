@@ -299,14 +299,8 @@ export default function RouletteMode() {
           <PlayerList />
         </DialogContent>
       </Dialog>
-      {showWinner && winner && topDrinker && (
+      {showWinner && (
         <WinnerScreen
-          winner={{
-            name: winner.name,
-            points: winner.points
-          }}
-          topDrinker={topDrinker}
-          maxPoints={maxPoints}
           onPlayAgain={resetGame}
         />
       )}
