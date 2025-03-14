@@ -2,38 +2,53 @@ import { Player, InsertPlayer, GameSettings } from "@shared/schema";
 
 export interface IStorage {
   // Players
-  getPlayers(): Promise<Player[]>;
-  addPlayer(player: InsertPlayer): Promise<Player>;
-  updatePlayerPoints(id: string, points: number, type: "challenge" | "drink"): Promise<Player>;
-  getCurrentPlayer(): Promise<Player | undefined>;
-  setNextPlayer(): Promise<Player | undefined>;
-  removePlayer(id: string): Promise<void>;
-  removeAllPlayers(): Promise<void>;
-  resetPlayersPoints(): Promise<void>;
-  setFirstPlayer(): Promise<Player | undefined>;
-  getPlayer(id: string): Promise<Player | undefined>;
+  getPlayers(userId: string): Promise<Player[]>;
+  addPlayer(userId: string, player: InsertPlayer): Promise<Player>;
+  updatePlayerPoints(userId: string, id: string, points: number, type: "challenge" | "drink"): Promise<Player>;
+  getCurrentPlayer(userId: string): Promise<Player | undefined>;
+  setNextPlayer(userId: string): Promise<Player | undefined>;
+  removePlayer(userId: string, id: string): Promise<void>;
+  removeAllPlayers(userId: string): Promise<void>;
+  resetPlayersPoints(userId: string): Promise<void>;
+  setFirstPlayer(userId: string): Promise<Player | undefined>;
+  getPlayer(userId: string, id: string): Promise<Player | undefined>;
 
   // Game Settings
-  getGameSettings(): Promise<GameSettings>;
-  updateGameSettings(maxPoints: number): Promise<GameSettings>;
+  getGameSettings(userId: string): Promise<GameSettings>;
+  updateGameSettings(userId: string, maxPoints: number): Promise<GameSettings>;
+}
+
+interface UserGameState {
+  players: Player[];
+  settings: GameSettings;
 }
 
 class MemStorage implements IStorage {
-  private players: Player[] = [];
-  private settings: GameSettings = {
-    maxPoints: 100,
-    currentPlayerId: null
-  };
+  private userStates: Map<string, UserGameState> = new Map();
 
   private generateId(): string {
     return Math.random().toString(36).substr(2, 9);
   }
 
-  async getPlayers(): Promise<Player[]> {
-    return this.players;
+  private getUserState(userId: string): UserGameState {
+    if (!this.userStates.has(userId)) {
+      this.userStates.set(userId, {
+        players: [],
+        settings: {
+          maxPoints: 100,
+          currentPlayerId: null
+        }
+      });
+    }
+    return this.userStates.get(userId)!;
   }
 
-  async addPlayer(player: InsertPlayer): Promise<Player> {
+  async getPlayers(userId: string): Promise<Player[]> {
+    return this.getUserState(userId).players;
+  }
+
+  async addPlayer(userId: string, player: InsertPlayer): Promise<Player> {
+    const state = this.getUserState(userId);
     const newPlayer: Player = {
       id: this.generateId(),
       name: player.name,
@@ -43,18 +58,19 @@ class MemStorage implements IStorage {
       drinksCompleted: 0,
     };
 
-    this.players.push(newPlayer);
+    state.players.push(newPlayer);
 
     // Se for o primeiro jogador, define como jogador atual
-    if (this.players.length === 1) {
-      this.settings.currentPlayerId = newPlayer.id;
+    if (state.players.length === 1) {
+      state.settings.currentPlayerId = newPlayer.id;
     }
 
     return newPlayer;
   }
 
-  async updatePlayerPoints(id: string, points: number, type: "challenge" | "drink"): Promise<Player> {
-    const player = this.players.find(p => p.id === id);
+  async updatePlayerPoints(userId: string, id: string, points: number, type: "challenge" | "drink"): Promise<Player> {
+    const state = this.getUserState(userId);
+    const player = state.players.find(p => p.id === id);
     if (!player) {
       throw new Error("Player not found");
     }
@@ -69,75 +85,78 @@ class MemStorage implements IStorage {
     return player;
   }
 
-  async getCurrentPlayer(): Promise<Player | undefined> {
-    if (!this.settings.currentPlayerId) return undefined;
-    const currentPlayer = this.players.find(p => p.id === this.settings.currentPlayerId);
-    console.log('Current player:', currentPlayer); // Debug log
-    return currentPlayer;
+  async getCurrentPlayer(userId: string): Promise<Player | undefined> {
+    const state = this.getUserState(userId);
+    if (!state.settings.currentPlayerId) return undefined;
+    return state.players.find(p => p.id === state.settings.currentPlayerId);
   }
 
-  async setNextPlayer(): Promise<Player | undefined> {
-    if (this.players.length === 0) return undefined;
+  async setNextPlayer(userId: string): Promise<Player | undefined> {
+    const state = this.getUserState(userId);
+    if (state.players.length === 0) return undefined;
 
-    const currentIndex = this.players.findIndex(p => p.id === this.settings.currentPlayerId);
-    const nextIndex = (currentIndex + 1) % this.players.length;
-    const nextPlayer = this.players[nextIndex];
+    const currentIndex = state.players.findIndex(p => p.id === state.settings.currentPlayerId);
+    const nextIndex = (currentIndex + 1) % state.players.length;
+    const nextPlayer = state.players[nextIndex];
 
-    this.settings.currentPlayerId = nextPlayer.id;
-    console.log('Next player set to:', nextPlayer); // Debug log
+    state.settings.currentPlayerId = nextPlayer.id;
     return nextPlayer;
   }
 
-  async removePlayer(id: string): Promise<void> {
-    const index = this.players.findIndex(p => p.id === id);
+  async removePlayer(userId: string, id: string): Promise<void> {
+    const state = this.getUserState(userId);
+    const index = state.players.findIndex(p => p.id === id);
     if (index === -1) return;
 
     // Se o jogador removido era o atual, passa para o próximo
-    if (id === this.settings.currentPlayerId) {
-      await this.setNextPlayer();
+    if (id === state.settings.currentPlayerId) {
+      await this.setNextPlayer(userId);
     }
 
-    this.players.splice(index, 1);
+    state.players.splice(index, 1);
   }
 
-  async removeAllPlayers(): Promise<void> {
-    this.players = [];
-    this.settings.currentPlayerId = null;
+  async removeAllPlayers(userId: string): Promise<void> {
+    const state = this.getUserState(userId);
+    state.players = [];
+    state.settings.currentPlayerId = null;
   }
 
-  async resetPlayersPoints(): Promise<void> {
-    for (const player of this.players) {
+  async resetPlayersPoints(userId: string): Promise<void> {
+    const state = this.getUserState(userId);
+    for (const player of state.players) {
       player.points = 0;
       player.challengesCompleted = 0;
       player.drinksCompleted = 0;
     }
 
     // Resetar o jogador atual para o primeiro da lista
-    if (this.players.length > 0) {
-      this.settings.currentPlayerId = this.players[0].id;
+    if (state.players.length > 0) {
+      state.settings.currentPlayerId = state.players[0].id;
     }
   }
 
-  async setFirstPlayer(): Promise<Player | undefined> {
-    if (this.players.length === 0) return undefined;
+  async setFirstPlayer(userId: string): Promise<Player | undefined> {
+    const state = this.getUserState(userId);
+    if (state.players.length === 0) return undefined;
 
-    this.settings.currentPlayerId = this.players[0].id;
-    const firstPlayer = this.players[0];
-    console.log('First player set to:', firstPlayer); // Debug log
-    return firstPlayer;
+    state.settings.currentPlayerId = state.players[0].id;
+    return state.players[0];
   }
 
-  async getPlayer(id: string): Promise<Player | undefined> {
-    return this.players.find(p => p.id === id);
+  async getPlayer(userId: string, id: string): Promise<Player | undefined> {
+    const state = this.getUserState(userId);
+    return state.players.find(p => p.id === id);
   }
 
-  async getGameSettings(): Promise<GameSettings> {
-    return this.settings;
+  async getGameSettings(userId: string): Promise<GameSettings> {
+    return this.getUserState(userId).settings;
   }
 
-  async updateGameSettings(maxPoints: number): Promise<GameSettings> {
-    this.settings.maxPoints = maxPoints;
-    return this.settings;
+  async updateGameSettings(userId: string, maxPoints: number): Promise<GameSettings> {
+    const state = this.getUserState(userId);
+    state.settings.maxPoints = maxPoints;
+    return state.settings;
   }
 }
 

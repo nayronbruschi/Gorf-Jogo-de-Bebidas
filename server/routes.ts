@@ -14,6 +14,152 @@ const BUCKET_PATH = "replit-objstore-40b80319-33b5-4913-8c43-e847afc83215";
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
 
+  // Middleware para verificar se o userId está presente
+  const requireUserId = (req: any, res: any, next: any) => {
+    const userId = req.headers['x-user-id'];
+    if (!userId) {
+      return res.status(401).json({ message: "Usuário não autenticado" });
+    }
+    req.userId = userId;
+    next();
+  };
+
+  // Player routes
+  app.get("/api/players", requireUserId, async (req, res) => {
+    try {
+      const players = await storage.getPlayers(req.userId);
+      res.json(players);
+    } catch (error) {
+      console.error('Erro ao buscar jogadores:', error);
+      res.status(500).json({ message: "Erro ao buscar jogadores" });
+    }
+  });
+
+  app.post("/api/players", requireUserId, async (req, res) => {
+    try {
+      const result = insertPlayerSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ message: "Nome do jogador é obrigatório" });
+      }
+
+      const player = await storage.addPlayer(req.userId, result.data);
+      res.json(player);
+    } catch (error) {
+      console.error('Erro ao adicionar jogador:', error);
+      res.status(500).json({ message: "Erro ao adicionar jogador" });
+    }
+  });
+
+  app.get("/api/players/current", requireUserId, async (req, res) => {
+    try {
+      const player = await storage.getCurrentPlayer(req.userId);
+      if (!player) {
+        return res.status(404).json({ message: "Nenhum jogador atual" });
+      }
+      res.json(player);
+    } catch (error) {
+      console.error('Erro ao buscar jogador atual:', error);
+      res.status(500).json({ message: "Erro ao buscar jogador atual" });
+    }
+  });
+
+  app.post("/api/players/first", requireUserId, async (req, res) => {
+    try {
+      const player = await storage.setFirstPlayer(req.userId);
+      if (!player) {
+        return res.status(404).json({ message: "Nenhum jogador disponível" });
+      }
+      res.json(player);
+    } catch (error) {
+      console.error('Erro ao definir primeiro jogador:', error);
+      res.status(500).json({ message: "Erro ao definir primeiro jogador" });
+    }
+  });
+
+  app.post("/api/players/next", requireUserId, async (req, res) => {
+    try {
+      const player = await storage.setNextPlayer(req.userId);
+      if (!player) {
+        return res.status(404).json({ message: "Nenhum jogador disponível" });
+      }
+      res.json(player);
+    } catch (error) {
+      console.error('Erro ao definir próximo jogador:', error);
+      res.status(500).json({ message: "Erro ao definir próximo jogador" });
+    }
+  });
+
+  app.delete("/api/players/all", requireUserId, async (req, res) => {
+    try {
+      await storage.removeAllPlayers(req.userId);
+      res.status(204).end();
+    } catch (error) {
+      console.error('Erro ao remover todos os jogadores:', error);
+      res.status(500).json({ message: "Erro ao remover jogadores" });
+    }
+  });
+
+  app.patch("/api/players/:id/points", requireUserId, async (req, res) => {
+    try {
+      const result = updatePlayerPointsSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ message: "Dados inválidos" });
+      }
+
+      const id = req.params.id;
+      const player = await storage.updatePlayerPoints(req.userId, id, result.data.points, result.data.type);
+      res.json(player);
+    } catch (error) {
+      console.error('Erro ao atualizar pontos do jogador:', error);
+      res.status(404).json({ message: "Jogador não encontrado" });
+    }
+  });
+
+  app.delete("/api/players/:id", requireUserId, async (req, res) => {
+    try {
+      const id = req.params.id;
+      await storage.removePlayer(req.userId, id);
+      res.status(204).end();
+    } catch (error) {
+      console.error('Erro ao remover jogador:', error);
+      res.status(404).json({ message: "Jogador não encontrado" });
+    }
+  });
+
+  app.post("/api/players/reset", requireUserId, async (req, res) => {
+    try {
+      await storage.resetPlayersPoints(req.userId);
+      res.status(204).end();
+    } catch (error) {
+      console.error('Erro ao resetar pontuações:', error);
+      res.status(500).json({ message: "Erro ao resetar pontuações" });
+    }
+  });
+
+  app.get("/api/settings", requireUserId, async (req, res) => {
+    try {
+      const settings = await storage.getGameSettings(req.userId);
+      res.json(settings);
+    } catch (error) {
+      console.error('Erro ao buscar configurações do jogo:', error);
+      res.status(500).json({ message: "Erro ao buscar configurações do jogo" });
+    }
+  });
+
+  app.patch("/api/settings", requireUserId, async (req, res) => {
+    try {
+      const result = gameSettingsSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ message: "Pontuação máxima inválida" });
+      }
+      const settings = await storage.updateGameSettings(req.userId, result.data.maxPoints);
+      res.json(settings);
+    } catch (error) {
+      console.error('Erro ao atualizar configurações do jogo:', error);
+      res.status(500).json({ message: "Erro ao atualizar configurações do jogo" });
+    }
+  });
+
   // Rota de upload de imagens
   app.post("/api/upload", upload.single('file'), async (req, res) => {
     try {
@@ -131,148 +277,6 @@ export async function registerRoutes(app: Express) {
     }
   });
 
-  // Player routes
-  app.get("/api/players", async (_req, res) => {
-    try {
-      const players = await storage.getPlayers();
-      res.json(players);
-    } catch (error) {
-      console.error('Erro ao buscar jogadores:', error);
-      res.status(500).json({ message: "Erro ao buscar jogadores" });
-    }
-  });
-
-  app.post("/api/players", async (req, res) => {
-    try {
-      console.log("Recebendo requisição para adicionar jogador:", req.body);
-      const result = insertPlayerSchema.safeParse(req.body);
-      if (!result.success) {
-        console.error("Erro de validação:", result.error);
-        return res.status(400).json({ message: "Nome do jogador é obrigatório" });
-      }
-
-      const player = await storage.addPlayer(result.data);
-      console.log("Jogador adicionado com sucesso:", player);
-      res.json(player);
-    } catch (error) {
-      console.error('Erro ao adicionar jogador:', error);
-      res.status(500).json({ message: "Erro ao adicionar jogador" });
-    }
-  });
-
-  app.get("/api/players/current", async (_req, res) => {
-    try {
-      const player = await storage.getCurrentPlayer();
-      if (!player) {
-        return res.status(404).json({ message: "Nenhum jogador atual" });
-      }
-      console.log("Jogador atual:", player); // Debug log
-      res.json(player);
-    } catch (error) {
-      console.error('Erro ao buscar jogador atual:', error);
-      res.status(500).json({ message: "Erro ao buscar jogador atual" });
-    }
-  });
-
-  app.post("/api/players/first", async (_req, res) => {
-    try {
-      const player = await storage.setFirstPlayer();
-      if (!player) {
-        return res.status(404).json({ message: "Nenhum jogador disponível" });
-      }
-      console.log("Primeiro jogador definido:", player); // Debug log
-      res.json(player);
-    } catch (error) {
-      console.error('Erro ao definir primeiro jogador:', error);
-      res.status(500).json({ message: "Erro ao definir primeiro jogador" });
-    }
-  });
-
-  app.post("/api/players/next", async (_req, res) => {
-    try {
-      const player = await storage.setNextPlayer();
-      if (!player) {
-        return res.status(404).json({ message: "Nenhum jogador disponível" });
-      }
-      console.log("Próximo jogador definido:", player); // Debug log
-      res.json(player);
-    } catch (error) {
-      console.error('Erro ao definir próximo jogador:', error);
-      res.status(500).json({ message: "Erro ao definir próximo jogador" });
-    }
-  });
-
-  app.delete("/api/players/all", async (_req, res) => {
-    try {
-      await storage.removeAllPlayers();
-      res.status(204).end();
-    } catch (error) {
-      console.error('Erro ao remover todos os jogadores:', error);
-      res.status(500).json({ message: "Erro ao remover jogadores" });
-    }
-  });
-
-  app.patch("/api/players/:id/points", async (req, res) => {
-    try {
-      const result = updatePlayerPointsSchema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ message: "Dados inválidos" });
-      }
-
-      const id = req.params.id;
-      const player = await storage.updatePlayerPoints(id, result.data.points, result.data.type);
-      console.log("Pontos atualizados para o jogador:", player); // Debug log
-      res.json(player);
-    } catch (error) {
-      console.error('Erro ao atualizar pontos do jogador:', error);
-      res.status(404).json({ message: "Jogador não encontrado" });
-    }
-  });
-
-  app.delete("/api/players/:id", async (req, res) => {
-    try {
-      const id = req.params.id;
-      await storage.removePlayer(id);
-      res.status(204).end();
-    } catch (error) {
-      console.error('Erro ao remover jogador:', error);
-      res.status(404).json({ message: "Jogador não encontrado" });
-    }
-  });
-
-  app.post("/api/players/reset", async (_req, res) => {
-    try {
-      await storage.resetPlayersPoints();
-      res.status(204).end();
-    } catch (error) {
-      console.error('Erro ao resetar pontuações:', error);
-      res.status(500).json({ message: "Erro ao resetar pontuações" });
-    }
-  });
-
-  app.get("/api/settings", async (_req, res) => {
-    try {
-      const settings = await storage.getGameSettings();
-      res.json(settings);
-    } catch (error) {
-      console.error('Erro ao buscar configurações do jogo:', error);
-      res.status(500).json({ message: "Erro ao buscar configurações do jogo" });
-    }
-  });
-
-  app.patch("/api/settings", async (req, res) => {
-    try {
-      const result = gameSettingsSchema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ message: "Pontuação máxima inválida" });
-      }
-      const settings = await storage.updateGameSettings(result.data.maxPoints);
-      res.json(settings);
-    } catch (error) {
-      console.error('Erro ao atualizar configurações do jogo:', error);
-      res.status(500).json({ message: "Erro ao atualizar configurações do jogo" });
-    }
-  });
 
   return httpServer;
 }
