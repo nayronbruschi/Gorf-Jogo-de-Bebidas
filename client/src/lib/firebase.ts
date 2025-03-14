@@ -48,12 +48,12 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
       updatedAt: now,
     };
 
+    // Criar perfil do usuário
     await setDoc(userRef, defaultProfile);
 
-    // Inicializar estatísticas do jogador
-    const statsRef = doc(db, 'userStats', userId);
+    // Criar subcoleção de estatísticas
+    const statsRef = doc(userRef, 'stats', 'gameStats');
     await setDoc(statsRef, {
-      userId,
       lastGamePlayed: null,
       totalGamesPlayed: 0,
       victories: 0,
@@ -61,10 +61,9 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
       lastGameStartTime: null
     });
 
-    // Inicializar jogos recentes
-    const recentGamesRef = doc(db, 'recentGames', userId);
+    // Criar subcoleção de jogos recentes
+    const recentGamesRef = doc(userRef, 'games', 'recent');
     await setDoc(recentGamesRef, {
-      userId,
       games: []
     });
 
@@ -89,20 +88,20 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
 }
 
 export async function getUserStats(userId: string): Promise<UserGameStats | null> {
-  const statsRef = doc(db, 'userStats', userId);
+  const statsRef = doc(db, 'users', userId, 'stats', 'gameStats');
   const statsDoc = await getDoc(statsRef);
   return statsDoc.exists() ? statsDoc.data() as UserGameStats : null;
 }
 
 export async function getRecentGames(userId: string) {
-  const recentGamesRef = doc(db, 'recentGames', userId);
+  const recentGamesRef = doc(db, 'users', userId, 'games', 'recent');
   const recentGamesDoc = await getDoc(recentGamesRef);
   return recentGamesDoc.exists() ? recentGamesDoc.data().games.slice(0, 3) : [];
 }
 
 // Funções para gerenciar o tempo de jogo
 export async function startGameSession(userId: string) {
-  const statsRef = doc(db, 'userStats', userId);
+  const statsRef = doc(db, 'users', userId, 'stats', 'gameStats');
   const now = new Date().toISOString();
 
   await updateDoc(statsRef, {
@@ -112,7 +111,7 @@ export async function startGameSession(userId: string) {
 }
 
 export async function endGameSession(userId: string) {
-  const statsRef = doc(db, 'userStats', userId);
+  const statsRef = doc(db, 'users', userId, 'stats', 'gameStats');
   const statsDoc = await getDoc(statsRef);
   const stats = statsDoc.data();
 
@@ -134,7 +133,7 @@ export async function updateRecentGames(userId: string, gameData: {
   players: number;
   winner: string;
 }, isNewGame: boolean = true) {
-  const recentGamesRef = doc(db, 'recentGames', userId);
+  const recentGamesRef = doc(db, 'users', userId, 'games', 'recent');
   const recentGamesDoc = await getDoc(recentGamesRef);
 
   if (recentGamesDoc.exists()) {
@@ -154,7 +153,7 @@ export async function updateRecentGames(userId: string, gameData: {
 
       // Atualizar último jogo jogado nas estatísticas apenas se for um novo jogo
       if (isNewGame) {
-        const statsRef = doc(db, 'userStats', userId);
+        const statsRef = doc(db, 'users', userId, 'stats', 'gameStats');
         await updateDoc(statsRef, {
           lastGamePlayed: gameData.date
         });
@@ -163,32 +162,24 @@ export async function updateRecentGames(userId: string, gameData: {
   }
 }
 
-// Limpar dados de jogos de todos os usuários
-export async function clearAllUsersGameData() {
-  const usersRef = collection(db, 'users');
-  const usersSnapshot = await getDocs(usersRef);
+// Limpar dados de jogos de um usuário específico
+export async function clearUserGameData(userId: string) {
+  const statsRef = doc(db, 'users', userId, 'stats', 'gameStats');
+  const recentGamesRef = doc(db, 'users', userId, 'games', 'recent');
 
-  for (const userDoc of usersSnapshot.docs) {
-    const userId = userDoc.id;
+  // Reset user stats
+  await setDoc(statsRef, {
+    lastGamePlayed: null,
+    totalGamesPlayed: 0,
+    victories: 0,
+    totalPlayTime: 0,
+    lastGameStartTime: null
+  }, { merge: true });
 
-    // Reset user stats
-    const statsRef = doc(db, 'userStats', userId);
-    await setDoc(statsRef, {
-      userId,
-      lastGamePlayed: null,
-      totalGamesPlayed: 0,
-      victories: 0,
-      totalPlayTime: 0,
-      lastGameStartTime: null
-    }, { merge: true });
-
-    // Clear recent games
-    const recentGamesRef = doc(db, 'recentGames', userId);
-    await setDoc(recentGamesRef, {
-      userId,
-      games: []
-    }, { merge: true });
-  }
+  // Clear recent games
+  await setDoc(recentGamesRef, {
+    games: []
+  }, { merge: true });
 }
 
 // Observar mudanças no estado de autenticação
