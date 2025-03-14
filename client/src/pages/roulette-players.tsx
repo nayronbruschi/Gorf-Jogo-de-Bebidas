@@ -110,7 +110,7 @@ export default function RoulettePlayers() {
                   </Button>
                 </div>
                 <p className="text-white/60 text-base mt-2">
-                  {gameMode === "shots" 
+                  {gameMode === "shots"
                     ? "Número máximo de shots por rodada (1-5)"
                     : "Número máximo de goles por rodada (2-15)"}
                 </p>
@@ -163,13 +163,13 @@ export default function RoulettePlayers() {
             onClick={handleStartGame}
             disabled={players.length < 2}
             className={`px-8 py-6 flex items-center justify-center ${
-              players.length >= 2 
-                ? "bg-purple-700 hover:bg-purple-800 text-white"
+              players.length >= 2
+                ? "bg-purple-900 hover:bg-purple-950 text-white"
                 : "bg-white/20 hover:bg-white/30 text-white"
             }`}
           >
             <Play className="mr-2 h-6 w-6" />
-            {players.length < 2 
+            {players.length < 2
               ? "Mínimo 2 jogadores"
               : "Vamos começar!"}
           </Button>

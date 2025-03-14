@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,6 +7,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useRouletteGame } from "@/hooks/use-roulette-game";
 import { PlayerList } from "@/components/PlayerList";
 import { PunishmentDialog } from "@/components/PunishmentDialog";
+import { auth, updateRecentGames } from "@/lib/firebase";
+import { updateGameStats } from "@/lib/stats";
+import { WinnerScreen } from "@/components/WinnerScreen";
 
 // Desafios de punição para quem se recusa a beber
 const punishmentChallenges = [
@@ -28,7 +31,9 @@ export default function RouletteMode() {
       action,
       punishmentDrinks,
       gameMode,
-      players
+      players,
+      maxPoints,
+      showWinner
     },
     actions: {
       setShowPunishment,
@@ -37,13 +42,72 @@ export default function RouletteMode() {
       setPunishmentDrinks,
       selectRandomPlayer,
       updatePoints,
-      checkAllPlayersForWin
+      checkAllPlayersForWin,
+      resetGame
     }
   } = useRouletteGame();
 
   const [showPlayerList, setShowPlayerList] = useState(false);
+  const [gameStartTime] = useState<number>(Date.now());
   const drinkText = gameMode === "shots" ? "shot" : "gole";
   const drinkTextPlural = gameMode === "shots" ? "shots" : "goles";
+
+  // Inicializar estatísticas do jogo quando o componente montar
+  useEffect(() => {
+    const initializeGameStats = async () => {
+      if (!auth.currentUser) return;
+
+      try {
+        // Atualizar jogos recentes
+        await updateRecentGames(auth.currentUser.uid, {
+          name: "Gorf",
+          date: new Date().toISOString(),
+          players: players.length,
+          winner: "-"
+        }, true);
+
+        // Inicializar estatísticas do jogo
+        await updateGameStats({
+          gameType: "gorf",
+          playTimeInSeconds: 0,
+          playerNames: players.map(p => p.name)
+        });
+      } catch (error) {
+        console.error('Error initializing game stats:', error);
+      }
+    };
+
+    initializeGameStats();
+  }, []);
+
+  // Atualizar estatísticas quando o jogo terminar
+  useEffect(() => {
+    return () => {
+      if (!auth.currentUser) return;
+
+      const endTime = Date.now();
+      const playTimeInSeconds = Math.floor((endTime - gameStartTime) / 1000);
+
+      // Encontrar o jogador com mais bebidas
+      const topDrinker = [...players].sort((a, b) => b.points - a.points)[0];
+
+      updateGameStats({
+        gameType: "gorf",
+        playTimeInSeconds,
+        playerNames: players.map(p => p.name)
+      }).catch(console.error);
+
+      // Atualizar jogos recentes com o vencedor
+      if (topDrinker) {
+        updateRecentGames(auth.currentUser.uid, {
+          name: "Gorf",
+          date: new Date().toISOString(),
+          players: players.length,
+          winner: topDrinker.name
+        }, false).catch(console.error);
+      }
+    };
+  }, [gameStartTime, players]);
 
   const handleDrink = () => {
     if (!selectedPlayer) return;
@@ -86,6 +150,8 @@ export default function RouletteMode() {
 
   // Ordenar jogadores por pontos
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
+  const winner = sortedPlayers[0];
+  const topDrinker = winner;
 
   return (
     <GameLayout title="">
@@ -143,7 +209,7 @@ export default function RouletteMode() {
                     onClick={handleDrink}
                     variant={action === "drink" ? "outline" : "default"}
                     className={action === "drink"
-                      ? "border-purple-700 text-purple-700 hover:bg-purple-50 w-full sm:w-auto justify-center"
+                      ? "border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700 w-full sm:w-auto justify-center"
                       : "bg-purple-700 hover:bg-purple-800 text-white w-full sm:w-auto justify-center"}
                   >
                     <Beer className="mr-2 h-5 w-5" />
@@ -153,7 +219,7 @@ export default function RouletteMode() {
                     size="lg"
                     onClick={handleRefusal}
                     variant="outline"
-                    className="bg-white border-purple-700 text-purple-700 hover:bg-purple-50 w-full sm:w-auto justify-center"
+                    className="bg-white border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700 w-full sm:w-auto justify-center"
                   >
                     <X className="mr-2 h-5 w-5" />
                     Se recusou a beber
@@ -230,6 +296,20 @@ export default function RouletteMode() {
           <PlayerList />
         </DialogContent>
       </Dialog>
+      {showWinner && winner && (
+        <WinnerScreen
+          winner={{
+            name: winner.name,
+            points: winner.points
+          }}
+          topDrinker={{
+            name: topDrinker.name,
+            drinks: topDrinker.points
+          }}
+          maxPoints={maxPoints}
+          onPlayAgain={resetGame}
+        />
+      )}
     </GameLayout>
   );
 }

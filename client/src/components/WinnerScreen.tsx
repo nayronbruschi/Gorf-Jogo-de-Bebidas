@@ -85,17 +85,24 @@ export function WinnerScreen({ winner, topDrinker, maxPoints, onPlayAgain }: Win
         <Trophy className="h-16 w-16 text-yellow-400 mx-auto mb-6" />
 
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Essa rodada acabou :(
+          {winner.name} ganhou o jogo!
         </h2>
 
         <p className="text-gray-600 mb-4">
-          O jogador(a) <span className="font-bold text-purple-600">{winner.name}</span> atingiu {maxPoints} pontos primeiro!
+          <span className="font-bold text-purple-600">{winner.name}</span> atingiu {maxPoints} pontos primeiro!
         </p>
 
         <p className="text-gray-600 mb-6">
-          Mas isso não significa que foi quem mais bebeu, o jogador que mais bebeu foi{" "}
-          <span className="font-bold text-purple-600">{topDrinker.name}</span> dando{" "}
-          <span className="font-bold text-purple-600">{topDrinker.drinks} goles</span>!
+          {topDrinker.name === winner.name ? (
+            <>
+              E ainda foi quem mais bebeu com <span className="font-bold text-purple-600">{topDrinker.drinks} goles</span>!
+            </>
+          ) : (
+            <>
+              Mas quem mais bebeu foi <span className="font-bold text-purple-600">{topDrinker.name}</span> com{" "}
+              <span className="font-bold text-purple-600">{topDrinker.drinks} goles</span>!
+            </>
+          )}
         </p>
 
         <p className="text-xl font-bold text-gray-900 mb-6">
@@ -105,7 +112,7 @@ export function WinnerScreen({ winner, topDrinker, maxPoints, onPlayAgain }: Win
         <div className="grid grid-cols-2 gap-4">
           <Button
             onClick={onPlayAgain}
-            className="bg-purple-500 hover:bg-purple-600 flex items-center justify-center"
+            className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white flex items-center justify-center"
           >
             <Play className="h-4 w-4 mr-2" />
             Jogar de novo
@@ -113,6 +120,7 @@ export function WinnerScreen({ winner, topDrinker, maxPoints, onPlayAgain }: Win
           <Button
             onClick={handleChooseNewGame}
             variant="outline"
+            className="border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700"
           >
             Escolher outro jogo
           </Button>
