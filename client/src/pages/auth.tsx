@@ -13,8 +13,7 @@ import { FcGoogle } from "react-icons/fc";
 import { Eye, EyeOff } from "lucide-react";
 import { GorfLogo } from "@/components/GorfLogo";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/use-auth"; // Added import
-
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Auth() {
   const [, setLocation] = useLocation();
@@ -25,14 +24,20 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
-  const { isNewUser } = useAuth();
+  const { isNewUser, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    // Se o usuário for novo, redireciona para o onboarding
-    if (isNewUser) {
-      setLocation("/onboarding");
+    // Se o usuário estiver autenticado
+    if (isAuthenticated) {
+      // Se for novo usuário, vai para onboarding
+      if (isNewUser) {
+        setLocation("/onboarding");
+      } else {
+        // Se não for novo usuário, vai para dashboard
+        setLocation("/dashboard");
+      }
     }
-  }, [isNewUser, setLocation]);
+  }, [isNewUser, isAuthenticated, setLocation]);
 
   const getErrorMessage = (code: string) => {
     switch (code) {
@@ -63,11 +68,8 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
-      const result = await signInWithPopup(auth, googleProvider);
-      if (result.user) {
-        // O redirecionamento será feito pelo useEffect acima
-        return;
-      }
+      await signInWithPopup(auth, googleProvider);
+      // O redirecionamento será feito pelo useEffect
     } catch (error: any) {
       console.error("Error signing in with Google:", error);
       setError(getErrorMessage(error.code));
@@ -91,7 +93,7 @@ export default function Auth() {
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
-      // O redirecionamento será feito pelo useEffect acima
+      // O redirecionamento será feito pelo useEffect
     } catch (error: any) {
       console.error("Error with email auth:", error);
       setError(getErrorMessage(error.code));
