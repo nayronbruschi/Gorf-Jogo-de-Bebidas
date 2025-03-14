@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { auth, googleProvider } from "@/lib/firebase";
 import {
@@ -13,6 +13,8 @@ import { FcGoogle } from "react-icons/fc";
 import { Eye, EyeOff } from "lucide-react";
 import { GorfLogo } from "@/components/GorfLogo";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth"; // Added import
+
 
 export default function Auth() {
   const [, setLocation] = useLocation();
@@ -23,6 +25,14 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
+  const { isNewUser } = useAuth();
+
+  useEffect(() => {
+    // Se o usuário for novo, redireciona para o onboarding
+    if (isNewUser) {
+      setLocation("/onboarding");
+    }
+  }, [isNewUser, setLocation]);
 
   const getErrorMessage = (code: string) => {
     switch (code) {
@@ -55,7 +65,8 @@ export default function Auth() {
       setError("");
       const result = await signInWithPopup(auth, googleProvider);
       if (result.user) {
-        setLocation("/dashboard");
+        // O redirecionamento será feito pelo useEffect acima
+        return;
       }
     } catch (error: any) {
       console.error("Error signing in with Google:", error);
@@ -80,7 +91,7 @@ export default function Auth() {
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
-      setLocation("/dashboard");
+      // O redirecionamento será feito pelo useEffect acima
     } catch (error: any) {
       console.error("Error with email auth:", error);
       setError(getErrorMessage(error.code));

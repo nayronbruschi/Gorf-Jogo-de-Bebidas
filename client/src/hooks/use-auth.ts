@@ -6,6 +6,7 @@ export function useAuth() {
   const [user, setUser] = useState(auth.currentUser);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -16,16 +17,15 @@ export function useAuth() {
 
           // Se não existe perfil, criar um novo
           if (!userProfile) {
-            const newProfile = await createUserProfile(user.uid, {
-              name: user.displayName || "",
-            });
-            setProfile(newProfile);
+            setIsNewUser(true);
           } else {
             setProfile(userProfile);
+            setIsNewUser(false);
           }
         } else {
           setUser(null);
           setProfile(null);
+          setIsNewUser(false);
         }
       } catch (error) {
         console.error("Error loading user profile:", error);
@@ -44,6 +44,7 @@ export function useAuth() {
     user,
     profile,
     loading,
+    isNewUser,
     isAuthenticated: !!user,
   };
 }
