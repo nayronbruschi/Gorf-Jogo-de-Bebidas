@@ -83,7 +83,7 @@ export function WinnerScreen({ onPlayAgain }: WinnerScreenProps) {
         <div className="grid grid-cols-2 gap-4">
           <Button
             onClick={onPlayAgain}
-            className="bg-purple-700 hover:bg-purple-800 text-white hover:text-white flex items-center justify-center"
+            className="bg-purple-600 hover:bg-purple-700 text-white hover:text-white flex items-center justify-center"
           >
             <Play className="h-4 w-4 mr-2" />
             Jogar de novo
@@ -91,7 +91,7 @@ export function WinnerScreen({ onPlayAgain }: WinnerScreenProps) {
           <Button
             onClick={handleChooseNewGame}
             variant="outline"
-            className="border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700"
+            className="border-purple-600 text-purple-600 hover:bg-purple-50 hover:text-purple-700"
           >
             Escolher outro jogo
           </Button>
