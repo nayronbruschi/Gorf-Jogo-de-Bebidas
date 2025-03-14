@@ -69,7 +69,7 @@ export function useRouletteGame() {
     setIsSelecting(true);
     setAction(null);
     setPunishmentDrinks(0);
-    play('spin');
+    play("spinSound"); // Corrigido o nome do efeito sonoro
 
     setTimeout(() => {
       const randomPlayer = players[Math.floor(Math.random() * players.length)];
@@ -80,7 +80,7 @@ export function useRouletteGame() {
       setSelectedPlayer(randomPlayer);
       setNumDrinks(randomDrinks);
       setIsSelecting(false);
-      play('tada');
+      play("success"); // Usando um efeito sonoro de sucesso
     }, 2000);
   };
 
