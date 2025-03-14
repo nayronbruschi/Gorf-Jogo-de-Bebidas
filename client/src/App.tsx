@@ -29,6 +29,7 @@ import GuessWhoPlayers from "@/pages/guess-who-players";
 import GuessWhoTheme from "@/pages/guess-who-theme";
 import GuessWhoGame from "@/pages/guess-who-game";
 import Profile from "@/pages/profile";
+import Onboarding from "@/pages/onboarding"; // Adicionado
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading } = useAuth();
@@ -49,6 +50,9 @@ function Router() {
     <Switch>
       <Route path="/" component={Auth} />
       <Route path="/auth" component={Auth} />
+      <Route path="/onboarding">
+        <ProtectedRoute component={Onboarding} />
+      </Route>
       <Route path="/dashboard">
         <ProtectedRoute component={Dashboard} />
       </Route>
