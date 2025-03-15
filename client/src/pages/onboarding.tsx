@@ -23,7 +23,7 @@ export default function Onboarding() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedDrinks, setSelectedDrinks] = useState<string[]>([]);
+  const [selectedDrinks, setSelectedDrinks] = useState<Array<typeof drinkOptions[number]>>([]);
   const [formData, setFormData] = useState({
     name: user?.displayName || "",
     birthDate: "",
@@ -32,11 +32,12 @@ export default function Onboarding() {
   });
 
   if (!user) {
+    console.log("[Onboarding] No user found, redirecting to auth");
     setLocation("/auth");
     return null;
   }
 
-  const handleSelectDrink = (drink: string) => {
+  const handleSelectDrink = (drink: typeof drinkOptions[number]) => {
     if (selectedDrinks.includes(drink)) {
       setSelectedDrinks(prev => prev.filter(d => d !== drink));
     } else if (selectedDrinks.length < 3) {
@@ -46,6 +47,7 @@ export default function Onboarding() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("[Onboarding] Starting profile creation");
 
     if (selectedDrinks.length === 0) {
       toast({
@@ -56,13 +58,29 @@ export default function Onboarding() {
       return;
     }
 
+    if (!formData.birthDate) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Data de nascimento é obrigatória"
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
+      console.log("[Onboarding] Creating user profile with data:", {
+        ...formData,
+        favoriteDrinks: selectedDrinks
+      });
+
       await createUserProfile(user.uid, {
         ...formData,
-        favoriteDrinks: selectedDrinks,
+        favoriteDrinks: selectedDrinks
       });
+
+      console.log("[Onboarding] Profile created successfully");
 
       toast({
         title: "Perfil criado com sucesso!",
@@ -71,7 +89,7 @@ export default function Onboarding() {
 
       setLocation("/dashboard");
     } catch (error) {
-      console.error("Error creating profile:", error);
+      console.error("[Onboarding] Error creating profile:", error);
       toast({
         variant: "destructive",
         title: "Erro ao criar perfil",
@@ -141,7 +159,7 @@ export default function Onboarding() {
               <Label className="text-white">Rede Social Favorita</Label>
               <Select
                 value={formData.favoriteSocialNetwork}
-                onValueChange={(value: "instagram" | "tiktok" | "facebook" | "twitter") =>
+                onValueChange={(value: "instagram" | "tiktok" | "X" | "facebook") =>
                   setFormData({ ...formData, favoriteSocialNetwork: value })}
               >
                 <SelectTrigger className="bg-white/20 text-white border-none">
@@ -150,8 +168,8 @@ export default function Onboarding() {
                 <SelectContent>
                   <SelectItem value="instagram">Instagram</SelectItem>
                   <SelectItem value="tiktok">TikTok</SelectItem>
+                  <SelectItem value="X">X</SelectItem>
                   <SelectItem value="facebook">Facebook</SelectItem>
-                  <SelectItem value="twitter">Twitter</SelectItem>
                 </SelectContent>
               </Select>
             </div>

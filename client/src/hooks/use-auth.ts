@@ -11,44 +11,51 @@ export function useAuth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    console.log("Setting up auth state listener");
+    console.log("[Auth] Iniciando listener de autenticação");
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       try {
         if (user) {
-          console.log("User authenticated:", user.uid);
+          console.log("[Auth] Usuário autenticado:", user.uid);
           setUser(user);
           setLoading(true);
 
           // Verificar se o usuário tem perfil no Firestore
           const hasProfile = await checkUserProfile(user.uid);
-          console.log("Has profile:", hasProfile);
+          console.log("[Auth] Tem perfil:", hasProfile);
 
           if (!hasProfile) {
-            console.log("New user, needs onboarding");
+            // Novo usuário - precisa de onboarding
+            console.log("[Auth] Novo usuário, redirecionando para onboarding");
             setIsNewUser(true);
             setProfile(null);
+            localStorage.setItem('needsOnboarding', 'true');
           } else {
-            console.log("Existing user, loading profile");
+            // Usuário existente - carregar perfil
+            console.log("[Auth] Carregando perfil existente");
             const userProfile = await getUserProfile(user.uid);
 
             if (userProfile) {
-              console.log("Profile loaded successfully");
+              console.log("[Auth] Perfil carregado com sucesso");
               setProfile(userProfile);
               setIsNewUser(false);
+              localStorage.removeItem('needsOnboarding');
             } else {
-              console.log("Failed to load profile, marking as new user");
+              // Perfil não encontrado - tratar como novo usuário
+              console.log("[Auth] Perfil não encontrado, tratando como novo usuário");
               setIsNewUser(true);
               setProfile(null);
+              localStorage.setItem('needsOnboarding', 'true');
             }
           }
         } else {
-          console.log("User logged out");
+          console.log("[Auth] Usuário deslogado");
           setUser(null);
           setProfile(null);
           setIsNewUser(false);
+          localStorage.removeItem('needsOnboarding');
         }
       } catch (error) {
-        console.error("Error in auth state change:", error);
+        console.error("[Auth] Erro:", error);
         toast({
           variant: "destructive",
           title: "Erro ao carregar perfil",
@@ -56,13 +63,14 @@ export function useAuth() {
         });
         setProfile(null);
         setIsNewUser(true);
+        localStorage.setItem('needsOnboarding', 'true');
       } finally {
         setLoading(false);
       }
     });
 
     return () => {
-      console.log("Cleaning up auth state listener");
+      console.log("[Auth] Limpando listener");
       unsubscribe();
     };
   }, [toast]);

@@ -27,14 +27,14 @@ export default function Auth() {
   const { isNewUser, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    console.log("Auth page - Authentication state changed:", { isAuthenticated, isNewUser });
+    console.log("[Auth page] Estado de autenticação:", { isAuthenticated, isNewUser });
 
     if (isAuthenticated) {
       if (isNewUser) {
-        console.log("Redirecting to onboarding");
+        console.log("[Auth page] Novo usuário detectado, redirecionando para onboarding");
         setLocation("/onboarding");
       } else {
-        console.log("Redirecting to dashboard");
+        console.log("[Auth page] Usuário existente, redirecionando para dashboard");
         setLocation("/dashboard");
       }
     }
@@ -69,11 +69,14 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
-      console.log("Starting Google sign in");
-      await signInWithPopup(auth, googleProvider);
-      // Redirecionamento será feito pelo useEffect
+      console.log("[Auth page] Iniciando login com Google");
+
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log("[Auth page] Login com Google bem-sucedido:", result.user.uid);
+
+      // O redirecionamento será feito pelo useEffect após a verificação do perfil
     } catch (error: any) {
-      console.error("Error signing in with Google:", error);
+      console.error("[Auth page] Erro no login com Google:", error);
       setError(getErrorMessage(error.code));
       toast({
         variant: "destructive",
@@ -87,6 +90,7 @@ export default function Auth() {
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!email || !password) {
       setError("Preencha todos os campos");
       return;
@@ -95,15 +99,18 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
-      console.log("Starting email authentication");
+      console.log("[Auth page] Iniciando autenticação por email, modo:", isLogin ? "login" : "cadastro");
+
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        console.log("[Auth page] Login por email bem-sucedido:", result.user.uid);
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        console.log("[Auth page] Cadastro por email bem-sucedido:", result.user.uid);
       }
-      // Redirecionamento será feito pelo useEffect
+      // O redirecionamento será feito pelo useEffect após a verificação do perfil
     } catch (error: any) {
-      console.error("Error with email auth:", error);
+      console.error("[Auth page] Erro na autenticação por email:", error);
       setError(getErrorMessage(error.code));
       toast({
         variant: "destructive",
