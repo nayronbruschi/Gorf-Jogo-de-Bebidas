@@ -2,12 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.appspot.com`,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  apiKey: "AIzaSyDRZ0akGNllg2YFaJM832PWSXvbNfcFbcE",
+  authDomain: "gorf-jogo-de-bebidas.firebaseapp.com",
+  projectId: "gorf-jogo-de-bebidas",
+  storageBucket: "gorf-jogo-de-bebidas.firebasestorage.app",
+  messagingSenderId: "666516951655",
+  appId: "1:666516951655:web:ecade148dce7e08852fac2"
 };
 
 // Initialize Firebase
@@ -20,3 +20,9 @@ googleProvider.setCustomParameters({
 });
 
 export { app, auth, googleProvider };
+
+// Stub function to prevent import errors
+export async function createUserProfile(userId: string, profileData: any): Promise<any> {
+  console.log("[Firebase] createUserProfile stub called with", { userId, profileData });
+  return { id: userId, ...profileData };
+}
