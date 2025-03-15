@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { GorfLogo } from "./GorfLogo";
 
-export function SplashScreen() {
+export default function SplashScreen() {
   const [, setLocation] = useLocation();
   const [show, setShow] = useState(true);
 

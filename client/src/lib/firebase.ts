@@ -14,7 +14,7 @@ const getEnvVar = (key: string): string => {
 // Configuração do Firebase
 const firebaseConfig = {
   apiKey: getEnvVar('VITE_FIREBASE_API_KEY'),
-  authDomain: `${getEnvVar('VITE_FIREBASE_PROJECT_ID')}.firebaseapp.com`,
+  authDomain: "gorf.com.br",
   projectId: getEnvVar('VITE_FIREBASE_PROJECT_ID'),
   storageBucket: `${getEnvVar('VITE_FIREBASE_PROJECT_ID')}.appspot.com`,
   appId: getEnvVar('VITE_FIREBASE_APP_ID'),

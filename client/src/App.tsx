@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/use-auth";
 import { LoadingScreen } from "@/components/LoadingScreen";
-import { SplashScreen } from "@/components/SplashScreen";
+import SplashScreen from "@/components/SplashScreen";
 
 // Pages
 import NotFound from "@/pages/not-found";
