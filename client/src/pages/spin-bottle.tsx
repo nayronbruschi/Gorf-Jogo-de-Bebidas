@@ -57,7 +57,7 @@ export default function SpinBottle() {
             }}
           >
             <img
-              src="/api/images/icone-fleche-droite-violet.png"
+              src="https://firebasestorage.googleapis.com/v0/b/gorf-o-jogo.firebasestorage.app/o/icone-fleche-droite-violet.png?alt=media&token=7cb55654-6798-45c0-8635-8729761eefb1"
               alt="Seta"
               className="w-3/4 h-3/4 object-contain"
             />
