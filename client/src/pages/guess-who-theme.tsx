@@ -21,7 +21,6 @@ export default function GuessWhoTheme() {
   const [, setLocation] = useLocation();
   const [selectedTheme, setSelectedTheme] = useState<ThemeId | null>(null);
 
-  // Verificar se existem jogadores selecionados
   useEffect(() => {
     try {
       const storedPlayers = localStorage.getItem("guessWhoPlayers");
@@ -48,14 +47,12 @@ export default function GuessWhoTheme() {
     if (!selectedTheme) return;
 
     try {
-      // Validar os dados antes de prosseguir
       const storedPlayers = localStorage.getItem("guessWhoPlayers");
       if (!storedPlayers) {
         setLocation("/guess-who/players");
         return;
       }
 
-      // Salvar tema e ir para o jogo
       localStorage.setItem("guessWhoTheme", selectedTheme);
       setLocation("/guess-who/play");
     } catch (error) {
@@ -83,8 +80,8 @@ export default function GuessWhoTheme() {
                 onClick={() => handleSelectTheme(theme.id)}
                 className={`flex flex-col items-center gap-2 p-6 h-auto ${
                   selectedTheme === theme.id
-                    ? 'bg-white text-purple-700'
-                    : 'bg-purple-700/50 hover:bg-purple-700/70 text-white'
+                    ? 'bg-purple-900 hover:bg-purple-950 text-white'
+                    : 'bg-white hover:bg-purple-50 text-purple-900'
                 }`}
                 variant="ghost"
               >
@@ -99,7 +96,7 @@ export default function GuessWhoTheme() {
           size="lg"
           onClick={handleStartGame}
           disabled={!selectedTheme}
-          className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 mt-4"
+          className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6 mt-4"
         >
           <Play className="mr-2 h-6 w-6" />
           Iniciar Jogo

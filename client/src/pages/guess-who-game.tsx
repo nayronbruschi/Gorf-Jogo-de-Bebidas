@@ -34,15 +34,21 @@ export default function GuessWhoGame() {
   const [winner, setWinner] = useState("");
   const [readyToStart, setReadyToStart] = useState(false);
 
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  };
+
   const setLandscapeMode = () => {
-    document.documentElement.style.setProperty('transform', 'rotate(-90deg)');
-    document.documentElement.style.setProperty('transform-origin', 'left top');
-    document.documentElement.style.setProperty('width', '100vh');
-    document.documentElement.style.setProperty('height', '100vw');
-    document.documentElement.style.setProperty('overflow', 'hidden');
-    document.documentElement.style.setProperty('position', 'absolute');
-    document.documentElement.style.setProperty('top', '100%');
-    document.documentElement.style.setProperty('left', '0');
+    if (isMobileDevice()) {
+      document.documentElement.style.setProperty('transform', 'rotate(-90deg)');
+      document.documentElement.style.setProperty('transform-origin', 'left top');
+      document.documentElement.style.setProperty('width', '100vh');
+      document.documentElement.style.setProperty('height', '100vw');
+      document.documentElement.style.setProperty('overflow', 'hidden');
+      document.documentElement.style.setProperty('position', 'absolute');
+      document.documentElement.style.setProperty('top', '100%');
+      document.documentElement.style.setProperty('left', '0');
+    }
   };
 
   const setPortraitMode = () => {
@@ -50,14 +56,16 @@ export default function GuessWhoGame() {
   };
 
   const resetOrientation = () => {
-    document.documentElement.style.removeProperty('transform');
-    document.documentElement.style.removeProperty('transform-origin');
-    document.documentElement.style.removeProperty('width');
-    document.documentElement.style.removeProperty('height');
-    document.documentElement.style.removeProperty('overflow');
-    document.documentElement.style.removeProperty('position');
-    document.documentElement.style.removeProperty('top');
-    document.documentElement.style.removeProperty('left');
+    if (isMobileDevice()) {
+      document.documentElement.style.removeProperty('transform');
+      document.documentElement.style.removeProperty('transform-origin');
+      document.documentElement.style.removeProperty('width');
+      document.documentElement.style.removeProperty('height');
+      document.documentElement.style.removeProperty('overflow');
+      document.documentElement.style.removeProperty('position');
+      document.documentElement.style.removeProperty('top');
+      document.documentElement.style.removeProperty('left');
+    }
   };
 
   const getPlayerName = (playerId: string) => {
@@ -246,6 +254,10 @@ export default function GuessWhoGame() {
     }
   };
 
+  const handleBack = () => {
+    setLocation("/guess-who/theme");
+  };
+
   if (players.length === 0) return null;
 
   const currentPlayerId = players[currentPlayerIndex];
@@ -338,14 +350,14 @@ export default function GuessWhoGame() {
         <Button
           variant="ghost"
           className="text-white hover:bg-white/20"
-          onClick={() => setLocation("/guess-who/players")}
+          onClick={handleBack}
         >
           <ChevronLeft className="h-6 w-6" />
         </Button>
 
         <div className="flex items-center gap-4">
           <span className="text-xl font-medium text-white">
-            {currentPlayerName}
+            {currentPlayerIndex >= 0 && players[currentPlayerIndex] ? getPlayerName(players[currentPlayerIndex]) : ""}
           </span>
         </div>
       </div>
