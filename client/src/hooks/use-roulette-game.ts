@@ -20,12 +20,13 @@ export function useRouletteGame() {
   const [currentPunishment, setCurrentPunishment] = useState<PunishmentType | null>(null);
   const [action, setAction] = useState<"drink" | "refuse" | null>(null);
   const [punishmentDrinks, setPunishmentDrinks] = useState(0);
+  const [showWinner, setShowWinner] = useState(false);
 
   // Hooks
   const [, navigate] = useLocation();
   const { play } = useSound();
   const gameMode = localStorage.getItem("rouletteMode") || "goles";
-  const maxPoints = Number(localStorage.getItem("maxPoints"));
+  const maxPoints = Number(localStorage.getItem("maxPoints")) || 50;
 
   // Queries
   const { data: players = [] } = useQuery<Player[]>({
@@ -52,11 +53,24 @@ export function useRouletteGame() {
 
     for (const player of players) {
       if (player.points >= maxPoints) {
+        setShowWinner(true);
         navigate(`/roulette/winner?playerId=${player.id}`);
         return true;
       }
     }
     return false;
+  };
+
+  // Reset game
+  const resetGame = async () => {
+    try {
+      await apiRequest("POST", "/api/players/reset", {});
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      setShowWinner(false);
+      navigate("/roulette/play");
+    } catch (error) {
+      console.error('Erro ao reiniciar jogo:', error);
+    }
   };
 
   // Game actions
@@ -69,7 +83,7 @@ export function useRouletteGame() {
     setIsSelecting(true);
     setAction(null);
     setPunishmentDrinks(0);
-    play("spinSound"); // Corrigido o nome do efeito sonoro
+    play("spin");
 
     setTimeout(() => {
       const randomPlayer = players[Math.floor(Math.random() * players.length)];
@@ -80,7 +94,7 @@ export function useRouletteGame() {
       setSelectedPlayer(randomPlayer);
       setNumDrinks(randomDrinks);
       setIsSelecting(false);
-      play("success"); // Usando um efeito sonoro de sucesso
+      play("success");
     }, 2000);
   };
 
@@ -95,7 +109,8 @@ export function useRouletteGame() {
       punishmentDrinks,
       gameMode,
       maxPoints,
-      players
+      players,
+      showWinner
     },
     actions: {
       setSelectedPlayer,
@@ -105,7 +120,8 @@ export function useRouletteGame() {
       setPunishmentDrinks,
       selectRandomPlayer,
       updatePoints,
-      checkAllPlayersForWin
+      checkAllPlayersForWin,
+      resetGame
     }
   };
 }

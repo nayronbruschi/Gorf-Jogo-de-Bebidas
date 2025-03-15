@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,8 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useRouletteGame } from "@/hooks/use-roulette-game";
 import { PlayerList } from "@/components/PlayerList";
 import { PunishmentDialog } from "@/components/PunishmentDialog";
-import { auth, updateRecentGames } from "@/lib/firebase";
-import { updateGameStats } from "@/lib/stats";
+import { auth } from "@/lib/firebase";
 import { WinnerScreen } from "@/components/WinnerScreen";
 
 // Desafios de punição para quem se recusa a beber
@@ -48,66 +47,8 @@ export default function RouletteMode() {
   } = useRouletteGame();
 
   const [showPlayerList, setShowPlayerList] = useState(false);
-  const [gameStartTime] = useState<number>(Date.now());
   const drinkText = gameMode === "shots" ? "shot" : "gole";
   const drinkTextPlural = gameMode === "shots" ? "shots" : "goles";
-
-  // Inicializar estatísticas do jogo quando o componente montar
-  useEffect(() => {
-    const initializeGameStats = async () => {
-      if (!auth.currentUser) return;
-
-      try {
-        // Atualizar jogos recentes
-        await updateRecentGames(auth.currentUser.uid, {
-          name: "Gorf",
-          date: new Date().toISOString(),
-          players: players.length,
-          winner: "-"
-        }, true);
-
-        // Inicializar estatísticas do jogo
-        await updateGameStats({
-          gameType: "gorf",
-          playTimeInSeconds: 0,
-          playerNames: players.map(p => p.name)
-        });
-      } catch (error) {
-        console.error('Error initializing game stats:', error);
-      }
-    };
-
-    initializeGameStats();
-  }, []);
-
-  // Atualizar estatísticas quando o jogo terminar
-  useEffect(() => {
-    return () => {
-      if (!auth.currentUser) return;
-
-      const endTime = Date.now();
-      const playTimeInSeconds = Math.floor((endTime - gameStartTime) / 1000);
-
-      // Encontrar o jogador com mais bebidas
-      const topDrinker = [...players].sort((a, b) => b.points - a.points)[0];
-
-      updateGameStats({
-        gameType: "gorf",
-        playTimeInSeconds,
-        playerNames: players.map(p => p.name)
-      }).catch(console.error);
-
-      // Atualizar jogos recentes com o vencedor
-      if (topDrinker) {
-        updateRecentGames(auth.currentUser.uid, {
-          name: "Gorf",
-          date: new Date().toISOString(),
-          players: players.length,
-          winner: topDrinker.name
-        }, false).catch(console.error);
-      }
-    };
-  }, [gameStartTime, players]);
 
   const handleDrink = () => {
     if (!selectedPlayer) return;
@@ -151,10 +92,6 @@ export default function RouletteMode() {
   // Ordenar jogadores por pontos
   const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
   const winner = showWinner ? sortedPlayers[0] : null;
-  const topDrinker = winner ? {
-    name: winner.name,
-    drinks: winner.points
-  } : null;
 
   return (
     <GameLayout title="">
