@@ -27,7 +27,16 @@ export const googleProvider = new GoogleAuthProvider();
 
 // Configurações adicionais para o provedor Google
 googleProvider.setCustomParameters({
-  prompt: 'select_account'
+  prompt: 'select_account',
+  // Forçar o uso do domínio gorf.com.br
+  hd: 'gorf.com.br'
+});
+
+// Add state parameter to track auth source
+googleProvider.addScope('profile');
+googleProvider.addScope('email');
+googleProvider.setCustomParameters({
+  state: 'fromAuth'
 });
 
 // Funções auxiliares para gerenciar dados do usuário
@@ -186,8 +195,25 @@ export async function clearUserGameData(userId: string) {
 onAuthStateChanged(auth, (user) => {
   if (user) {
     localStorage.setItem('currentUserId', user.uid);
+
+    // Verificar se está voltando da autenticação do Google
+    const urlParams = new URLSearchParams(window.location.search);
+    const state = urlParams.get('state');
+
+    if (state === 'fromAuth') {
+      // Remover parâmetros da URL e redirecionar para dashboard
+      window.history.replaceState({}, '', '/dashboard');
+    } else if (window.location.pathname === '/') {
+      // Se estiver na raiz e já autenticado, redirecionar para dashboard
+      window.location.href = '/dashboard';
+    }
   } else {
     localStorage.removeItem('currentUserId');
+    // Se não estiver autenticado e não estiver na página de autenticação ou splash,
+    // redirecionar para a raiz
+    if (!['/auth', '/'].includes(window.location.pathname)) {
+      window.location.href = '/';
+    }
   }
 });
 
