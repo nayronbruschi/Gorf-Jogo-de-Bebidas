@@ -14,7 +14,7 @@ const getEnvVar = (key: string): string => {
 // Configuração do Firebase
 const firebaseConfig = {
   apiKey: getEnvVar('VITE_FIREBASE_API_KEY'),
-  authDomain: "gorf.com.br",
+  authDomain: `${getEnvVar('VITE_FIREBASE_PROJECT_ID')}.firebaseapp.com`,
   projectId: getEnvVar('VITE_FIREBASE_PROJECT_ID'),
   storageBucket: `${getEnvVar('VITE_FIREBASE_PROJECT_ID')}.appspot.com`,
   appId: getEnvVar('VITE_FIREBASE_APP_ID'),
@@ -27,14 +27,7 @@ export const googleProvider = new GoogleAuthProvider();
 
 // Configurações adicionais para o provedor Google
 googleProvider.setCustomParameters({
-  prompt: 'select_account',
-});
-
-// Add state parameter to track auth source
-googleProvider.addScope('profile');
-googleProvider.addScope('email');
-googleProvider.setCustomParameters({
-  state: 'fromAuth'
+  prompt: 'select_account'
 });
 
 // Funções auxiliares para gerenciar dados do usuário
@@ -193,25 +186,8 @@ export async function clearUserGameData(userId: string) {
 onAuthStateChanged(auth, (user) => {
   if (user) {
     localStorage.setItem('currentUserId', user.uid);
-
-    // Verificar se está voltando da autenticação do Google
-    const urlParams = new URLSearchParams(window.location.search);
-    const state = urlParams.get('state');
-
-    if (state === 'fromAuth') {
-      // Remover parâmetros da URL e redirecionar para dashboard
-      window.history.replaceState({}, '', '/dashboard');
-    } else if (window.location.pathname === '/') {
-      // Se estiver na raiz e já autenticado, redirecionar para dashboard
-      window.location.href = '/dashboard';
-    }
   } else {
     localStorage.removeItem('currentUserId');
-    // Se não estiver autenticado e não estiver na página de autenticação ou splash,
-    // redirecionar para a raiz
-    if (!['/auth', '/'].includes(window.location.pathname)) {
-      window.location.href = '/';
-    }
   }
 });
 

@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/use-auth";
 import { LoadingScreen } from "@/components/LoadingScreen";
-import SplashScreen from "@/components/SplashScreen";
+import { SplashScreen } from "@/components/SplashScreen";
 
 // Pages
 import NotFound from "@/pages/not-found";
@@ -117,20 +117,7 @@ function Router() {
       <Route path="/guess-who/play">
         <ProtectedRoute component={GuessWhoGame} />
       </Route>
-      <Route>
-        {/* Catch-all route for handling auth redirects */}
-        {() => {
-          const params = new URLSearchParams(window.location.search);
-          const state = params.get('state');
-
-          if (state === 'fromAuth') {
-            window.history.replaceState({}, '', '/dashboard');
-            return <LoadingScreen />;
-          }
-
-          return <NotFound />;
-        }}
-      </Route>
+      <Route component={NotFound} />
     </Switch>
   );
 }
