@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { auth, createUserProfile, getUserProfile, checkUserProfile } from "@/lib/firebase";
+import { auth, checkUserProfile, getUserProfile } from "@/lib/firebase";
 import type { UserProfile } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
@@ -15,20 +15,20 @@ export function useAuth() {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       try {
         if (user) {
-          console.log(`User authenticated: ${user.uid}`);
+          console.log("User authenticated:", user.uid);
           setUser(user);
           setLoading(true);
 
-          // 1. Verificar se o perfil existe
+          // Verificar se o usuário tem perfil no Firestore
           const hasProfile = await checkUserProfile(user.uid);
-          console.log(`Profile check result: ${hasProfile}`);
+          console.log("Has profile:", hasProfile);
 
           if (!hasProfile) {
-            console.log("No profile found, marking as new user");
+            console.log("New user, needs onboarding");
             setIsNewUser(true);
             setProfile(null);
           } else {
-            console.log("Profile exists, fetching data");
+            console.log("Existing user, loading profile");
             const userProfile = await getUserProfile(user.uid);
 
             if (userProfile) {
@@ -36,20 +36,9 @@ export function useAuth() {
               setProfile(userProfile);
               setIsNewUser(false);
             } else {
-              console.log("Failed to load profile, will recreate");
+              console.log("Failed to load profile, marking as new user");
               setIsNewUser(true);
               setProfile(null);
-
-              // Tentar criar o perfil automaticamente
-              try {
-                const newProfile = await createUserProfile(user.uid);
-                console.log("Profile created automatically");
-                setProfile(newProfile);
-                setIsNewUser(false);
-              } catch (error) {
-                console.error("Failed to create profile automatically:", error);
-                setIsNewUser(true);
-              }
             }
           }
         } else {
@@ -83,6 +72,6 @@ export function useAuth() {
     profile,
     loading,
     isNewUser,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user
   };
 }

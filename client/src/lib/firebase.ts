@@ -1,18 +1,22 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, getDocs, increment } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
 import type { UserProfile, UserGameStats } from "@shared/schema";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.appspot.com`,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: "AIzaSyBSbE-z6rYYOW7UkbzdWFWSdmEkLOnVe5U",
+  authDomain: "gorf-o-jogo.firebaseapp.com",
+  projectId: "gorf-o-jogo",
+  storageBucket: "gorf-o-jogo.firebasestorage.app",
+  messagingSenderId: "169710703950",
+  appId: "1:169710703950:web:ebea65b3c93e180a10ba1f",
+  measurementId: "G-YGF0WE1E38"
 };
 
-// Inicializar Firebase
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+export const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
@@ -21,29 +25,42 @@ googleProvider.setCustomParameters({
   prompt: 'select_account'
 });
 
-// Função para criar usuário com retry
-export async function createUserProfile(userId: string, profile: Partial<UserProfile> = {}, retryCount = 3): Promise<UserProfile> {
-  console.log(`Attempting to create user profile for ${userId}, attempt ${4 - retryCount}`);
+// Função para verificar se o usuário existe no Firestore
+export async function checkUserProfile(userId: string): Promise<boolean> {
+  if (!userId) return false;
 
+  try {
+    console.log("Checking if user exists in Firestore:", userId);
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    const exists = userDoc.exists();
+    console.log("User exists in Firestore:", exists);
+    return exists;
+  } catch (error) {
+    console.error("Error checking user profile:", error);
+    return false;
+  }
+}
+
+// Função para criar o perfil do usuário no Firestore
+export async function createUserProfile(userId: string, profile: Partial<UserProfile>): Promise<UserProfile> {
   if (!userId) {
     throw new Error("UserId is required to create profile");
   }
 
   try {
-    // 1. Verificar se usuário já existe
+    console.log("Creating new user profile:", userId);
     const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
 
+    // Verificar se já existe
+    const userDoc = await getDoc(userRef);
     if (userDoc.exists()) {
-      console.log("User profile already exists, returning existing data");
+      console.log("User already exists, returning existing profile");
       return userDoc.data() as UserProfile;
     }
 
-    // 2. Criar novo perfil
-    console.log("Creating new user profile");
     const now = new Date().toISOString();
-
-    const defaultProfile: UserProfile = {
+    const newProfile: UserProfile = {
       id: userId,
       name: profile.name || auth.currentUser?.displayName || "Usuário",
       birthDate: profile.birthDate || now,
@@ -54,11 +71,11 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
       updatedAt: now,
     };
 
-    // 3. Criar todos os documentos necessários
-    await setDoc(userRef, defaultProfile);
-    console.log("Basic profile created");
+    // Criar o perfil
+    await setDoc(userRef, newProfile);
+    console.log("User profile created successfully");
 
-    // 4. Criar estatísticas
+    // Criar as estatísticas iniciais
     const statsRef = doc(db, 'users', userId, 'stats', 'gameStats');
     await setDoc(statsRef, {
       lastGamePlayed: null,
@@ -70,69 +87,41 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
     });
     console.log("Game stats initialized");
 
-    // 5. Criar jogos recentes
+    // Criar a coleção de jogos recentes
     const recentGamesRef = doc(db, 'users', userId, 'games', 'recent');
     await setDoc(recentGamesRef, { games: [] });
     console.log("Recent games collection initialized");
 
-    // 6. Verificar se tudo foi criado corretamente
-    const verifyDoc = await getDoc(userRef);
-    if (!verifyDoc.exists()) {
-      throw new Error("Profile verification failed");
-    }
-
-    console.log("User profile creation successful");
-    return defaultProfile;
-
+    return newProfile;
   } catch (error) {
-    console.error("Error in createUserProfile:", error);
-
-    // Retry logic
-    if (retryCount > 0) {
-      console.log(`Retrying... ${retryCount} attempts remaining`);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
-      return createUserProfile(userId, profile, retryCount - 1);
-    }
-
-    throw new Error(`Failed to create user profile after all attempts: ${error}`);
+    console.error("Error creating user profile:", error);
+    throw error;
   }
 }
 
-// Função para verificar se usuário existe
-export async function checkUserProfile(userId: string): Promise<boolean> {
-  try {
-    console.log(`Checking profile existence for user ${userId}`);
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
-    const exists = userDoc.exists();
-    console.log(`Profile exists: ${exists}`);
-    return exists;
-  } catch (error) {
-    console.error("Error checking user profile:", error);
-    return false;
-  }
-}
-
-// Função para obter perfil do usuário
+// Função para obter o perfil do usuário
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
+  if (!userId) return null;
+
   try {
-    console.log(`Fetching profile for user ${userId}`);
+    console.log("Getting user profile:", userId);
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
 
     if (!userDoc.exists()) {
-      console.log("Profile not found");
+      console.log("User profile not found");
       return null;
     }
 
-    console.log("Profile retrieved successfully");
+    console.log("User profile retrieved successfully");
     return userDoc.data() as UserProfile;
   } catch (error) {
-    console.error("Error fetching user profile:", error);
+    console.error("Error getting user profile:", error);
     return null;
   }
 }
 
+// Função para atualizar o perfil do usuário
 export async function updateUserProfile(profile: UserProfile) {
   const userRef = doc(db, 'users', profile.id);
   await updateDoc(userRef, {
@@ -141,10 +130,18 @@ export async function updateUserProfile(profile: UserProfile) {
   });
 }
 
+// Funções para estatísticas do jogo
 export async function getUserStats(userId: string): Promise<UserGameStats | null> {
-  const statsRef = doc(db, 'users', userId, 'stats', 'gameStats');
-  const statsDoc = await getDoc(statsRef);
-  return statsDoc.exists() ? statsDoc.data() as UserGameStats : null;
+  if (!userId) return null;
+
+  try {
+    const statsRef = doc(db, 'users', userId, 'stats', 'gameStats');
+    const statsDoc = await getDoc(statsRef);
+    return statsDoc.exists() ? statsDoc.data() as UserGameStats : null;
+  } catch (error) {
+    console.error("Error getting user stats:", error);
+    return null;
+  }
 }
 
 export async function getRecentGames(userId: string) {
@@ -152,6 +149,7 @@ export async function getRecentGames(userId: string) {
   const recentGamesDoc = await getDoc(recentGamesRef);
   return recentGamesDoc.exists() ? recentGamesDoc.data().games.slice(0, 3) : [];
 }
+
 
 // Funções para gerenciar o tempo de jogo
 export async function startGameSession(userId: string) {
@@ -238,11 +236,24 @@ export async function clearUserGameData(userId: string) {
 }
 
 // Observar mudanças no estado de autenticação
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   if (user) {
+    console.log("User signed in:", user.uid);
     localStorage.setItem('currentUserId', user.uid);
+
+    // Verificar se o usuário já tem perfil
+    const hasProfile = await checkUserProfile(user.uid);
+    if (!hasProfile) {
+      console.log("New user detected, needs onboarding");
+      localStorage.setItem('needsOnboarding', 'true');
+    } else {
+      console.log("Existing user detected");
+      localStorage.removeItem('needsOnboarding');
+    }
   } else {
+    console.log("User signed out");
     localStorage.removeItem('currentUserId');
+    localStorage.removeItem('needsOnboarding');
   }
 });
 
