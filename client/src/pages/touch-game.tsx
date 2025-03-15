@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, ChevronLeft, Hand } from "lucide-react";
 import { useLocation } from "wouter";
-import { apiRequest } from "@/lib/queryClient";
 
 interface TouchPoint {
   id: number;
@@ -37,7 +36,6 @@ export default function TouchGame() {
 
     if (gameEnded) return;
 
-    // Se não houver toques
     if (e.touches.length === 0) {
       setTouchPoints([]);
       touchPointsRef.current = [];
@@ -58,12 +56,10 @@ export default function TouchGame() {
       });
     }
 
-    // Atualizar pontos apenas se não estivermos em contagem regressiva
     if (countdown === null) {
       setTouchPoints(newPoints);
       touchPointsRef.current = newPoints;
 
-      // Iniciar contagem apenas se não estiver já contando
       if (timerRef.current === null) {
         setCountdown(3);
 
@@ -77,7 +73,6 @@ export default function TouchGame() {
           });
         };
 
-        // Contagem regressiva mais lenta
         setTimeout(updateCountdown, 1500);
         setTimeout(updateCountdown, 3000);
         timerRef.current = setTimeout(() => {
@@ -91,8 +86,8 @@ export default function TouchGame() {
     if (touchPointsRef.current.length === 0) return;
 
     setSelecting(true);
-    const duration = 2000; // 2 segundos de animação
-    const interval = 150; // Intervalo entre as piscadas
+    const duration = 2000;
+    const interval = 150;
     let timeElapsed = 0;
 
     const flash = setInterval(() => {
@@ -102,10 +97,8 @@ export default function TouchGame() {
         clearInterval(flash);
         const randomPoint = touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)];
 
-        // Primeiro, parar todas as animações
         setSelecting(false);
 
-        // Depois, mostrar apenas o ponto vencedor sem animação
         setTimeout(() => {
           touchPointsRef.current = [randomPoint];
           setSelectedPoint(randomPoint);
@@ -113,7 +106,6 @@ export default function TouchGame() {
           setGameEnded(true);
         }, 100);
       } else {
-        // Durante a animação, todos os pontos piscam
         setTouchPoints([...touchPointsRef.current]);
       }
     }, interval);
@@ -149,8 +141,6 @@ export default function TouchGame() {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
-      // Cleanup players when component unmounts
-      apiRequest('DELETE', '/api/players/all').catch(console.error);
     };
   }, [isPlaying, gameEnded]);
 
@@ -188,7 +178,6 @@ export default function TouchGame() {
 
   return (
     <div className="h-screen bg-gradient-to-b from-purple-900 to-purple-800 relative">
-      {/* Barra superior com navegação e controles */}
       <div className="absolute top-0 left-0 right-0 px-4 py-4 flex items-center z-50">
         <Button
           variant="ghost"
@@ -214,7 +203,6 @@ export default function TouchGame() {
           )}
         </div>
 
-        {/* Espaço vazio para manter o equilíbrio */}
         <div className="w-10" />
       </div>
 
@@ -223,7 +211,6 @@ export default function TouchGame() {
           ref={containerRef}
           className="w-full h-full relative touch-none"
         >
-          {/* Contador regressivo no topo */}
           <AnimatePresence>
             {countdown !== null && (
               <motion.div

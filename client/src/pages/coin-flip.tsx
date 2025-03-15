@@ -1,39 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Coins } from "lucide-react";
-import { updateGameStats } from "@/lib/stats";
 
 export default function CoinFlip() {
   const [isFlipping, setIsFlipping] = useState(false);
   const [result, setResult] = useState<"cara" | "coroa" | null>(null);
-  const [gameStartTime] = useState<number>(Date.now());
 
   const flipCoin = () => {
     if (isFlipping) return;
 
     setIsFlipping(true);
-    // Definir o resultado antes da animação
     const newResult = Math.random() < 0.5 ? "cara" : "coroa";
     setResult(null);
 
-    // Mostrar o resultado apenas quando a animação terminar
     setTimeout(() => {
       setResult(newResult);
       setIsFlipping(false);
-
-      // Atualizar estatísticas quando o resultado é definido
-      const gameEndTime = Date.now();
-      const playTimeInMinutes = Math.floor((gameEndTime - gameStartTime) / (1000 * 60));
-
-      updateGameStats({
-        gameType: "coinFlip",
-        playTime: playTimeInMinutes,
-        isVictory: true,
-        playerCount: 1
-      });
-    }, 1500); // 1.5 segundos
+    }, 1500);
   };
 
   return (

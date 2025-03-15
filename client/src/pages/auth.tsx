@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { auth, googleProvider } from "@/lib/firebase";
 import {
@@ -13,7 +13,6 @@ import { FcGoogle } from "react-icons/fc";
 import { Eye, EyeOff } from "lucide-react";
 import { GorfLogo } from "@/components/GorfLogo";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/use-auth";
 
 export default function Auth() {
   const [, setLocation] = useLocation();
@@ -24,21 +23,6 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
-  const { isNewUser, isAuthenticated } = useAuth();
-
-  useEffect(() => {
-    console.log("[Auth page] Estado de autenticação:", { isAuthenticated, isNewUser });
-
-    if (isAuthenticated) {
-      if (isNewUser) {
-        console.log("[Auth page] Novo usuário detectado, redirecionando para onboarding");
-        setLocation("/onboarding");
-      } else {
-        console.log("[Auth page] Usuário existente, redirecionando para dashboard");
-        setLocation("/dashboard");
-      }
-    }
-  }, [isNewUser, isAuthenticated, setLocation]);
 
   const getErrorMessage = (code: string) => {
     switch (code) {
@@ -69,14 +53,10 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
-      console.log("[Auth page] Iniciando login com Google");
-
       const result = await signInWithPopup(auth, googleProvider);
-      console.log("[Auth page] Login com Google bem-sucedido:", result.user.uid);
-
-      // O redirecionamento será feito pelo useEffect após a verificação do perfil
+      setLocation("/dashboard");
     } catch (error: any) {
-      console.error("[Auth page] Erro no login com Google:", error);
+      console.error("Erro no login com Google:", error);
       setError(getErrorMessage(error.code));
       toast({
         variant: "destructive",
@@ -99,18 +79,15 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
-      console.log("[Auth page] Iniciando autenticação por email, modo:", isLogin ? "login" : "cadastro");
 
       if (isLogin) {
-        const result = await signInWithEmailAndPassword(auth, email, password);
-        console.log("[Auth page] Login por email bem-sucedido:", result.user.uid);
+        await signInWithEmailAndPassword(auth, email, password);
       } else {
-        const result = await createUserWithEmailAndPassword(auth, email, password);
-        console.log("[Auth page] Cadastro por email bem-sucedido:", result.user.uid);
+        await createUserWithEmailAndPassword(auth, email, password);
       }
-      // O redirecionamento será feito pelo useEffect após a verificação do perfil
+      setLocation("/dashboard");
     } catch (error: any) {
-      console.error("[Auth page] Erro na autenticação por email:", error);
+      console.error("Erro na autenticação por email:", error);
       setError(getErrorMessage(error.code));
       toast({
         variant: "destructive",

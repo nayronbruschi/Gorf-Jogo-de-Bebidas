@@ -1,22 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
-import { updateGameStats } from "@/lib/stats";
 
 export default function SpinBottle() {
   const [rotation, setRotation] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [gameStartTime] = useState<number>(Date.now());
   const [isDragging, setIsDragging] = useState(false);
   const [startAngle, setStartAngle] = useState(0);
-
-  // Preload da imagem
-  useEffect(() => {
-    const img = new Image();
-    img.src = "https://firebasestorage.googleapis.com/v0/b/gorf-o-jogo.firebasestorage.app/o/icone-fleche-droite-violet-2.png?alt=media&token=82a5ffce-35ee-4eca-a9b9-48b22aa77799";
-  }, []);
 
   const spinBottle = () => {
     if (isSpinning) return;
@@ -28,15 +20,6 @@ export default function SpinBottle() {
 
     setTimeout(() => {
       setIsSpinning(false);
-
-      const gameEndTime = Date.now();
-      const playTimeInSeconds = Math.floor((gameEndTime - gameStartTime) / 1000);
-
-      updateGameStats({
-        gameType: "spinBottle",
-        playTimeInSeconds,
-        isVictory: true
-      });
     }, 3000);
   };
 
@@ -103,7 +86,7 @@ export default function SpinBottle() {
             }}
           >
             <img
-              src="https://firebasestorage.googleapis.com/v0/b/gorf-o-jogo.firebasestorage.app/o/icone-fleche-droite-violet-2.png?alt=media&token=82a5ffce-35ee-4eca-a9b9-48b22aa77799"
+              src="https://firebasestorage.googleapis.com/v0/b/gorf-o-jogo.firebasestorage.apps/o/icone-fleche-droite-violet-2.png?alt=media&token=82a5ffce-35ee-4eca-a9b9-48b22aa77799"
               alt="Seta"
               className="w-3/4 h-3/4 object-contain"
               draggable="false"

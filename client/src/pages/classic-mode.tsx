@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { decks } from "@/lib/game-data";
 import { useSound } from "@/hooks/use-sound";
-import { User, Beer, Target, ArrowRight, Award, Crown, Plus, Minus, Users, ArrowLeft, ChevronLeft } from "lucide-react";
+import { User, Beer, Target, ArrowRight, Award, Crown, Plus, Minus } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
@@ -16,8 +16,8 @@ import { useForm } from "react-hook-form";
 import { createElement } from "react";
 import { useLocation } from "wouter";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
-import { updateGameStats, useGameTimer } from "@/lib/stats";
-import { auth, updateRecentGames } from "@/lib/firebase";
+import { useGameTimer } from "@/lib/stats";
+import { auth } from "@/lib/firebase";
 
 export default function ClassicMode() {
   const [currentChallenge, setCurrentChallenge] = useState("");
@@ -30,7 +30,6 @@ export default function ClassicMode() {
     const hasSeenTutorial = localStorage.getItem("hasSeenTutorial");
     return !hasSeenTutorial;
   });
-  const [gameStartTime] = useState<number>(Date.now());
   const { play } = useSound();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -47,12 +46,7 @@ export default function ClassicMode() {
   });
 
   const { data: settings } = useQuery({
-    queryKey: ["/api/settings"],
-    onSuccess: (data) => {
-      if (data?.maxPoints) {
-        maxPointsForm.setValue("maxPoints", data.maxPoints);
-      }
-    }
+    queryKey: ["/api/settings"]
   });
 
   const updatePoints = useMutation({
@@ -157,50 +151,9 @@ export default function ClassicMode() {
   const winner = players.find(player => player.points >= (settings?.maxPoints || 100));
   const topDrinker = [...players].sort((a, b) => b.drinksCompleted - a.drinksCompleted)[0];
 
-  const getPlayTime = useGameTimer();
-  const [gameStartTime2] = useState<number>(Date.now());
-
-  // Update the updateGameStatistics function in classic-mode.tsx
-  const updateGameStatistics = async (winner?: string) => {
-    if (!auth.currentUser) return;
-
-    const endTime = Date.now();
-    const playTimeInSeconds = Math.floor((endTime - gameStartTime2) / 1000);
-
-    try {
-      // Get unique player names
-      const playerNames = players.map(player => player.name);
-
-      // Update game stats
-      await updateGameStats({
-        gameType: "classic",
-        playTimeInSeconds,
-        playerNames
-      });
-
-      // Update recent games
-      await updateRecentGames(auth.currentUser.uid, {
-        name: "Modo Clássico",
-        date: new Date().toISOString(),
-        players: players.length,
-        winner: winner || "-"
-      });
-    } catch (error) {
-      console.error('Error updating game statistics:', error);
-    }
-  };
-
-  // Call updateGameStatistics when component unmounts
-  useEffect(() => {
-    return () => {
-      if (auth.currentUser) {
-        updateGameStatistics();
-      }
-    };
-  }, []);
+  const gameStartTime2 = Date.now();
 
   if (winner && topDrinker) {
-    updateGameStatistics(winner.name);
     return (
       <WinnerScreen
         winner={{ name: winner.name, points: winner.points }}
@@ -368,18 +321,18 @@ export default function ClassicMode() {
                 onClick={handleBackToGame}
                 className="text-white hover:text-white/80"
               >
-                <ArrowLeft className="h-5 w-5" />
+                <ArrowRight className="h-5 w-5" />
               </Button>
             </div>
             <div className="space-y-3">
-              {sortedPlayers.map((player, index) => (
+              {sortedPlayers.map((player) => (
                 <div
                   key={player.id}
                   className="bg-white/10 p-3 rounded-lg flex flex-col gap-2"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      {index === 0 && <Crown className="h-4 w-4 text-yellow-400" />}
+                      {player === sortedPlayers[0] && <Crown className="h-4 w-4 text-yellow-400" />}
                       <span className="text-white">{player.name}</span>
                     </div>
                     <span className="text-white font-bold">{player.points} pts</span>

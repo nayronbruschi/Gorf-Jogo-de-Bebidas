@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { getItemsByTheme, type ThemeId } from "@/lib/guess-who-data";
 import { ChevronLeft, RotateCcw, Home, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { updateGameStats } from "@/lib/stats";
 
 interface PlayerItem {
   [playerId: string]: string;
@@ -14,7 +13,6 @@ interface PlayerItem {
 
 export default function GuessWhoGame() {
   const [, setLocation] = useLocation();
-  const [gameStartTime] = useState<number>(Date.now());
   const { data: playersData = [] } = useQuery({
     queryKey: ["/api/players"],
   });
@@ -76,24 +74,13 @@ export default function GuessWhoGame() {
 
   const checkForWinner = useCallback((remainingPlayers: string[]) => {
     if (remainingPlayers.length === 1) {
-      const gameEndTime = Date.now();
-      const playTimeInMinutes = Math.floor((gameEndTime - gameStartTime) / (1000 * 60));
-
-      // Atualizar estatísticas quando alguém vence
-      updateGameStats({
-        gameType: "guessWho",
-        playTime: playTimeInMinutes,
-        isVictory: true,
-        playerCount: players.length
-      });
-
       setWinner(remainingPlayers[0]);
       setShowWinScreen(true);
       setPortraitMode();
       return true;
     }
     return false;
-  }, [gameStartTime, players]);
+  }, []);
 
   useEffect(() => {
     const storedPlayers = localStorage.getItem("guessWhoPlayers");
@@ -219,17 +206,6 @@ export default function GuessWhoGame() {
     const remainingPlayers = players.filter(id => !newEliminated.includes(id));
 
     if (remainingPlayers.length === 1) {
-      const gameEndTime = Date.now();
-      const playTimeInMinutes = Math.floor((gameEndTime - gameStartTime) / (1000 * 60));
-
-      // Atualizar estatísticas quando o último jogador permanece
-      updateGameStats({
-        gameType: "guessWho",
-        playTime: playTimeInMinutes,
-        isVictory: true,
-        playerCount: players.length
-      });
-
       setWinner(remainingPlayers[0]);
       setShowWinScreen(true);
       setPortraitMode();

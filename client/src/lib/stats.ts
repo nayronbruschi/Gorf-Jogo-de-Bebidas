@@ -20,3 +20,19 @@ export function useGameTimer() {
 export async function updateGameStats(data: any): Promise<void> {
   console.log("[Stats] Statistics temporarily disabled. Called with data:", data);
 }
+
+// Stub function for getUserStats
+export async function getUserStats(): Promise<any> {
+  console.log("[Stats] getUserStats temporarily disabled");
+  return {
+    gamesPlayed: 0,
+    totalPlayTime: 0,
+    favoriteGame: 'classic',
+    achievements: []
+  };
+}
+
+// Stub function for updateRecentGames
+export async function updateRecentGames(userId: string, gameData: any): Promise<void> {
+  console.log("[Stats] updateRecentGames temporarily disabled. Called with:", { userId, gameData });
+}
