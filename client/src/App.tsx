@@ -125,7 +125,7 @@ function Router() {
 
           if (state === 'fromAuth') {
             window.history.replaceState({}, '', '/dashboard');
-            return null;
+            return <LoadingScreen />;
           }
 
           return <NotFound />;
