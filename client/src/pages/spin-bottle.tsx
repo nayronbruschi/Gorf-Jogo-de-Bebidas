@@ -3,7 +3,6 @@ import { GameLayout } from "@/components/GameLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
-import { BottleIcon } from "@/components/BottleIcon";
 import { updateGameStats } from "@/lib/stats";
 
 export default function SpinBottle() {
@@ -29,7 +28,6 @@ export default function SpinBottle() {
       updateGameStats({
         gameType: "spinBottle",
         playTimeInSeconds,
-        isVictory: true,
         playerCount: 1
       });
     }, 3000);
@@ -44,9 +42,13 @@ export default function SpinBottle() {
           </p>
         </div>
 
-        <div className="relative w-full max-w-md aspect-square p-8">
+        <div className="relative w-full max-w-md aspect-square">
+          {/* Container estático com o círculo roxo */}
+          <div className="absolute inset-0 rounded-full bg-purple-900/90" />
+
+          {/* Container da seta que vai girar */}
           <motion.div
-            className="w-full h-full"
+            className="absolute inset-0 flex items-center justify-center"
             animate={{ rotate: rotation }}
             transition={{
               type: "spring",
@@ -54,7 +56,11 @@ export default function SpinBottle() {
               bounce: 0.2
             }}
           >
-            <BottleIcon />
+            <img
+              src="/api/images/icone-fleche-droite-violet.png"
+              alt="Seta"
+              className="w-3/4 h-3/4 object-contain"
+            />
           </motion.div>
         </div>
 
