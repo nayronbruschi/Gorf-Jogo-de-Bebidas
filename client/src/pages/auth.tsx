@@ -27,13 +27,14 @@ export default function Auth() {
   const { isNewUser, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    // Se o usuário estiver autenticado
+    console.log("Auth page - Authentication state changed:", { isAuthenticated, isNewUser });
+
     if (isAuthenticated) {
-      // Se for novo usuário, vai para onboarding
       if (isNewUser) {
+        console.log("Redirecting to onboarding");
         setLocation("/onboarding");
       } else {
-        // Se não for novo usuário, vai para dashboard
+        console.log("Redirecting to dashboard");
         setLocation("/dashboard");
       }
     }
@@ -68,11 +69,17 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
+      console.log("Starting Google sign in");
       await signInWithPopup(auth, googleProvider);
-      // O redirecionamento será feito pelo useEffect
+      // Redirecionamento será feito pelo useEffect
     } catch (error: any) {
       console.error("Error signing in with Google:", error);
       setError(getErrorMessage(error.code));
+      toast({
+        variant: "destructive",
+        title: "Erro no login",
+        description: getErrorMessage(error.code)
+      });
     } finally {
       setIsLoading(false);
     }
@@ -88,15 +95,21 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
+      console.log("Starting email authentication");
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
-      // O redirecionamento será feito pelo useEffect
+      // Redirecionamento será feito pelo useEffect
     } catch (error: any) {
       console.error("Error with email auth:", error);
       setError(getErrorMessage(error.code));
+      toast({
+        variant: "destructive",
+        title: "Erro na autenticação",
+        description: getErrorMessage(error.code)
+      });
     } finally {
       setIsLoading(false);
     }

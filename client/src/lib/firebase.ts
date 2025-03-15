@@ -32,45 +32,59 @@ googleProvider.setCustomParameters({
 
 // Funções auxiliares para gerenciar dados do usuário
 export async function createUserProfile(userId: string, profile: Partial<UserProfile> = {}) {
-  const userRef = doc(db, 'users', userId);
-  const userDoc = await getDoc(userRef);
+  console.log("Starting createUserProfile for userId:", userId);
 
-  if (!userDoc.exists()) {
-    const now = new Date().toISOString();
-    // Create default profile
-    const defaultProfile: UserProfile = {
-      id: userId,
-      name: profile.name || auth.currentUser?.displayName || "Usuário",
-      birthDate: profile.birthDate || now,
-      gender: profile.gender || "homem",
-      favoriteSocialNetwork: profile.favoriteSocialNetwork || "instagram",
-      createdAt: now,
-      updatedAt: now,
-    };
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
 
-    // Criar perfil do usuário
-    await setDoc(userRef, defaultProfile);
+    if (!userDoc.exists()) {
+      console.log("User document doesn't exist, creating new profile");
+      const now = new Date().toISOString();
 
-    // Criar subcoleção de estatísticas
-    const statsRef = doc(userRef, 'stats', 'gameStats');
-    await setDoc(statsRef, {
-      lastGamePlayed: null,
-      totalGamesPlayed: 0,
-      victories: 0,
-      totalPlayTime: 0,
-      lastGameStartTime: null
-    });
+      // Create default profile
+      const defaultProfile: UserProfile = {
+        id: userId,
+        name: profile.name || auth.currentUser?.displayName || "Usuário",
+        birthDate: profile.birthDate || now,
+        gender: profile.gender || "homem",
+        favoriteSocialNetwork: profile.favoriteSocialNetwork || "instagram",
+        createdAt: now,
+        updatedAt: now,
+      };
 
-    // Criar subcoleção de jogos recentes
-    const recentGamesRef = doc(userRef, 'games', 'recent');
-    await setDoc(recentGamesRef, {
-      games: []
-    });
+      // Criar perfil do usuário
+      await setDoc(userRef, defaultProfile);
+      console.log("User profile created successfully");
 
-    return defaultProfile;
+      // Criar subcoleção de estatísticas
+      const statsRef = doc(userRef, 'stats', 'gameStats');
+      await setDoc(statsRef, {
+        lastGamePlayed: null,
+        totalGamesPlayed: 0,
+        victories: 0,
+        totalPlayTime: 0,
+        lastGameStartTime: null,
+        uniquePlayers: 0
+      });
+      console.log("Game stats initialized");
+
+      // Criar subcoleção de jogos recentes
+      const recentGamesRef = doc(userRef, 'games', 'recent');
+      await setDoc(recentGamesRef, {
+        games: []
+      });
+      console.log("Recent games collection initialized");
+
+      return defaultProfile;
+    } else {
+      console.log("User profile already exists");
+      return userDoc.data() as UserProfile;
+    }
+  } catch (error) {
+    console.error("Error in createUserProfile:", error);
+    throw new Error(`Failed to create user profile: ${error}`);
   }
-
-  return userDoc.data() as UserProfile;
 }
 
 export async function updateUserProfile(profile: UserProfile) {
@@ -173,7 +187,8 @@ export async function clearUserGameData(userId: string) {
     totalGamesPlayed: 0,
     victories: 0,
     totalPlayTime: 0,
-    lastGameStartTime: null
+    lastGameStartTime: null,
+    uniquePlayers: 0
   }, { merge: true });
 
   // Clear recent games
