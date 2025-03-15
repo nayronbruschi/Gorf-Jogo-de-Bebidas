@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
-import type { UserProfile, UserGameStats } from "@shared/schema";
+import type { UserProfile } from "@shared/schema";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBSbE-z6rYYOW7UkbzdWFWSdmEkLOnVe5U",
@@ -73,24 +73,7 @@ export async function createUserProfile(userId: string, profileData: Partial<Use
 
     // Criar perfil principal
     await setDoc(userRef, newProfile);
-    console.log("[Firebase] Perfil criado");
-
-    // Criar stats
-    const statsRef = doc(db, 'users', userId, 'stats', 'gameStats');
-    await setDoc(statsRef, {
-      lastGamePlayed: null,
-      totalGamesPlayed: 0,
-      victories: 0,
-      totalPlayTime: 0,
-      lastGameStartTime: null,
-      uniquePlayers: 0
-    });
-    console.log("[Firebase] Stats inicializados");
-
-    // Criar jogos recentes
-    const recentGamesRef = doc(db, 'users', userId, 'games', 'recent');
-    await setDoc(recentGamesRef, { games: [] });
-    console.log("[Firebase] Jogos recentes inicializados");
+    console.log("[Firebase] Perfil criado com sucesso");
 
     return newProfile;
   } catch (error) {
