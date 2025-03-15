@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/use-auth";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { SplashScreen } from "@/components/SplashScreen";
 
 // Pages
 import NotFound from "@/pages/not-found";
@@ -29,7 +30,7 @@ import GuessWhoPlayers from "@/pages/guess-who-players";
 import GuessWhoTheme from "@/pages/guess-who-theme";
 import GuessWhoGame from "@/pages/guess-who-game";
 import Profile from "@/pages/profile";
-import Onboarding from "@/pages/onboarding"; // Adicionado
+import Onboarding from "@/pages/onboarding";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading } = useAuth();
@@ -48,7 +49,7 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Auth} />
+      <Route path="/" component={SplashScreen} />
       <Route path="/auth" component={Auth} />
       <Route path="/onboarding">
         <ProtectedRoute component={Onboarding} />
