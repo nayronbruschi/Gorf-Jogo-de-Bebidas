@@ -33,6 +33,7 @@ export default function GuessWhoGame() {
   const [showLoseScreen, setShowLoseScreen] = useState(false);
   const [winner, setWinner] = useState("");
   const [readyToStart, setReadyToStart] = useState(false);
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
   const isMobileDevice = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -136,18 +137,23 @@ export default function GuessWhoGame() {
 
     const timer = setInterval(() => {
       setSetupTime(prev => {
-        if (prev <= 1) {
+        const newTime = prev - 1;
+        if (newTime <= 0) {
           clearInterval(timer);
           setIsSetup(false);
           setShowItem(true);
           setTimeLeft(30);
           return 0;
         }
-        return prev - 1;
+        return newTime;
       });
     }, 1000);
 
-    return () => clearInterval(timer);
+    setTimer(timer);
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
   }, [isSetup, readyToStart]);
 
   useEffect(() => {
@@ -155,7 +161,8 @@ export default function GuessWhoGame() {
 
     const timer = setInterval(() => {
       setTimeLeft(prev => {
-        if (prev <= 1) {
+        const newTime = prev - 1;
+        if (newTime <= 0) {
           clearInterval(timer);
           setShowItem(false);
           setPortraitMode();
@@ -164,15 +171,19 @@ export default function GuessWhoGame() {
           }
           return 0;
         }
-        return prev - 1;
+        return newTime;
       });
     }, 1000);
 
-    return () => clearInterval(timer);
+    setTimer(timer);
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
   }, [showItem]);
 
   const handleNextPlayer = useCallback(() => {
-    const remainingPlayers = winner 
+    const remainingPlayers = winner
       ? players.filter(id => id !== winner)
       : players;
 
