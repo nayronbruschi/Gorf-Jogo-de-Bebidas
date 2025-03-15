@@ -58,7 +58,9 @@ export default function Auth() {
       setIsLoading(true);
       setError("");
       console.log("Iniciando login com Google...");
-      console.log("Domínio atual:", window.location.host, window.location.origin);
+      console.log("Domínio atual:", window.location.host);
+      console.log("URL completa:", window.location.origin);
+      console.log("Protocolo:", window.location.protocol);
       const result = await signInWithPopup(auth, googleProvider);
       console.log("Login com Google bem sucedido:", result.user.email);
       setLocation("/dashboard");
