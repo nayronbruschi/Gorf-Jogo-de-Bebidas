@@ -24,11 +24,11 @@ export default function SpinBottle() {
 
       // Atualizar estatísticas quando a garrafa para
       const gameEndTime = Date.now();
-      const playTimeInMinutes = Math.floor((gameEndTime - gameStartTime) / (1000 * 60));
+      const playTimeInSeconds = Math.floor((gameEndTime - gameStartTime) / 1000);
 
       updateGameStats({
         gameType: "spinBottle",
-        playTime: playTimeInMinutes,
+        playTimeInSeconds,
         isVictory: true,
         playerCount: 1
       });
@@ -44,7 +44,7 @@ export default function SpinBottle() {
           </p>
         </div>
 
-        <div className="relative w-full max-w-md aspect-square">
+        <div className="relative w-full max-w-md aspect-square p-8">
           <motion.div
             className="w-full h-full"
             animate={{ rotate: rotation }}
@@ -62,7 +62,7 @@ export default function SpinBottle() {
           size="lg"
           onClick={spinBottle}
           disabled={isSpinning}
-          className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl"
+          className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white px-8 py-6 text-xl"
         >
           <RotateCcw className="mr-2 h-5 w-5" />
           {isSpinning ? "Girando..." : "Girar Garrafa"}
