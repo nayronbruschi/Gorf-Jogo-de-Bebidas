@@ -11,37 +11,49 @@ export function useAuth() {
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log("Setting up auth state listener");
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       try {
         if (user) {
-          console.log("Auth state changed - User logged in:", user.uid);
+          console.log(`User authenticated: ${user.uid}`);
           setUser(user);
+          setLoading(true);
 
-          // Verificar se o usuário tem perfil
+          // 1. Verificar se o perfil existe
           const hasProfile = await checkUserProfile(user.uid);
-          console.log("User profile check:", hasProfile ? "exists" : "needs creation");
+          console.log(`Profile check result: ${hasProfile}`);
 
           if (!hasProfile) {
-            console.log("New user detected, will redirect to onboarding");
+            console.log("No profile found, marking as new user");
             setIsNewUser(true);
             setProfile(null);
           } else {
-            // Carregar perfil existente
+            console.log("Profile exists, fetching data");
             const userProfile = await getUserProfile(user.uid);
-            console.log("Existing user profile loaded:", userProfile ? "success" : "failed");
 
             if (userProfile) {
+              console.log("Profile loaded successfully");
               setProfile(userProfile);
               setIsNewUser(false);
             } else {
-              // Se não conseguiu carregar o perfil, tratar como novo usuário
-              console.log("Failed to load profile, treating as new user");
+              console.log("Failed to load profile, will recreate");
               setIsNewUser(true);
               setProfile(null);
+
+              // Tentar criar o perfil automaticamente
+              try {
+                const newProfile = await createUserProfile(user.uid);
+                console.log("Profile created automatically");
+                setProfile(newProfile);
+                setIsNewUser(false);
+              } catch (error) {
+                console.error("Failed to create profile automatically:", error);
+                setIsNewUser(true);
+              }
             }
           }
         } else {
-          console.log("Auth state changed - User logged out");
+          console.log("User logged out");
           setUser(null);
           setProfile(null);
           setIsNewUser(false);
@@ -54,13 +66,14 @@ export function useAuth() {
           description: "Por favor, tente fazer login novamente."
         });
         setProfile(null);
-        setIsNewUser(true); // Em caso de erro, tratar como novo usuário
+        setIsNewUser(true);
       } finally {
         setLoading(false);
       }
     });
 
     return () => {
+      console.log("Cleaning up auth state listener");
       unsubscribe();
     };
   }, [toast]);
