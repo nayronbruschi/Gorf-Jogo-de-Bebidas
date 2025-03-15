@@ -101,162 +101,164 @@ export default function Dashboard() {
 
   return (
     <AppLayout>
-      <div className="container mx-auto p-4 space-y-4 pb-32 min-h-screen">
-        <section className="pb-2 overflow-hidden rounded-xl">
-          <PromotionalBanner />
-        </section>
+      <div className="min-h-screen w-full">
+        <div className="container mx-auto px-4 py-6 space-y-6">
+          <section className="pb-2 overflow-hidden rounded-xl">
+            <PromotionalBanner />
+          </section>
 
-        <section className="pb-2">
-          <h2 className="text-white text-lg font-medium mb-2">Todos os Jogos</h2>
-          <Carousel 
-            className="w-full"
-            opts={{
-              align: "start",
-              dragFree: true,
-              skipSnaps: true,
-              inViewThreshold: 0.5,
-            }}
-          >
-            <CarouselContent className="-ml-4">
-              {games.map((game) => (
-                <CarouselItem key={game.id} className="pl-4 basis-[22%]">
-                  <div 
-                    className="flex flex-col items-center gap-1 p-3 cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => navigate(game.route)}
-                  >
-                    <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
-                      <game.icon className="h-7 w-7 text-white" />
+          <section className="pb-2">
+            <h2 className="text-white text-lg font-medium mb-2">Todos os Jogos</h2>
+            <Carousel 
+              className="w-full"
+              opts={{
+                align: "start",
+                dragFree: true,
+                skipSnaps: true,
+                inViewThreshold: 0.5,
+              }}
+            >
+              <CarouselContent className="-ml-4">
+                {games.map((game) => (
+                  <CarouselItem key={game.id} className="pl-4 basis-[22%]">
+                    <div 
+                      className="flex flex-col items-center gap-1 p-3 cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => navigate(game.route)}
+                    >
+                      <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
+                        <game.icon className="h-7 w-7 text-white" />
+                      </div>
+                      <span className="text-xs text-white text-center mt-1 px-12">{game.name}</span>
                     </div>
-                    <span className="text-xs text-white text-center mt-1 px-12">{game.name}</span>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-        </section>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </section>
 
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-2">
-          <Card className="bg-white/10 backdrop-blur-lg border-none">
-            <CardHeader>
-              <CardTitle className="text-white">Último Jogo</CardTitle>
-              <CardDescription className="text-white/60">
-                Continue de onde parou
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-4">
-                {recentGames && recentGames.length > 0 ? (
-                  <div className="p-4 rounded-lg bg-white/5">
-                    <h3 className="text-lg font-medium text-white mb-2">{recentGames[0].name}</h3>
-                    <p className="text-sm text-white/60 mb-4">{formatDate(recentGames[0].date)}</p>
-                    <Button 
-                      onClick={() => navigate(getGamePath(recentGames[0].name))}
-                      className="w-full bg-purple-700 hover:bg-purple-800 text-white"
-                    >
-                      Jogar Novamente
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-white/60 mb-4">Você ainda não jogou nenhuma partida</p>
-                    <Button
-                      onClick={() => navigate("/game-modes")}
-                      className="bg-purple-600 hover:bg-purple-700 text-white"
-                    >
-                      Jogar Agora
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/10 backdrop-blur-lg border-none">
-            <CardHeader>
-              <CardTitle className="text-white">Acesso Rápido</CardTitle>
-              <CardDescription className="text-white/60">
-                Todos os jogos disponíveis
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                size="lg"
-                onClick={() => navigate("/game-modes")}
-                className="w-full bg-purple-700 hover:bg-purple-800 text-white"
-              >
-                <GamepadIcon className="mr-2 h-5 w-5" />
-                Ver Todos os Jogos
-              </Button>
-            </CardContent>
-          </Card>
-        </section>
-
-        <Card className="bg-white/10 backdrop-blur-lg border-none">
-          <CardHeader>
-            <CardTitle className="text-white">Seus Dados</CardTitle>
-            <CardDescription className="text-white/60">
-              Estatísticas de jogo
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {stats.map((stat) => (
-                <div key={stat.title} className="flex items-center gap-4 p-4 rounded-lg bg-white/5">
-                  <stat.icon className="h-8 w-8 text-white/60" />
-                  <div>
-                    <p className="text-2xl font-bold text-white">{stat.value}</p>
-                    <p className="text-sm text-white/60">{stat.title}</p>
-                  </div>
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-2">
+            <Card className="bg-white/10 backdrop-blur-lg border-none">
+              <CardHeader>
+                <CardTitle className="text-white">Último Jogo</CardTitle>
+                <CardDescription className="text-white/60">
+                  Continue de onde parou
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col gap-4">
+                  {recentGames && recentGames.length > 0 ? (
+                    <div className="p-4 rounded-lg bg-white/5">
+                      <h3 className="text-lg font-medium text-white mb-2">{recentGames[0].name}</h3>
+                      <p className="text-sm text-white/60 mb-4">{formatDate(recentGames[0].date)}</p>
+                      <Button 
+                        onClick={() => navigate(getGamePath(recentGames[0].name))}
+                        className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                      >
+                        Jogar Novamente
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-white/60 mb-4">Você ainda não jogou nenhuma partida</p>
+                      <Button
+                        onClick={() => navigate("/game-modes")}
+                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                      >
+                        Jogar Agora
+                      </Button>
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        <Card className="bg-white/10 backdrop-blur-lg border-none">
-          <CardHeader>
-            <CardTitle className="text-white">Jogos Recentes</CardTitle>
-            <CardDescription className="text-white/60">
-              Últimas partidas jogadas
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {recentGames && recentGames.length > 0 ? (
-              <div className="space-y-4">
-                {recentGames.map((game, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between p-4 rounded-lg bg-white/5"
-                  >
+            <Card className="bg-white/10 backdrop-blur-lg border-none">
+              <CardHeader>
+                <CardTitle className="text-white">Acesso Rápido</CardTitle>
+                <CardDescription className="text-white/60">
+                  Todos os jogos disponíveis
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button
+                  size="lg"
+                  onClick={() => navigate("/game-modes")}
+                  className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                >
+                  <GamepadIcon className="mr-2 h-5 w-5" />
+                  Ver Todos os Jogos
+                </Button>
+              </CardContent>
+            </Card>
+          </section>
+
+          <Card className="bg-white/10 backdrop-blur-lg border-none">
+            <CardHeader>
+              <CardTitle className="text-white">Seus Dados</CardTitle>
+              <CardDescription className="text-white/60">
+                Estatísticas de jogo
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {stats.map((stat) => (
+                  <div key={stat.title} className="flex items-center gap-4 p-4 rounded-lg bg-white/5">
+                    <stat.icon className="h-8 w-8 text-white/60" />
                     <div>
-                      <p className="text-white font-medium">{game.name}</p>
-                      <p className="text-sm text-white/60">{formatDate(game.date)}</p>
-                      <p className="text-sm text-white/60">
-                        {game.players} jogadores 
-                      </p>
+                      <p className="text-2xl font-bold text-white">{stat.value}</p>
+                      <p className="text-sm text-white/60">{stat.title}</p>
                     </div>
-                    <Button
-                      className="shrink-0 bg-purple-700 hover:bg-purple-800 text-white"
-                      onClick={() => navigate(getGamePath(game.name))}
-                    >
-                      Jogar Novamente
-                    </Button>
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-white/60 mb-4">Você ainda não jogou nenhuma partida</p>
-                <Button
-                  onClick={() => navigate("/game-modes")}
-                  className="bg-purple-600 hover:bg-purple-700 text-white"
-                >
-                  Jogar Agora
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/10 backdrop-blur-lg border-none">
+            <CardHeader>
+              <CardTitle className="text-white">Jogos Recentes</CardTitle>
+              <CardDescription className="text-white/60">
+                Últimas partidas jogadas
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {recentGames && recentGames.length > 0 ? (
+                <div className="space-y-4">
+                  {recentGames.map((game, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center justify-between p-4 rounded-lg bg-white/5"
+                    >
+                      <div>
+                        <p className="text-white font-medium">{game.name}</p>
+                        <p className="text-sm text-white/60">{formatDate(game.date)}</p>
+                        <p className="text-sm text-white/60">
+                          {game.players} jogadores 
+                        </p>
+                      </div>
+                      <Button
+                        className="shrink-0 bg-purple-700 hover:bg-purple-800 text-white"
+                        onClick={() => navigate(getGamePath(game.name))}
+                      >
+                        Jogar Novamente
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-white/60 mb-4">Você ainda não jogou nenhuma partida</p>
+                  <Button
+                    onClick={() => navigate("/game-modes")}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    Jogar Agora
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </AppLayout>
   );
