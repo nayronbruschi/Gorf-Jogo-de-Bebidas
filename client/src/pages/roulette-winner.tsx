@@ -13,7 +13,6 @@ export default function RouletteWinner() {
 
   const handlePlayAgain = async () => {
     try {
-      // Resetar apenas os pontos dos jogadores
       await apiRequest("POST", "/api/players/reset", {});
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       navigate("/roulette/play");

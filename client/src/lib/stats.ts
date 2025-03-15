@@ -15,3 +15,8 @@ export function useGameTimer() {
 
   return elapsedTime;
 }
+
+// Stub function to prevent import errors
+export async function updateGameStats(data: any): Promise<void> {
+  console.log("[Stats] Statistics temporarily disabled. Called with data:", data);
+}
