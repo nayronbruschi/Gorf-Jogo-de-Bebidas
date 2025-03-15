@@ -44,6 +44,8 @@ export default function Auth() {
         return 'Login com Google cancelado';
       case 'auth/cancelled-popup-request':
         return 'Operação cancelada';
+      case 'auth/unauthorized-domain':
+        return 'Este domínio não está autorizado para login. Por favor, contate o administrador.';
       case 'auth/invalid-credential':
         return 'Credenciais inválidas. Por favor, tente novamente.';
       default:
@@ -56,11 +58,14 @@ export default function Auth() {
       setIsLoading(true);
       setError("");
       console.log("Iniciando login com Google...");
+      console.log("Domínio atual:", window.location.hostname);
       const result = await signInWithPopup(auth, googleProvider);
       console.log("Login com Google bem sucedido:", result.user.email);
       setLocation("/dashboard");
     } catch (error: any) {
       console.error("Erro no login com Google:", error);
+      console.error("Código do erro:", error.code);
+      console.error("Mensagem do erro:", error.message);
       setError(getErrorMessage(error.code));
       toast({
         variant: "destructive",
