@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,14 @@ export default function SpinBottle() {
   const [rotation, setRotation] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [gameStartTime] = useState<number>(Date.now());
+  const [isDragging, setIsDragging] = useState(false);
+  const [startAngle, setStartAngle] = useState(0);
+
+  // Preload da imagem
+  useEffect(() => {
+    const img = new Image();
+    img.src = "https://firebasestorage.googleapis.com/v0/b/gorf-o-jogo.firebasestorage.app/o/icone-fleche-droite-violet-2.png?alt=media&token=82a5ffce-35ee-4eca-a9b9-48b22aa77799";
+  }, []);
 
   const spinBottle = () => {
     if (isSpinning) return;
@@ -21,16 +29,45 @@ export default function SpinBottle() {
     setTimeout(() => {
       setIsSpinning(false);
 
-      // Atualizar estatísticas quando a garrafa para
       const gameEndTime = Date.now();
       const playTimeInSeconds = Math.floor((gameEndTime - gameStartTime) / 1000);
 
       updateGameStats({
         gameType: "spinBottle",
         playTimeInSeconds,
-        playerCount: 1
+        isVictory: true
       });
     }, 3000);
+  };
+
+  // Funções para interação touch/mouse
+  const handleDragStart = (event: React.MouseEvent | React.TouchEvent) => {
+    if (isSpinning) return;
+
+    setIsDragging(true);
+    const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
+    const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
+    setStartAngle(Math.atan2(clientY - window.innerHeight/2, clientX - window.innerWidth/2));
+  };
+
+  const handleDragMove = (event: React.MouseEvent | React.TouchEvent) => {
+    if (!isDragging || isSpinning) return;
+
+    const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
+    const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
+    const currentAngle = Math.atan2(clientY - window.innerHeight/2, clientX - window.innerWidth/2);
+    const angleDiff = (currentAngle - startAngle) * (180/Math.PI);
+    setRotation(prev => prev + angleDiff);
+    setStartAngle(currentAngle);
+  };
+
+  const handleDragEnd = () => {
+    if (isSpinning) return;
+
+    setIsDragging(false);
+    if (Math.abs(rotation % 360) > 50) {
+      spinBottle();
+    }
   };
 
   return (
@@ -42,24 +79,34 @@ export default function SpinBottle() {
           </p>
         </div>
 
-        <div className="relative w-full max-w-md aspect-square">
+        <div 
+          className="relative w-full max-w-md aspect-square"
+          onMouseDown={handleDragStart}
+          onMouseMove={handleDragMove}
+          onMouseUp={handleDragEnd}
+          onMouseLeave={handleDragEnd}
+          onTouchStart={handleDragStart}
+          onTouchMove={handleDragMove}
+          onTouchEnd={handleDragEnd}
+        >
           {/* Container estático com o círculo roxo */}
           <div className="absolute inset-0 rounded-full bg-purple-900/90" />
 
           {/* Container da seta que vai girar */}
           <motion.div
-            className="absolute inset-0 flex items-center justify-center"
+            className="absolute inset-0 flex items-center justify-center cursor-pointer"
             animate={{ rotate: rotation }}
             transition={{
               type: "spring",
-              duration: 3,
-              bounce: 0.2
+              duration: isSpinning ? 3 : 0.2,
+              bounce: isSpinning ? 0.2 : 0
             }}
           >
             <img
-              src="https://firebasestorage.googleapis.com/v0/b/gorf-o-jogo.firebasestorage.app/o/icone-fleche-droite-violet.png?alt=media&token=7cb55654-6798-45c0-8635-8729761eefb1"
+              src="https://firebasestorage.googleapis.com/v0/b/gorf-o-jogo.firebasestorage.app/o/icone-fleche-droite-violet-2.png?alt=media&token=82a5ffce-35ee-4eca-a9b9-48b22aa77799"
               alt="Seta"
               className="w-3/4 h-3/4 object-contain"
+              draggable="false"
             />
           </motion.div>
         </div>
