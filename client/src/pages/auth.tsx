@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { auth, googleProvider } from "@/lib/firebase";
+import { auth, googleProvider, getUserProfile } from "@/lib/firebase";
 import {
   signInWithPopup,
   createUserWithEmailAndPassword,
@@ -63,7 +63,14 @@ export default function Auth() {
       console.log("Protocolo:", window.location.protocol);
       const result = await signInWithPopup(auth, googleProvider);
       console.log("Login com Google bem sucedido:", result.user.email);
-      setLocation("/dashboard");
+
+      // Verificar se o usuário já tem perfil
+      const profile = await getUserProfile(result.user.uid);
+      if (!profile) {
+        setLocation("/onboarding");
+      } else {
+        setLocation("/dashboard");
+      }
     } catch (error: any) {
       console.error("Erro no login com Google:", error);
       console.error("Código do erro:", error.code);
@@ -92,13 +99,22 @@ export default function Auth() {
       setError("");
       console.log("Iniciando autenticação por email...");
 
+      let userCredential;
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
       }
+
       console.log("Autenticação por email bem sucedida");
-      setLocation("/dashboard");
+
+      // Verificar se o usuário já tem perfil
+      const profile = await getUserProfile(userCredential.user.uid);
+      if (!profile) {
+        setLocation("/onboarding");
+      } else {
+        setLocation("/dashboard");
+      }
     } catch (error: any) {
       console.error("Erro na autenticação por email:", error);
       setError(getErrorMessage(error.code));

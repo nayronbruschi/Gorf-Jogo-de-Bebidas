@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { auth } from '@/lib/firebase';
+import { auth, getUserProfile } from '@/lib/firebase';
 import { useToast } from "@/hooks/use-toast";
 
 export function useAuth() {
@@ -10,12 +10,14 @@ export function useAuth() {
 
   useEffect(() => {
     console.log("[Auth] Iniciando listener de autenticação");
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       try {
         if (user) {
           console.log("[Auth] Usuário autenticado:", user.uid);
+          // Verificar se o usuário já tem perfil
+          const profile = await getUserProfile(user.uid);
+          setIsNewUser(!profile);
           setUser(user);
-          setIsNewUser(false);
         } else {
           console.log("[Auth] Usuário deslogado");
           setUser(null);
