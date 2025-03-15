@@ -1,36 +1,15 @@
-import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { Beer, Home, Award } from "lucide-react";
+import { Beer, Home } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
-import { updateGameStats } from "@/lib/stats";
-
 
 export default function RouletteWinner() {
   const [, navigate] = useLocation();
   const params = new URLSearchParams(window.location.search);
   const playerId = params.get("playerId");
   const gameMode = localStorage.getItem("rouletteMode") || "goles";
-
-  // Buscar dados do jogador vencedor
-  const { data: winner, isLoading: isLoadingWinner } = useQuery({
-    queryKey: [`/api/players/${playerId}`],
-    queryFn: async () => {
-      if (!playerId) return null;
-      const response = await apiRequest("GET", `/api/players/${playerId}`);
-      console.log('Dados do vencedor:', response);
-      return response;
-    },
-    enabled: !!playerId
-  });
-
-  // Buscar todos os jogadores para o ranking
-  const { data: players = [] } = useQuery({
-    queryKey: ["/api/players"],
-  });
 
   const handlePlayAgain = async () => {
     try {
@@ -43,21 +22,8 @@ export default function RouletteWinner() {
     }
   };
 
-  // Mostrar loading ou retornar null se não tiver dados
-  if (isLoadingWinner || !winner) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-        <div className="text-white text-2xl">Carregando...</div>
-      </div>
-    );
-  }
-
-  // Ordenar jogadores por pontuação
-  const sortedPlayers = [...players].sort((a, b) => b.points - a.points);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 relative overflow-hidden">
-      {/* Animação de gosma com múltiplas pontas */}
       <motion.div
         initial={{ y: -1000 }}
         animate={{ y: 0 }}
@@ -80,7 +46,7 @@ export default function RouletteWinner() {
                 "M0,0 L100,0 L100,30 Q75,60 50,45 Q25,30 0,30 Z",
                 "M0,0 L100,0 L100,40 Q80,70 60,55 Q40,40 20,55 Q0,70 0,40 Z",
                 "M0,0 L100,0 L100,50 Q90,80 70,65 Q50,50 30,65 Q10,80 0,50 Z",
-                "M0,0 L100,0 L100,20 Q50,40 0,20 Z"  // Retorna ao início suavemente
+                "M0,0 L100,0 L100,20 Q50,40 0,20 Z"
               ]
             }}
             transition={{
@@ -113,40 +79,14 @@ export default function RouletteWinner() {
               className="space-y-6"
             >
               <h1 className="text-4xl font-bold text-purple-900">
-                {winner.name} deu Gorf!
+                Alguém deu Gorf!
               </h1>
 
               <div className="flex items-center justify-center gap-2 text-2xl text-purple-700">
                 <Beer className="h-8 w-8" />
                 <span>
-                  Foi um total de {winner.points} {
-                    winner.points === 1
-                    ? (gameMode === "shots" ? "shot" : "gole")
-                    : (gameMode === "shots" ? "shots" : "goles")
-                  }!
+                  Parabéns ao vencedor!
                 </span>
-              </div>
-
-              {/* Ranking Section */}
-              <div className="mt-8 bg-purple-50 rounded-lg p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Award className="h-5 w-5 text-purple-700" />
-                  <h3 className="text-lg font-semibold text-purple-900">Ranking Final</h3>
-                </div>
-                <div className="space-y-3">
-                  {sortedPlayers.map((player) => (
-                    <div
-                      key={player.id}
-                      className="bg-white/50 p-3 rounded-lg flex items-center justify-between"
-                    >
-                      <span className="text-purple-900">{player.name}</span>
-                      <div className="flex items-center gap-1 text-purple-700">
-                        <Beer className="h-4 w-4" />
-                        <span>{player.points} {gameMode === "shots" ? "shots" : "goles"}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
               </div>
 
               <div className="flex flex-col gap-4 mt-8">

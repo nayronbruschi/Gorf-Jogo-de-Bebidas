@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { updateUserProfile } from "@/lib/firebase";
 import { genderOptions, socialNetworkOptions } from "@shared/schema";
 import type { UserProfile } from "@shared/schema";
 
@@ -36,16 +35,10 @@ export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdate
 
   const handleSave = async () => {
     try {
-      await updateUserProfile({
-        ...formData,
-        id: profile?.id || "",
-        createdAt: profile?.createdAt || new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      });
-
+      // TODO: Implement profile update functionality
       toast({
-        title: "Perfil atualizado",
-        description: "Suas informações foram salvas com sucesso.",
+        title: "Funcionalidade em desenvolvimento",
+        description: "A edição de perfil será implementada em breve.",
       });
 
       onProfileUpdated();

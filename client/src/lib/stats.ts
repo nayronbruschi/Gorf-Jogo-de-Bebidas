@@ -1,17 +1,17 @@
-import { getFirestore, doc, getDoc, updateDoc, increment } from 'firebase/firestore';
-import { auth } from '@/lib/firebase';
-import { app } from '@/lib/firebase';
-
-// Inicializa o Firestore
-const db = getFirestore(app);
+import { useState, useEffect } from 'react';
 
 // Hook para rastrear o tempo de jogo
 export function useGameTimer() {
-  const startTime = Date.now();
+  const [startTime] = useState(Date.now());
+  const [elapsedTime, setElapsedTime] = useState(0);
 
-  return () => {
-    const endTime = Date.now();
-    const playTimeInSeconds = Math.floor((endTime - startTime) / 1000);
-    return playTimeInSeconds;
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [startTime]);
+
+  return elapsedTime;
 }
