@@ -44,6 +44,8 @@ export default function Auth() {
         return 'Login com Google cancelado';
       case 'auth/cancelled-popup-request':
         return 'Operação cancelada';
+      case 'auth/invalid-credential':
+        return 'Credenciais inválidas. Por favor, tente novamente.';
       default:
         return 'Ocorreu um erro. Tente novamente.';
     }
@@ -53,7 +55,9 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
+      console.log("Iniciando login com Google...");
       const result = await signInWithPopup(auth, googleProvider);
+      console.log("Login com Google bem sucedido:", result.user.email);
       setLocation("/dashboard");
     } catch (error: any) {
       console.error("Erro no login com Google:", error);
@@ -79,12 +83,14 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
+      console.log("Iniciando autenticação por email...");
 
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
+      console.log("Autenticação por email bem sucedida");
       setLocation("/dashboard");
     } catch (error: any) {
       console.error("Erro na autenticação por email:", error);
