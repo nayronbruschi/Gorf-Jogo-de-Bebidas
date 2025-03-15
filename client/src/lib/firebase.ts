@@ -28,8 +28,6 @@ export const googleProvider = new GoogleAuthProvider();
 // Configurações adicionais para o provedor Google
 googleProvider.setCustomParameters({
   prompt: 'select_account',
-  // Forçar o uso do domínio gorf.com.br
-  hd: 'gorf.com.br'
 });
 
 // Add state parameter to track auth source

@@ -117,7 +117,20 @@ function Router() {
       <Route path="/guess-who/play">
         <ProtectedRoute component={GuessWhoGame} />
       </Route>
-      <Route component={NotFound} />
+      <Route>
+        {/* Catch-all route for handling auth redirects */}
+        {() => {
+          const params = new URLSearchParams(window.location.search);
+          const state = params.get('state');
+
+          if (state === 'fromAuth') {
+            window.history.replaceState({}, '', '/dashboard');
+            return null;
+          }
+
+          return <NotFound />;
+        }}
+      </Route>
     </Switch>
   );
 }
