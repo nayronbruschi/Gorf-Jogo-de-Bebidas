@@ -14,17 +14,21 @@ import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { createUserProfile } from "@/lib/firebase";
 import { useAuth } from "@/hooks/use-auth";
+import { drinkOptions } from "@shared/schema";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
 
 export default function Onboarding() {
   const [, setLocation] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedDrinks, setSelectedDrinks] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     name: user?.displayName || "",
     birthDate: "",
     gender: "homem" as const,
-    favoriteSocialNetwork: "instagram" as const
+    favoriteSocialNetwork: "instagram" as const,
   });
 
   if (!user) {
@@ -32,12 +36,33 @@ export default function Onboarding() {
     return null;
   }
 
+  const handleSelectDrink = (drink: string) => {
+    if (selectedDrinks.includes(drink)) {
+      setSelectedDrinks(prev => prev.filter(d => d !== drink));
+    } else if (selectedDrinks.length < 3) {
+      setSelectedDrinks(prev => [...prev, drink]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (selectedDrinks.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Selecione pelo menos uma bebida favorita"
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      await createUserProfile(user.uid, formData);
+      await createUserProfile(user.uid, {
+        ...formData,
+        favoriteDrinks: selectedDrinks,
+      });
 
       toast({
         title: "Perfil criado com sucesso!",
@@ -98,7 +123,8 @@ export default function Onboarding() {
               <Label className="text-white">Gênero</Label>
               <Select
                 value={formData.gender}
-                onValueChange={(value: "homem" | "mulher" | "não-binário") => setFormData({ ...formData, gender: value })}
+                onValueChange={(value: "homem" | "mulher" | "não-binário") =>
+                  setFormData({ ...formData, gender: value })}
               >
                 <SelectTrigger className="bg-white/20 text-white border-none">
                   <SelectValue />
@@ -115,7 +141,8 @@ export default function Onboarding() {
               <Label className="text-white">Rede Social Favorita</Label>
               <Select
                 value={formData.favoriteSocialNetwork}
-                onValueChange={(value: "instagram" | "tiktok" | "facebook" | "twitter") => setFormData({ ...formData, favoriteSocialNetwork: value })}
+                onValueChange={(value: "instagram" | "tiktok" | "facebook" | "twitter") =>
+                  setFormData({ ...formData, favoriteSocialNetwork: value })}
               >
                 <SelectTrigger className="bg-white/20 text-white border-none">
                   <SelectValue />
@@ -127,6 +154,44 @@ export default function Onboarding() {
                   <SelectItem value="twitter">Twitter</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-white">Bebidas Favoritas (escolha até 3)</Label>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {selectedDrinks.map(drink => (
+                  <Badge
+                    key={drink}
+                    variant="secondary"
+                    className="bg-purple-500 text-white"
+                  >
+                    {drink}
+                    <X
+                      className="ml-1 h-3 w-3 cursor-pointer"
+                      onClick={() => handleSelectDrink(drink)}
+                    />
+                  </Badge>
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {drinkOptions.map(drink => (
+                  <Button
+                    key={drink}
+                    type="button"
+                    variant={selectedDrinks.includes(drink) ? "secondary" : "outline"}
+                    className={`
+                      ${selectedDrinks.includes(drink)
+                        ? 'bg-purple-500 text-white'
+                        : 'bg-white/20 text-white hover:bg-white/30'}
+                      transition-colors
+                    `}
+                    onClick={() => handleSelectDrink(drink)}
+                    disabled={selectedDrinks.length >= 3 && !selectedDrinks.includes(drink)}
+                  >
+                    {drink}
+                  </Button>
+                ))}
+              </div>
             </div>
 
             <Button

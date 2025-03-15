@@ -49,6 +49,7 @@ export async function createUserProfile(userId: string, profile: Partial<UserPro
       birthDate: profile.birthDate || now,
       gender: profile.gender || "homem",
       favoriteSocialNetwork: profile.favoriteSocialNetwork || "instagram",
+      favoriteDrinks: profile.favoriteDrinks || [],
       createdAt: now,
       updatedAt: now,
     };

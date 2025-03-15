@@ -27,6 +27,18 @@ export interface CustomGame {
 // User Profile Types
 export const genderOptions = ["homem", "mulher", "não-binário"] as const;
 export const socialNetworkOptions = ["instagram", "tiktok", "X", "facebook"] as const;
+export const drinkOptions = [
+  "Cerveja",
+  "Vodka",
+  "Whisky",
+  "Gin",
+  "Vinho",
+  "Tequila",
+  "Rum",
+  "Cachaça",
+  "Sake",
+  "Energético"
+] as const;
 
 export interface UserProfile {
   id: string;
@@ -34,6 +46,7 @@ export interface UserProfile {
   birthDate: string;
   gender: typeof genderOptions[number];
   favoriteSocialNetwork: typeof socialNetworkOptions[number];
+  favoriteDrinks: Array<typeof drinkOptions[number]>;
   createdAt: string;
   updatedAt: string;
 }
@@ -75,6 +88,7 @@ export const userProfileSchema = z.object({
   birthDate: z.string(),
   gender: z.enum(genderOptions),
   favoriteSocialNetwork: z.enum(socialNetworkOptions),
+  favoriteDrinks: z.array(z.enum(drinkOptions)).min(1, "Escolha pelo menos uma bebida").max(3, "Escolha no máximo 3 bebidas"),
 });
 
 export const userGameStatsSchema = z.object({
