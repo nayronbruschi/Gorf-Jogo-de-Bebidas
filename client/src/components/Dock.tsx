@@ -2,8 +2,9 @@ import { motion } from "framer-motion";
 import { useLocation } from "wouter";
 import { 
   Target, 
-  LayoutGrid, 
-  Users, 
+  GlassWater,
+  Wine, 
+  Hand,
   User
 } from "lucide-react";
 
@@ -24,7 +25,7 @@ function DockItem({ icon, label, to, isActive }: DockItemProps) {
         ${isActive ? 'text-white' : 'text-white/60 hover:text-white'}`}
       onClick={() => navigate(to)}
     >
-      <div className={`p-3 rounded-2xl transition-colors backdrop-blur-sm
+      <div className={`p-3 rounded-full transition-colors backdrop-blur-sm
         ${isActive ? 'bg-white/20' : 'hover:bg-white/10'}
         border border-white/10 shadow-inner`}>
         {icon}
@@ -42,27 +43,33 @@ export function Dock() {
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
-        className="mx-4 mb-4 px-6 py-2 backdrop-blur-xl bg-black/30 rounded-2xl 
+        className="mx-4 mb-4 px-6 py-2 backdrop-blur-xl bg-black/30 rounded-3xl 
           flex items-center gap-4 shadow-xl border border-white/10
           max-w-md"
       >
         <DockItem
           icon={<Target className="h-6 w-6" />}
-          label="Roleta"
+          label="Gorf"
           to="/roulette-mode"
           isActive={location.includes('roulette')}
         />
         <DockItem
-          icon={<LayoutGrid className="h-6 w-6" />}
-          label="Jogos"
+          icon={<GlassWater className="h-6 w-6" />}
+          label="Modos"
           to="/game-modes"
           isActive={location === '/game-modes'}
         />
         <DockItem
-          icon={<Users className="h-6 w-6" />}
-          label="Grupo"
-          to="/manage-players"
-          isActive={location === '/manage-players'}
+          icon={<Wine className="h-6 w-6" />}
+          label="Garrafa"
+          to="/spin-bottle"
+          isActive={location === '/spin-bottle'}
+        />
+        <DockItem
+          icon={<Hand className="h-6 w-6" />}
+          label="Sorte"
+          to="/touch-game"
+          isActive={location === '/touch-game'}
         />
         <DockItem
           icon={<User className="h-6 w-6" />}

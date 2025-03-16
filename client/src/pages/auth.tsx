@@ -129,7 +129,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-800 to-purple-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 to-purple-950 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -140,9 +140,12 @@ export default function Auth() {
         </div>
 
         <div className="bg-white/10 backdrop-blur-lg rounded-lg p-8 shadow-xl">
-          <h1 className="text-3xl font-bold text-white text-center mb-8">
-            {isLogin ? "Bem-vindo" : "Crie sua conta"}
-          </h1>
+          <div className="text-center space-y-2 mb-8">
+            <h1 className="text-3xl font-bold text-white">
+              {isLogin ? "Bem-vindo" : "Crie sua conta"}
+            </h1>
+            <p className="text-xl text-white/80">Bora beber?</p>
+          </div>
 
           <form onSubmit={handleEmailAuth} className="space-y-4">
             <Input
