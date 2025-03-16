@@ -31,7 +31,6 @@ export default function Cards() {
   const [specialPermissions, setSpecialPermissions] = useState<SpecialPermission[]>([]);
   const [playerName, setPlayerName] = useState("");
 
-  // Registrar o jogo assim que entrar na página
   useEffect(() => {
     const trackGameOpen = async () => {
       try {
@@ -62,7 +61,7 @@ export default function Cards() {
       setCurrentCard(drawnCard);
       setRemainingCards(newRemainingCards);
       setIsDrawing(false);
-    }, 600); // Reduzido para 600ms já que agora só gira uma vez
+    }, 600); // Reduzido para 600ms
   };
 
   const handleCardClick = () => {
@@ -80,6 +79,7 @@ export default function Cards() {
           </p>
         </div>
 
+        {/* Botões movidos para cima da carta */}
         <div className="flex flex-col gap-4 items-center mb-4">
           <Button
             size="lg"
@@ -103,6 +103,7 @@ export default function Cards() {
           )}
         </div>
 
+        {/* Carta com funcionalidade de clique */}
         <div 
           className="relative w-full max-w-md aspect-[3/4] perspective-1000 cursor-pointer"
           onClick={handleCardClick}
