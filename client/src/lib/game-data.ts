@@ -1,11 +1,11 @@
 import {
-  GamepadIcon, Brain, HandMetal, Wine, Sparkles, Spade,
+  GamepadIcon, Brain, HandMetal, CircleDashed, Sparkles, Spade,
   LucideIcon, Heart, Dumbbell, UserRound, Music, Smile, Drama,
   MessageSquare, PartyPopper, Laugh, Mic2, Activity, Beer, Home,
   Camera, Gift, Trophy, Ghost, Star, Megaphone, Palette, Gamepad2,
   Baby, Crown, HeartHandshake, Glasses, Hand, Shirt, Umbrella,
   Soup, Coffee, Flame, Candy, Snowflake, IceCream, Utensils,
-  UtensilsCrossed, Cake, HandMetal
+  UtensilsCrossed, Cake, Droplet, Wine
 } from "lucide-react";
 
 interface Challenge {
@@ -237,7 +237,7 @@ export const games: GameType[] = [
     id: "gorf",
     name: "Gorf",
     description: "Esse modo é para começar ou terminar o rolê. Quer beber muito? Então clica aqui!",
-    icon: GamepadIcon,
+    icon: Droplet,
     route: "/roulette/start"
   },
   {
@@ -265,7 +265,7 @@ export const games: GameType[] = [
     id: "spin-bottle",
     name: "Roleta",
     description: "Gire a roleta e descubra seu destino!",
-    icon: Wine,
+    icon: CircleDashed,
     route: "/spin-bottle"
   },
   {
