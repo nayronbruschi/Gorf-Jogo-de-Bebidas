@@ -16,6 +16,41 @@ const punishmentChallenges = [
   { text: "Cantar 'Parabéns pra Você' em ópera", icon: Beer },
   { text: "Fazer 10 polichinelos contando em alemão", icon: Beer },
   { text: "Declarar seu amor para uma planta", icon: Beer },
+  { text: "Fazer uma dança do TikTok escolhida pelo grupo", icon: Beer },
+  { text: "Imitar um personagem de desenho animado", icon: Beer },
+  { text: "Fazer uma pose de yoga por 30 segundos", icon: Beer },
+  { text: "Contar uma história engraçada em outro idioma", icon: Beer },
+  { text: "Fazer uma mímica de um filme famoso", icon: Beer },
+  { text: "Cantar o hino nacional fazendo careta", icon: Beer },
+  { text: "Dançar balé improvisado", icon: Beer },
+  { text: "Imitar um locutor de futebol narrando o jogo", icon: Beer },
+  { text: "Fazer uma propaganda de venda do objeto mais próximo", icon: Beer },
+  { text: "Criar um rap sobre o jogador à sua direita", icon: Beer },
+  { text: "Imitar um político famoso", icon: Beer },
+  { text: "Dançar como se estivesse em uma balada dos anos 80", icon: Beer },
+  { text: "Fazer uma declaração dramática para o teto", icon: Beer },
+  { text: "Criar um jingle para o grupo", icon: Beer },
+  { text: "Imitar um bebê fazendo birra", icon: Beer },
+  { text: "Fazer uma pose de super-herói por 30 segundos", icon: Beer },
+  { text: "Cantar uma música infantil com voz de heavy metal", icon: Beer },
+  { text: "Imitar um youtuber fazendo unboxing", icon: Beer },
+  { text: "Fazer uma dança do robô por 30 segundos", icon: Beer },
+  { text: "Contar uma história de terror com voz de criança", icon: Beer },
+  { text: "Imitar uma celebridade dando entrevista", icon: Beer },
+  { text: "Fazer uma propaganda de pasta de dente", icon: Beer },
+  { text: "Dançar valsa sozinho", icon: Beer },
+  { text: "Imitar um vendedor de feira", icon: Beer },
+  { text: "Cantar uma música romântica para um objeto", icon: Beer },
+  { text: "Fazer uma pose de estátua por 1 minuto", icon: Beer },
+  { text: "Imitar um animal em câmera lenta", icon: Beer },
+  { text: "Dançar como se estivesse em uma batalha de break", icon: Beer },
+  { text: "Fazer uma declaração de amor para si mesmo no espelho", icon: Beer },
+  { text: "Imitar um professor bravo", icon: Beer },
+  { text: "Cantar ópera com letra improvisada", icon: Beer },
+  { text: "Fazer uma propaganda de shampoo dramática", icon: Beer },
+  { text: "Imitar um repórter do tempo", icon: Beer },
+  { text: "Dançar funk com cara de sério", icon: Beer },
+  { text: "Fazer uma pose de modelo de revista", icon: Beer }
 ];
 
 export default function RouletteMode() {
@@ -46,8 +81,8 @@ export default function RouletteMode() {
   } = useRouletteGame();
 
   const [showPlayerList, setShowPlayerList] = useState(false);
-  const drinkText = gameMode === "shots" ? "shot" : "gole";
-  const drinkTextPlural = gameMode === "shots" ? "shots" : "goles";
+  const drinkText = gameMode === "shots" ? "shot" : "Gole";
+  const drinkTextPlural = gameMode === "shots" ? "shots" : "Goles";
 
   const handleDrink = () => {
     if (!selectedPlayer) return;

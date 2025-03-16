@@ -5,6 +5,7 @@ import { useLocation } from "wouter";
 import { Play } from "lucide-react";
 import { Beer, Flame } from "lucide-react";
 import { auth, updateGameStats } from "@/lib/firebase";
+import { apiRequest } from "@/lib/queryClient";
 
 type GameMode = "goles" | "shots";
 
@@ -43,6 +44,17 @@ export default function RouletteStart() {
     };
 
     trackGameOpen();
+
+    // Limpar jogadores ao entrar na página
+    const cleanupPlayers = async () => {
+      try {
+        await apiRequest("DELETE", "/api/players/all", {});
+      } catch (error) {
+        console.error('Erro ao limpar jogadores:', error);
+      }
+    };
+
+    cleanupPlayers();
   }, []);
 
   const handleStartGame = () => {
@@ -86,7 +98,7 @@ export default function RouletteStart() {
           <Button
             size="lg"
             onClick={handleStartGame}
-            className="bg-purple-700 hover:bg-purple-800 text-white text-xl px-8 py-6"
+            className="bg-purple-900 hover:bg-purple-950 text-white text-xl px-8 py-6"
           >
             <Play className="mr-2 h-6 w-6" />
             Continuar

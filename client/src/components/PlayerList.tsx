@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPlayerSchema } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
-import { motion, AnimatePresence } from "framer-motion";
 import { UserPlus, X } from "lucide-react";
 
 interface Player {
@@ -56,13 +55,6 @@ export function PlayerList({ selectedPlayers, onSelectedPlayersChange }: PlayerL
     addPlayer.mutate(data.name);
   }), [addPlayer, form]);
 
-  const springAnimation = {
-    type: "spring",
-    stiffness: 500,
-    damping: 30,
-    mass: 0.8
-  };
-
   return (
     <div className="space-y-4 w-full">
       <form onSubmit={onSubmit} className="flex gap-2">
@@ -81,15 +73,11 @@ export function PlayerList({ selectedPlayers, onSelectedPlayersChange }: PlayerL
         </Button>
       </form>
 
-      <AnimatePresence mode="popLayout">
+      <div className="space-y-2">
         {players.map((player) => (
-          <motion.div
+          <div
             key={player.id}
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={springAnimation}
-            className="bg-purple-50 p-3 rounded space-y-2"
+            className="bg-purple-50 p-3 rounded"
           >
             <div className="flex items-center justify-between">
               <span className="text-purple-900">{player.name}</span>
@@ -102,9 +90,9 @@ export function PlayerList({ selectedPlayers, onSelectedPlayersChange }: PlayerL
                 <X className="h-4 w-4" />
               </Button>
             </div>
-          </motion.div>
+          </div>
         ))}
-      </AnimatePresence>
+      </div>
     </div>
   );
 }

@@ -60,7 +60,7 @@ export function PunishmentDialog({
             <Button
               variant="outline"
               onClick={onGenerateNewPunishment}
-              className="border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700"
+              className="border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-900"
             >
               Beba mais um {drinkText} para gerar outro desafio
             </Button>
