@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { Play } from "lucide-react";
 import { Beer, Flame } from "lucide-react";
+import { auth, updateGameStats } from "@/lib/firebase";
 
 type GameMode = "goles" | "shots";
 
@@ -28,6 +29,22 @@ export default function RouletteStart() {
   const [, navigate] = useLocation();
   const [selectedMode, setSelectedMode] = useState<GameMode>("goles");
 
+  // Registrar o jogo assim que entrar na página
+  useEffect(() => {
+    const trackGameOpen = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (userId) {
+          await updateGameStats(userId, "Roleta");
+        }
+      } catch (error) {
+        console.error("[RouletteStart] Error tracking game:", error);
+      }
+    };
+
+    trackGameOpen();
+  }, []);
+
   const handleStartGame = () => {
     // Salvar o modo selecionado no localStorage
     localStorage.setItem("rouletteMode", selectedMode);
@@ -38,7 +55,6 @@ export default function RouletteStart() {
   return (
     <GameLayout title="">
       <div className="max-w-4xl mx-auto space-y-12">
-
         {/* Seção de Modos de Jogo */}
         <section>
           <h2 className="text-2xl font-bold text-white text-center mb-6">

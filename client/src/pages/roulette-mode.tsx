@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,7 +7,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useRouletteGame } from "@/hooks/use-roulette-game";
 import { PlayerList } from "@/components/PlayerList";
 import { PunishmentDialog } from "@/components/PunishmentDialog";
-import { auth, updateGameStats } from "@/lib/firebase";
 import { WinnerScreen } from "@/components/WinnerScreen";
 
 // Desafios de punição para quem se recusa a beber
@@ -20,22 +19,6 @@ const punishmentChallenges = [
 ];
 
 export default function RouletteMode() {
-  // Adicionar useEffect para registrar o início do jogo
-  useEffect(() => {
-    const trackGameStart = async () => {
-      try {
-        const userId = auth.currentUser?.uid;
-        if (userId) {
-          await updateGameStats(userId, "Roleta");
-        }
-      } catch (error) {
-        console.error("[RouletteMode] Error tracking game start:", error);
-      }
-    };
-
-    trackGameStart();
-  }, []); // Executar apenas uma vez quando o componente montar
-
   const {
     gameState: {
       selectedPlayer,
