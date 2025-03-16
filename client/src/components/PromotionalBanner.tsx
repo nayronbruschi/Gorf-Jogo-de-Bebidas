@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import useEmblaCarousel from "embla-carousel-react";
+import { apiRequest } from "@/lib/queryClient";
 
 interface BannerUrls {
   [key: string]: string;
@@ -12,22 +13,6 @@ interface BannerInfo {
   title: string;
   description: string;
 }
-
-const getBannerInfo = (key: string): BannerInfo => {
-  const bannerData: Record<string, BannerInfo> = {
-    "1": {
-      url: "/api/images/freepik__adorable-cartoon-style-a-vibrant-party-scene-with-__16340.jpeg",
-      title: "Bem-vindo ao Gorf",
-      description: "O melhor app para suas festas"
-    },
-    "2": {
-      url: "/api/images/freepik__adorable-cartoon-style-a-cozy-indoor-setting-with-__16341.jpeg",
-      title: "Diversão Garantida",
-      description: "Jogos para todos os momentos"
-    }
-  };
-  return bannerData[key] || { url: "", title: "", description: "" };
-};
 
 export function PromotionalBanner() {
   const [api, setApi] = useState<any>();
@@ -40,15 +25,25 @@ export function PromotionalBanner() {
     align: "center"
   });
 
-  // Fetch active banners
+  // Fetch active banners and their texts
   const { data: banners = {} } = useQuery<BannerUrls>({
     queryKey: ["/api/banners"],
   });
 
-  // Garantir que os banners são mostrados em ordem
-  const orderedBanners = ["1", "2", "3"]
-    .map(key => getBannerInfo(key))
-    .filter(banner => banner.url);
+  const { data: bannerTexts = {} } = useQuery({
+    queryKey: ["/api/banner-texts"],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/banner-texts", undefined);
+      return response.json();
+    }
+  });
+
+  // Combine banners with their texts
+  const orderedBanners = ["1", "2"].map(key => ({
+    url: banners[key] || "",
+    title: bannerTexts[key]?.title || "Bem-vindo ao Gorf",
+    description: bannerTexts[key]?.description || "O melhor app para suas festas"
+  })).filter(banner => banner.url);
 
   useEffect(() => {
     if (emblaApi) {

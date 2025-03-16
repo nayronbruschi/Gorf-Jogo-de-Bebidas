@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { auth } from "@/lib/firebase";
 import { apiRequest } from "@/lib/queryClient";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface BannerTexts {
   title: string;
@@ -19,6 +19,7 @@ interface BannerTexts {
 export default function Admin() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -87,6 +88,8 @@ export default function Admin() {
       return response;
     },
     onSuccess: () => {
+      // Invalidate and refetch banner texts queries
+      queryClient.invalidateQueries({ queryKey: ['/api/banner-texts'] });
       toast({
         title: "Sucesso",
         description: "Textos dos banners atualizados",

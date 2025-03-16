@@ -14,10 +14,14 @@ export async function uploadImage(file: File, path: string): Promise<string> {
 
     // Upload para o Firebase Storage
     const storageRef = ref(storage, `images/${path}`);
-    const snapshot = await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(snapshot.ref);
 
-    console.log('Upload concluído:', downloadURL);
+    // Fazer o upload e aguardar a conclusão
+    const snapshot = await uploadBytes(storageRef, file);
+    console.log('Upload concluído. Metadata:', snapshot.metadata);
+
+    // Obter a URL do arquivo
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    console.log('URL de download:', downloadURL);
 
     return downloadURL;
   } catch (error) {
@@ -29,11 +33,16 @@ export async function uploadImage(file: File, path: string): Promise<string> {
         stack: error.stack
       });
     }
-    throw error;
+    throw new Error(`Falha no upload da imagem: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
   }
 }
 
 export async function getImageUrl(path: string): Promise<string> {
-  const imageRef = ref(storage, `images/${path}`);
-  return getDownloadURL(imageRef);
+  try {
+    const imageRef = ref(storage, `images/${path}`);
+    return await getDownloadURL(imageRef);
+  } catch (error) {
+    console.error('Erro ao obter URL da imagem:', error);
+    throw error;
+  }
 }
