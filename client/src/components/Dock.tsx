@@ -3,10 +3,7 @@ import { useLocation } from "wouter";
 import { 
   Target, 
   LayoutGrid, 
-  MessageCircle, 
-  Dice1, 
-  Hand, 
-  Wine,
+  Users, 
   User
 } from "lucide-react";
 
@@ -23,15 +20,16 @@ function DockItem({ icon, label, to, isActive }: DockItemProps) {
   return (
     <motion.button
       whileTap={{ scale: 0.9 }}
-      className={`relative flex flex-col items-center justify-center p-2 rounded-2xl transition-colors
+      className={`relative flex flex-col items-center justify-center p-2
         ${isActive ? 'text-white' : 'text-white/60 hover:text-white'}`}
       onClick={() => navigate(to)}
     >
-      <div className={`p-2 rounded-xl transition-colors
-        ${isActive ? 'bg-white/20' : 'hover:bg-white/10'}`}>
+      <div className={`p-3 rounded-2xl transition-colors backdrop-blur-sm
+        ${isActive ? 'bg-white/20' : 'hover:bg-white/10'}
+        border border-white/10 shadow-inner`}>
         {icon}
       </div>
-      <span className="text-xs mt-1">{label}</span>
+      <span className="text-[10px] mt-1 font-medium">{label}</span>
     </motion.button>
   );
 }
@@ -44,46 +42,30 @@ export function Dock() {
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
-        className="mx-4 mb-4 p-2 backdrop-blur-xl bg-black/30 rounded-2xl flex items-center gap-2 shadow-xl border border-white/10"
+        className="mx-4 mb-4 px-6 py-2 backdrop-blur-xl bg-black/30 rounded-2xl 
+          flex items-center gap-4 shadow-xl border border-white/10
+          max-w-md"
       >
         <DockItem
-          icon={<Target className="w-6 h-6" />}
+          icon={<Target className="h-6 w-6" />}
           label="Roleta"
           to="/roulette-mode"
           isActive={location.includes('roulette')}
         />
         <DockItem
-          icon={<LayoutGrid className="w-6 h-6" />}
-          label="Cartas"
-          to="/cards"
-          isActive={location === '/cards'}
+          icon={<LayoutGrid className="h-6 w-6" />}
+          label="Jogos"
+          to="/game-modes"
+          isActive={location === '/game-modes'}
         />
         <DockItem
-          icon={<MessageCircle className="w-6 h-6" />}
-          label="Verdade"
-          to="/truth-or-dare"
-          isActive={location === '/truth-or-dare'}
+          icon={<Users className="h-6 w-6" />}
+          label="Grupo"
+          to="/manage-players"
+          isActive={location === '/manage-players'}
         />
         <DockItem
-          icon={<Dice1 className="w-6 h-6" />}
-          label="Clássico"
-          to="/classic-mode"
-          isActive={location.includes('classic')}
-        />
-        <DockItem
-          icon={<Hand className="w-6 h-6" />}
-          label="Sorte"
-          to="/touch-game"
-          isActive={location === '/touch-game'}
-        />
-        <DockItem
-          icon={<Wine className="w-6 h-6" />}
-          label="Garrafa"
-          to="/spin-bottle"
-          isActive={location === '/spin-bottle'}
-        />
-        <DockItem
-          icon={<User className="w-6 h-6" />}
+          icon={<User className="h-6 w-6" />}
           label="Perfil"
           to="/profile"
           isActive={location === '/profile'}
