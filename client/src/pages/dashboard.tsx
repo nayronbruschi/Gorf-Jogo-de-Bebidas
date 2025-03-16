@@ -26,6 +26,7 @@ export default function Dashboard() {
     const loadUserProfile = async () => {
       if (userId) {
         const profile = await getUserProfile(userId);
+        console.log("[Dashboard] User profile loaded:", profile);
         setUserProfile(profile);
       }
     };

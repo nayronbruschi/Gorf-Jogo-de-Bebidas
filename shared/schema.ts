@@ -49,6 +49,7 @@ export interface UserProfile {
   favoriteDrinks: Array<typeof drinkOptions[number]>;
   createdAt: string;
   updatedAt: string;
+  gameStats: UserGameStats;
 }
 
 export interface UserGameStats {
@@ -58,6 +59,10 @@ export interface UserGameStats {
   victories: number;
   totalPlayTime: number; // in minutes
   lastGameStartTime: string | null;
+  recentGames: Array<{
+    name: string;
+    playedAt: string;
+  }>;
 }
 
 // Schemas Zod para validação
