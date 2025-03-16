@@ -10,10 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 interface Player {
   id: number;
   name: string;
-}
-
-interface PlayerItem {
-  [playerId: string]: string;
+  points?: number;
 }
 
 export default function GuessWhoGame() {
@@ -25,7 +22,7 @@ export default function GuessWhoGame() {
   const [players, setPlayers] = useState<string[]>([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [items, setItems] = useState<string[]>([]);
-  const [playerItems, setPlayerItems] = useState<PlayerItem>({});
+  const [playerItems, setPlayerItems] = useState<{ [key: string]: string }>({});
   const [timeLeft, setTimeLeft] = useState(30);
   const [showItem, setShowItem] = useState(false);
   const [guess, setGuess] = useState("");
@@ -43,11 +40,9 @@ export default function GuessWhoGame() {
     setLocation("/guess-who/theme");
   };
 
-  const getPlayerName = (playerId: string) => {
-    if (!playersData) return "";
-    const player = playersData.find(p => p.id === Number(playerId));
-    return player ? player.name : "";
-  };
+  // Usar a mesma lógica do modo clássico para puxar o nome do jogador
+  const currentPlayer = playersData.find(p => p.id === Number(players[currentPlayerIndex]));
+  const currentPlayerName = currentPlayer?.name;
 
   const checkForWinner = useCallback((remainingPlayers: string[]) => {
     if (remainingPlayers.length === 1) {
@@ -79,7 +74,7 @@ export default function GuessWhoGame() {
       const themeItems = getItemsByTheme(theme);
       setItems(themeItems.map(item => item.name));
 
-      const initialPlayerItems: PlayerItem = {};
+      const initialPlayerItems: { [key: string]: string } = {};
       playerList.forEach((playerId: string) => {
         const randomItem = themeItems[Math.floor(Math.random() * themeItems.length)].name;
         initialPlayerItems[playerId] = randomItem;
@@ -257,10 +252,16 @@ export default function GuessWhoGame() {
 
   const currentPlayerId = players[currentPlayerIndex];
   const currentItem = playerItems[currentPlayerId];
-  const currentPlayerName = getPlayerName(currentPlayerId);
   const winnerName = winner ? getPlayerName(winner) : "";
 
   const canContinueGame = players.length > 2;
+
+  const getPlayerName = (playerId: string) => {
+    if (!playersData) return "";
+    const player = playersData.find(p => p.id === Number(playerId));
+    return player ? player.name : "";
+  };
+
 
   if (showLoseScreen) {
     return (
@@ -279,7 +280,7 @@ export default function GuessWhoGame() {
                 setShowLoseScreen(false);
                 handleNextPlayer();
               }}
-              className="bg-purple-900 hover:bg-purple-950 text-white"
+              className="bg-blue-500 hover:bg-blue-700 text-white" // Changed button color
             >
               Tomar 5 goles e continuar
             </Button>
@@ -311,7 +312,7 @@ export default function GuessWhoGame() {
               <Button
                 size="lg"
                 onClick={handleNextPlayer}
-                className="bg-purple-900 hover:bg-purple-950 text-white"
+                className="bg-blue-500 hover:bg-blue-700 text-white" // Changed button color
               >
                 <RotateCcw className="mr-2 h-5 w-5" />
                 Continuar Jogando
@@ -320,7 +321,7 @@ export default function GuessWhoGame() {
             <Button
               size="lg"
               onClick={() => setLocation("/guess-who/theme")}
-              className="bg-purple-900 hover:bg-purple-950 text-white"
+              className="bg-blue-500 hover:bg-blue-700 text-white" // Changed button color
             >
               <RotateCcw className="mr-2 h-5 w-5" />
               Escolher Outra Categoria
@@ -352,7 +353,7 @@ export default function GuessWhoGame() {
 
         <div className="flex items-center gap-4">
           <span className="text-xl font-medium text-white">
-            {currentPlayerIndex >= 0 && players[currentPlayerIndex] ? getPlayerName(players[currentPlayerIndex]) : ""}
+            {currentPlayerName || ""}
           </span>
         </div>
       </div>
@@ -368,7 +369,7 @@ export default function GuessWhoGame() {
               className="text-center space-y-6"
             >
               <h2 className="text-4xl font-bold text-white">
-                É a vez de {getPlayerName(players[currentPlayerIndex])}
+                É a vez de {currentPlayerName || ""}
               </h2>
               <p className="text-xl text-white/80">
                 Coloque o celular de lado na testa
@@ -377,7 +378,7 @@ export default function GuessWhoGame() {
                 <Button
                   size="lg"
                   onClick={() => setReadyToStart(true)}
-                  className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6"
+                  className="bg-blue-500 hover:bg-blue-700 text-white px-8 py-6" // Changed button color
                 >
                   <Play className="mr-2 h-6 w-6" />
                   Estou Pronto!
@@ -397,7 +398,7 @@ export default function GuessWhoGame() {
               className="w-full h-full flex flex-col items-center justify-center"
             >
               <div className="text-6xl font-bold text-white text-center mb-12">
-                {currentItem}
+                {playerItems[players[currentPlayerIndex]]}
               </div>
               <div className="text-4xl font-bold text-white">
                 {timeLeft}s
@@ -424,7 +425,7 @@ export default function GuessWhoGame() {
               <div className="flex gap-4">
                 <Button
                   onClick={handleGuess}
-                  className="bg-purple-900 hover:bg-purple-950 text-white"
+                  className="bg-blue-500 hover:bg-blue-700 text-white px-8" // Changed button color
                   size="lg"
                 >
                   Chutar
@@ -457,7 +458,7 @@ export default function GuessWhoGame() {
                 <Button
                   size="lg"
                   onClick={handleNextPlayer}
-                  className="bg-purple-900 hover:bg-purple-950 text-white"
+                  className="bg-blue-500 hover:bg-blue-700 text-white" // Changed button color
                 >
                   <RotateCcw className="mr-2 h-5 w-5" />
                   Continuar Jogando
@@ -466,7 +467,7 @@ export default function GuessWhoGame() {
               <Button
                 size="lg"
                 onClick={() => setLocation("/guess-who/theme")}
-                className="bg-purple-900 hover:bg-purple-950 text-white"
+                className="bg-blue-500 hover:bg-blue-700 text-white" // Changed button color
               >
                 <RotateCcw className="mr-2 h-5 w-5" />
                 Escolher Outra Categoria
@@ -500,7 +501,7 @@ export default function GuessWhoGame() {
                   setShowLoseScreen(false);
                   handleNextPlayer();
                 }}
-                className="bg-purple-900 hover:bg-purple-950 text-white"
+                className="bg-blue-500 hover:bg-blue-700 text-white" // Changed button color
               >
                 Tomar 5 goles e continuar
               </Button>
