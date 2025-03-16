@@ -104,7 +104,7 @@ export default function Cards() {
         </div>
 
         {/* Carta com funcionalidade de clique */}
-        <div 
+        <div
           className="relative w-full max-w-md aspect-[3/4] perspective-1000 cursor-pointer mb-4"
           onClick={handleTouch}
         >
@@ -200,22 +200,19 @@ export default function Cards() {
         {specialPermissions.length > 0 && (
           <div className="w-full max-w-md mt-8">
             <h3 className="text-xl font-semibold text-white mb-4">Permissões Especiais:</h3>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 space-y-2">
+            <div className="space-y-2">
               {specialPermissions.map((permission, index) => (
-                <div key={index} className="text-white flex justify-between items-center p-3 bg-white/5 rounded-lg">
-                  <div>
-                    <span>
-                      {permission.name} - {permission.type === "bathroom" ? "🚽 Banheiro" : "👆 Dedinho"}
-                    </span>
-                    <div className="text-sm opacity-75">{permission.timestamp}</div>
-                  </div>
+                <div key={index} className="text-white flex justify-between items-center p-3 bg-white/10 rounded-lg">
+                  <span>
+                    {permission.name} - {permission.type === "bathroom" ? "🚽 Banheiro" : "👆 Dedinho"}
+                  </span>
                   <Button
                     onClick={() => handleRemovePermission(index)}
                     variant="ghost"
                     size="sm"
-                    className="hover:bg-white/10 text-white"
+                    className="bg-green-700/50 hover:bg-green-700 text-white px-4"
                   >
-                    <CheckSquare className="h-5 w-5" />
+                    Usou a carta
                   </Button>
                 </div>
               ))}
