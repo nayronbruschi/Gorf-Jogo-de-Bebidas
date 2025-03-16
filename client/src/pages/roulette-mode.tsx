@@ -102,172 +102,168 @@ export default function RouletteMode() {
 
   return (
     <GameLayout title="">
-      <div className="max-w-4xl mx-auto relative min-h-screen">
-        {/* Header with home button */}
-        <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-50">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-white/20"
-            onClick={handleHome}
-          >
-            <Home className="h-6 w-6" />
-          </Button>
-        </div>
+      {/* Header with home button */}
+      <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-white hover:bg-white/20"
+          onClick={handleHome}
+        >
+          <Home className="h-6 w-6" />
+        </Button>
+      </div>
 
-        {/* Main content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-2 pt-16">
-          <div className="bg-white rounded-xl p-6 space-y-8">
-            {!selectedPlayer && !isSelecting && (
-              <div className="flex justify-center">
-                <Button
-                  size="lg"
-                  onClick={selectRandomPlayer}
-                  className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6 text-xl"
-                >
-                  Sortear Jogador
-                </Button>
-              </div>
-            )}
-
-            <AnimatePresence mode="wait">
-              {isSelecting && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="text-center text-purple-900 text-2xl font-bold"
-                >
-                  Sorteando...
-                </motion.div>
-              )}
-
-              {selectedPlayer && !isSelecting && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="text-center"
-                >
-                  <p className="text-purple-900 text-xl mb-2">
-                    É a vez de
-                  </p>
-                  <h3 className="text-2xl font-bold text-purple-900 mb-6">
-                    {selectedPlayer.name}
-                  </h3>
-                  <div className="bg-purple-50 rounded-lg p-6 mb-6">
-                    <p className="text-purple-700 text-4xl font-bold">
-                      {gameMode === "shots" ? (
-                        <>Tome {numDrinks} {numDrinks === 1 ? drinkText : drinkTextPlural}!</>
-                      ) : (
-                        <>Beba {numDrinks} {numDrinks === 1 ? drinkText : drinkTextPlural}!</>
-                      )}
-                    </p>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button
-                      size="lg"
-                      onClick={handleDrink}
-                      variant={action === "drink" ? "outline" : "default"}
-                      className={`${
-                        action === "drink"
-                          ? "bg-purple-900 text-white hover:bg-purple-950 hover:text-white"
-                          : "bg-purple-900 hover:bg-purple-950 text-white hover:text-white"
-                      } w-full sm:w-auto justify-center`}
-                    >
-                      <Beer className="mr-2 h-5 w-5" />
-                      Bebeu
-                    </Button>
-                    <Button
-                      size="lg"
-                      onClick={handleRefusal}
-                      variant="outline"
-                      className="bg-white border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700 w-full sm:w-auto justify-center"
-                    >
-                      <X className="mr-2 h-5 w-5" />
-                      Se recusou a beber
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-white" />
-                <h3 className="text-xl font-bold text-white">Ranking</h3>
-              </div>
-              <Button
-                variant="ghost"
-                onClick={() => setShowPlayerList(true)}
-                className="text-white hover:text-white/80"
-              >
-                <Users className="h-5 w-5" />
-              </Button>
-            </div>
-            <div className="space-y-3">
-              {sortedPlayers.map((player) => (
-                <div
-                  key={player.id}
-                  className="bg-white/10 p-3 rounded-lg flex items-center justify-between"
-                >
-                  <span className="text-white">{player.name}</span>
-                  <div className="flex items-center gap-1 text-white/80">
-                    <Beer className="h-4 w-4" />
-                    <span>{player.points} {drinkTextPlural}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom action bar */}
-        {selectedPlayer && action && (
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/10 backdrop-blur-sm">
-            <div className="container max-w-4xl mx-auto">
+      {/* Main content */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto px-2 pt-16">
+        <div className="bg-white rounded-xl p-6 space-y-8">
+          {!selectedPlayer && !isSelecting && (
+            <div className="flex justify-center">
               <Button
                 size="lg"
-                onClick={handleNextPlayer}
-                disabled={updatePoints.isPending}
-                className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white px-8 py-6 text-xl w-full"
+                onClick={selectRandomPlayer}
+                className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6 text-xl"
               >
-                Sortear Próximo Jogador
+                Sortear Jogador
               </Button>
             </div>
+          )}
+
+          <AnimatePresence mode="wait">
+            {isSelecting && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="text-center text-purple-900 text-2xl font-bold"
+              >
+                Sorteando...
+              </motion.div>
+            )}
+
+            {selectedPlayer && !isSelecting && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="text-center"
+              >
+                <p className="text-purple-900 text-xl mb-2">
+                  É a vez de
+                </p>
+                <h3 className="text-2xl font-bold text-purple-900 mb-6">
+                  {selectedPlayer.name}
+                </h3>
+                <div className="bg-purple-50 rounded-lg p-6 mb-6">
+                  <p className="text-purple-700 text-4xl font-bold">
+                    {gameMode === "shots" ? (
+                      <>Tome {numDrinks} {numDrinks === 1 ? drinkText : drinkTextPlural}!</>
+                    ) : (
+                      <>Beba {numDrinks} {numDrinks === 1 ? drinkText : drinkTextPlural}!</>
+                    )}
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button
+                    size="lg"
+                    onClick={handleDrink}
+                    variant={action === "drink" ? "outline" : "default"}
+                    className={action === "drink"
+                      ? "bg-purple-900 text-white hover:bg-purple-950 hover:text-white w-full sm:w-auto justify-center"
+                      : "bg-purple-900 hover:bg-purple-950 text-white hover:text-white w-full sm:w-auto justify-center"}
+                  >
+                    <Beer className="mr-2 h-5 w-5" />
+                    Bebeu
+                  </Button>
+                  <Button
+                    size="lg"
+                    onClick={handleRefusal}
+                    variant="outline"
+                    className="bg-white border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700 w-full sm:w-auto justify-center"
+                  >
+                    <X className="mr-2 h-5 w-5" />
+                    Se recusou a beber
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-white" />
+              <h3 className="text-xl font-bold text-white">Ranking</h3>
+            </div>
+            <Button
+              variant="ghost"
+              onClick={() => setShowPlayerList(true)}
+              className="text-white hover:text-white/80"
+            >
+              <Users className="h-5 w-5" />
+            </Button>
           </div>
-        )}
-
-        {/* Dialogs */}
-        <PunishmentDialog
-          open={showPunishment}
-          onOpenChange={setShowPunishment}
-          playerName={selectedPlayer?.name || ""}
-          punishment={currentPunishment}
-          punishmentDrinks={punishmentDrinks}
-          drinkText={drinkText}
-          drinkTextPlural={drinkTextPlural}
-          onAcceptPunishment={handleNextPlayer}
-          onGenerateNewPunishment={generateNewPunishment}
-        />
-
-        <Dialog open={showPlayerList} onOpenChange={setShowPlayerList}>
-          <DialogContent className="bg-white rounded-xl">
-            <DialogHeader>
-              <DialogTitle className="text-purple-900">Gerenciar Jogadores</DialogTitle>
-            </DialogHeader>
-            <PlayerList />
-          </DialogContent>
-        </Dialog>
-
-        {showWinner && (
-          <WinnerScreen
-            onPlayAgain={resetGame}
-          />
-        )}
+          <div className="space-y-3">
+            {sortedPlayers.map((player) => (
+              <div
+                key={player.id}
+                className="bg-white/10 p-3 rounded-lg flex items-center justify-between"
+              >
+                <span className="text-white">{player.name}</span>
+                <div className="flex items-center gap-1 text-white/80">
+                  <Beer className="h-4 w-4" />
+                  <span>{player.points} {drinkTextPlural}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Bottom action bar */}
+      {selectedPlayer && action && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/10 backdrop-blur-sm">
+          <div className="container max-w-4xl mx-auto">
+            <Button
+              size="lg"
+              onClick={handleNextPlayer}
+              disabled={updatePoints.isPending}
+              className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white px-8 py-6 text-xl w-full"
+            >
+              Sortear Próximo Jogador
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Dialogs */}
+      <PunishmentDialog
+        open={showPunishment}
+        onOpenChange={setShowPunishment}
+        playerName={selectedPlayer?.name || ""}
+        punishment={currentPunishment}
+        punishmentDrinks={punishmentDrinks}
+        drinkText={drinkText}
+        drinkTextPlural={drinkTextPlural}
+        onAcceptPunishment={handleNextPlayer}
+        onGenerateNewPunishment={generateNewPunishment}
+      />
+
+      <Dialog open={showPlayerList} onOpenChange={setShowPlayerList}>
+        <DialogContent className="bg-white rounded-xl">
+          <DialogHeader>
+            <DialogTitle className="text-purple-900">Gerenciar Jogadores</DialogTitle>
+          </DialogHeader>
+          <PlayerList />
+        </DialogContent>
+      </Dialog>
+
+      {showWinner && (
+        <WinnerScreen
+          onPlayAgain={resetGame}
+        />
+      )}
     </GameLayout>
   );
 }
