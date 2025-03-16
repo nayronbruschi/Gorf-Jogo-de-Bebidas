@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { truthQuestions, dares } from "@/lib/game-data";
 import { useSound } from "@/hooks/use-sound";
+import { auth, updateGameStats } from "@/lib/firebase";
 
 type Mode = "truth" | "dare" | null;
 
@@ -12,9 +13,24 @@ export default function TruthOrDare() {
   const [challenge, setChallenge] = useState("");
   const { play } = useSound();
 
+  useEffect(() => {
+    const trackGameStart = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (userId) {
+          await updateGameStats(userId, "Verdade ou Desafio");
+        }
+      } catch (error) {
+        console.error("[TruthOrDare] Error tracking game:", error);
+      }
+    };
+
+    trackGameStart();
+  }, []);
+
   const generateChallenge = (selectedMode: Mode) => {
     if (!selectedMode) return;
-    
+
     play("click");
     const list = selectedMode === "truth" ? truthQuestions : dares;
     const newChallenge = list[Math.floor(Math.random() * list.length)];

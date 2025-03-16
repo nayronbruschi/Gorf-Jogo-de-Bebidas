@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { themes, type ThemeId } from "@/lib/guess-who-data";
+import { auth, updateGameStats } from "@/lib/firebase";
 import {
   Cat, UserSquare2, Clapperboard, Palmtree,
   Box, Users, Play
@@ -22,6 +23,19 @@ export default function GuessWhoTheme() {
   const [selectedTheme, setSelectedTheme] = useState<ThemeId | null>(null);
 
   useEffect(() => {
+    const trackGameStart = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (userId) {
+          await updateGameStats(userId, "Quem sou eu?");
+        }
+      } catch (error) {
+        console.error("[GuessWhoTheme] Error tracking game:", error);
+      }
+    };
+
+    trackGameStart();
+
     try {
       const storedPlayers = localStorage.getItem("guessWhoPlayers");
       if (!storedPlayers) {

@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import type { UserProfile, InsertUserProfile, UserGameStats } from "@shared/schema";
 
 const firebaseConfig = {
@@ -85,15 +85,25 @@ export async function updateGameStats(userId: string, gameName: string): Promise
     const userData = userSnap.data();
     const now = new Date().toISOString();
 
+    // Criar novo jogo para adicionar à lista
+    const newGame = {
+      name: gameName,
+      playedAt: now
+    };
+
+    // Pegar lista atual de jogos recentes
+    const currentGames = userData.gameStats?.recentGames || [];
+
+    // Criar nova lista com o jogo mais recente no início
+    // e manter apenas os últimos 10 jogos
+    const updatedGames = [newGame, ...currentGames].slice(0, 10);
+
     // Atualizar estatísticas
     await updateDoc(userRef, {
       'gameStats.lastGamePlayed': gameName,
       'gameStats.totalGamesPlayed': (userData.gameStats?.totalGamesPlayed || 0) + 1,
       'gameStats.lastGameStartTime': now,
-      'gameStats.recentGames': arrayUnion({
-        name: gameName,
-        playedAt: now
-      })
+      'gameStats.recentGames': updatedGames
     });
 
   } catch (error) {
