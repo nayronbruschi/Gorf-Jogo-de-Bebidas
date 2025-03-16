@@ -36,6 +36,14 @@ export function useRouletteGame() {
         type: "drink",
         points: data.points
       });
+
+      // Verificar se o jogador atingiu a pontuação máxima após a atualização
+      const updatedPlayer = players.find(p => p.id === data.playerId);
+      if (updatedPlayer && updatedPlayer.points + data.points >= maxPoints) {
+        setShowWinner(true);
+        navigate(`/roulette/winner?playerId=${data.playerId}`);
+      }
+
       return result;
     },
     onSuccess: () => {
@@ -82,7 +90,7 @@ export function useRouletteGame() {
         return;
       }
 
-      const remainingPlayers = players.filter(player => !showWinner || player.points < maxPoints);
+      const remainingPlayers = players;
       if (remainingPlayers.length === 0) {
         setIsSelecting(false);
         return;

@@ -102,7 +102,7 @@ export default function RouletteMode() {
 
   return (
     <GameLayout title="">
-      <div className="max-w-4xl mx-auto p-4 relative min-h-screen">
+      <div className="max-w-4xl mx-auto relative min-h-screen">
         {/* Header with home button */}
         <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-50">
           <Button
@@ -116,7 +116,7 @@ export default function RouletteMode() {
         </div>
 
         {/* Main content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-2 pt-16">
           <div className="bg-white rounded-xl p-6 space-y-8">
             {!selectedPlayer && !isSelecting && (
               <div className="flex justify-center">
