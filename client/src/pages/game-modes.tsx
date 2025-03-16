@@ -39,7 +39,7 @@ export default function GameModes() {
     <GameLayout title="Escolha seu modo de jogo">
       <div className="grid grid-cols-1 gap-6">
         <GameCard
-          title="Gorf"
+          title="Roleta"
           description="Esse modo é para começar ou terminar o rolê. Quer beber muito? Então clica aqui!"
           icon={CircleDot}
           href="/roulette/start"

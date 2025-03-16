@@ -52,6 +52,7 @@ export async function createUserProfile(
       createdAt: now,
       updatedAt: now,
       gameStats: {
+        userId: userId,
         lastGamePlayed: null,
         totalGamesPlayed: 0,
         victories: 0,
