@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { auth } from "@/lib/firebase";
+import { apiRequest } from "@/lib/queryClient";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 interface BannerTexts {
   title: string;
@@ -20,10 +22,28 @@ export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // Get banner texts from the API
+  const { data: initialBannerTexts } = useQuery({
+    queryKey: ['/api/banner-texts'],
+    queryFn: async () => {
+      const response = await apiRequest("GET", '/api/banner-texts', undefined);
+      const data = await response.json();
+      return data as Record<string, BannerTexts>;
+    }
+  });
+
   const [bannerTexts, setBannerTexts] = useState<Record<string, BannerTexts>>({
     "1": { title: "Bem-vindo ao Gorf", description: "O melhor app para suas festas" },
     "2": { title: "Diversão Garantida", description: "Jogos para todos os momentos" }
   });
+
+  // Update banner texts when data is loaded
+  useEffect(() => {
+    if (initialBannerTexts) {
+      setBannerTexts(initialBannerTexts);
+    }
+  }, [initialBannerTexts]);
 
   useEffect(() => {
     // Verificar se o usuário é o admin
@@ -58,26 +78,30 @@ export default function Admin() {
     }
   };
 
-  const handleUpdateBannerTexts = async () => {
-    try {
-      await fetch('/api/banner-texts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ bannerTexts }),
-      });
-
+  const updateTexts = useMutation({
+    mutationFn: async () => {
+      await apiRequest("POST", '/api/banner-texts', bannerTexts);
+    },
+    onSuccess: () => {
       toast({
         title: "Sucesso",
         description: "Textos dos banners atualizados",
       });
-    } catch (error) {
+    },
+    onError: () => {
       toast({
         title: "Erro",
         description: "Falha ao atualizar textos dos banners",
         variant: "destructive",
       });
+    }
+  });
+
+  const handleUpdateBannerTexts = async () => {
+    try {
+      await updateTexts.mutateAsync();
+    } catch (error) {
+      console.error('Erro ao atualizar textos:', error);
     }
   };
 
@@ -157,8 +181,9 @@ export default function Admin() {
               <Button 
                 onClick={handleUpdateBannerTexts}
                 className="w-full mt-4"
+                disabled={updateTexts.isPending}
               >
-                Salvar Textos
+                {updateTexts.isPending ? "Salvando..." : "Salvar Textos"}
               </Button>
             </CardContent>
           </Card>

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, ChevronLeft, Hand } from "lucide-react";
 import { useLocation } from "wouter";
-import { auth, updateGameStats } from "@/lib/firebase";
+import { auth, updateGameStats, startGameSession, endGameSession } from "@/lib/firebase";
 
 interface TouchPoint {
   id: number;
@@ -29,6 +29,8 @@ export default function TouchGame() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const touchPointsRef = useRef<TouchPoint[]>([]);
   const [, setLocation] = useLocation();
+  let timer: NodeJS.Timer | undefined;
+
 
   // Registrar o jogo assim que entrar na página
   useEffect(() => {
@@ -37,6 +39,8 @@ export default function TouchGame() {
         const userId = auth.currentUser?.uid;
         if (userId) {
           await updateGameStats(userId, "Toque na Sorte");
+          // Iniciar sessão do jogo
+          await startGameSession(userId, "Toque na Sorte");
         }
       } catch (error) {
         console.error("[TouchGame] Error tracking game:", error);
@@ -44,7 +48,27 @@ export default function TouchGame() {
     };
 
     trackGameOpen();
+
+    // Cleanup function to end the game session
+    return () => {
+      const endSession = async () => {
+        try {
+          const userId = auth.currentUser?.uid;
+          if (userId) {
+            await endGameSession(userId);
+          }
+        } catch (error) {
+          console.error("[TouchGame] Error ending game session:", error);
+        }
+      };
+      endSession();
+    };
   }, []);
+
+  const handleBack = () => {
+    if (timer) clearInterval(timer);
+    setLocation("/game-modes");
+  };
 
   const handleTouch = (e: TouchEvent) => {
     e.preventDefault();
@@ -105,11 +129,11 @@ export default function TouchGame() {
     const interval = 150;
     let timeElapsed = 0;
 
-    const flash = setInterval(() => {
+    timer = setInterval(() => {
       timeElapsed += interval;
 
       if (timeElapsed >= duration) {
-        clearInterval(flash);
+        clearInterval(timer);
         const randomPoint = touchPointsRef.current[Math.floor(Math.random() * touchPointsRef.current.length)];
 
         setSelecting(false);
@@ -137,6 +161,7 @@ export default function TouchGame() {
       clearTimeout(timerRef.current);
     }
     timerRef.current = null;
+    if (timer) clearInterval(timer);
   };
 
   useEffect(() => {
@@ -197,7 +222,7 @@ export default function TouchGame() {
         <Button
           variant="ghost"
           className="text-white hover:bg-white/20"
-          onClick={() => setLocation("/dashboard")}
+          onClick={handleBack}
         >
           <ChevronLeft className="h-6 w-6" />
         </Button>

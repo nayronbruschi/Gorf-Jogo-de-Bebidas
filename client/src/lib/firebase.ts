@@ -79,6 +79,53 @@ export async function createUserProfile(
   }
 }
 
+// Função para iniciar uma sessão de jogo
+export async function startGameSession(userId: string, gameName: string): Promise<void> {
+  try {
+    const userRef = doc(db, "users", userId);
+    const now = new Date().toISOString();
+
+    await updateDoc(userRef, {
+      'gameStats.lastGameStartTime': now,
+      'gameStats.lastGamePlayed': gameName
+    });
+
+  } catch (error) {
+    console.error("[Firebase] Error starting game session:", error);
+    throw error;
+  }
+}
+
+// Função para finalizar uma sessão de jogo e atualizar o tempo total
+export async function endGameSession(userId: string): Promise<void> {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      throw new Error("User not found");
+    }
+
+    const userData = userSnap.data();
+    const startTime = userData.gameStats?.lastGameStartTime;
+
+    if (startTime) {
+      const playedMinutes = Math.floor(
+        (new Date().getTime() - new Date(startTime).getTime()) / (1000 * 60)
+      );
+
+      await updateDoc(userRef, {
+        'gameStats.totalPlayTime': (userData.gameStats?.totalPlayTime || 0) + playedMinutes,
+        'gameStats.lastGameStartTime': null
+      });
+    }
+
+  } catch (error) {
+    console.error("[Firebase] Error ending game session:", error);
+    throw error;
+  }
+}
+
 // Função para atualizar as estatísticas de jogo
 export async function updateGameStats(userId: string, gameName: string): Promise<void> {
   try {

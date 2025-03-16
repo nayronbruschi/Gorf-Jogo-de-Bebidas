@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,8 +35,23 @@ export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdate
     birthDate: profile?.birthDate || "",
     gender: profile?.gender || "",
     favoriteSocialNetwork: profile?.favoriteSocialNetwork || "",
-    profileImage: profile?.profileImage || user?.photoURL || ""
+    profileImage: profile?.profileImage || user?.photoURL || "",
+    favoriteDrinks: profile?.favoriteDrinks || []
   });
+
+  // Update form data when profile changes
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        name: profile.name || user?.displayName || "",
+        birthDate: profile.birthDate || "",
+        gender: profile.gender || "",
+        favoriteSocialNetwork: profile.favoriteSocialNetwork || "",
+        profileImage: profile.profileImage || user?.photoURL || "",
+        favoriteDrinks: profile.favoriteDrinks || []
+      });
+    }
+  }, [profile, user]);
 
   const updateProfile = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -62,7 +77,7 @@ export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdate
     }
   });
 
-  const updateField = (field: string, value: string) => {
+  const updateField = (field: string, value: string | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
