@@ -64,7 +64,7 @@ export default function GuessWhoPlayers() {
         </div>
 
         <Button
-          className="w-full max-w-md bg-purple-700 hover:bg-purple-800 text-white"
+          className="w-full max-w-md bg-purple-900 hover:bg-purple-950 text-white"
           size="lg"
           onClick={handleStartGame}
           disabled={players.length < 2}

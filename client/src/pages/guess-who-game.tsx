@@ -41,7 +41,8 @@ export default function GuessWhoGame() {
   };
 
   // Usar a mesma lógica do modo clássico para puxar o nome do jogador
-  const currentPlayer = playersData.find(p => p.id === Number(players[currentPlayerIndex]));
+  const currentPlayerId = players[currentPlayerIndex];
+  const currentPlayer = playersData.find(p => p.id === Number(currentPlayerId));
   const currentPlayerName = currentPlayer?.name;
 
   const checkForWinner = useCallback((remainingPlayers: string[]) => {
@@ -248,20 +249,19 @@ export default function GuessWhoGame() {
   };
 
 
-  if (players.length === 0) return null;
-
-  const currentPlayerId = players[currentPlayerIndex];
-  const currentItem = playerItems[currentPlayerId];
-  const winnerName = winner ? getPlayerName(winner) : "";
-
-  const canContinueGame = players.length > 2;
-
+  // Função auxiliar para obter nomes de jogadores (usado em outras partes do componente)
   const getPlayerName = (playerId: string) => {
     if (!playersData) return "";
     const player = playersData.find(p => p.id === Number(playerId));
     return player ? player.name : "";
   };
 
+  if (players.length === 0) return null;
+
+  const currentItem = playerItems[currentPlayerId];
+  const winnerName = winner ? getPlayerName(winner) : "";
+
+  const canContinueGame = players.length > 2;
 
   if (showLoseScreen) {
     return (
@@ -369,8 +369,11 @@ export default function GuessWhoGame() {
               className="text-center space-y-6"
             >
               <h2 className="text-4xl font-bold text-white">
-                É a vez de {currentPlayerName || ""}
+                É a vez de:
               </h2>
+              <p className="text-3xl text-white mb-8">
+                {currentPlayerName || ""}
+              </p>
               <p className="text-xl text-white/80">
                 Coloque o celular de lado na testa
               </p>
@@ -378,7 +381,7 @@ export default function GuessWhoGame() {
                 <Button
                   size="lg"
                   onClick={() => setReadyToStart(true)}
-                  className="bg-blue-500 hover:bg-blue-700 text-white px-8 py-6" // Changed button color
+                  className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6"
                 >
                   <Play className="mr-2 h-6 w-6" />
                   Estou Pronto!
