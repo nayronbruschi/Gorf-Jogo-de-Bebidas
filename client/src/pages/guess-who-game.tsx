@@ -4,19 +4,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getItemsByTheme, type ThemeId } from "@/lib/guess-who-data";
-import { ChevronLeft, RotateCcw, Home, Play } from "lucide-react";
+import { Home, RotateCcw, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 interface Player {
   id: number;
   name: string;
-  points?: number;
 }
 
 export default function GuessWhoGame() {
   const [, setLocation] = useLocation();
   const { data: playersData = [] } = useQuery<Player[]>({
     queryKey: ["/api/players"],
+  });
+
+  const { data: currentPlayer } = useQuery({
+    queryKey: ["/api/players/current"],
   });
 
   const [players, setPlayers] = useState<string[]>([]);
@@ -35,26 +38,6 @@ export default function GuessWhoGame() {
   const [readyToStart, setReadyToStart] = useState(false);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
-  const handleBack = () => {
-    if (timer) clearInterval(timer);
-    setLocation("/guess-who/theme");
-  };
-
-  // Usar a mesma lógica do modo clássico para puxar o nome do jogador
-  const currentPlayerId = players[currentPlayerIndex];
-  const currentPlayer = playersData.find(p => p.id === Number(currentPlayerId));
-  const currentPlayerName = currentPlayer?.name;
-
-  const checkForWinner = useCallback((remainingPlayers: string[]) => {
-    if (remainingPlayers.length === 1) {
-      setWinner(remainingPlayers[0]);
-      setShowWinScreen(true);
-      setPortraitMode();
-      return true;
-    }
-    return false;
-  }, []);
-
   useEffect(() => {
     const storedPlayers = localStorage.getItem("guessWhoPlayers");
     const theme = localStorage.getItem("guessWhoTheme") as ThemeId;
@@ -65,18 +48,18 @@ export default function GuessWhoGame() {
     }
 
     try {
-      const playerList = JSON.parse(storedPlayers);
-      if (!Array.isArray(playerList) || playerList.length < 2) {
+      const playerIds = JSON.parse(storedPlayers);
+      if (!Array.isArray(playerIds) || playerIds.length < 2) {
         setLocation("/guess-who/players");
         return;
       }
-      setPlayers(playerList);
+      setPlayers(playerIds);
 
       const themeItems = getItemsByTheme(theme);
       setItems(themeItems.map(item => item.name));
 
       const initialPlayerItems: { [key: string]: string } = {};
-      playerList.forEach((playerId: string) => {
+      playerIds.forEach((playerId: string) => {
         const randomItem = themeItems[Math.floor(Math.random() * themeItems.length)].name;
         initialPlayerItems[playerId] = randomItem;
       });
@@ -86,11 +69,31 @@ export default function GuessWhoGame() {
     } catch (error) {
       console.error('Erro ao inicializar o jogo:', error);
       setLocation("/guess-who/players");
-      return;
     }
-
-    return resetOrientation;
   }, [setLocation]);
+
+  const handleBack = () => {
+    if (timer) clearInterval(timer);
+    setLocation("/game-modes");
+  };
+
+  // Lógica para obter o nome do jogador atual
+  const getCurrentPlayerName = () => {
+    if (!currentPlayer) return "";
+    return currentPlayer.name;
+  };
+
+  const currentPlayerName = getCurrentPlayerName();
+
+  const checkForWinner = useCallback((remainingPlayers: string[]) => {
+    if (remainingPlayers.length === 1) {
+      setWinner(remainingPlayers[0]);
+      setShowWinScreen(true);
+      setPortraitMode();
+      return true;
+    }
+    return false;
+  }, []);
 
   useEffect(() => {
     if (!isSetup || !readyToStart || setupTime <= 0) return;
@@ -258,7 +261,7 @@ export default function GuessWhoGame() {
 
   if (players.length === 0) return null;
 
-  const currentItem = playerItems[currentPlayerId];
+  const currentItem = playerItems[players[currentPlayerIndex]];
   const winnerName = winner ? getPlayerName(winner) : "";
 
   const canContinueGame = players.length > 2;
@@ -348,12 +351,12 @@ export default function GuessWhoGame() {
           className="text-white hover:bg-white/20"
           onClick={handleBack}
         >
-          <ChevronLeft className="h-6 w-6" />
+          <Home className="h-6 w-6" />
         </Button>
 
         <div className="flex items-center gap-4">
           <span className="text-xl font-medium text-white">
-            {currentPlayerName || ""}
+            {currentPlayerName}
           </span>
         </div>
       </div>
@@ -372,7 +375,7 @@ export default function GuessWhoGame() {
                 É a vez de:
               </h2>
               <p className="text-3xl text-white mb-8">
-                {currentPlayerName || ""}
+                {currentPlayerName}
               </p>
               <p className="text-xl text-white/80">
                 Coloque o celular de lado na testa
