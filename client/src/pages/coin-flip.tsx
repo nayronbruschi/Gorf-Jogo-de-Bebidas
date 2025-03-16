@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Coins } from "lucide-react";
+import { Crown, SmilePlus } from "lucide-react";
 import { auth, updateGameStats } from "@/lib/firebase";
 
 export default function CoinFlip() {
@@ -29,9 +29,10 @@ export default function CoinFlip() {
     if (isFlipping) return;
 
     setIsFlipping(true);
-    const newResult = Math.random() < 0.5 ? "cara" : "coroa";
     setResult(null);
+    const newResult = Math.random() < 0.5 ? "cara" : "coroa";
 
+    // Atrasar a exibição do resultado até a animação terminar
     setTimeout(() => {
       setResult(newResult);
       setIsFlipping(false);
@@ -70,9 +71,7 @@ export default function CoinFlip() {
             >
               <div className="relative w-20 h-20">
                 <div className="absolute inset-0 rounded-full bg-yellow-300 flex items-center justify-center">
-                  <div className="absolute w-3 h-3 rounded-full bg-yellow-700" style={{ top: '30%', left: '40%' }} />
-                  <div className="absolute w-3 h-3 rounded-full bg-yellow-700" style={{ top: '30%', right: '40%' }} />
-                  <div className="absolute w-8 h-4 rounded-full border-2 border-yellow-700" style={{ top: '60%', left: '50%', transform: 'translateX(-50%)' }} />
+                  <SmilePlus className="w-12 h-12 text-yellow-700" />
                 </div>
               </div>
             </div>
@@ -85,20 +84,14 @@ export default function CoinFlip() {
             >
               <div className="relative w-20 h-20">
                 <div className="absolute inset-0 rounded-full bg-yellow-300 flex items-center justify-center">
-                  <div className="w-12 h-12 relative">
-                    <div className="absolute w-full h-2 bg-yellow-700 top-0 left-0" />
-                    <div className="absolute w-2 h-8 bg-yellow-700 top-2 left-1" />
-                    <div className="absolute w-2 h-8 bg-yellow-700 top-2 right-1" />
-                    <div className="absolute w-2 h-8 bg-yellow-700 top-2 left-[calc(50%-1px)]" />
-                    <div className="absolute w-8 h-2 bg-yellow-700 bottom-0 left-[calc(50%-16px)]" />
-                  </div>
+                  <Crown className="w-12 h-12 text-yellow-700" />
                 </div>
               </div>
             </div>
           </motion.div>
         </div>
 
-        {result && !isFlipping && (
+        {!isFlipping && result && (
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -112,9 +105,8 @@ export default function CoinFlip() {
           size="lg"
           onClick={flipCoin}
           disabled={isFlipping}
-          className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl"
+          className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6 text-xl"
         >
-          <Coins className="mr-2 h-5 w-5" />
           {isFlipping ? "Jogando..." : "Jogar Moeda"}
         </Button>
       </div>
