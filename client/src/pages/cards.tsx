@@ -106,7 +106,7 @@ export default function Cards() {
           className="relative w-full max-w-md aspect-[3/4] perspective-1000 cursor-pointer mb-4"
           onClick={handleCardClick}
         >
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {currentCard ? (
               <motion.div
                 key="card"
@@ -131,17 +131,30 @@ export default function Cards() {
                         {currentCard.rule}
                       </p>
                       {currentCard.specialAction && (
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowDialog(true);
-                          }}
-                          variant="outline"
-                          className="bg-purple-900 text-white hover:bg-white hover:text-purple-900 hover:border-purple-900 border-2"
-                        >
-                          <UserPlus className="mr-2 h-5 w-5" />
-                          Registrar jogador
-                        </Button>
+                        <div className="flex flex-col gap-2">
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowDialog(true);
+                            }}
+                            variant="outline"
+                            className="bg-purple-900 text-white hover:bg-white hover:text-purple-900 hover:border-purple-900 border-2"
+                          >
+                            <UserPlus className="mr-2 h-5 w-5" />
+                            Registrar jogador
+                          </Button>
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleUseCard();
+                            }}
+                            variant="outline"
+                            className="bg-green-700 text-white hover:bg-white hover:text-green-700 hover:border-green-700 border-2"
+                          >
+                            <CheckSquare className="mr-2 h-5 w-5" />
+                            Usou a carta
+                          </Button>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -228,41 +241,21 @@ export default function Cards() {
               placeholder="Nome do jogador"
               className="my-4"
             />
-            <AlertDialogFooter className="flex-col gap-2 sm:flex-row">
-              <AlertDialogCancel
-                className="sm:w-full"
-                onClick={() => {
-                  setShowDialog(false);
-                  setPlayerName("");
-                }}
-              >
-                Cancelar
-              </AlertDialogCancel>
-              <AlertDialogAction
-                className="sm:w-full bg-purple-900 text-white hover:bg-purple-800"
-                onClick={() => {
-                  if (!currentCard?.specialAction || !playerName.trim()) return;
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setShowDialog(false)}>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={() => {
+                if (!currentCard?.specialAction || !playerName.trim()) return;
 
-                  const newPermission: SpecialPermission = {
-                    type: currentCard.specialAction,
-                    name: playerName.trim(),
-                    timestamp: new Date().toLocaleTimeString()
-                  };
+                const newPermission: SpecialPermission = {
+                  type: currentCard.specialAction,
+                  name: playerName.trim(),
+                  timestamp: new Date().toLocaleTimeString()
+                };
 
-                  setSpecialPermissions([...specialPermissions, newPermission]);
-                  setShowDialog(false);
-                  setPlayerName("");
-                }}
-              >
-                Registrar Permissão
-              </AlertDialogAction>
-              <AlertDialogAction
-                className="sm:w-full bg-green-700 text-white hover:bg-green-600"
-                onClick={handleUseCard}
-              >
-                <CheckSquare className="mr-2 h-5 w-5" />
-                Usou a carta
-              </AlertDialogAction>
+                setSpecialPermissions([...specialPermissions, newPermission]);
+                setShowDialog(false);
+                setPlayerName("");
+              }}>Confirmar</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
