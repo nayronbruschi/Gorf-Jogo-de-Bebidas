@@ -176,7 +176,7 @@ export default function ClassicMode() {
       await apiRequest("DELETE", "/api/players/all", {});
       await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
       await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
-      navigate("/manage-players");
+      navigate("/game-modes");
     } catch (error) {
       console.error('Erro ao limpar jogadores:', error);
     }
@@ -200,7 +200,7 @@ export default function ClassicMode() {
             <Home className="h-6 w-6" />
           </Button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto px-2 pt-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto px-2 pt-8">
           <div className="bg-white/80 rounded-xl p-6 space-y-8">
             <div className="flex items-center gap-4 text-purple-900">
               <User className="h-6 w-6" />

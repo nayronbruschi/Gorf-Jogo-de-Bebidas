@@ -225,7 +225,11 @@ export default function GuessWhoGame() {
     const currentPlayerId = players[currentPlayerIndex];
     const currentItem = playerItems[currentPlayerId];
 
-    if (guess.toLowerCase().trim() === currentItem?.toLowerCase().trim()) {
+    // Normaliza as strings removendo hífens e espaços extras
+    const normalizedGuess = guess.toLowerCase().trim().replace(/-/g, '');
+    const normalizedItem = currentItem?.toLowerCase().trim().replace(/-/g, '');
+
+    if (normalizedGuess === normalizedItem) {
       setWinner(currentPlayerId);
       setShowWinScreen(true);
       setPortraitMode();
