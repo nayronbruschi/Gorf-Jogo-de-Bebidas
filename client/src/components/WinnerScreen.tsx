@@ -92,7 +92,7 @@ export function WinnerScreen({ onPlayAgain }: WinnerScreenProps) {
           <Button
             onClick={handleChooseNewGame}
             variant="outline"
-            className="bg-white border-purple-700 text-purple-700 hover:bg-purple-900 hover:text-white"
+            className="bg-white border-purple-700 text-white hover:bg-purple-900 hover:text-white bg-purple-900"
           >
             Escolher outro jogo
           </Button>
