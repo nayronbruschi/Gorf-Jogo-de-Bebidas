@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { WinnerScreen } from "@/components/WinnerScreen";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { PlayerManagementDialog } from "@/components/PlayerManagementDialog";
 import { useForm } from "react-hook-form";
 import { createElement } from "react";
 import { useLocation } from "wouter";
@@ -30,7 +31,7 @@ export default function ClassicMode() {
     const hasSeenTutorial = localStorage.getItem("hasSeenTutorial");
     return !hasSeenTutorial;
   });
-  const [showPlayerList, setShowPlayerList] = useState(false); // Added state for player list
+  const [showPlayerList, setShowPlayerList] = useState(false);
   const { play } = useSound();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -189,6 +190,12 @@ export default function ClassicMode() {
           <TutorialOverlay onClose={handleCloseTutorial} />
         )}
       </AnimatePresence>
+
+      <PlayerManagementDialog
+        open={showPlayerList}
+        onOpenChange={setShowPlayerList}
+      />
+
       <GameLayout title="">
         <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-50">
           <Button
@@ -343,7 +350,7 @@ export default function ClassicMode() {
               </div>
               <Button
                 variant="ghost"
-                onClick={() => setShowPlayerList(true)} // Changed onClick
+                onClick={() => setShowPlayerList(true)}
                 className="text-white hover:text-white/80"
               >
                 <Settings className="h-5 w-5" />

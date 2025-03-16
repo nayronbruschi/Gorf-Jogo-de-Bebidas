@@ -253,6 +253,11 @@ export default function GuessWhoGame() {
       document.documentElement.style.setProperty('position', 'absolute');
       document.documentElement.style.setProperty('top', '100%');
       document.documentElement.style.setProperty('left', '0');
+      // Adicionar bloqueio de orientação via CSS
+      document.body.style.setProperty('overflow', 'hidden');
+      document.body.style.setProperty('position', 'fixed');
+      document.body.style.setProperty('width', '100%');
+      document.body.style.setProperty('height', '100%');
     }
   };
 
@@ -270,6 +275,11 @@ export default function GuessWhoGame() {
       document.documentElement.style.removeProperty('position');
       document.documentElement.style.removeProperty('top');
       document.documentElement.style.removeProperty('left');
+      // Remover bloqueio de orientação
+      document.body.style.removeProperty('overflow');
+      document.body.style.removeProperty('position');
+      document.body.style.removeProperty('width');
+      document.body.style.removeProperty('height');
     }
   };
 
