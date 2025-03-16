@@ -21,6 +21,7 @@ interface SpecialPermission {
   type: "bathroom" | "finger";
   name: string;
   timestamp: string;
+  card?: Card;
 }
 
 export default function Cards() {
@@ -64,7 +65,7 @@ export default function Cards() {
     }, 600);
   };
 
-  const handleCardClick = () => {
+  const handleTouch = () => {
     if (!isDrawing && remainingCards.length > 0) {
       drawCard();
     }
@@ -80,16 +81,17 @@ export default function Cards() {
     }
   };
 
-  const handleUseCard = () => {
-    if (currentCard) {
+  const handleRemovePermission = (index: number) => {
+    const permission = specialPermissions[index];
+    if (permission.card) {
       const newRemainingCards = remainingCards.filter(
-        card => !(card.suit === currentCard.suit && card.value === currentCard.value)
+        card => !(card.suit === permission.card?.suit && card.value === permission.card?.value)
       );
       setRemainingCards(newRemainingCards);
-      setCurrentCard(null);
-      setShowDialog(false);
-      setPlayerName("");
     }
+    const newPermissions = [...specialPermissions];
+    newPermissions.splice(index, 1);
+    setSpecialPermissions(newPermissions);
   };
 
   return (
@@ -104,7 +106,7 @@ export default function Cards() {
         {/* Carta com funcionalidade de clique */}
         <div 
           className="relative w-full max-w-md aspect-[3/4] perspective-1000 cursor-pointer mb-4"
-          onClick={handleCardClick}
+          onClick={handleTouch}
         >
           <AnimatePresence mode="wait">
             {currentCard ? (
@@ -131,30 +133,17 @@ export default function Cards() {
                         {currentCard.rule}
                       </p>
                       {currentCard.specialAction && (
-                        <div className="flex flex-col gap-2">
-                          <Button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setShowDialog(true);
-                            }}
-                            variant="outline"
-                            className="bg-purple-900 text-white hover:bg-white hover:text-purple-900 hover:border-purple-900 border-2"
-                          >
-                            <UserPlus className="mr-2 h-5 w-5" />
-                            Registrar jogador
-                          </Button>
-                          <Button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleUseCard();
-                            }}
-                            variant="outline"
-                            className="bg-green-700 text-white hover:bg-white hover:text-green-700 hover:border-green-700 border-2"
-                          >
-                            <CheckSquare className="mr-2 h-5 w-5" />
-                            Usou a carta
-                          </Button>
-                        </div>
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowDialog(true);
+                          }}
+                          variant="outline"
+                          className="bg-purple-900 text-white hover:bg-white hover:text-purple-900 hover:border-purple-900 border-2"
+                        >
+                          <UserPlus className="mr-2 h-5 w-5" />
+                          Registrar jogador
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -213,11 +202,21 @@ export default function Cards() {
             <h3 className="text-xl font-semibold text-white mb-4">Permissões Especiais:</h3>
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 space-y-2">
               {specialPermissions.map((permission, index) => (
-                <div key={index} className="text-white flex justify-between items-center">
-                  <span>
-                    {permission.name} - {permission.type === "bathroom" ? "🚽 Banheiro" : "👆 Dedinho"}
-                  </span>
-                  <span className="text-sm opacity-75">{permission.timestamp}</span>
+                <div key={index} className="text-white flex justify-between items-center p-3 bg-white/5 rounded-lg">
+                  <div>
+                    <span>
+                      {permission.name} - {permission.type === "bathroom" ? "🚽 Banheiro" : "👆 Dedinho"}
+                    </span>
+                    <div className="text-sm opacity-75">{permission.timestamp}</div>
+                  </div>
+                  <Button
+                    onClick={() => handleRemovePermission(index)}
+                    variant="ghost"
+                    size="sm"
+                    className="hover:bg-white/10 text-white"
+                  >
+                    <CheckSquare className="h-5 w-5" />
+                  </Button>
                 </div>
               ))}
             </div>
@@ -249,7 +248,8 @@ export default function Cards() {
                 const newPermission: SpecialPermission = {
                   type: currentCard.specialAction,
                   name: playerName.trim(),
-                  timestamp: new Date().toLocaleTimeString()
+                  timestamp: new Date().toLocaleTimeString(),
+                  card: currentCard
                 };
 
                 setSpecialPermissions([...specialPermissions, newPermission]);
