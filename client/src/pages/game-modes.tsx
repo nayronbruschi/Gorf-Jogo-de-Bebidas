@@ -63,8 +63,8 @@ export default function GameModes() {
           href="/touch-game"
         />
         <GameCard
-          title="Garrafa Giratória"
-          description="Gire a garrafa e descubra quem será o próximo a beber!"
+          title="Roleta"
+          description="Gire a roleta e descubra quem será o próximo a beber!"
           icon={Wine}
           href="/spin-bottle"
         />
