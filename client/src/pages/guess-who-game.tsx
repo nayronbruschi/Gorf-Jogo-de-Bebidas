@@ -92,6 +92,7 @@ export default function GuessWhoGame() {
 
   const handleBack = () => {
     if (timer) clearInterval(timer);
+    setPortraitMode();
     setLocation("/game-modes");
   };
 
