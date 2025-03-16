@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
-import type { UserProfile, InsertUserProfile } from "@shared/schema";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import type { UserProfile, InsertUserProfile, UserGameStats } from "@shared/schema";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDRZ0akGNllg2YFaJM832PWSXvbNfcFbcE",
@@ -50,7 +50,15 @@ export async function createUserProfile(
       id: userId,
       ...profileData,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
+      gameStats: {
+        lastGamePlayed: null,
+        totalGamesPlayed: 0,
+        victories: 0,
+        totalPlayTime: 0,
+        lastGameStartTime: null,
+        recentGames: [] // Array dos últimos jogos jogados
+      }
     };
 
     const userRef = doc(db, "users", userId);
@@ -59,6 +67,36 @@ export async function createUserProfile(
     return userProfile;
   } catch (error) {
     console.error("[Firebase] Error creating user profile:", error);
+    throw error;
+  }
+}
+
+// Função para atualizar as estatísticas de jogo
+export async function updateGameStats(userId: string, gameName: string): Promise<void> {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      throw new Error("User not found");
+    }
+
+    const userData = userSnap.data();
+    const now = new Date().toISOString();
+
+    // Atualizar estatísticas
+    await updateDoc(userRef, {
+      'gameStats.lastGamePlayed': gameName,
+      'gameStats.totalGamesPlayed': (userData.gameStats?.totalGamesPlayed || 0) + 1,
+      'gameStats.lastGameStartTime': now,
+      'gameStats.recentGames': arrayUnion({
+        name: gameName,
+        playedAt: now
+      })
+    });
+
+  } catch (error) {
+    console.error("[Firebase] Error updating game stats:", error);
     throw error;
   }
 }
