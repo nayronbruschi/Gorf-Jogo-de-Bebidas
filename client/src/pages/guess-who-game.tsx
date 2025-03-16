@@ -345,9 +345,10 @@ export default function GuessWhoGame() {
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-purple-900 to-purple-800 overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between">
+      <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-50">
         <Button
           variant="ghost"
+          size="icon"
           className="text-white hover:bg-white/20"
           onClick={handleBack}
         >
