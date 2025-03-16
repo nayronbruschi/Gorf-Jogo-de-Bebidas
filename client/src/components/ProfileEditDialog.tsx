@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { genderOptions, socialNetworkOptions } from "@shared/schema";
+import { ImageUploader } from "@/components/ImageUploader";
 import type { UserProfile } from "@shared/schema";
+import { Image } from "lucide-react";
 
 interface ProfileEditDialogProps {
   open: boolean;
@@ -26,11 +28,16 @@ export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdate
     name: profile?.name || "",
     birthDate: profile?.birthDate || "",
     gender: profile?.gender || "",
-    favoriteSocialNetwork: profile?.favoriteSocialNetwork || ""
+    favoriteSocialNetwork: profile?.favoriteSocialNetwork || "",
+    profileImage: profile?.profileImage || ""
   });
 
   const updateField = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleImageUpload = (url: string) => {
+    updateField("profileImage", url);
   };
 
   const handleSave = async () => {
@@ -62,6 +69,20 @@ export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdate
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-sm text-gray-300">Foto de Perfil</label>
+            <div className="space-y-4">
+              {formData.profileImage && (
+                <img
+                  src={formData.profileImage}
+                  alt="Foto de perfil"
+                  className="w-24 h-24 rounded-full object-cover mx-auto"
+                />
+              )}
+              <ImageUploader onUploadComplete={handleImageUpload} />
+            </div>
+          </div>
+
           <div className="space-y-2">
             <label className="text-sm text-gray-300">Nome</label>
             <Input
