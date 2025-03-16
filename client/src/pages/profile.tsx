@@ -100,7 +100,7 @@ export default function Profile() {
 
   return (
     <AppLayout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 min-h-screen overflow-y-auto pb-32">
         <div className="space-y-8">
           <Card className="bg-white/10 backdrop-blur-lg border-none relative">
             <Button

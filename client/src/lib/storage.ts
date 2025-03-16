@@ -1,4 +1,7 @@
 import { app } from "./firebase";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+const storage = getStorage(app);
 
 export async function uploadImage(file: File, path: string): Promise<string> {
   try {
@@ -9,25 +12,14 @@ export async function uploadImage(file: File, path: string): Promise<string> {
       name: file.name
     });
 
-    // Criar FormData para enviar o arquivo
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('path', path);
+    // Upload para o Firebase Storage
+    const storageRef = ref(storage, `images/${path}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
 
-    // Fazer o upload para o bucket do Replit
-    const response = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData
-    });
+    console.log('Upload concluído:', downloadURL);
 
-    if (!response.ok) {
-      throw new Error(`Upload failed: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log('Upload concluído:', data);
-
-    return data.url;
+    return downloadURL;
   } catch (error) {
     console.error('Erro no upload:', error);
     if (error instanceof Error) {
@@ -42,10 +34,6 @@ export async function uploadImage(file: File, path: string): Promise<string> {
 }
 
 export async function getImageUrl(path: string): Promise<string> {
-  const response = await fetch(`/api/images/${path}`);
-  if (!response.ok) {
-    throw new Error('Failed to get image URL');
-  }
-  const data = await response.json();
-  return data.url;
+  const imageRef = ref(storage, `images/${path}`);
+  return getDownloadURL(imageRef);
 }

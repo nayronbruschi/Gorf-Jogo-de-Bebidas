@@ -80,13 +80,13 @@ export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdate
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-gray-900 border-gray-800">
+      <DialogContent className="bg-gray-900 border-gray-800 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl text-white">
             Editar Perfil
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-6">
+        <div className="space-y-6 pb-16">
           <div className="space-y-2">
             <label className="text-sm text-gray-300">Foto de Perfil</label>
             <div className="space-y-4">
@@ -159,13 +159,15 @@ export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdate
             </Select>
           </div>
 
-          <Button
-            onClick={handleSave}
-            disabled={updateProfile.isPending}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white"
-          >
-            {updateProfile.isPending ? "Salvando..." : "Salvar Alterações"}
-          </Button>
+          <div className="sticky bottom-0 pt-4 bg-gray-900">
+            <Button
+              onClick={handleSave}
+              disabled={updateProfile.isPending}
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+            >
+              {updateProfile.isPending ? "Salvando..." : "Salvar Alterações"}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
