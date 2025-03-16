@@ -17,6 +17,20 @@ import { auth, getUserProfile } from "@/lib/firebase";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+// Função para capitalizar primeira letra de cada palavra e adicionar quebras de linha
+const formatGameName = (name: string) => {
+  switch (name.toLowerCase()) {
+    case "quem sou eu":
+      return "Quem\nSou Eu";
+    case "toque na sorte":
+      return "Toque na\nSorte";
+    default:
+      return name.split(' ').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      ).join(' ');
+  }
+};
+
 // Função para capitalizar primeira letra de cada palavra
 const capitalizeWords = (text: string) => {
   return text.split(' ').map(word => 
@@ -86,8 +100,8 @@ export default function Dashboard() {
                       <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
                         <game.icon className="h-7 w-7 text-white" />
                       </div>
-                      <span className="text-xs text-white text-center mt-1 leading-tight h-10 line-clamp-2 px-2">
-                        {capitalizeWords(game.name)}
+                      <span className="text-xs text-white text-center mt-1 leading-tight h-10 whitespace-pre-line px-2">
+                        {formatGameName(game.name)}
                       </span>
                     </div>
                   </CarouselItem>
