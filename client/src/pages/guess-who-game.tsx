@@ -38,42 +38,14 @@ export default function GuessWhoGame() {
   const [readyToStart, setReadyToStart] = useState(false);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
-  const isMobileDevice = () => {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  };
-
-  const setLandscapeMode = () => {
-    if (isMobileDevice()) {
-      document.documentElement.style.setProperty('transform', 'rotate(-90deg)');
-      document.documentElement.style.setProperty('transform-origin', 'left top');
-      document.documentElement.style.setProperty('width', '100vh');
-      document.documentElement.style.setProperty('height', '100vw');
-      document.documentElement.style.setProperty('overflow', 'hidden');
-      document.documentElement.style.setProperty('position', 'absolute');
-      document.documentElement.style.setProperty('top', '100%');
-      document.documentElement.style.setProperty('left', '0');
-    }
-  };
-
-  const setPortraitMode = () => {
-    resetOrientation();
-  };
-
-  const resetOrientation = () => {
-    if (isMobileDevice()) {
-      document.documentElement.style.removeProperty('transform');
-      document.documentElement.style.removeProperty('transform-origin');
-      document.documentElement.style.removeProperty('width');
-      document.documentElement.style.removeProperty('height');
-      document.documentElement.style.removeProperty('overflow');
-      document.documentElement.style.removeProperty('position');
-      document.documentElement.style.removeProperty('top');
-      document.documentElement.style.removeProperty('left');
-    }
+  const handleBack = () => {
+    if (timer) clearInterval(timer);
+    setLocation("/guess-who/theme");
   };
 
   const getPlayerName = (playerId: string) => {
-    const player = playersData.find((p: Player) => p.id === Number(playerId));
+    if (!playersData) return "";
+    const player = playersData.find(p => p.id === Number(playerId));
     return player ? player.name : "";
   };
 
@@ -246,9 +218,40 @@ export default function GuessWhoGame() {
     }
   };
 
-  const handleBack = () => {
-    setLocation("/guess-who/theme");
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   };
+
+  const setLandscapeMode = () => {
+    if (isMobileDevice()) {
+      document.documentElement.style.setProperty('transform', 'rotate(-90deg)');
+      document.documentElement.style.setProperty('transform-origin', 'left top');
+      document.documentElement.style.setProperty('width', '100vh');
+      document.documentElement.style.setProperty('height', '100vw');
+      document.documentElement.style.setProperty('overflow', 'hidden');
+      document.documentElement.style.setProperty('position', 'absolute');
+      document.documentElement.style.setProperty('top', '100%');
+      document.documentElement.style.setProperty('left', '0');
+    }
+  };
+
+  const setPortraitMode = () => {
+    resetOrientation();
+  };
+
+  const resetOrientation = () => {
+    if (isMobileDevice()) {
+      document.documentElement.style.removeProperty('transform');
+      document.documentElement.style.removeProperty('transform-origin');
+      document.documentElement.style.removeProperty('width');
+      document.documentElement.style.removeProperty('height');
+      document.documentElement.style.removeProperty('overflow');
+      document.documentElement.style.removeProperty('position');
+      document.documentElement.style.removeProperty('top');
+      document.documentElement.style.removeProperty('left');
+    }
+  };
+
 
   if (players.length === 0) return null;
 
@@ -276,7 +279,7 @@ export default function GuessWhoGame() {
                 setShowLoseScreen(false);
                 handleNextPlayer();
               }}
-              className="bg-purple-700 hover:bg-purple-800 text-white"
+              className="bg-purple-900 hover:bg-purple-950 text-white"
             >
               Tomar 5 goles e continuar
             </Button>
@@ -308,7 +311,7 @@ export default function GuessWhoGame() {
               <Button
                 size="lg"
                 onClick={handleNextPlayer}
-                className="bg-purple-700 hover:bg-purple-800 text-white"
+                className="bg-purple-900 hover:bg-purple-950 text-white"
               >
                 <RotateCcw className="mr-2 h-5 w-5" />
                 Continuar Jogando
@@ -317,7 +320,7 @@ export default function GuessWhoGame() {
             <Button
               size="lg"
               onClick={() => setLocation("/guess-who/theme")}
-              className="bg-white/20 hover:bg-white/30 text-white"
+              className="bg-purple-900 hover:bg-purple-950 text-white"
             >
               <RotateCcw className="mr-2 h-5 w-5" />
               Escolher Outra Categoria
@@ -365,7 +368,7 @@ export default function GuessWhoGame() {
               className="text-center space-y-6"
             >
               <h2 className="text-4xl font-bold text-white">
-                É a vez de {currentPlayerName}
+                É a vez de {getPlayerName(players[currentPlayerIndex])}
               </h2>
               <p className="text-xl text-white/80">
                 Coloque o celular de lado na testa
@@ -439,6 +442,79 @@ export default function GuessWhoGame() {
           )}
         </AnimatePresence>
       </div>
+
+      {showWinScreen && (
+        <div className="fixed inset-0 bg-gradient-to-br from-purple-900 to-purple-800 flex items-center justify-center">
+          <div className="text-center space-y-8 p-4">
+            <h1 className="text-3xl font-bold text-white mb-8">
+              🎉 Parabéns {winnerName}! 🎉
+            </h1>
+            <p className="text-2xl text-white/80 mb-12">
+              Você acertou!
+            </p>
+            <div className="flex flex-col gap-4 max-w-xs mx-auto">
+              {canContinueGame && (
+                <Button
+                  size="lg"
+                  onClick={handleNextPlayer}
+                  className="bg-purple-900 hover:bg-purple-950 text-white"
+                >
+                  <RotateCcw className="mr-2 h-5 w-5" />
+                  Continuar Jogando
+                </Button>
+              )}
+              <Button
+                size="lg"
+                onClick={() => setLocation("/guess-who/theme")}
+                className="bg-purple-900 hover:bg-purple-950 text-white"
+              >
+                <RotateCcw className="mr-2 h-5 w-5" />
+                Escolher Outra Categoria
+              </Button>
+              <Button
+                size="lg"
+                onClick={() => setLocation("/game-modes")}
+                className="bg-white/10 hover:bg-white/20 text-white"
+              >
+                <Home className="mr-2 h-5 w-5" />
+                Escolher Outro Jogo
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLoseScreen && (
+        <div className="fixed inset-0 bg-gradient-to-br from-purple-900 to-purple-800 flex items-center justify-center">
+          <div className="text-center space-y-8 p-4">
+            <h1 className="text-4xl font-bold text-white mb-8">
+              Você errou!
+            </h1>
+            <p className="text-2xl text-white/80 mb-12">
+              Você pode tomar 5 goles e continuar jogando ou sair do jogo
+            </p>
+            <div className="flex flex-col gap-4 max-w-xs mx-auto">
+              <Button
+                size="lg"
+                onClick={() => {
+                  setShowLoseScreen(false);
+                  handleNextPlayer();
+                }}
+                className="bg-purple-900 hover:bg-purple-950 text-white"
+              >
+                Tomar 5 goles e continuar
+              </Button>
+              <Button
+                size="lg"
+                onClick={handleEliminatePlayer}
+                className="bg-white/20 hover:bg-white/30 text-white"
+              >
+                Sair do Jogo
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {eliminated.length > 0 && (
         <div className="absolute bottom-4 left-0 right-0 text-white/60 text-center">
