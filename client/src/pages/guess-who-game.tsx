@@ -39,19 +39,35 @@ export default function GuessWhoGame() {
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    const lockScreenOrientation = async () => {
+      try {
+        if (screen.orientation && screen.orientation.lock) {
+          await screen.orientation.lock("landscape");
+        }
+      } catch (error) {
+        console.error("[GuessWhoGame] Error locking screen orientation:", error);
+      }
+    };
+
+    const unlockScreenOrientation = () => {
+      if (screen.orientation && screen.orientation.unlock) {
+        screen.orientation.unlock();
+      }
+    };
+
     const storedPlayers = localStorage.getItem("guessWhoPlayers");
     const theme = localStorage.getItem("guessWhoTheme") as ThemeId;
 
     if (!storedPlayers || !theme) {
       setLocation("/guess-who/players");
-      return;
+      return () => unlockScreenOrientation();
     }
 
     try {
       const playerIds = JSON.parse(storedPlayers);
       if (!Array.isArray(playerIds) || playerIds.length < 2) {
         setLocation("/guess-who/players");
-        return;
+        return () => unlockScreenOrientation();
       }
       setPlayers(playerIds);
 
@@ -66,9 +82,11 @@ export default function GuessWhoGame() {
       setPlayerItems(initialPlayerItems);
 
       setLandscapeMode();
+      lockScreenOrientation();
     } catch (error) {
       console.error('Erro ao inicializar o jogo:', error);
       setLocation("/guess-who/players");
+      return () => unlockScreenOrientation();
     }
   }, [setLocation]);
 

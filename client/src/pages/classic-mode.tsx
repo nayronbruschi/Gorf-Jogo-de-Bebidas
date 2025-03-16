@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { decks } from "@/lib/game-data";
 import { useSound } from "@/hooks/use-sound";
-import { User, Beer, Target, ArrowRight, Award, Crown, Plus, Minus } from "lucide-react";
+import { User, Beer, Target, ArrowRight, Award, Crown, Plus, Minus, Home, Settings } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
@@ -30,6 +30,7 @@ export default function ClassicMode() {
     const hasSeenTutorial = localStorage.getItem("hasSeenTutorial");
     return !hasSeenTutorial;
   });
+  const [showPlayerList, setShowPlayerList] = useState(false); // Added state for player list
   const { play } = useSound();
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -170,6 +171,17 @@ export default function ClassicMode() {
     navigate("/manage-players");
   };
 
+  const handleHome = async () => {
+    try {
+      await apiRequest("DELETE", "/api/players/all", {});
+      await queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/players/current"] });
+      navigate("/manage-players");
+    } catch (error) {
+      console.error('Erro ao limpar jogadores:', error);
+    }
+  };
+
   return (
     <>
       <AnimatePresence>
@@ -178,7 +190,17 @@ export default function ClassicMode() {
         )}
       </AnimatePresence>
       <GameLayout title="">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-50">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/20"
+            onClick={handleHome}
+          >
+            <Home className="h-6 w-6" />
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto px-2 pt-16">
           <div className="bg-white/80 rounded-xl p-6 space-y-8">
             <div className="flex items-center gap-4 text-purple-900">
               <User className="h-6 w-6" />
@@ -263,7 +285,7 @@ export default function ClassicMode() {
                   </DialogTrigger>
                   <DialogContent className="bg-white rounded-xl">
                     <DialogHeader>
-                      <DialogTitle>Alterar Pontuação Máxima</DialogTitle>
+                      <DialogTitle className="text-purple-900">Alterar Pontuação Máxima</DialogTitle>
                     </DialogHeader>
                     <div className="flex items-center gap-2 mt-4">
                       <Button
@@ -299,7 +321,7 @@ export default function ClassicMode() {
                       </Button>
                     </div>
                     <Button
-                      className="w-full mt-4 bg-purple-700 hover:bg-purple-800 text-white"
+                      className="w-full mt-4 bg-purple-900 hover:bg-purple-950 text-white"
                       onClick={() => {
                         const newMaxPoints = maxPointsForm.getValues("maxPoints");
                         updateMaxPoints.mutate(Number(newMaxPoints));
@@ -313,7 +335,7 @@ export default function ClassicMode() {
             </div>
           </div>
 
-          <div className="bg-white/20 backdrop-blur-lg rounded-xl p-6">
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <Award className="h-5 w-5 text-white" />
@@ -321,10 +343,10 @@ export default function ClassicMode() {
               </div>
               <Button
                 variant="ghost"
-                onClick={handleBackToGame}
+                onClick={() => setShowPlayerList(true)} // Changed onClick
                 className="text-white hover:text-white/80"
               >
-                <ArrowRight className="h-5 w-5" />
+                <Settings className="h-5 w-5" />
               </Button>
             </div>
             <div className="space-y-3">
