@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { GameCard } from "@/components/GameCard";
-import { CircleDot, Brain, Hand, Wine, Coins, LayoutGrid, GamepadIcon } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
+import { games } from "@/lib/game-data";
 
 export default function GameModes() {
   // Scroll to top when component mounts
@@ -38,48 +38,15 @@ export default function GameModes() {
   return (
     <GameLayout title="Escolha seu modo de jogo">
       <div className="grid grid-cols-1 gap-6">
-        <GameCard
-          title="Roleta"
-          description="Esse modo é para começar ou terminar o rolê. Quer beber muito? Então clica aqui!"
-          icon={CircleDot}
-          href="/roulette/start"
-        />
-        <GameCard
-          title="Modo Clássico"
-          description="Desafios e perguntas para todos os jogadores beberem conforme as regras."
-          icon={GamepadIcon}
-          href="/classic"
-        />
-        <GameCard
-          title="Quem Sou Eu?"
-          description="Descubra qual personagem, animal ou objeto você é fazendo perguntas!"
-          icon={Brain}
-          href="/guess-who/players"
-        />
-        <GameCard
-          title="Toque na Sorte"
-          description="Toque na tela e veja quem será o escolhido pelo destino!"
-          icon={Hand}
-          href="/touch-game"
-        />
-        <GameCard
-          title="Roleta"
-          description="Gire a roleta e descubra quem será o próximo a beber!"
-          icon={Wine}
-          href="/spin-bottle"
-        />
-        <GameCard
-          title="Cara ou Coroa"
-          description="Deixe a sorte decidir quem vai beber!"
-          icon={Coins}
-          href="/coin-flip"
-        />
-        <GameCard
-          title="Sueca"
-          description="Cada carta tem sua regra. Quem será o próximo a beber?"
-          icon={LayoutGrid}
-          href="/cards"
-        />
+        {games.map((game) => (
+          <GameCard
+            key={game.id}
+            title={game.name}
+            description={game.description}
+            icon={game.icon}
+            href={game.route}
+          />
+        ))}
       </div>
     </GameLayout>
   );
