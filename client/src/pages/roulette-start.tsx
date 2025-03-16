@@ -35,7 +35,7 @@ export default function RouletteStart() {
       try {
         const userId = auth.currentUser?.uid;
         if (userId) {
-          await updateGameStats(userId, "Roleta");
+          await updateGameStats(userId, "Gorf");
         }
       } catch (error) {
         console.error("[RouletteStart] Error tracking game:", error);

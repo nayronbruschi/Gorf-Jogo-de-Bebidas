@@ -1,14 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { Play } from "lucide-react";
 import { decks } from "@/lib/game-data";
 import { motion } from "framer-motion";
+import { auth, updateGameStats } from "@/lib/firebase";
 
 export default function ClassicStart() {
   const [, navigate] = useLocation();
   const [selectedDecks, setSelectedDecks] = useState<Set<string>>(new Set(["classic"]));
+
+  // Registrar o jogo assim que entrar na página
+  useEffect(() => {
+    const trackGameOpen = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (userId) {
+          await updateGameStats(userId, "Modo Clássico");
+        }
+      } catch (error) {
+        console.error("[ClassicStart] Error tracking game:", error);
+      }
+    };
+
+    trackGameOpen();
+  }, []);
 
   const handleDeckToggle = (deckId: string) => {
     const newSelected = new Set(selectedDecks);

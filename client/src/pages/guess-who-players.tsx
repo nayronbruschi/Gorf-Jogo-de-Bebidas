@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { GameLayout } from "@/components/GameLayout";
 import { PlayerList } from "@/components/PlayerList";
 import { Button } from "@/components/ui/button";
 import { Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { auth, updateGameStats } from "@/lib/firebase";
 
 interface Player {
   id: number;
@@ -16,6 +18,22 @@ export default function GuessWhoPlayers() {
   const { data: players = [] } = useQuery<Player[]>({
     queryKey: ["/api/players"],
   });
+
+  // Registrar o jogo assim que entrar na página
+  useEffect(() => {
+    const trackGameOpen = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (userId) {
+          await updateGameStats(userId, "Quem sou eu?");
+        }
+      } catch (error) {
+        console.error("[GuessWhoPlayers] Error tracking game:", error);
+      }
+    };
+
+    trackGameOpen();
+  }, []);
 
   const handleStartGame = () => {
     if (players.length < 2) return;
