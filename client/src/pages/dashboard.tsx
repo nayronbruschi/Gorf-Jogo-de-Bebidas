@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { GamepadIcon, History, Trophy, Clock } from "lucide-react";
+import { GamepadIcon, History, Trophy, Clock, Play } from "lucide-react";
 import { PromotionalBanner } from "@/components/PromotionalBanner";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { games } from "@/lib/game-data";
@@ -41,13 +41,70 @@ export default function Dashboard() {
   const lastGame = userProfile?.gameStats?.recentGames?.[0];
   const recentGames = userProfile?.gameStats?.recentGames?.slice(0, 3) || [];
 
+  // Função para encontrar a rota do jogo pelo nome
+  const findGameRoute = (gameName: string) => {
+    const game = games.find(g => g.name === gameName);
+    return game?.route || "/game-modes";
+  };
+
   return (
     <AppLayout>
       <div className="min-h-screen w-full">
         <div className="container mx-auto px-4 py-6 space-y-6">
+          {/* Banners */}
           <section className="pb-2 overflow-hidden rounded-xl">
             <PromotionalBanner />
           </section>
+
+          {/* Carrossel de Todos os Jogos */}
+          <section className="pb-2">
+            <h2 className="text-white text-lg font-medium mb-2">Todos os Jogos</h2>
+            <Carousel 
+              className="w-full"
+              opts={{
+                align: "start",
+                dragFree: true,
+                skipSnaps: true,
+                inViewThreshold: 0.5,
+              }}
+            >
+              <CarouselContent className="-ml-4">
+                {games.map((game) => (
+                  <CarouselItem key={game.id} className="pl-4 basis-[22%]">
+                    <div 
+                      className="flex flex-col items-center gap-1 p-3 cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => navigate(game.route)}
+                    >
+                      <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
+                        <game.icon className="h-7 w-7 text-white" />
+                      </div>
+                      <span className="text-xs text-white text-center mt-1 px-12">{game.name}</span>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </section>
+
+          {/* Bem-vindo ao Gorf */}
+          <Card className="bg-white/10 backdrop-blur-lg border-none">
+            <CardHeader>
+              <CardTitle className="text-white">Bem-vindo ao Gorf!</CardTitle>
+              <CardDescription className="text-white/60">
+                Escolha um jogo para começar
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                size="lg"
+                onClick={() => navigate("/game-modes")}
+                className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+              >
+                <GamepadIcon className="mr-2 h-5 w-5" />
+                Ver Todos os Jogos
+              </Button>
+            </CardContent>
+          </Card>
 
           {/* Último Jogo */}
           {lastGame && (
@@ -58,7 +115,7 @@ export default function Dashboard() {
                   Último Jogo
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <div className="text-white/90">
                   <p className="text-lg font-semibold">{lastGame.name}</p>
                   <p className="text-sm text-white/60">
@@ -68,12 +125,19 @@ export default function Dashboard() {
                     })}
                   </p>
                 </div>
+                <Button
+                  onClick={() => navigate(findGameRoute(lastGame.name))}
+                  className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                >
+                  <Play className="mr-2 h-5 w-5" />
+                  Jogar Novamente
+                </Button>
               </CardContent>
             </Card>
           )}
 
           {/* Estatísticas */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <Card className="bg-white/10 backdrop-blur-lg border-none">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
@@ -128,60 +192,19 @@ export default function Dashboard() {
                           })}
                         </p>
                       </div>
+                      <Button
+                        size="sm"
+                        onClick={() => navigate(findGameRoute(game.name))}
+                        className="bg-purple-700 hover:bg-purple-800 text-white"
+                      >
+                        <Play className="h-4 w-4" />
+                      </Button>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
           )}
-
-          <section className="pb-2">
-            <h2 className="text-white text-lg font-medium mb-2">Todos os Jogos</h2>
-            <Carousel 
-              className="w-full"
-              opts={{
-                align: "start",
-                dragFree: true,
-                skipSnaps: true,
-                inViewThreshold: 0.5,
-              }}
-            >
-              <CarouselContent className="-ml-4">
-                {games.map((game) => (
-                  <CarouselItem key={game.id} className="pl-4 basis-[22%]">
-                    <div 
-                      className="flex flex-col items-center gap-1 p-3 cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => navigate(game.route)}
-                    >
-                      <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
-                        <game.icon className="h-7 w-7 text-white" />
-                      </div>
-                      <span className="text-xs text-white text-center mt-1 px-12">{game.name}</span>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
-          </section>
-
-          <Card className="bg-white/10 backdrop-blur-lg border-none">
-            <CardHeader>
-              <CardTitle className="text-white">Bem-vindo ao Gorf!</CardTitle>
-              <CardDescription className="text-white/60">
-                Escolha um jogo para começar
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                size="lg"
-                onClick={() => navigate("/game-modes")}
-                className="w-full bg-purple-700 hover:bg-purple-800 text-white"
-              >
-                <GamepadIcon className="mr-2 h-5 w-5" />
-                Ver Todos os Jogos
-              </Button>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </AppLayout>
