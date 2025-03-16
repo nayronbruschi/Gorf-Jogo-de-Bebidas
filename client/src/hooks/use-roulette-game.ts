@@ -12,7 +12,6 @@ interface PunishmentType {
 }
 
 export function useRouletteGame() {
-  // Game states
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [isSelecting, setIsSelecting] = useState(false);
   const [numDrinks, setNumDrinks] = useState(0);
@@ -22,18 +21,15 @@ export function useRouletteGame() {
   const [punishmentDrinks, setPunishmentDrinks] = useState(0);
   const [showWinner, setShowWinner] = useState(false);
 
-  // Hooks
   const [, navigate] = useLocation();
   const { play } = useSound();
   const gameMode = localStorage.getItem("rouletteMode") || "goles";
   const maxPoints = Number(localStorage.getItem("maxPoints")) || 50;
 
-  // Queries
   const { data: players = [] } = useQuery<Player[]>({
     queryKey: ["/api/players"],
   });
 
-  // Points mutation
   const updatePoints = useMutation({
     mutationFn: async (data: { playerId: string; points: number }) => {
       const result = await apiRequest("PATCH", `/api/players/${data.playerId}/points`, {
@@ -47,7 +43,6 @@ export function useRouletteGame() {
     }
   });
 
-  // Check for winner
   const checkAllPlayersForWin = async () => {
     if (!players || players.length === 0) return false;
 
@@ -61,7 +56,6 @@ export function useRouletteGame() {
     return false;
   };
 
-  // Reset game
   const resetGame = async () => {
     try {
       await apiRequest("POST", "/api/players/reset", {});
@@ -73,20 +67,28 @@ export function useRouletteGame() {
     }
   };
 
-  // Game actions
   const selectRandomPlayer = async () => {
     if (isSelecting || !players.length) return;
-
-    const hasWinner = await checkAllPlayersForWin();
-    if (hasWinner) return;
 
     setIsSelecting(true);
     setAction(null);
     setPunishmentDrinks(0);
     play("spin");
 
-    setTimeout(() => {
-      const randomPlayer = players[Math.floor(Math.random() * players.length)];
+    setTimeout(async () => {
+      const hasWinner = await checkAllPlayersForWin();
+      if (hasWinner) {
+        setIsSelecting(false);
+        return;
+      }
+
+      const remainingPlayers = players.filter(player => !showWinner || player.points < maxPoints);
+      if (remainingPlayers.length === 0) {
+        setIsSelecting(false);
+        return;
+      }
+
+      const randomPlayer = remainingPlayers[Math.floor(Math.random() * remainingPlayers.length)];
       const minDrinks = gameMode === "shots" ? 1 : 2;
       const maxDrinks = Number(localStorage.getItem("maxPerRound")) || (gameMode === "shots" ? 5 : 15);
       const randomDrinks = Math.floor(Math.random() * (maxDrinks - minDrinks + 1)) + minDrinks;
