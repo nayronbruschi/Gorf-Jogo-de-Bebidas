@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { themes, type ThemeId } from "@/lib/guess-who-data";
 import {
   Cat, UserSquare2, Clapperboard, Palmtree,
-  Box, Users, Play
+  Box, Users, Play, ArrowLeft
 } from "lucide-react";
 
 const themeIcons = {
@@ -61,9 +61,22 @@ export default function GuessWhoTheme() {
     }
   };
 
+  const handleBack = () => {
+    setLocation("/guess-who/players");
+  };
+
   return (
     <GameLayout title="Quem Sou Eu?">
-      <div className="flex flex-col items-center gap-8 p-4">
+      <div className="relative flex flex-col items-center gap-8 p-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute left-4 top-4 text-white hover:text-white/80"
+          onClick={handleBack}
+        >
+          <ArrowLeft className="h-6 w-6" />
+        </Button>
+
         <div className="text-center mb-4">
           <h2 className="text-2xl font-bold text-white mb-2">Escolha o Tema</h2>
           <p className="text-white/80">
@@ -80,8 +93,8 @@ export default function GuessWhoTheme() {
                 onClick={() => handleSelectTheme(theme.id)}
                 className={`flex flex-col items-center gap-2 p-6 h-auto ${
                   selectedTheme === theme.id
-                    ? 'bg-purple-900 hover:bg-purple-950 text-white'
-                    : 'bg-white hover:bg-purple-50 text-purple-900'
+                    ? 'bg-purple-900 hover:bg-purple-900 text-white'
+                    : 'bg-white hover:bg-purple-50 text-purple-900 hover:text-purple-900'
                 }`}
                 variant="ghost"
               >

@@ -7,13 +7,18 @@ import { getItemsByTheme, type ThemeId } from "@/lib/guess-who-data";
 import { ChevronLeft, RotateCcw, Home, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
+interface Player {
+  id: number;
+  name: string;
+}
+
 interface PlayerItem {
   [playerId: string]: string;
 }
 
 export default function GuessWhoGame() {
   const [, setLocation] = useLocation();
-  const { data: playersData = [] } = useQuery({
+  const { data: playersData = [] } = useQuery<Player[]>({
     queryKey: ["/api/players"],
   });
 
@@ -68,7 +73,7 @@ export default function GuessWhoGame() {
   };
 
   const getPlayerName = (playerId: string) => {
-    const player = playersData.find((p: any) => p.id === Number(playerId));
+    const player = playersData.find((p: Player) => p.id === Number(playerId));
     return player ? player.name : "";
   };
 
@@ -369,7 +374,7 @@ export default function GuessWhoGame() {
                 <Button
                   size="lg"
                   onClick={() => setReadyToStart(true)}
-                  className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6"
+                  className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6"
                 >
                   <Play className="mr-2 h-6 w-6" />
                   Estou Pronto!
@@ -416,7 +421,7 @@ export default function GuessWhoGame() {
               <div className="flex gap-4">
                 <Button
                   onClick={handleGuess}
-                  className="bg-purple-700 hover:bg-purple-800 text-white"
+                  className="bg-purple-900 hover:bg-purple-950 text-white"
                   size="lg"
                 >
                   Chutar

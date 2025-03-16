@@ -10,6 +10,7 @@ export default function SpinBottle() {
   const [isSpinning, setIsSpinning] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [startAngle, setStartAngle] = useState(0);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   // Registrar o jogo assim que entrar na página
   useEffect(() => {
@@ -17,12 +18,17 @@ export default function SpinBottle() {
       try {
         const userId = auth.currentUser?.uid;
         if (userId) {
-          await updateGameStats(userId, "Garrafa Giratória");
+          await updateGameStats(userId, "Roleta");
         }
       } catch (error) {
         console.error("[SpinBottle] Error tracking game:", error);
       }
     };
+
+    // Pré-carregar a imagem
+    const img = new Image();
+    img.src = "https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/icone-fleche-droite-violet-2.png?alt=media&token=57c5a199-f99b-4243-a746-846dbddaccd7";
+    img.onload = () => setImageLoaded(true);
 
     trackGameOpen();
   }, []);
@@ -70,12 +76,22 @@ export default function SpinBottle() {
     }
   };
 
+  if (!imageLoaded) {
+    return (
+      <GameLayout title="Roleta">
+        <div className="flex flex-col items-center justify-center min-h-[50vh]">
+          <div className="text-white text-xl animate-pulse">Carregando...</div>
+        </div>
+      </GameLayout>
+    );
+  }
+
   return (
-    <GameLayout title="Garrafa Giratória">
+    <GameLayout title="Roleta">
       <div className="flex flex-col items-center gap-8">
         <div className="text-center mb-4">
           <p className="text-white/80">
-            Gire a garrafa e veja quem será o escolhido!
+            Gire a roleta e veja quem será o escolhido!
           </p>
         </div>
 
@@ -103,7 +119,7 @@ export default function SpinBottle() {
             }}
           >
             <img
-              src="https://firebasestorage.googleapis.com/v0/b/gorf-o-jogo.firebasestorage.apps/o/icone-fleche-droite-violet-2.png?alt=media&token=82a5ffce-35ee-4eca-a9b9-48b22aa77799"
+              src="https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/icone-fleche-droite-violet-2.png?alt=media&token=57c5a199-f99b-4243-a746-846dbddaccd7"
               alt="Seta"
               className="w-3/4 h-3/4 object-contain"
               draggable="false"
@@ -118,7 +134,7 @@ export default function SpinBottle() {
           className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white px-8 py-6 text-xl"
         >
           <RotateCcw className="mr-2 h-5 w-5" />
-          {isSpinning ? "Girando..." : "Girar Garrafa"}
+          {isSpinning ? "Girando..." : "Girar Roleta"}
         </Button>
       </div>
     </GameLayout>

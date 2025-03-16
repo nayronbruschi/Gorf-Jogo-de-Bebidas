@@ -62,30 +62,13 @@ export default function Cards() {
       setCurrentCard(drawnCard);
       setRemainingCards(newRemainingCards);
       setIsDrawing(false);
-    }, 1000);
+    }, 600); // Reduzido para 600ms já que agora só gira uma vez
   };
 
-  const resetDeck = () => {
-    setRemainingCards([...cardRules]);
-    setCurrentCard(null);
-  };
-
-  const handleOpenDialog = () => {
-    setShowDialog(true);
-  };
-
-  const handleAddPermission = () => {
-    if (!currentCard?.specialAction || !playerName.trim()) return;
-
-    const newPermission: SpecialPermission = {
-      type: currentCard.specialAction,
-      name: playerName.trim(),
-      timestamp: new Date().toLocaleTimeString()
-    };
-
-    setSpecialPermissions([...specialPermissions, newPermission]);
-    setShowDialog(false);
-    setPlayerName("");
+  const handleCardClick = () => {
+    if (!isDrawing && remainingCards.length > 0) {
+      drawCard();
+    }
   };
 
   return (
@@ -97,7 +80,33 @@ export default function Cards() {
           </p>
         </div>
 
-        <div className="relative w-full max-w-md aspect-[3/4] perspective-1000">
+        <div className="flex flex-col gap-4 items-center mb-4">
+          <Button
+            size="lg"
+            onClick={drawCard}
+            disabled={isDrawing || remainingCards.length === 0}
+            className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6 text-xl"
+          >
+            <LayoutGrid className="mr-2 h-5 w-5" />
+            {isDrawing ? "Virando..." : "Virar uma carta"}
+          </Button>
+
+          {remainingCards.length === 0 && (
+            <Button
+              size="lg"
+              onClick={() => setRemainingCards([...cardRules])}
+              variant="outline"
+              className="border-purple-900 text-purple-900 hover:bg-purple-50 px-8 py-6 text-xl"
+            >
+              Embaralhar
+            </Button>
+          )}
+        </div>
+
+        <div 
+          className="relative w-full max-w-md aspect-[3/4] perspective-1000 cursor-pointer"
+          onClick={handleCardClick}
+        >
           <AnimatePresence mode="wait">
             {currentCard ? (
               <motion.div
@@ -123,9 +132,12 @@ export default function Cards() {
                       </p>
                       {currentCard.specialAction && (
                         <Button
-                          onClick={handleOpenDialog}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowDialog(true);
+                          }}
                           variant="outline"
-                          className="mt-4 border-purple-700 text-purple-700 hover:bg-purple-50"
+                          className="mt-4 bg-purple-900 text-white hover:bg-white hover:text-purple-900 hover:border-purple-900 border-2"
                         >
                           <UserPlus className="mr-2 h-5 w-5" />
                           Registrar jogador que ganhou a carta
@@ -148,35 +160,12 @@ export default function Cards() {
                 animate={{ rotateY: 0, opacity: 1 }}
                 exit={{ rotateY: 180, opacity: 0 }}
                 transition={{ duration: 0.6 }}
-                className="w-full h-full bg-purple-700 rounded-xl flex items-center justify-center"
+                className="w-full h-full bg-purple-900 rounded-xl flex items-center justify-center"
               >
                 <LayoutGrid className="w-24 h-24 text-white/50" />
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
-
-        <div className="flex flex-col gap-4 items-center">
-          <Button
-            size="lg"
-            onClick={drawCard}
-            disabled={isDrawing || remainingCards.length === 0}
-            className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl"
-          >
-            <LayoutGrid className="mr-2 h-5 w-5" />
-            {isDrawing ? "Virando..." : "Virar uma carta"}
-          </Button>
-
-          {remainingCards.length === 0 && (
-            <Button
-              size="lg"
-              onClick={resetDeck}
-              variant="outline"
-              className="border-purple-700 text-purple-700 hover:bg-purple-50 px-8 py-6 text-xl"
-            >
-              Embaralhar
-            </Button>
-          )}
         </div>
 
         {/* Lista de permissões especiais */}
@@ -215,7 +204,19 @@ export default function Cards() {
             />
             <AlertDialogFooter>
               <AlertDialogCancel onClick={() => setShowDialog(false)}>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleAddPermission}>Confirmar</AlertDialogAction>
+              <AlertDialogAction onClick={() => {
+                if (!currentCard?.specialAction || !playerName.trim()) return;
+
+                const newPermission: SpecialPermission = {
+                  type: currentCard.specialAction,
+                  name: playerName.trim(),
+                  timestamp: new Date().toLocaleTimeString()
+                };
+
+                setSpecialPermissions([...specialPermissions, newPermission]);
+                setShowDialog(false);
+                setPlayerName("");
+              }}>Confirmar</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
