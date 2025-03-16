@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, ChevronLeft, Hand } from "lucide-react";
 import { useLocation } from "wouter";
+import { auth, updateGameStats } from "@/lib/firebase";
 
 interface TouchPoint {
   id: number;
@@ -30,6 +31,22 @@ export default function TouchGame() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const touchPointsRef = useRef<TouchPoint[]>([]);
   const [, setLocation] = useLocation();
+
+  // Registrar o jogo assim que entrar na página
+  useEffect(() => {
+    const trackGameOpen = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (userId) {
+          await updateGameStats(userId, "Toque na Sorte");
+        }
+      } catch (error) {
+        console.error("[TouchGame] Error tracking game:", error);
+      }
+    };
+
+    trackGameOpen();
+  }, []);
 
   const handleTouch = (e: TouchEvent) => {
     e.preventDefault();

@@ -1,14 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
+import { auth, updateGameStats } from "@/lib/firebase";
 
 export default function SpinBottle() {
   const [rotation, setRotation] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [startAngle, setStartAngle] = useState(0);
+
+  // Registrar o jogo assim que entrar na página
+  useEffect(() => {
+    const trackGameOpen = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (userId) {
+          await updateGameStats(userId, "Garrafa Giratória");
+        }
+      } catch (error) {
+        console.error("[SpinBottle] Error tracking game:", error);
+      }
+    };
+
+    trackGameOpen();
+  }, []);
 
   const spinBottle = () => {
     if (isSpinning) return;

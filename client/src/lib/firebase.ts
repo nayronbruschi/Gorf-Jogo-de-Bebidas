@@ -29,7 +29,14 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
-      return userSnap.data() as UserProfile;
+      const userData = userSnap.data() as UserProfile;
+      // Garantir que os jogos recentes estejam ordenados por data
+      if (userData.gameStats?.recentGames) {
+        userData.gameStats.recentGames = userData.gameStats.recentGames.sort((a, b) => 
+          new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime()
+        );
+      }
+      return userData;
     }
 
     return null;
@@ -91,10 +98,13 @@ export async function updateGameStats(userId: string, gameName: string): Promise
       playedAt: now
     };
 
-    // Pegar lista atual de jogos recentes
-    const currentGames = userData.gameStats?.recentGames || [];
+    // Pegar lista atual de jogos recentes ordenada por data
+    let currentGames = userData.gameStats?.recentGames || [];
+    currentGames = currentGames.sort((a, b) => 
+      new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime()
+    );
 
-    // Criar nova lista com o jogo mais recente no início
+    // Criar nova lista inserindo o novo jogo no início
     // e manter apenas os últimos 10 jogos
     const updatedGames = [newGame, ...currentGames].slice(0, 10);
 

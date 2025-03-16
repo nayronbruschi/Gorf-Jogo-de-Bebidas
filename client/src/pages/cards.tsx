@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, UserPlus } from "lucide-react";
 import { cardRules, type Card } from "@/lib/cards-data";
+import { auth, updateGameStats } from "@/lib/firebase";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,6 +30,22 @@ export default function Cards() {
   const [showDialog, setShowDialog] = useState(false);
   const [specialPermissions, setSpecialPermissions] = useState<SpecialPermission[]>([]);
   const [playerName, setPlayerName] = useState("");
+
+  // Registrar o jogo assim que entrar na página
+  useEffect(() => {
+    const trackGameOpen = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (userId) {
+          await updateGameStats(userId, "Sueca");
+        }
+      } catch (error) {
+        console.error("[Cards] Error tracking game:", error);
+      }
+    };
+
+    trackGameOpen();
+  }, []);
 
   const drawCard = () => {
     if (isDrawing || remainingCards.length === 0) return;

@@ -1,12 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Coins } from "lucide-react";
+import { auth, updateGameStats } from "@/lib/firebase";
 
 export default function CoinFlip() {
   const [isFlipping, setIsFlipping] = useState(false);
   const [result, setResult] = useState<"cara" | "coroa" | null>(null);
+
+  // Registrar o jogo assim que entrar na página
+  useEffect(() => {
+    const trackGameOpen = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (userId) {
+          await updateGameStats(userId, "Cara ou Coroa");
+        }
+      } catch (error) {
+        console.error("[CoinFlip] Error tracking game:", error);
+      }
+    };
+
+    trackGameOpen();
+  }, []);
 
   const flipCoin = () => {
     if (isFlipping) return;
