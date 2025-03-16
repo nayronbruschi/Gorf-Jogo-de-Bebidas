@@ -1,5 +1,5 @@
 import {
-  GamepadIcon, Brain, HandMetal, CircleDashed, Sparkles, Spade,
+  GamepadIcon, Brain, HandMetal, Sparkles, Spade,
   LucideIcon, Heart, Dumbbell, UserRound, Music, Smile, Drama,
   MessageSquare, PartyPopper, Laugh, Mic2, Activity, Beer, Home,
   Camera, Gift, Trophy, Ghost, Star, Megaphone, Palette, Gamepad2,
@@ -265,7 +265,7 @@ export const games: GameType[] = [
     id: "spin-bottle",
     name: "Girar a Garrafa",
     description: "Gire a garrafa e descubra seu destino!",
-    icon: CircleDashed,
+    icon: Beer,
     route: "/spin-bottle"
   },
   {
