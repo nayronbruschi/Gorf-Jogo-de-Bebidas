@@ -79,8 +79,12 @@ export default function Admin() {
   };
 
   const updateTexts = useMutation({
-    mutationFn: async () => {
-      await apiRequest("POST", '/api/banner-texts', bannerTexts);
+    mutationFn: async (data: typeof bannerTexts) => {
+      const response = await apiRequest("POST", '/api/banner-texts', data);
+      if (!response.ok) {
+        throw new Error('Failed to update banner texts');
+      }
+      return response;
     },
     onSuccess: () => {
       toast({
@@ -88,7 +92,8 @@ export default function Admin() {
         description: "Textos dos banners atualizados",
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Erro ao atualizar textos:', error);
       toast({
         title: "Erro",
         description: "Falha ao atualizar textos dos banners",
@@ -99,7 +104,7 @@ export default function Admin() {
 
   const handleUpdateBannerTexts = async () => {
     try {
-      await updateTexts.mutateAsync();
+      await updateTexts.mutateAsync(bannerTexts);
     } catch (error) {
       console.error('Erro ao atualizar textos:', error);
     }

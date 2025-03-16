@@ -248,7 +248,8 @@ export async function registerRoutes(app: Express) {
         fs.mkdirSync(dir, { recursive: true });
       }
 
-      fs.writeFileSync(bannersTextPath, JSON.stringify(req.body.bannerTexts, null, 2));
+      // Salvar os textos diretamente do body
+      fs.writeFileSync(bannersTextPath, JSON.stringify(req.body, null, 2));
       console.log('Textos dos banners salvos em:', bannersTextPath);
       res.json({ message: "Textos dos banners atualizados com sucesso" });
     } catch (error) {
