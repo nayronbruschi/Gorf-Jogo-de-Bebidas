@@ -242,6 +242,9 @@ export default function ClassicMode() {
             </div>
 
             <div className="space-y-4">
+              <p className="text-sm text-purple-900 text-center italic">
+                Você pode fazer o desafio e beber para ganhar o dobro de pontos
+              </p>
               <Button
                 size="lg"
                 onClick={handleNextPlayer}

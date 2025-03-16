@@ -15,9 +15,7 @@ interface TouchPoint {
 
 // Array de cores vibrantes para os círculos
 const colors = [
-  "#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEEAD",
-  "#D4A5A5", "#9B59B6", "#3498DB", "#E67E22", "#2ECC71",
-  "#E74C3C", "#1ABC9C", "#F1C40F", "#9B59B6", "#34495E"
+  "#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEEAD"
 ];
 
 export default function TouchGame() {
@@ -63,7 +61,7 @@ export default function TouchGame() {
     if (!rect) return;
 
     const newPoints: TouchPoint[] = [];
-    for (let i = 0; i < e.touches.length && i < 15; i++) {
+    for (let i = 0; i < e.touches.length && i < 5; i++) {
       const touch = e.touches[i];
       newPoints.push({
         id: i,
@@ -169,7 +167,7 @@ export default function TouchGame() {
             <Hand className="w-16 h-16 text-white mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-white mb-2">Como Jogar</h2>
             <p className="text-white/80 text-lg leading-relaxed">
-              1. Toque na tela com vários dedos ao mesmo tempo (até 15)
+              1. Toque na tela com vários dedos ao mesmo tempo (até 5)
             </p>
             <p className="text-white/80 text-lg leading-relaxed">
               2. Mantenha os dedos na tela por 3 segundos

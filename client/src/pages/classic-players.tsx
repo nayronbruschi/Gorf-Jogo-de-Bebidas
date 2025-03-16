@@ -42,20 +42,20 @@ export default function ClassicPlayers() {
 
         <div className="flex justify-center">
           <Button
-            size="lg"
-            onClick={() => startGame.mutate()}
-            disabled={players.length < 2}
-            className={`px-8 py-6 flex items-center justify-center ${
-              players.length >= 2 
-                ? "bg-purple-700 hover:bg-purple-800 text-white"
-                : "bg-white/20 hover:bg-white/30 text-white"
-            }`}
-          >
-            <Play className="mr-2 h-6 w-6" />
-            {players.length < 2 
-              ? "Mínimo 2 jogadores"
-              : "Vamos começar!"}
-          </Button>
+              size="lg"
+              onClick={() => startGame.mutate()}
+              disabled={players.length < 2}
+              className={`px-8 py-6 flex items-center justify-center text-2xl ${
+                players.length >= 2 
+                  ? "bg-purple-900 hover:bg-purple-950 text-white"
+                  : "bg-white/20 hover:bg-white/30 text-white"
+              }`}
+            >
+              <Play className="mr-2 h-6 w-6" />
+              {players.length < 2 
+                ? "Mínimo 2 jogadores"
+                : "Vamos começar!"}
+            </Button>
         </div>
       </div>
     </GameLayout>
