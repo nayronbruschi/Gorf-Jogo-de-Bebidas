@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, UserPlus } from "lucide-react";
+import { LayoutGrid, UserPlus, CheckSquare } from "lucide-react";
 import { cardRules, type Card } from "@/lib/cards-data";
 import { auth, updateGameStats } from "@/lib/firebase";
 import {
@@ -61,7 +61,7 @@ export default function Cards() {
       setCurrentCard(drawnCard);
       setRemainingCards(newRemainingCards);
       setIsDrawing(false);
-    }, 600); // Reduzido para 600ms
+    }, 600);
   };
 
   const handleCardClick = () => {
@@ -70,8 +70,30 @@ export default function Cards() {
     }
   };
 
+  const getSuitSymbol = (suit: string) => {
+    switch (suit) {
+      case "hearts": return "♥";
+      case "diamonds": return "♦";
+      case "clubs": return "♣";
+      case "spades": return "♠";
+      default: return "";
+    }
+  };
+
+  const handleUseCard = () => {
+    if (currentCard) {
+      const newRemainingCards = remainingCards.filter(
+        card => !(card.suit === currentCard.suit && card.value === currentCard.value)
+      );
+      setRemainingCards(newRemainingCards);
+      setCurrentCard(null);
+      setShowDialog(false);
+      setPlayerName("");
+    }
+  };
+
   return (
-    <GameLayout title="Sueca">
+    <GameLayout title="">
       <div className="flex flex-col items-center gap-8">
         <div className="text-center mb-4">
           <p className="text-white/80">
@@ -79,8 +101,90 @@ export default function Cards() {
           </p>
         </div>
 
-        {/* Botões movidos para cima da carta */}
-        <div className="flex flex-col gap-4 items-center mb-4">
+        {/* Carta com funcionalidade de clique */}
+        <div 
+          className="relative w-full max-w-md aspect-[3/4] perspective-1000 cursor-pointer mb-4"
+          onClick={handleCardClick}
+        >
+          <AnimatePresence mode="wait">
+            {currentCard ? (
+              <motion.div
+                key="card"
+                initial={{ rotateY: 180, opacity: 0 }}
+                animate={{ rotateY: 0, opacity: 1 }}
+                exit={{ rotateY: -180, opacity: 0 }}
+                transition={{ duration: 0.6 }}
+                className="w-full h-full"
+              >
+                <div className="w-full h-full bg-white rounded-xl p-6 flex flex-col items-center justify-between relative">
+                  <div className="absolute top-4 left-4 text-4xl font-bold" style={{
+                    color: currentCard.suit === "hearts" || currentCard.suit === "diamonds" ? "#e11d48" : "#1e293b"
+                  }}>
+                    {currentCard.value}
+                    <span className="ml-1">{getSuitSymbol(currentCard.suit)}</span>
+                  </div>
+
+                  <div className="flex-1 flex items-center justify-center text-center p-4">
+                    <div className="space-y-4">
+                      <currentCard.icon className="w-12 h-12 mx-auto text-purple-600" />
+                      <p className="text-xl font-medium text-purple-900">
+                        {currentCard.rule}
+                      </p>
+                      {currentCard.specialAction && (
+                        <div className="flex flex-col gap-2">
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowDialog(true);
+                            }}
+                            variant="outline"
+                            className="bg-purple-900 text-white hover:bg-white hover:text-purple-900 hover:border-purple-900 border-2"
+                          >
+                            <UserPlus className="mr-2 h-5 w-5" />
+                            Registrar jogador
+                          </Button>
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleUseCard();
+                            }}
+                            variant="outline"
+                            className="bg-green-700 text-white hover:bg-white hover:text-green-700 hover:border-green-700 border-2"
+                          >
+                            <CheckSquare className="mr-2 h-5 w-5" />
+                            Usou a carta
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="absolute bottom-4 right-4 text-4xl font-bold" style={{
+                    color: currentCard.suit === "hearts" || currentCard.suit === "diamonds" ? "#e11d48" : "#1e293b"
+                  }}>
+                    {currentCard.value}
+                    <span className="ml-1">{getSuitSymbol(currentCard.suit)}</span>
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="back"
+                initial={{ rotateY: -180, opacity: 0 }}
+                animate={{ rotateY: 0, opacity: 1 }}
+                exit={{ rotateY: 180, opacity: 0 }}
+                transition={{ duration: 0.6 }}
+                className="w-full h-full bg-purple-900 rounded-xl flex items-center justify-center relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-purple-800/50 pattern-grid-lg"></div>
+                <LayoutGrid className="w-24 h-24 text-white/50 relative z-10" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Botões movidos para baixo da carta */}
+        <div className="flex flex-col gap-4 items-center">
           <Button
             size="lg"
             onClick={drawCard}
@@ -101,72 +205,6 @@ export default function Cards() {
               Embaralhar
             </Button>
           )}
-        </div>
-
-        {/* Carta com funcionalidade de clique */}
-        <div 
-          className="relative w-full max-w-md aspect-[3/4] perspective-1000 cursor-pointer"
-          onClick={handleCardClick}
-        >
-          <AnimatePresence mode="wait">
-            {currentCard ? (
-              <motion.div
-                key="card"
-                initial={{ rotateY: 180, opacity: 0 }}
-                animate={{ rotateY: 0, opacity: 1 }}
-                exit={{ rotateY: -180, opacity: 0 }}
-                transition={{ duration: 0.6 }}
-                className="w-full h-full"
-              >
-                <div className="w-full h-full bg-white rounded-xl p-6 flex flex-col items-center justify-between">
-                  <div className="text-4xl font-bold" style={{
-                    color: currentCard.suit === "hearts" || currentCard.suit === "diamonds" ? "#e11d48" : "#1e293b"
-                  }}>
-                    {currentCard.value}
-                  </div>
-
-                  <div className="flex-1 flex items-center justify-center text-center p-4">
-                    <div className="space-y-4">
-                      <currentCard.icon className="w-12 h-12 mx-auto text-purple-600" />
-                      <p className="text-xl font-medium text-purple-900">
-                        {currentCard.rule}
-                      </p>
-                      {currentCard.specialAction && (
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowDialog(true);
-                          }}
-                          variant="outline"
-                          className="mt-4 bg-purple-900 text-white hover:bg-white hover:text-purple-900 hover:border-purple-900 border-2"
-                        >
-                          <UserPlus className="mr-2 h-5 w-5" />
-                          Registrar jogador que ganhou a carta
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="text-4xl font-bold" style={{
-                    color: currentCard.suit === "hearts" || currentCard.suit === "diamonds" ? "#e11d48" : "#1e293b"
-                  }}>
-                    {currentCard.value}
-                  </div>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="back"
-                initial={{ rotateY: -180, opacity: 0 }}
-                animate={{ rotateY: 0, opacity: 1 }}
-                exit={{ rotateY: 180, opacity: 0 }}
-                transition={{ duration: 0.6 }}
-                className="w-full h-full bg-purple-900 rounded-xl flex items-center justify-center"
-              >
-                <LayoutGrid className="w-24 h-24 text-white/50" />
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         {/* Lista de permissões especiais */}
