@@ -17,6 +17,13 @@ import { auth, getUserProfile } from "@/lib/firebase";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+// Função para capitalizar primeira letra de cada palavra
+const capitalizeWords = (text: string) => {
+  return text.split(' ').map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  ).join(' ');
+};
+
 export default function Dashboard() {
   const [, navigate] = useLocation();
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -73,13 +80,15 @@ export default function Dashboard() {
                 {games.map((game) => (
                   <CarouselItem key={game.id} className="pl-4 basis-[22%]">
                     <div 
-                      className="flex flex-col items-center gap-1 p-3 cursor-pointer hover:opacity-80 transition-opacity"
+                      className="flex flex-col items-center gap-1 p-2 cursor-pointer hover:opacity-80 transition-opacity"
                       onClick={() => navigate(game.route)}
                     >
                       <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
                         <game.icon className="h-7 w-7 text-white" />
                       </div>
-                      <span className="text-xs text-white text-center mt-1 px-12">{game.name}</span>
+                      <span className="text-xs text-white text-center mt-1 leading-tight h-10 line-clamp-2 px-2">
+                        {capitalizeWords(game.name)}
+                      </span>
                     </div>
                   </CarouselItem>
                 ))}

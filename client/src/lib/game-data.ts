@@ -1,12 +1,11 @@
 import {
-  Dumbbell, UserRound, Music, Smile, Drama, LucideIcon,
-  MessageSquare, PartyPopper, Brain, SmilePlus, Laugh,
-  Mic2, Activity, Heart, Beer, Home, Sparkles, Camera,
-  Gift, Trophy, Ghost, Star, Megaphone, Palette,
-  Gamepad2, Cookie, Baby, Rocket, Crown, HeartHandshake,
-  Glasses, Hand, Shirt, Umbrella, Wine, Soup, Coffee,
-  Flame, Candy, Snowflake, IceCream, Utensils, UtensilsCrossed,
-  Cake, GamepadIcon, HandMetal, Spade
+  GamepadIcon, Brain, HandMetal, Wine, Sparkles, Spade,
+  LucideIcon, Heart, Dumbbell, UserRound, Music, Smile, Drama,
+  MessageSquare, PartyPopper, Laugh, Mic2, Activity, Beer, Home,
+  Camera, Gift, Trophy, Ghost, Star, Megaphone, Palette, Gamepad2,
+  Baby, Crown, HeartHandshake, Glasses, Hand, Shirt, Umbrella,
+  Soup, Coffee, Flame, Candy, Snowflake, IceCream, Utensils,
+  UtensilsCrossed, Cake, HandMetal
 } from "lucide-react";
 
 interface Challenge {
@@ -30,7 +29,6 @@ interface GameType {
   route: string;
 }
 
-// Desafios clássicos - Foco em diversão geral e socialização
 const classicChallenges: Challenge[] = [
   { text: "Faça 10 polichinelos", icon: Dumbbell },
   { text: "Imite alguém do grupo", icon: UserRound },
@@ -46,7 +44,7 @@ const classicChallenges: Challenge[] = [
   { text: "Invente uma rima com o nome de outro jogador", icon: Brain },
   { text: "Faça uma dança engraçada", icon: PartyPopper },
   { text: "Conte um segredo (nada muito pessoal)", icon: MessageSquare },
-  { text: "Faça uma careta engraçada", icon: SmilePlus },
+  { text: "Faça uma careta engraçada", icon: Smile },
   { text: "Tire uma selfie engraçada", icon: Camera },
   { text: "Faça uma declaração dramática", icon: Drama },
   { text: "Invente um comercial de TV", icon: Megaphone },
@@ -74,7 +72,6 @@ const classicChallenges: Challenge[] = [
   { text: "Invente um passo de dança", icon: Activity }
 ];
 
-// Desafios para beber - Foco em diversão alcoólica
 const drinkingChallenges: Challenge[] = [
   { text: "Beba um shot inteiro", icon: Wine },
   { text: "Vire seu copo", icon: Beer },
@@ -118,7 +115,6 @@ const drinkingChallenges: Challenge[] = [
   { text: "Crie um drink para o jogador à sua esquerda", icon: Wine }
 ];
 
-// Desafios família - Foco em diversão familiar
 const familyChallenges: Challenge[] = [
   { text: "Conte uma história da sua infância", icon: Baby },
   { text: "Imite um parente", icon: UserRound },
@@ -162,7 +158,6 @@ const familyChallenges: Challenge[] = [
   { text: "Imite seu parente mais bravo", icon: Drama }
 ];
 
-// Desafios picantes - Foco em romance e sensualidade
 const spicyChallenges: Challenge[] = [
   { text: "Beije alguém do grupo", icon: Flame },
   { text: "Faça uma massagem sensual", icon: Hand },
@@ -254,7 +249,7 @@ export const games: GameType[] = [
   },
   {
     id: "guess-who",
-    name: "Quem sou eu",
+    name: "Quem Sou Eu",
     description: "Adivinhe quem você é neste jogo divertido!",
     icon: Brain,
     route: "/guess-who/players"
@@ -268,8 +263,8 @@ export const games: GameType[] = [
   },
   {
     id: "spin-bottle",
-    name: "Garrafa Giratória",
-    description: "Gire a garrafa e descubra seu destino!",
+    name: "Roleta",
+    description: "Gire a roleta e descubra seu destino!",
     icon: Wine,
     route: "/spin-bottle"
   },

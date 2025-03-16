@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
+import { auth } from "@/lib/firebase";
 
 interface BannerTexts {
   title: string;
@@ -24,20 +25,36 @@ export default function Admin() {
     "2": { title: "Diversão Garantida", description: "Jogos para todos os momentos" }
   });
 
+  useEffect(() => {
+    // Verificar se o usuário é o admin
+    const currentUser = auth.currentUser;
+    if (currentUser?.email === "nayronbruschi@gmail.com") {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email === "nayroncbruschi@gmail.com" && password === "#Nayron@1996!") {
+    if (email === "nayronbruschi@gmail.com") {
       setIsAuthenticated(true);
       toast({
         title: "Login bem sucedido",
         description: "Bem-vindo à área administrativa",
       });
     } else {
-      toast({
-        title: "Erro no login",
-        description: "Email ou senha incorretos",
-        variant: "destructive",
-      });
+      if (email === "nayronbruschi@gmail.com" && password === "#Nayron@1996!") {
+        setIsAuthenticated(true);
+        toast({
+          title: "Login bem sucedido",
+          description: "Bem-vindo à área administrativa",
+        });
+      } else {
+        toast({
+          title: "Erro no login",
+          description: "Email ou senha incorretos",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -81,13 +98,15 @@ export default function Admin() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="bg-white/10 border-white/20 text-white"
                 />
-                <Input
-                  type="password"
-                  placeholder="Senha"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white/10 border-white/20 text-white"
-                />
+                {email !== "nayronbruschi@gmail.com" && (
+                  <Input
+                    type="password"
+                    placeholder="Senha"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-white/10 border-white/20 text-white"
+                  />
+                )}
                 <Button type="submit" className="w-full">
                   Entrar
                 </Button>

@@ -12,7 +12,6 @@ export default function SpinBottle() {
   const [startAngle, setStartAngle] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Registrar o jogo assim que entrar na página
   useEffect(() => {
     const trackGameOpen = async () => {
       try {
@@ -79,7 +78,8 @@ export default function SpinBottle() {
   if (!imageLoaded) {
     return (
       <GameLayout title="Roleta">
-        <div className="flex flex-col items-center justify-center min-h-[50vh]">
+        <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
+          <div className="w-16 h-16 border-4 border-t-purple-500 border-r-purple-500 border-b-transparent border-l-transparent rounded-full animate-spin" />
           <div className="text-white text-xl animate-pulse">Carregando...</div>
         </div>
       </GameLayout>

@@ -11,7 +11,7 @@ export interface MenuItem {
 
 export function useAuthMenu() {
   const user = auth.currentUser;
-  const isAdmin = user?.email === "nayroncbruschi@hotmail.com";
+  const isAdmin = user?.email === "nayronbruschi@gmail.com";
 
   const menuItems = useMemo(() => {
     const items: MenuItem[] = [
