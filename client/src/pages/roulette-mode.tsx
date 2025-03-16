@@ -115,14 +115,14 @@ export default function RouletteMode() {
       </div>
 
       {/* Main content */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto px-2 pt-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto px-2 pt-8">
         <div className="bg-white rounded-xl p-6 space-y-8">
           {!selectedPlayer && !isSelecting && (
             <div className="flex justify-center">
               <Button
                 size="lg"
                 onClick={selectRandomPlayer}
-                className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6 text-xl"
+                className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6 text-2xl"
               >
                 Sortear Jogador
               </Button>
@@ -167,10 +167,10 @@ export default function RouletteMode() {
                   <Button
                     size="lg"
                     onClick={handleDrink}
-                    variant={action === "drink" ? "outline" : "default"}
+                    variant="outline"
                     className={action === "drink"
                       ? "bg-purple-900 text-white hover:bg-purple-950 hover:text-white w-full sm:w-auto justify-center"
-                      : "bg-purple-900 hover:bg-purple-950 text-white hover:text-white w-full sm:w-auto justify-center"}
+                      : "bg-white border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700 w-full sm:w-auto justify-center"}
                   >
                     <Beer className="mr-2 h-5 w-5" />
                     Bebeu
