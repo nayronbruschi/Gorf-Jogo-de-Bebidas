@@ -17,7 +17,7 @@ export default function SpinBottle() {
       try {
         const userId = auth.currentUser?.uid;
         if (userId) {
-          await updateGameStats(userId, "Roleta");
+          await updateGameStats(userId, "Girar a Garrafa");
         }
       } catch (error) {
         console.error("[SpinBottle] Error tracking game:", error);
@@ -26,7 +26,7 @@ export default function SpinBottle() {
 
     // Pré-carregar a imagem
     const img = new Image();
-    img.src = "https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/icone-fleche-droite-violet-2.png?alt=media&token=57c5a199-f99b-4243-a746-846dbddaccd7";
+    img.src = "https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/Garrafa-2.png?alt=media&token=fb17efb1-9110-4f2e-9875-2ba87f63f25e";
     img.onload = () => setImageLoaded(true);
 
     trackGameOpen();
@@ -77,7 +77,7 @@ export default function SpinBottle() {
 
   if (!imageLoaded) {
     return (
-      <GameLayout title="Roleta">
+      <GameLayout title="Girar a Garrafa">
         <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
           <div className="w-16 h-16 border-4 border-t-purple-500 border-r-purple-500 border-b-transparent border-l-transparent rounded-full animate-spin" />
           <div className="text-white text-xl animate-pulse">Carregando...</div>
@@ -87,11 +87,11 @@ export default function SpinBottle() {
   }
 
   return (
-    <GameLayout title="Roleta">
+    <GameLayout title="Girar a Garrafa">
       <div className="flex flex-col items-center gap-8">
         <div className="text-center mb-4">
           <p className="text-white/80">
-            Gire a roleta e veja quem será o escolhido!
+            Gire a garrafa e veja quem será o escolhido!
           </p>
         </div>
 
@@ -108,7 +108,7 @@ export default function SpinBottle() {
           {/* Container estático com o círculo roxo */}
           <div className="absolute inset-0 rounded-full bg-purple-900/90" />
 
-          {/* Container da seta que vai girar */}
+          {/* Container da garrafa que vai girar */}
           <motion.div
             className="absolute inset-0 flex items-center justify-center cursor-pointer"
             animate={{ rotate: rotation }}
@@ -119,8 +119,8 @@ export default function SpinBottle() {
             }}
           >
             <img
-              src="https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/icone-fleche-droite-violet-2.png?alt=media&token=57c5a199-f99b-4243-a746-846dbddaccd7"
-              alt="Seta"
+              src="https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/Garrafa-2.png?alt=media&token=fb17efb1-9110-4f2e-9875-2ba87f63f25e"
+              alt="Garrafa"
               className="w-3/4 h-3/4 object-contain"
               draggable="false"
             />
@@ -134,7 +134,7 @@ export default function SpinBottle() {
           className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white px-8 py-6 text-xl"
         >
           <RotateCcw className="mr-2 h-5 w-5" />
-          {isSpinning ? "Girando..." : "Girar Roleta"}
+          {isSpinning ? "Girando..." : "Girar Garrafa"}
         </Button>
       </div>
     </GameLayout>

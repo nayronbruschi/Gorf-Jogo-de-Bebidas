@@ -263,8 +263,8 @@ export const games: GameType[] = [
   },
   {
     id: "spin-bottle",
-    name: "Roleta",
-    description: "Gire a roleta e descubra seu destino!",
+    name: "Girar a Garrafa",
+    description: "Gire a garrafa e descubra seu destino!",
     icon: CircleDashed,
     route: "/spin-bottle"
   },
