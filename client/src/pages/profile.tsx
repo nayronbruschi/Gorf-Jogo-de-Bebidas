@@ -1,13 +1,21 @@
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Edit, Image } from "lucide-react";
-import { useState } from "react";
+import { Edit, Image, Trophy, Activity, Clock } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { auth } from "@/lib/firebase";
 import { ProfileEditDialog } from "@/components/ProfileEditDialog";
 import { uploadImage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
+
+interface GameStats {
+  totalGames: number;
+  favoriteModes: { [key: string]: number };
+  totalTimePlayed: number;
+  lastPlayed: string;
+}
 
 export default function Profile() {
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -15,6 +23,16 @@ export default function Profile() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const user = auth.currentUser;
+
+  const { data: userProfile } = useQuery({
+    queryKey: ["/api/profile", user?.uid],
+    enabled: !!user?.uid
+  });
+
+  const { data: gameStats } = useQuery<GameStats>({
+    queryKey: ["/api/stats", user?.uid],
+    enabled: !!user?.uid
+  });
 
   if (!user) {
     navigate("/auth");
@@ -66,6 +84,20 @@ export default function Profile() {
     }
   };
 
+  const getFavoriteMode = () => {
+    if (!gameStats?.favoriteModes) return null;
+    const modes = Object.entries(gameStats.favoriteModes);
+    if (modes.length === 0) return null;
+    return modes.sort((a, b) => b[1] - a[1])[0][0];
+  };
+
+  const formatPlayTime = (minutes: number) => {
+    if (minutes < 60) return `${minutes} minutos`;
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return `${hours}h ${remainingMinutes}min`;
+  };
+
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8">
@@ -84,14 +116,43 @@ export default function Profile() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4">
-                <div className="space-y-1">
-                  <p className="text-sm text-white/60">Nome</p>
-                  <p className="text-white">{user.displayName || user.email?.split('@')[0] || "Usuário"}</p>
+                <div className="flex items-start gap-4">
+                  {userProfile?.profileImage ? (
+                    <img
+                      src={userProfile.profileImage}
+                      alt="Foto de perfil"
+                      className="w-20 h-20 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-purple-900 flex items-center justify-center">
+                      <span className="text-2xl text-white">
+                        {user.displayName?.charAt(0) || user.email?.charAt(0) || "U"}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold text-white">
+                      {user.displayName || user.email?.split('@')[0] || "Usuário"}
+                    </h3>
+                    <p className="text-white/60">{user.email}</p>
+                    {userProfile?.gender && (
+                      <p className="text-white/60 mt-1">
+                        {userProfile.gender.charAt(0).toUpperCase() + userProfile.gender.slice(1)}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-white/60">Email</p>
-                  <p className="text-white">{user.email}</p>
-                </div>
+
+                {userProfile?.favoriteSocialNetwork && (
+                  <div className="space-y-1">
+                    <p className="text-sm text-white/60">Rede Social Favorita</p>
+                    <p className="text-white">
+                      {userProfile.favoriteSocialNetwork.charAt(0).toUpperCase() + 
+                       userProfile.favoriteSocialNetwork.slice(1)}
+                    </p>
+                  </div>
+                )}
+
                 <div className="space-y-1">
                   <p className="text-sm text-white/60">Imagens da Galeria</p>
                   <Button
@@ -103,11 +164,36 @@ export default function Profile() {
                     {isUploadingGallery ? "Enviando imagens..." : "Escolher da Galeria"}
                   </Button>
                 </div>
-                <div className="text-center mt-4">
-                  <p className="text-white/60">
-                    Funcionalidades adicionais do perfil serão implementadas em breve.
-                  </p>
-                </div>
+
+                {gameStats && (
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div className="bg-white/5 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Trophy className="h-5 w-5 text-yellow-500" />
+                        <span className="text-white/60">Total de Jogos</span>
+                      </div>
+                      <p className="text-2xl font-bold text-white">{gameStats.totalGames}</p>
+                    </div>
+
+                    <div className="bg-white/5 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Activity className="h-5 w-5 text-green-500" />
+                        <span className="text-white/60">Modo Favorito</span>
+                      </div>
+                      <p className="text-lg font-medium text-white">{getFavoriteMode() || "Nenhum"}</p>
+                    </div>
+
+                    <div className="bg-white/5 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Clock className="h-5 w-5 text-blue-500" />
+                        <span className="text-white/60">Tempo Total</span>
+                      </div>
+                      <p className="text-lg font-medium text-white">
+                        {formatPlayTime(gameStats.totalTimePlayed)}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -116,7 +202,7 @@ export default function Profile() {
         <ProfileEditDialog
           open={showEditDialog}
           onOpenChange={setShowEditDialog}
-          profile={null}
+          profile={userProfile}
           onProfileUpdated={() => {}}
         />
       </div>

@@ -8,6 +8,9 @@ import { genderOptions, socialNetworkOptions } from "@shared/schema";
 import { ImageUploader } from "@/components/ImageUploader";
 import type { UserProfile } from "@shared/schema";
 import { Image } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { auth } from "@/lib/firebase";
 
 interface ProfileEditDialogProps {
   open: boolean;
@@ -24,12 +27,39 @@ const GENDER_LABELS = {
 
 export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdated }: ProfileEditDialogProps) {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const user = auth.currentUser;
+
   const [formData, setFormData] = useState({
-    name: profile?.name || "",
+    name: profile?.name || user?.displayName || "",
     birthDate: profile?.birthDate || "",
     gender: profile?.gender || "",
     favoriteSocialNetwork: profile?.favoriteSocialNetwork || "",
-    profileImage: profile?.profileImage || ""
+    profileImage: profile?.profileImage || user?.photoURL || ""
+  });
+
+  const updateProfile = useMutation({
+    mutationFn: async (data: typeof formData) => {
+      if (!user?.uid) throw new Error("Usuário não autenticado");
+      await apiRequest("PATCH", `/api/profile/${user.uid}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+      onProfileUpdated();
+      onOpenChange(false);
+      toast({
+        title: "Perfil atualizado",
+        description: "Suas informações foram salvas com sucesso!",
+      });
+    },
+    onError: (error) => {
+      console.error("Erro ao atualizar perfil:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar seu perfil. Tente novamente.",
+        variant: "destructive",
+      });
+    }
   });
 
   const updateField = (field: string, value: string) => {
@@ -42,21 +72,9 @@ export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdate
 
   const handleSave = async () => {
     try {
-      // TODO: Implement profile update functionality
-      toast({
-        title: "Funcionalidade em desenvolvimento",
-        description: "A edição de perfil será implementada em breve.",
-      });
-
-      onProfileUpdated();
-      onOpenChange(false);
+      await updateProfile.mutateAsync(formData);
     } catch (error) {
       console.error("Erro ao atualizar perfil:", error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar seu perfil. Tente novamente.",
-        variant: "destructive",
-      });
     }
   };
 
@@ -143,9 +161,10 @@ export function ProfileEditDialog({ open, onOpenChange, profile, onProfileUpdate
 
           <Button
             onClick={handleSave}
+            disabled={updateProfile.isPending}
             className="w-full bg-purple-600 hover:bg-purple-700 text-white"
           >
-            Salvar Alterações
+            {updateProfile.isPending ? "Salvando..." : "Salvar Alterações"}
           </Button>
         </div>
       </DialogContent>
