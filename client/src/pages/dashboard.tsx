@@ -31,13 +31,6 @@ const formatGameName = (name: string) => {
   }
 };
 
-// Função para capitalizar primeira letra de cada palavra
-const capitalizeWords = (text: string) => {
-  return text.split(' ').map(word => 
-    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-  ).join(' ');
-};
-
 export default function Dashboard() {
   const [, navigate] = useLocation();
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -90,17 +83,17 @@ export default function Dashboard() {
                 inViewThreshold: 0.5,
               }}
             >
-              <CarouselContent className="-ml-4">
+              <CarouselContent className="-ml-2">
                 {games.map((game) => (
-                  <CarouselItem key={game.id} className="pl-4 basis-[30%] sm:basis-[25%]">
+                  <CarouselItem key={game.id} className="pl-2 basis-[28%] sm:basis-[22%]">
                     <div 
-                      className="flex flex-col items-center gap-1 p-2 cursor-pointer hover:opacity-80 transition-opacity"
+                      className="flex flex-col items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
                       onClick={() => navigate(game.route)}
                     >
                       <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
                         <game.icon className="h-7 w-7 text-white" />
                       </div>
-                      <span className="text-xs text-white text-center mt-1 leading-tight h-8 whitespace-pre-line px-1">
+                      <span className="text-xs text-white text-center mt-1 leading-tight h-8 whitespace-pre-line">
                         {formatGameName(game.name)}
                       </span>
                     </div>
