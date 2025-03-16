@@ -26,6 +26,11 @@ export function PunishmentDialog({
 }: PunishmentDialogProps) {
   if (!punishment) return null;
 
+  const handleAcceptPunishment = () => {
+    onAcceptPunishment();
+    onOpenChange(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-white rounded-xl">
@@ -52,15 +57,15 @@ export function PunishmentDialog({
           </div>
           <div className="flex flex-col gap-2">
             <Button
-              onClick={onAcceptPunishment}
+              onClick={handleAcceptPunishment}
               className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white text-xl py-6"
             >
               Fez o desafio
             </Button>
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={onGenerateNewPunishment}
-              className="border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-900"
+              className="text-purple-700 hover:text-purple-900"
             >
               Beba mais um {drinkText} para gerar outro desafio
             </Button>
