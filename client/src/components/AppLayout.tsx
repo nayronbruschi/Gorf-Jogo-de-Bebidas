@@ -40,8 +40,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   const HomeIcon = menuItems[0]?.icon;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 to-black">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-lg border-b border-white/5">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-900 to-purple-950">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-black/20 backdrop-blur-lg border-b border-white/5">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           {!isDashboard ? (
             <Button
@@ -122,7 +122,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
       </header>
 
-      <main className="flex-1 pt-16 pb-24">
+      <main className="flex-1 pt-16 pb-safe">
         {children}
       </main>
 

@@ -17,6 +17,7 @@ interface DockItemProps {
 
 function DockItem({ icon, label, to, isActive }: DockItemProps) {
   const [, navigate] = useLocation();
+  console.log(`Rendering DockItem: ${label}, isActive: ${isActive}`); // Debug log
 
   return (
     <motion.button
@@ -37,6 +38,7 @@ function DockItem({ icon, label, to, isActive }: DockItemProps) {
 
 export function Dock() {
   const [location] = useLocation();
+  console.log('Rendering Dock, current location:', location); // Debug log
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-safe">
