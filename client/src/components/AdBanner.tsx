@@ -6,19 +6,25 @@ interface AdBannerProps {
 
 export function AdBanner({ className }: AdBannerProps) {
   useEffect(() => {
-    // Initialize AdMob
     try {
-      // Load Google AdSense script
+      // Carrega o script do AdMob
       const script = document.createElement('script');
       script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
       script.async = true;
-      script.crossOrigin = 'anonymous';
+      script.setAttribute('data-ad-client', import.meta.env.VITE_ADMOB_APP_ID || 'ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy');
       document.head.appendChild(script);
 
-      // Initialize ads
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      // Inicializa o AdMob
+      script.onload = () => {
+        (window as any).adsbygoogle = (window as any).adsbygoogle || [];
+        (window as any).adsbygoogle.push({});
+      };
+
+      return () => {
+        document.head.removeChild(script);
+      };
     } catch (error) {
-      console.error('Error loading ads:', error);
+      console.error('Erro ao carregar anúncios:', error);
     }
   }, []);
 
@@ -27,8 +33,8 @@ export function AdBanner({ className }: AdBannerProps) {
       <ins
         className="adsbygoogle"
         style={{ display: 'block' }}
-        data-ad-client="ca-pub-YOUR_PUBLISHER_ID" // Replace with your AdSense publisher ID
-        data-ad-slot="YOUR_AD_SLOT_ID" // Replace with your ad slot ID
+        data-ad-client={import.meta.env.VITE_ADMOB_APP_ID}
+        data-ad-slot={import.meta.env.VITE_ADMOB_BANNER_ID}
         data-ad-format="auto"
         data-full-width-responsive="true"
       />
