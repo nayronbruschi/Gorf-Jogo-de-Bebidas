@@ -2,15 +2,10 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GamepadIcon, History, Trophy, Clock, Play } from "lucide-react";
 import { PromotionalBanner } from "@/components/PromotionalBanner";
+import { AdBanner } from "@/components/AdBanner";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { games } from "@/lib/game-data";
 import { auth, getUserProfile } from "@/lib/firebase";
@@ -25,7 +20,7 @@ const formatGameName = (name: string) => {
     case "toque na sorte":
       return "Toque na\nSorte";
     default:
-      return name.split(' ').map(word => 
+      return name.split(' ').map(word =>
         word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
       ).join(' ');
   }
@@ -71,10 +66,15 @@ export default function Dashboard() {
             <PromotionalBanner />
           </section>
 
+          {/* Ad Banner */}
+          <section className="pb-2">
+            <AdBanner />
+          </section>
+
           {/* Carrossel de Todos os Jogos */}
           <section className="pb-2">
             <h2 className="text-white text-lg font-medium mb-2">Todos os Jogos</h2>
-            <Carousel 
+            <Carousel
               className="w-full"
               opts={{
                 align: "start",
@@ -86,7 +86,7 @@ export default function Dashboard() {
               <CarouselContent className="-ml-2">
                 {games.map((game) => (
                   <CarouselItem key={game.id} className="pl-2 basis-[28%] sm:basis-[22%]">
-                    <div 
+                    <div
                       className="flex flex-col items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
                       onClick={() => navigate(game.route)}
                     >
