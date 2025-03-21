@@ -225,17 +225,17 @@ export default function Admin() {
                       <div className="mt-2 space-y-4">
                         <div>
                           <Select
-                            value={texts.linkUrl || ""}
+                            value={texts.linkUrl?.startsWith("http") ? "_none_" : (texts.linkUrl || "_none_")}
                             onValueChange={(value) => setBannerTexts(prev => ({
                               ...prev,
-                              [key]: { ...prev[key], linkUrl: value }
+                              [key]: { ...prev[key], linkUrl: value === "_none_" ? "" : value }
                             }))}
                           >
                             <SelectTrigger className="bg-white/10 border-white/20 text-white">
                               <SelectValue placeholder="Selecione uma página do aplicativo" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="">Nenhuma (selecione)</SelectItem>
+                              <SelectItem value="_none_">Nenhuma (selecione)</SelectItem>
                               <SelectItem value="/dashboard">Dashboard</SelectItem>
                               <SelectItem value="/game-modes">Modos de Jogo</SelectItem>
                               <SelectItem value="/classic">Modo Clássico</SelectItem>
