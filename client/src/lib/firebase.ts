@@ -7,7 +7,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyDRZ0akGNllg2YFaJM832PWSXvbNfcFbcE",
   authDomain: "gorf-jogo-de-bebidas.firebaseapp.com",
   projectId: "gorf-jogo-de-bebidas",
-  storageBucket: "gorf-jogo-de-bebidas.firebasestorage.app",
+  storageBucket: "gorf-jogo-de-bebidas.appspot.com",
   messagingSenderId: "666516951655",
   appId: "1:666516951655:web:ecade148dce7e08852fac2"
 };
