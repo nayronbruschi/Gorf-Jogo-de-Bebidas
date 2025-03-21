@@ -117,14 +117,14 @@ export default function AdminGeoTest() {
   // Função para carregar localizações existentes
   const loadExistingLocations = async () => {
     try {
+      // Abordagem manual para obter localizações de usuários
       const db = getFirestore();
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("lastLocation", "!=", null));
-      const querySnapshot = await getDocs(q);
+      const usersCollection = collection(db, "users");
+      const usersSnapshot = await getDocs(usersCollection);
       
       const existingPoints: {lat: number, lng: number, intensity?: number}[] = [];
       
-      querySnapshot.forEach((docSnapshot) => {
+      usersSnapshot.forEach((docSnapshot) => {
         const userData = docSnapshot.data();
         if (userData.lastLocation?.latitude && userData.lastLocation?.longitude) {
           existingPoints.push({
