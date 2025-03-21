@@ -78,7 +78,7 @@ export function BannerUploader() {
   };
 
   return (
-    <Card className="bg-white/10 backdrop-blur-lg border-none">
+    <Card className="bg-purple-900/30 backdrop-blur-lg border-purple-700/50">
       <CardHeader>
         <CardTitle className="text-white">Upload de Banners</CardTitle>
       </CardHeader>
