@@ -114,18 +114,18 @@ export function PromotionalBanner() {
                       alt={`Banner ${index + 1}`}
                       className="w-full h-full object-cover rounded-lg"
                     />
-                    <div className="absolute bottom-0 left-0 p-4 bg-gradient-to-t from-black/60 to-transparent w-full rounded-b-lg">
-                      <h3 className="text-white text-xl font-bold mb-1">{banner.title}</h3>
-                      <p className="text-white/80 text-sm">{banner.description}</p>
+                    <div className="absolute bottom-0 left-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent w-full rounded-b-lg">
+                      <h3 className="text-white text-xl font-bold mb-1 text-shadow">{banner.title}</h3>
+                      <p className="text-white/90 text-sm text-shadow-sm">{banner.description}</p>
                       {banner.isClickable && (
-                        <p className="text-xs text-white/80 mt-2 flex items-center">
+                        <div className="mt-2 inline-flex items-center bg-purple-600/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
                           {banner.linkUrl?.startsWith('http') 
                             ? 'Visitar site externo' 
                             : 'Ver mais no aplicativo'}
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
-                        </p>
+                        </div>
                       )}
                     </div>
                   </CardContent>
@@ -137,16 +137,17 @@ export function PromotionalBanner() {
       </div>
 
       {/* Dots navigation */}
-      <div className="absolute bottom-4 right-4 flex gap-2 z-10">
+      <div className="absolute bottom-4 right-4 flex gap-2 z-10 px-2 py-1 bg-black/20 backdrop-blur-sm rounded-full">
         {orderedBanners.map((_, index) => (
           <button
             key={index}
-            className={`w-2 h-2 rounded-full transition-all ${
+            className={`w-2.5 h-2.5 rounded-full transition-all ${
               index === selectedIndex 
-                ? 'bg-white scale-125' 
+                ? 'bg-purple-500 scale-110 shadow-glow' 
                 : 'bg-white/50 hover:bg-white/80'
             }`}
             onClick={() => api?.scrollTo(index)}
+            aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>

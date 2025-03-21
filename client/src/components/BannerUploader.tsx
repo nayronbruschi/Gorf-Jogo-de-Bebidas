@@ -84,6 +84,22 @@ export function BannerUploader() {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
+          <div className="p-4 bg-purple-800/20 rounded-lg border border-purple-700/20 mb-4">
+            <h3 className="text-white font-semibold mb-2">⚠️ Importante</h3>
+            <p className="text-white/80 text-sm">
+              Os textos dos banners são exibidos em cor branca sobre a imagem. Para melhor visibilidade, 
+              recomendamos usar imagens com fundo escuro ou com um gradiente. Evite banners com fundo totalmente branco.
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <div className="flex-1 p-2 bg-gradient-to-r from-purple-900 to-blue-900 rounded text-white text-xs text-center">
+                ✅ Fundo escuro (recomendado)
+              </div>
+              <div className="flex-1 p-2 bg-white rounded text-purple-900 border border-purple-300 text-xs text-center">
+                ❌ Fundo branco (evitar)
+              </div>
+            </div>
+          </div>
+          
           <div className="space-y-4">
             <label className="text-sm text-white/60">Selecione o banner</label>
             <Select
@@ -105,12 +121,23 @@ export function BannerUploader() {
 
           {Object.entries(bannerUrls).map(([number, url]) => (
             <div key={number} className="mt-4">
-              <p className="text-sm text-white/60 mb-2">Banner {number}</p>
-              <img 
-                src={url} 
-                alt={`Banner ${number}`} 
-                className="rounded-lg max-h-48 w-full object-cover"
-              />
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-sm text-white/60">Banner {number}</p>
+                <div className="text-xs px-2 py-0.5 rounded bg-purple-700/30 text-white/80">
+                  {number === selectedBanner ? "Selecionado" : ""}
+                </div>
+              </div>
+              <div className="relative rounded-lg overflow-hidden border border-white/10">
+                <img 
+                  src={url} 
+                  alt={`Banner ${number}`} 
+                  className="max-h-48 w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+                <div className="absolute bottom-2 left-2 text-white text-shadow font-medium">
+                  Texto de exemplo para visualização
+                </div>
+              </div>
             </div>
           ))}
 
