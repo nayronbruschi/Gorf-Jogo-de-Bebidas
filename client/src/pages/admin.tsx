@@ -14,6 +14,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 interface BannerTexts {
   title: string;
   description: string;
+  linkUrl?: string;
+  isClickable?: boolean;
 }
 
 export default function Admin() {

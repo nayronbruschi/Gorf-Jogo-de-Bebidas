@@ -8,7 +8,6 @@ import { GorfLogo } from "@/components/GorfLogo";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useAuthMenu } from "@/hooks/use-auth-menu";
-import { Dock } from "@/components/Dock";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -125,8 +124,6 @@ export function AppLayout({ children }: AppLayoutProps) {
       <main className="flex-1 pt-16 pb-safe">
         {children}
       </main>
-
-      <Dock />
     </div>
   );
 }

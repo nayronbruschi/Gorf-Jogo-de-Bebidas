@@ -45,6 +45,9 @@ export function BannerUploader() {
           banners: bannerUrls
         })
       });
+      
+      // Forçar atualização dos dados no cliente
+      await queryClient.invalidateQueries({ queryKey: ["/api/banners"] });
 
       if (!response.ok) {
         throw new Error('Falha ao publicar banners');
