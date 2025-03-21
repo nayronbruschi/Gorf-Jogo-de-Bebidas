@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { auth } from "@/lib/firebase";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -37,8 +38,18 @@ export default function Admin() {
   });
 
   const [bannerTexts, setBannerTexts] = useState<Record<string, BannerTexts>>({
-    "1": { title: "Bem-vindo ao Gorf", description: "O melhor app para suas festas" },
-    "2": { title: "Diversão Garantida", description: "Jogos para todos os momentos" }
+    "1": { 
+      title: "Bem-vindo ao Gorf", 
+      description: "O melhor app para suas festas",
+      linkUrl: "",
+      isClickable: false
+    },
+    "2": { 
+      title: "Diversão Garantida", 
+      description: "Jogos para todos os momentos",
+      linkUrl: "",
+      isClickable: false
+    }
   });
 
   // Update banner texts when data is loaded
@@ -185,6 +196,40 @@ export default function Admin() {
                       placeholder="Descrição"
                       className="bg-white/10 border-white/20 text-white"
                     />
+                    
+                    <div className="flex items-center space-x-2 mt-4">
+                      <Switch
+                        id={`clickable-${key}`}
+                        checked={texts.isClickable || false}
+                        onCheckedChange={(checked) => setBannerTexts(prev => ({
+                          ...prev,
+                          [key]: { ...prev[key], isClickable: checked }
+                        }))}
+                      />
+                      <label 
+                        htmlFor={`clickable-${key}`}
+                        className="text-sm text-white/80"
+                      >
+                        Banner clicável
+                      </label>
+                    </div>
+                    
+                    {texts.isClickable && (
+                      <div className="mt-2">
+                        <Input
+                          value={texts.linkUrl || ""}
+                          onChange={(e) => setBannerTexts(prev => ({
+                            ...prev,
+                            [key]: { ...prev[key], linkUrl: e.target.value }
+                          }))}
+                          placeholder="URL de redirecionamento (ex: https://google.com)"
+                          className="bg-white/10 border-white/20 text-white"
+                        />
+                        <p className="text-xs text-white/60 mt-1">
+                          Digite uma URL completa com https:// para redirecionar para um site externo
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

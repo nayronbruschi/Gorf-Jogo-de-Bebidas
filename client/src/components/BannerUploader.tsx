@@ -1,4 +1,5 @@
-import { useState } from "react";
+import * as React from "react";
+const { useState, useEffect } = React;
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ImageUploader } from "@/components/ImageUploader";
@@ -14,12 +15,16 @@ export function BannerUploader() {
   const [isPublishing, setIsPublishing] = useState(false);
 
   // Carregar banners existentes
-  const { data: existingBanners = {} } = useQuery({
+  const { data: existingBanners = {} } = useQuery<Record<string, string>>({
     queryKey: ["/api/banners"],
-    onSuccess: (data) => {
-      setBannerUrls(data);
-    },
   });
+  
+  // Atualizar bannerUrls quando os dados forem carregados
+  useEffect(() => {
+    if (existingBanners && Object.keys(existingBanners).length > 0) {
+      setBannerUrls(existingBanners);
+    }
+  }, [existingBanners]);
 
   const handleUploadComplete = (url: string) => {
     setBannerUrls(prev => ({
