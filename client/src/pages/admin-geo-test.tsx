@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { BrazilHeatMap } from "@/components/BrazilHeatMap";
 
 // Lista de cidades brasileiras para simulação
 const BRASIL_CIDADES = [
@@ -98,6 +99,7 @@ export default function AdminGeoTest() {
   const [registerLocations, setRegisterLocations] = useState(true);
   const [includeCurrentUser, setIncludeCurrentUser] = useState(true);
   const [simulationID, setSimulationID] = useState("");
+  const [heatMapPoints, setHeatMapPoints] = useState<{lat: number, lng: number, intensity?: number}[]>([]);
 
   useEffect(() => {
     // Verificar se o usuário é o admin
@@ -185,6 +187,9 @@ export default function AdminGeoTest() {
         gamesRegistered: 0
       };
       
+      // Limpar os pontos do mapa de calor anteriores
+      const newHeatMapPoints: {lat: number, lng: number, intensity?: number}[] = [];
+      
       // Incluir usuário atual se selecionado
       if (includeCurrentUser) {
         const currentUser = auth.currentUser;
@@ -194,17 +199,26 @@ export default function AdminGeoTest() {
           if (userProfile && registerLocations) {
             // Atribuir uma localização aleatória ao usuário atual
             const cidade = getRandomCity();
+            const lat = cidade.latitude;
+            const lng = cidade.longitude;
             
             await setDoc(doc(db, "users", currentUser.uid), {
               ...userProfile,
               lastLocation: {
-                latitude: cidade.latitude,
-                longitude: cidade.longitude,
+                latitude: lat,
+                longitude: lng,
                 city: cidade.nome,
                 state: cidade.estado,
                 lastUpdated: Timestamp.now()
               }
             }, { merge: true });
+            
+            // Adicionar ponto ao mapa de calor
+            newHeatMapPoints.push({
+              lat,
+              lng,
+              intensity: 0.8 // Usuário atual tem maior intensidade
+            });
             
             newStats.locationsAdded++;
             
