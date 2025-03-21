@@ -17,10 +17,10 @@ import {
   ResponsiveContainer,
   Legend
 } from "recharts";
-import { format, subDays, startOfDay, endOfDay, addDays } from "date-fns";
+import { format, subDays, startOfDay, endOfDay, addDays, isSameDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useQueryClient } from "@tanstack/react-query";
-import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { type DateRange } from "react-day-picker";
 import { BrazilHeatMap } from "@/components/BrazilHeatMap";
 
 // Interface para os dados de estatísticas
@@ -73,6 +73,67 @@ export default function Admin() {
   
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Função para obter pontos do mapa de calor
+  const fetchHeatMapData = async () => {
+    try {
+      const db = getFirestore();
+      const usersSnapshot = await getDocs(collection(db, "users"));
+      const userProfiles = usersSnapshot.docs.map(doc => doc.data());
+      
+      const heatPoints: HeatMapPoint[] = [];
+      
+      // Converter localizações de usuários para pontos do mapa de calor
+      userProfiles.forEach(profile => {
+        if (profile.lastLocation?.latitude && profile.lastLocation?.longitude) {
+          heatPoints.push({
+            lat: profile.lastLocation.latitude,
+            lng: profile.lastLocation.longitude,
+            intensity: 0.7 // Intensidade padrão
+          });
+        }
+      });
+      
+      // Se não houver pontos, adicionar alguns pontos simulados para visualização
+      if (heatPoints.length === 0) {
+        // Cidades principais do Brasil
+        const citiesWithCoords = [
+          { city: "São Paulo", lat: -23.5505, lng: -46.6333, users: 5 },
+          { city: "Rio de Janeiro", lat: -22.9068, lng: -43.1729, users: 3 },
+          { city: "Brasília", lat: -15.7801, lng: -47.9292, users: 2 },
+          { city: "Salvador", lat: -12.9716, lng: -38.5016, users: 1 },
+          { city: "Fortaleza", lat: -3.7319, lng: -38.5267, users: 1 }
+        ];
+        
+        citiesWithCoords.forEach(city => {
+          // Adiciona um ponto por usuário para representar melhor a intensidade
+          for (let i = 0; i < city.users; i++) {
+            // Adiciona pequena variação para não sobrepor exatamente
+            const latVariation = (Math.random() - 0.5) * 0.1;
+            const lngVariation = (Math.random() - 0.5) * 0.1;
+            
+            heatPoints.push({
+              lat: city.lat + latVariation,
+              lng: city.lng + lngVariation,
+              intensity: 0.8
+            });
+          }
+        });
+      }
+      
+      setHeatMapPoints(heatPoints);
+    } catch (error) {
+      console.error("Erro ao buscar dados do mapa de calor:", error);
+    }
+  };
+  
+  // Atualiza os dados quando o período muda
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchStats();
+      fetchHeatMapData();
+    }
+  }, [dateRange, isAuthenticated]);
   
   // Buscar estatísticas do Firebase
   const fetchStats = async () => {
@@ -308,10 +369,48 @@ export default function Admin() {
   return (
     <AppLayout>
       <div className="container mx-auto p-4 space-y-8">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <h1 className="text-2xl font-bold text-white">Dashboard Admin</h1>
-          <div className="text-sm text-white/60">
-            Último acesso: {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+          
+          <div className="flex flex-col md:flex-row items-end gap-2">
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                className={`${dateRange?.from ? (isSameDay(dateRange.from, subDays(new Date(), 7)) ? 'bg-purple-700/50' : 'bg-white/10') : 'bg-white/10'} text-white text-xs`}
+                onClick={() => setDateRange({
+                  from: subDays(new Date(), 7),
+                  to: new Date()
+                })}
+              >
+                Últimos 7 dias
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className={`${dateRange?.from ? (isSameDay(dateRange.from, subDays(new Date(), 30)) ? 'bg-purple-700/50' : 'bg-white/10') : 'bg-white/10'} text-white text-xs`}
+                onClick={() => setDateRange({
+                  from: subDays(new Date(), 30),
+                  to: new Date()
+                })}
+              >
+                Últimos 30 dias
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className={`${dateRange?.from ? (isSameDay(dateRange.from, subDays(new Date(), 90)) ? 'bg-purple-700/50' : 'bg-white/10') : 'bg-white/10'} text-white text-xs`}
+                onClick={() => setDateRange({
+                  from: subDays(new Date(), 90),
+                  to: new Date()
+                })}
+              >
+                Últimos 90 dias
+              </Button>
+            </div>
+            
+            <div className="text-sm text-white/60">
+              Último acesso: {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+            </div>
           </div>
         </div>
         
@@ -428,6 +527,36 @@ export default function Admin() {
                 </div>
               )}
             </div>
+          </CardContent>
+        </Card>
+        
+        {/* Mapa de calor */}
+        <Card className="bg-white/10 backdrop-blur-lg border-none mb-8">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center justify-between">
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+                Mapa de Usuários no Brasil
+              </div>
+              <div className="text-sm text-white/60">
+                {userStats.userLocations.reduce((total, loc) => total + loc.count, 0)} usuários no total
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-4">
+                {userStats.userLocations.slice(0, 5).map((location, index) => (
+                  <div key={location.city} className="flex items-center justify-between bg-purple-900/20 p-2 rounded-md">
+                    <div className="text-white font-medium">{location.city}</div>
+                    <div className="text-purple-300 text-sm">{location.count} usuário{location.count > 1 ? 's' : ''}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <BrazilHeatMap points={heatMapPoints} height="400px" />
           </CardContent>
         </Card>
         
