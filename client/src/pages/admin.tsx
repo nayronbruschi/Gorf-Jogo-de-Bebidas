@@ -462,7 +462,7 @@ export default function Admin() {
                 <p className="text-white/60 text-sm mb-6">
                   Simule usuários em várias localidades do Brasil para testar a visualização geográfica no dashboard.
                 </p>
-                <Button onClick={() => navigate("/admin/geo-test")} className="bg-purple-600 hover:bg-purple-700">
+                <Button onClick={() => window.location.href = "/admin/geo-test"} className="bg-purple-600 hover:bg-purple-700">
                   Iniciar Simulação
                 </Button>
               </div>
