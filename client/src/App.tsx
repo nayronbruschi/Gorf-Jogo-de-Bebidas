@@ -14,6 +14,7 @@ import Stats from "@/pages/stats";
 import GameModes from "@/pages/game-modes";
 import Admin from "@/pages/admin";
 import BannerManagement from "@/pages/banner-management";
+import AdminGeoTest from "@/pages/admin-geo-test";
 import ClassicStart from "@/pages/classic-start";
 import ClassicPlayers from "@/pages/classic-players";
 import ClassicMode from "@/pages/classic-mode";
@@ -69,6 +70,9 @@ function Router() {
       </Route>
       <Route path="/admin/banners">
         <ProtectedRoute component={BannerManagement} />
+      </Route>
+      <Route path="/admin/geo-test">
+        <ProtectedRoute component={AdminGeoTest} />
       </Route>
       <Route path="/profile">
         <ProtectedRoute component={Profile} />

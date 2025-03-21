@@ -446,24 +446,24 @@ export default function Admin() {
             <CardHeader>
               <CardTitle className="text-white flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
-                Estatísticas de Usuários
+                Dados Geográficos
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center justify-center py-10 text-center">
                 <div className="w-16 h-16 rounded-full bg-purple-600/20 flex items-center justify-center mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                   </svg>
                 </div>
-                <h3 className="text-white text-lg font-medium mb-2">Dados Demográficos</h3>
+                <h3 className="text-white text-lg font-medium mb-2">Testar Dados Geográficos</h3>
                 <p className="text-white/60 text-sm mb-6">
-                  Visualize informações detalhadas sobre os usuários do aplicativo.
+                  Simule usuários em várias localidades do Brasil para testar a visualização geográfica no dashboard.
                 </p>
-                <Button disabled className="bg-purple-700/50 hover:bg-purple-700/80">
-                  Em desenvolvimento
+                <Button onClick={() => navigate("/admin/geo-test")} className="bg-purple-600 hover:bg-purple-700">
+                  Iniciar Simulação
                 </Button>
               </div>
             </CardContent>
