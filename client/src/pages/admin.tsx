@@ -17,9 +17,11 @@ import {
   ResponsiveContainer,
   Legend
 } from "recharts";
-import { format, subDays, startOfDay, endOfDay } from "date-fns";
+import { format, subDays, startOfDay, endOfDay, addDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useQueryClient } from "@tanstack/react-query";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { BrazilHeatMap } from "@/components/BrazilHeatMap";
 
 // Interface para os dados de estatísticas
 interface UserStats {
@@ -36,6 +38,13 @@ interface ChartData {
   acessos: number;
 }
 
+// Interface para pontos do mapa de calor
+interface HeatMapPoint {
+  lat: number;
+  lng: number;
+  intensity?: number;
+}
+
 export default function Admin() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
@@ -43,6 +52,15 @@ export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
+  // Estado para controle de período
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 30),
+    to: new Date()
+  });
+  
+  // Estado para dados do mapa de calor
+  const [heatMapPoints, setHeatMapPoints] = useState<HeatMapPoint[]>([]);
   
   // Estados para dados reais do Firebase
   const [userStats, setUserStats] = useState<UserStats>({
