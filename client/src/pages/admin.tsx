@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { auth } from "@/lib/firebase";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -215,19 +222,52 @@ export default function Admin() {
                     </div>
                     
                     {texts.isClickable && (
-                      <div className="mt-2">
-                        <Input
-                          value={texts.linkUrl || ""}
-                          onChange={(e) => setBannerTexts(prev => ({
-                            ...prev,
-                            [key]: { ...prev[key], linkUrl: e.target.value }
-                          }))}
-                          placeholder="URL de redirecionamento (ex: https://google.com)"
-                          className="bg-white/10 border-white/20 text-white"
-                        />
-                        <p className="text-xs text-white/60 mt-1">
-                          Digite uma URL completa com https:// para redirecionar para um site externo
-                        </p>
+                      <div className="mt-2 space-y-4">
+                        <div>
+                          <Select
+                            value={texts.linkUrl || ""}
+                            onValueChange={(value) => setBannerTexts(prev => ({
+                              ...prev,
+                              [key]: { ...prev[key], linkUrl: value }
+                            }))}
+                          >
+                            <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                              <SelectValue placeholder="Selecione uma página do aplicativo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="">Nenhuma (selecione)</SelectItem>
+                              <SelectItem value="/dashboard">Dashboard</SelectItem>
+                              <SelectItem value="/game-modes">Modos de Jogo</SelectItem>
+                              <SelectItem value="/classic">Modo Clássico</SelectItem>
+                              <SelectItem value="/truth-or-dare">Verdade ou Desafio</SelectItem>
+                              <SelectItem value="/spin-bottle">Girar a Garrafa</SelectItem>
+                              <SelectItem value="/touch-game">Toque na Sorte</SelectItem>
+                              <SelectItem value="/coin-flip">Cara ou Coroa</SelectItem>
+                              <SelectItem value="/cards">Jogo de Cartas</SelectItem>
+                              <SelectItem value="/guess-who/theme">Quem Sou Eu</SelectItem>
+                              <SelectItem value="/profile">Perfil</SelectItem>
+                              <SelectItem value="/stats">Estatísticas</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <p className="text-xs text-white/60 mt-1">
+                            Selecione uma página do aplicativo ou insira uma URL personalizada abaixo
+                          </p>
+                        </div>
+                        
+                        <div>
+                          <Input
+                            value={texts.linkUrl?.startsWith("http") ? texts.linkUrl : ""}
+                            onChange={(e) => setBannerTexts(prev => ({
+                              ...prev,
+                              [key]: { ...prev[key], linkUrl: e.target.value }
+                            }))}
+                            placeholder="Ou insira uma URL externa (ex: https://google.com)"
+                            className="bg-white/10 border-white/20 text-white"
+                          />
+                          <p className="text-xs text-white/60 mt-1">
+                            Para redirecionar para um site externo, digite a URL completa com https://
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>

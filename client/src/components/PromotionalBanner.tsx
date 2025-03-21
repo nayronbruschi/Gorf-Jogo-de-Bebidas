@@ -119,7 +119,9 @@ export function PromotionalBanner() {
                       <p className="text-white/80 text-sm">{banner.description}</p>
                       {banner.isClickable && (
                         <p className="text-xs text-white/80 mt-2 flex items-center">
-                          Clique para saber mais
+                          {banner.linkUrl?.startsWith('http') 
+                            ? 'Visitar site externo' 
+                            : 'Ver mais no aplicativo'}
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
