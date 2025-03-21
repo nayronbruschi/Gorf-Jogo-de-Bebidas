@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { auth, getUserProfile } from "@/lib/firebase";
-import { getFirestore, collection, addDoc, doc, setDoc, getDoc, Timestamp } from "firebase/firestore";
+import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, query, where, Timestamp } from "firebase/firestore";
 import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
@@ -124,8 +124,8 @@ export default function AdminGeoTest() {
       
       const existingPoints: {lat: number, lng: number, intensity?: number}[] = [];
       
-      querySnapshot.forEach(doc => {
-        const userData = doc.data();
+      querySnapshot.forEach((docSnapshot) => {
+        const userData = docSnapshot.data();
         if (userData.lastLocation?.latitude && userData.lastLocation?.longitude) {
           existingPoints.push({
             lat: userData.lastLocation.latitude,
