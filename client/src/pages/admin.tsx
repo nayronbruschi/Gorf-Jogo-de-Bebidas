@@ -170,15 +170,87 @@ export default function Admin() {
     );
   }
 
+  // Dados estatísticos (simulados, mas em produção viriam do Firebase)
+  const userStats = {
+    totalUsers: 248,
+    activeToday: 42,
+    topGame: "Verdade ou Desafio",
+    topGamePlays: 156,
+    userLocations: [
+      { city: "São Paulo", count: 89 },
+      { city: "Rio de Janeiro", count: 47 },
+      { city: "Belo Horizonte", count: 32 },
+      { city: "Salvador", count: 24 },
+      { city: "Outros", count: 56 }
+    ]
+  };
+
   return (
     <AppLayout>
       <div className="container mx-auto p-4 space-y-8">
-        <h1 className="text-2xl font-bold text-white mb-8">Administração</h1>
-
-        <div className="grid grid-cols-1 gap-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold text-white">Dashboard Admin</h1>
+          <div className="text-sm text-white/60">
+            Último acesso: {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+          </div>
+        </div>
+        
+        {/* Estatísticas no topo */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <Card className="bg-gradient-to-br from-purple-900/60 to-purple-700/60 backdrop-blur-lg border-none">
+            <CardContent className="p-6">
+              <div className="text-white/80 text-sm">Usuários Registrados</div>
+              <div className="text-white text-3xl font-bold mt-2">{userStats.totalUsers}</div>
+              <div className="text-green-400 text-xs mt-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                </svg>
+                +12 na última semana
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-br from-purple-900/60 to-purple-700/60 backdrop-blur-lg border-none">
+            <CardContent className="p-6">
+              <div className="text-white/80 text-sm">Ativos Hoje</div>
+              <div className="text-white text-3xl font-bold mt-2">{userStats.activeToday}</div>
+              <div className="text-white/50 text-xs mt-2">
+                {Math.round((userStats.activeToday / userStats.totalUsers) * 100)}% do total de usuários
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-br from-purple-900/60 to-purple-700/60 backdrop-blur-lg border-none">
+            <CardContent className="p-6">
+              <div className="text-white/80 text-sm">Jogo Mais Jogado</div>
+              <div className="text-white text-2xl font-bold mt-2">{userStats.topGame}</div>
+              <div className="text-white/50 text-xs mt-2">
+                {userStats.topGamePlays} partidas
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-br from-purple-900/60 to-purple-700/60 backdrop-blur-lg border-none">
+            <CardContent className="p-6">
+              <div className="text-white/80 text-sm">Principais Localizações</div>
+              <div className="text-white text-lg font-bold mt-2">{userStats.userLocations[0].city}</div>
+              <div className="text-white/50 text-xs mt-2">
+                {userStats.userLocations[0].count} usuários ({Math.round((userStats.userLocations[0].count / userStats.totalUsers) * 100)}%)
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* 3 Boxes principais */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="bg-white/10 backdrop-blur-lg border-none">
             <CardHeader>
-              <CardTitle className="text-white">Textos dos Banners</CardTitle>
+              <CardTitle className="text-white flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Gerenciamento de Banners
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {Object.entries(bannerTexts).map(([key, texts]) => (
@@ -280,10 +352,64 @@ export default function Admin() {
               >
                 {updateTexts.isPending ? "Salvando..." : "Salvar Textos"}
               </Button>
+              
+              <BannerUploader />
             </CardContent>
           </Card>
-
-          <BannerUploader />
+          
+          <Card className="bg-white/10 backdrop-blur-lg border-none">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Módulo em Desenvolvimento
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="w-16 h-16 rounded-full bg-purple-600/20 flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </div>
+                <h3 className="text-white text-lg font-medium mb-2">Funcionalidade em Desenvolvimento</h3>
+                <p className="text-white/60 text-sm">
+                  Este módulo está sendo desenvolvido e estará disponível em breve.
+                </p>
+                <Button disabled className="mt-6">
+                  Em breve
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-white/10 backdrop-blur-lg border-none">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Módulo em Desenvolvimento
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="w-16 h-16 rounded-full bg-purple-600/20 flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                  </svg>
+                </div>
+                <h3 className="text-white text-lg font-medium mb-2">Funcionalidade em Desenvolvimento</h3>
+                <p className="text-white/60 text-sm">
+                  Este módulo está sendo desenvolvido e estará disponível em breve.
+                </p>
+                <Button disabled className="mt-6">
+                  Em breve
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </AppLayout>
