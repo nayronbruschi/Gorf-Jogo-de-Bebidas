@@ -108,8 +108,49 @@ export default function AdminGeoTest() {
       setIsAuthenticated(true);
       // Gerar ID único para a simulação
       setSimulationID(`sim_${Date.now().toString(36)}`);
+      
+      // Carregar dados de localização existentes
+      loadExistingLocations();
     }
   }, []);
+  
+  // Função para carregar localizações existentes
+  const loadExistingLocations = async () => {
+    try {
+      const db = getFirestore();
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("lastLocation", "!=", null));
+      const querySnapshot = await getDocs(q);
+      
+      const existingPoints: {lat: number, lng: number, intensity?: number}[] = [];
+      
+      querySnapshot.forEach(doc => {
+        const userData = doc.data();
+        if (userData.lastLocation?.latitude && userData.lastLocation?.longitude) {
+          existingPoints.push({
+            lat: userData.lastLocation.latitude,
+            lng: userData.lastLocation.longitude,
+            intensity: 0.5
+          });
+        }
+      });
+      
+      if (existingPoints.length > 0) {
+        setHeatMapPoints(existingPoints);
+        setStats(prevStats => ({
+          ...prevStats,
+          locationsAdded: existingPoints.length
+        }));
+        
+        toast({
+          title: "Dados carregados",
+          description: `Carregados ${existingPoints.length} pontos de localização existentes.`
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao carregar localizações:", error);
+    }
+  };
 
   // Gerar nome aleatório
   const randomName = () => {
@@ -280,15 +321,26 @@ export default function AdminGeoTest() {
         
         // Adicionar localização se solicitado
         if (registerLocations) {
+          // Pequena variação para não ficarem todos no mesmo ponto
+          const lat = cidade.latitude + (Math.random() * 0.01 - 0.005);
+          const lng = cidade.longitude + (Math.random() * 0.01 - 0.005);
+          
           await setDoc(doc(db, "users", userId), {
             lastLocation: {
-              latitude: cidade.latitude + (Math.random() * 0.01 - 0.005),
-              longitude: cidade.longitude + (Math.random() * 0.01 - 0.005),
+              latitude: lat,
+              longitude: lng,
               city: cidade.nome,
               state: cidade.estado,
               lastUpdated: Timestamp.now()
             }
           }, { merge: true });
+          
+          // Adicionar ponto ao mapa de calor
+          newHeatMapPoints.push({
+            lat,
+            lng,
+            intensity: 0.5 // Intensidade normal para usuários simulados
+          });
           
           newStats.locationsAdded++;
           currentStep++;
@@ -330,6 +382,9 @@ export default function AdminGeoTest() {
       }
       
       setProgress(100);
+      
+      // Atualizar o mapa de calor com os pontos gerados
+      setHeatMapPoints(newHeatMapPoints);
       
       toast({
         title: "Simulação concluída",
@@ -514,6 +569,28 @@ export default function AdminGeoTest() {
             </div>
           </CardContent>
         </Card>
+
+        {stats.locationsAdded > 0 && (
+          <Card className="bg-white/10 backdrop-blur-lg border-none">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="10" r="3" />
+                  <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" />
+                </svg>
+                Mapa de Calor de Usuários
+              </CardTitle>
+              <p className="text-white/80 text-sm mt-1">
+                Visualização geográfica dos {stats.locationsAdded} usuários no Brasil
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-lg overflow-hidden border border-purple-700/30">
+                <BrazilHeatMap points={heatMapPoints} height="500px" />
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </AppLayout>
   );
