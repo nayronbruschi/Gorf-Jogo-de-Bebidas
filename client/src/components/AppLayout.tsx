@@ -39,7 +39,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const HomeIcon = menuItems[0]?.icon;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-900 to-purple-950">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-950 to-black">
       <header className="fixed top-0 left-0 right-0 z-40 bg-black/20 backdrop-blur-lg border-b border-white/5">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           {!isDashboard ? (
