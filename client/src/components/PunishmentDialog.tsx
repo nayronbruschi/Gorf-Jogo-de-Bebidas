@@ -5,26 +5,67 @@ interface PunishmentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   playerName: string;
-  punishment: { text: string; icon: any } | null;
-  punishmentDrinks: number;
-  drinkText: string;
-  drinkTextPlural: string;
   onAcceptPunishment: () => void;
   onGenerateNewPunishment: () => void;
 }
+
+const punishmentChallenges = [
+  { text: "Faça 10 polichinelos", icon: null },
+  { text: "Imite alguém do grupo", icon: null },
+  { text: "Dance por 30 segundos", icon: null },
+  { text: "Conte uma história engraçada", icon: null },
+  { text: "Faça uma mímica", icon: null },
+  { text: "Cante uma música", icon: null },
+  { text: "Faça 5 flexões", icon: null },
+  { text: "Imite um animal por 1 minuto", icon: null },
+  { text: "Conte uma piada", icon: null },
+  { text: "Faça uma pose de yoga", icon: null },
+  { text: "Faça uma imitação de um famoso", icon: null },
+  { text: "Invente uma rima com o nome de outro jogador", icon: null },
+  { text: "Faça uma dança engraçada", icon: null },
+  { text: "Conte um segredo (nada muito pessoal)", icon: null },
+  { text: "Faça uma careta engraçada", icon: null },
+  { text: "Tire uma selfie engraçada", icon: null },
+  { text: "Faça uma declaração dramática", icon: null },
+  { text: "Invente um comercial de TV", icon: null },
+  { text: "Desenhe algo de olhos fechados", icon: null },
+  { text: "Imite um personagem de videogame", icon: null },
+  { text: "Faça malabarismo com 3 objetos", icon: null },
+  { text: "Crie uma música com objetos da mesa", icon: null },
+  { text: "Faça uma dança robótica", icon: null },
+  { text: "Conte uma história em 30 segundos", icon: null },
+  { text: "Imite três emojis", icon: null },
+  { text: "Faça uma pose de super-herói", icon: null },
+  { text: "Invente um trocadilho", icon: null },
+  { text: "Faça uma imitação de bebê", icon: null },
+  { text: "Crie um slogan para um produto imaginário", icon: null },
+  { text: "Faça uma mímica de profissão", icon: null },
+  { text: "Imite um apresentador de TV", icon: null },
+  { text: "Faça uma pose de modelo", icon: null },
+  { text: "Crie uma coreografia de 10 segundos", icon: null },
+  { text: "Invente um nome para uma banda", icon: null },
+  { text: "Faça uma imitação de alienígena", icon: null },
+  { text: "Crie um rap sobre o jogador à sua direita", icon: null },
+  { text: "Faça uma propaganda de venda", icon: null },
+  { text: "Imite um YouTuber famoso", icon: null },
+  { text: "Faça uma pose de estátua por 30 segundos", icon: null },
+  { text: "Invente um passo de dança", icon: null },
+];
 
 export function PunishmentDialog({
   open,
   onOpenChange,
   playerName,
-  punishment,
-  punishmentDrinks,
-  drinkText,
-  drinkTextPlural,
   onAcceptPunishment,
-  onGenerateNewPunishment
+  onGenerateNewPunishment,
 }: PunishmentDialogProps) {
-  if (!punishment) return null;
+  const [punishment, setPunishment] = React.useState(
+    punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)]
+  );
+  const punishmentDrinks = 1; // Placeholder -  needs proper implementation
+  const drinkText = "gole"; // Placeholder
+  const drinkTextPlural = "Goles"; // Placeholder
+
 
   const handleAcceptPunishment = () => {
     onAcceptPunishment();
@@ -47,7 +88,7 @@ export function PunishmentDialog({
             Por isso você deve:
           </p>
           <div className="bg-purple-50 p-6 rounded-lg text-center">
-            <punishment.icon className="h-12 w-12 mx-auto mb-4 text-purple-700" />
+            {/* Placeholder for icon - needs proper implementation */}
             <p className="text-purple-700 text-2xl font-bold">
               {punishment.text}
             </p>
@@ -64,7 +105,11 @@ export function PunishmentDialog({
             </Button>
             <Button
               variant="outline"
-              onClick={onGenerateNewPunishment}
+              onClick={() => {
+                setPunishment(
+                  punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)]
+                );
+              }}
               className="bg-white text-purple-700 hover:bg-purple-900 hover:text-white border-purple-700"
             >
               Beba mais um {drinkText} para gerar outro desafio
