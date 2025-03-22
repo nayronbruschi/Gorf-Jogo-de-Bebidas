@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Home, GamepadIcon, UserCircle, Settings } from "lucide-react";
+import { Home, GamepadIcon, UserCircle, Settings, Sparkles } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import type { LucideIcon } from "lucide-react";
 
@@ -17,6 +17,7 @@ export function useAuthMenu() {
     const items: MenuItem[] = [
       { icon: Home, label: "Início", href: "/dashboard" },
       { icon: GamepadIcon, label: "Jogos", href: "/game-modes" },
+      { icon: Sparkles, label: "Recomendados", href: "/recommendations" },
       { icon: UserCircle, label: "Perfil e Estatísticas", href: "/profile" },
     ];
 

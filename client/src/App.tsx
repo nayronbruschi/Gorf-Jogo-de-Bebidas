@@ -33,6 +33,7 @@ import GuessWhoTheme from "@/pages/guess-who-theme";
 import GuessWhoGame from "@/pages/guess-who-game";
 import Profile from "@/pages/profile";
 import Onboarding from "@/pages/onboarding";
+import Recommendations from "@/pages/recommendations";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading } = useAuth();
@@ -76,6 +77,9 @@ function Router() {
       </Route>
       <Route path="/profile">
         <ProtectedRoute component={Profile} />
+      </Route>
+      <Route path="/recommendations">
+        <ProtectedRoute component={Recommendations} />
       </Route>
       <Route path="/classic">
         <ProtectedRoute component={ClassicStart} />
