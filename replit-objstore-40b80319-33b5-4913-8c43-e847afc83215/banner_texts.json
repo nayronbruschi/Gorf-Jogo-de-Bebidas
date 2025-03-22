@@ -5,6 +5,8 @@
   },
   "2": {
     "title": "Jogue no Modo Clássico",
-    "description": "Desafios que envolvem goles e shots🔥"
+    "description": "Desafios que envolvem goles e shots🔥",
+    "isClickable": true,
+    "linkUrl": "/classic"
   }
 }
