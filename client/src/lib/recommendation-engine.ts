@@ -31,7 +31,9 @@ export type GameTag =
   | 'embaraçoso'
   | 'físico'
   | 'difícil'
-  | 'fácil';
+  | 'fácil'
+  | 'regras'
+  | 'visual';
 
 // Definição de características de cada jogo para recomendação
 interface GameMetadata {
@@ -150,14 +152,14 @@ function generateReasonsToPlay(
   
   // Razões baseadas nas bebidas favoritas
   const alcoholicDrinks = userProfile.favoriteDrinks.filter(drink => 
-    ['cerveja', 'vinho', 'vodka', 'whisky', 'tequila', 'gin'].includes(drink)
+    ['Cerveja', 'Vinho', 'Vodka', 'Whisky', 'Tequila', 'Gin', 'Rum', 'Cachaça', 'Sake'].includes(drink)
   );
   
   if (alcoholicDrinks.length > 0 && game.alcoholLevel > 5) {
     reasons.push(`Como apreciador de ${alcoholicDrinks.join(' e ')}, este jogo tem o nível certo de diversão alcoólica para você.`);
   }
   
-  if (userProfile.favoriteDrinks.includes('água') && game.alcoholLevel < 5) {
+  if (userProfile.favoriteDrinks.includes('Energético') && game.alcoholLevel < 5) {
     reasons.push('Este jogo tem menor foco em álcool, o que combina com seu perfil.');
   }
   
@@ -198,7 +200,7 @@ function calculateMatchScore(
   
   // Ajustes baseados em bebidas favoritas
   const alcoholicDrinks = userProfile.favoriteDrinks.filter(drink => 
-    ['cerveja', 'vinho', 'vodka', 'whisky', 'tequila', 'gin'].includes(drink)
+    ['Cerveja', 'Vinho', 'Vodka', 'Whisky', 'Tequila', 'Gin', 'Rum', 'Cachaça', 'Sake'].includes(drink)
   );
   
   // Se usuário gosta de bebidas alcoólicas e o jogo tem álcool

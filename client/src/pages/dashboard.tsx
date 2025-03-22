@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GamepadIcon, History, Trophy, Clock, Play } from "lucide-react";
+import { GamepadIcon, History, Trophy, Clock, Play, Sparkles } from "lucide-react";
 import { PromotionalBanner } from "@/components/PromotionalBanner";
 import { AdBanner } from "@/components/AdBanner";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
@@ -11,6 +11,7 @@ import { games } from "@/lib/game-data";
 import { auth, getUserProfile } from "@/lib/firebase";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { GameRecommendationCard } from "@/components/GameRecommendation";
 
 // Função para capitalizar primeira letra de cada palavra e adicionar quebras de linha
 const formatGameName = (name: string) => {
@@ -152,6 +153,9 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           )}
+
+          {/* Recomendação de Jogo */}
+          <GameRecommendationCard className="bg-white/10 backdrop-blur-lg border-none" />
 
           {/* Estatísticas */}
           <div className="grid grid-cols-2 gap-4">
