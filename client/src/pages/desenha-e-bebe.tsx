@@ -737,13 +737,13 @@ export default function DesenhaEBebe() {
             </CardHeader>
             
             <CardContent className="space-y-4">
-              <div className="text-center p-8 bg-gray-100 rounded-lg">
-                <h2 className="text-2xl font-bold mb-2">Sua palavra é:</h2>
-                <div className="text-4xl font-bold text-purple-800 mb-4">
+              <div className="text-center p-8 bg-white rounded-lg border">
+                <h2 className="text-2xl font-bold mb-2 text-black">Sua palavra é:</h2>
+                <div className="text-4xl font-bold text-black mb-4">
                   {palavraAtual}
                 </div>
                 
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-black">
                   Dificuldade: {dificuldadeAtual}/3
                 </p>
                 
@@ -902,38 +902,38 @@ export default function DesenhaEBebe() {
             </CardHeader>
             
             <CardContent className="space-y-4">
-              <div className="bg-purple-50 p-8 border rounded-lg text-center">
+              <div className="bg-white p-8 border rounded-lg text-center">
                 <div className="mb-6 flex justify-center">
-                  <Drama className="h-32 w-32 text-purple-400 animate-pulse" />
+                  <Drama className="h-32 w-32 text-purple-700 animate-pulse" />
                 </div>
                 
                 <div className="text-center mb-4">
-                  <p className="text-sm">
+                  <p className="text-base text-black">
                     <Drama className="inline mr-1 h-4 w-4" />
-                    Você está representando: <span className="font-bold text-purple-800">{palavraAtual}</span>
+                    Você está representando: <span className="font-bold text-black text-lg">{palavraAtual}</span>
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-sm text-black mt-1">
                     Use apenas gestos! Não pode falar ou fazer sons!
                   </p>
                 </div>
                 
                 <div className="grid grid-cols-3 gap-2 text-sm mt-8">
-                  <div className="bg-white p-3 rounded-lg border shadow-sm">
+                  <div className="bg-gray-50 p-3 rounded-lg border shadow-sm">
                     <Target className="h-6 w-6 mx-auto mb-1 text-purple-600" />
-                    <p className="font-medium">Categoria</p>
-                    <p className="font-bold text-purple-700">{CATEGORIAS.find(c => c.id === categoriaAtual)?.nome}</p>
+                    <p className="font-medium text-black">Categoria</p>
+                    <p className="font-bold text-black">{CATEGORIAS.find(c => c.id === categoriaAtual)?.nome}</p>
                   </div>
                   
-                  <div className="bg-white p-3 rounded-lg border shadow-sm">
+                  <div className="bg-gray-50 p-3 rounded-lg border shadow-sm">
                     <Timer className="h-6 w-6 mx-auto mb-1 text-purple-600" />
-                    <p className="font-medium">Tempo</p>
-                    <p className="font-bold text-purple-700">{tempo} segundos</p>
+                    <p className="font-medium text-black">Tempo</p>
+                    <p className="font-bold text-black">{tempo} segundos</p>
                   </div>
                   
-                  <div className="bg-white p-3 rounded-lg border shadow-sm">
+                  <div className="bg-gray-50 p-3 rounded-lg border shadow-sm">
                     <AlertTriangle className="h-6 w-6 mx-auto mb-1 text-purple-600" />
-                    <p className="font-medium">Dificuldade</p>
-                    <p className="font-bold text-purple-700">{dificuldadeAtual}</p>
+                    <p className="font-medium text-black">Dificuldade</p>
+                    <p className="font-bold text-black">{dificuldadeAtual}</p>
                   </div>
                 </div>
               </div>
@@ -984,14 +984,14 @@ export default function DesenhaEBebe() {
               )}
               
               {config.modoRepresentacao === "mimica" && (
-                <div className="bg-purple-50 p-8 border rounded-lg text-center">
+                <div className="bg-white p-8 border rounded-lg text-center">
                   <div className="mb-4 flex justify-center">
-                    <Drama className="h-20 w-20 text-purple-600" />
+                    <Drama className="h-20 w-20 text-purple-700" />
                   </div>
-                  <p className="text-lg font-medium text-purple-800 mb-2">
+                  <p className="text-lg font-medium text-black mb-2">
                     {jogadores[jogadorAtual]?.nome} está fazendo mímica!
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-black">
                     Os outros jogadores devem adivinhar a palavra.
                   </p>
                 </div>
@@ -1065,13 +1065,13 @@ export default function DesenhaEBebe() {
                 )}
               </div>
               
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <h3 className="font-medium mb-2">Placar atual:</h3>
+              <div className="bg-white p-4 rounded-lg border">
+                <h3 className="font-medium mb-2 text-black">Placar atual:</h3>
                 <div className="space-y-4">
                   {[...jogadores].sort((a, b) => b.pontos - a.pontos).map((jogador) => (
                     <div key={jogador.id} className="space-y-1">
                       <div className="flex justify-between items-center">
-                        <span className="font-medium">{jogador.nome}</span>
+                        <span className="font-medium text-black">{jogador.nome}</span>
                         <div className="flex items-center gap-2">
                           <Badge className="bg-green-600 text-white font-medium">
                             <Trophy className="mr-1 h-3 w-3" />
@@ -1087,7 +1087,7 @@ export default function DesenhaEBebe() {
                       {/* Trilha de progresso */}
                       <div className="w-full h-6 bg-gray-200 rounded-full overflow-hidden relative">
                         <div 
-                          className="h-full bg-purple-600 rounded-full transition-all duration-500 ease-out flex items-center justify-end pr-1"
+                          className="h-full bg-purple-700 rounded-full transition-all duration-500 ease-out flex items-center justify-end pr-1"
                           style={{ width: `${Math.min(100, (jogador.pontos / config.metaVitoria) * 100)}%` }}
                         >
                           {jogador.pontos > 0 && (
@@ -1097,7 +1097,7 @@ export default function DesenhaEBebe() {
                           )}
                         </div>
                         <div className="absolute top-0 right-0 bottom-0 flex items-center pr-2">
-                          <span className="text-xs text-gray-500 font-medium">
+                          <span className="text-xs text-black font-medium">
                             Meta: {config.metaVitoria}
                           </span>
                         </div>
@@ -1163,8 +1163,8 @@ export default function DesenhaEBebe() {
                 )}
               </div>
               
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <h3 className="font-bold mb-3 text-center">Placar Final</h3>
+              <div className="bg-white p-4 rounded-lg border">
+                <h3 className="font-bold mb-3 text-center text-black">Placar Final</h3>
                 <div className="space-y-3">
                   {jogadoresOrdenados.map((jogador, index) => (
                     <div 
@@ -1174,19 +1174,19 @@ export default function DesenhaEBebe() {
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <span className="font-mono w-6 text-center">#{index+1}</span>
-                        <span className="font-medium">{jogador.nome}</span>
+                        <span className="font-mono w-6 text-center text-black">#{index+1}</span>
+                        <span className="font-medium text-black">{jogador.nome}</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <div className="flex flex-col items-end">
-                          <span className="text-sm text-muted-foreground">Pontos</span>
+                          <span className="text-sm text-black">Pontos</span>
                           <Badge className="bg-green-600 text-white">
                             {jogador.pontos}
                           </Badge>
                         </div>
                         <div className="flex flex-col items-end">
-                          <span className="text-sm text-muted-foreground">Bebidas</span>
-                          <Badge variant="outline" className="bg-red-100">
+                          <span className="text-sm text-black">Bebidas</span>
+                          <Badge className="bg-red-100 text-red-700 border-red-200 border">
                             {jogador.bebidas}
                           </Badge>
                         </div>
@@ -1196,28 +1196,28 @@ export default function DesenhaEBebe() {
                 </div>
               </div>
               
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <h3 className="font-bold mb-3 text-center">Estatísticas</h3>
+              <div className="bg-white p-4 rounded-lg border">
+                <h3 className="font-bold mb-3 text-center text-black">Estatísticas</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Total de rodadas</p>
-                    <p className="font-bold text-xl">{config.rodadas}</p>
+                    <p className="text-sm text-black">Total de rodadas</p>
+                    <p className="font-bold text-xl text-black">{config.rodadas}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Tempo jogado</p>
-                    <p className="font-bold text-xl">{Math.floor(tempoDecorrido / 60)} min</p>
+                    <p className="text-sm text-black">Tempo jogado</p>
+                    <p className="font-bold text-xl text-black">{Math.floor(tempoDecorrido / 60)} min</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Mais acertos</p>
-                    <p className="font-bold text-lg">
+                    <p className="text-sm text-black">Mais acertos</p>
+                    <p className="font-bold text-lg text-black">
                       {jogadores.reduce((prev, curr) => 
                         prev.acertos > curr.acertos ? prev : curr
                       ).nome}
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Mais bebidas</p>
-                    <p className="font-bold text-lg">
+                    <p className="text-sm text-black">Mais bebidas</p>
+                    <p className="font-bold text-lg text-black">
                       {jogadores.reduce((prev, curr) => 
                         prev.bebidas > curr.bebidas ? prev : curr
                       ).nome}
