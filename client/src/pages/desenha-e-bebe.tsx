@@ -150,6 +150,7 @@ export default function DesenhaEBebe() {
   const [tempoDecorrido, setTempoDecorrido] = useState(0);
   const [resultadoRodada, setResultadoRodada] = useState<"acerto" | "erro" | null>(null);
   const [palavrasUsadas, setPalavrasUsadas] = useState<string[]>([]);
+  const [palavraDialogOpen, setPalavraDialogOpen] = useState(false);
 
   // Canvas para desenho
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -765,40 +766,10 @@ export default function DesenhaEBebe() {
                   onClick={() => {
                     toast({
                       title: "Palavra revelada",
-                      description: `A palavra é: ${palavraAtual}`,
+                      description: `Memorize-a e não mostre aos outros!`,
                       variant: "default",
                     });
-                    
-                    Dialog.create({
-                      title: "Sua palavra secreta",
-                      content: (
-                        <div className="p-6 bg-white rounded-lg border text-center">
-                          <h2 className="text-2xl font-bold mb-2 text-black">Sua palavra é:</h2>
-                          <div className="text-4xl font-bold text-purple-800 mb-4 p-4 bg-purple-100 rounded-lg border border-purple-300">
-                            {palavraAtual}
-                          </div>
-                          
-                          <p className="text-sm text-gray-600 mb-4">
-                            Dificuldade: {dificuldadeAtual}/3 • Categoria: {CATEGORIAS.find(c => c.id === categoriaAtual)?.nome}
-                          </p>
-                          
-                          <Alert className="mb-4">
-                            <AlertTriangle className="h-4 w-4" />
-                            <AlertTitle>Atenção!</AlertTitle>
-                            <AlertDescription>
-                              Memorize essa palavra e não mostre para os outros jogadores!
-                            </AlertDescription>
-                          </Alert>
-                          
-                          <Button 
-                            onClick={() => Dialog.close()} 
-                            className="w-full bg-purple-700 hover:bg-purple-800"
-                          >
-                            Entendi e memorizei!
-                          </Button>
-                        </div>
-                      )
-                    });
+                    setPalavraDialogOpen(true);
                   }}
                   className="bg-purple-700 hover:bg-purple-800 w-full mb-4"
                 >
@@ -1302,6 +1273,44 @@ export default function DesenhaEBebe() {
       <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
         {renderizarConteudo()}
       </div>
+      
+      {/* Dialog para mostrar a palavra secreta */}
+      <Dialog open={palavraDialogOpen} onOpenChange={setPalavraDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">Sua palavra secreta</DialogTitle>
+            <DialogDescription className="text-center">
+              Memorize a palavra e não mostre para os outros jogadores
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="p-4 bg-white rounded-lg border text-center">
+            <div className="text-4xl font-bold text-purple-800 mb-4 p-4 bg-purple-100 rounded-lg border border-purple-300">
+              {palavraAtual}
+            </div>
+            
+            <p className="text-sm text-gray-600 mb-4">
+              Dificuldade: {dificuldadeAtual}/3 • Categoria: {CATEGORIAS.find(c => c.id === categoriaAtual)?.nome}
+            </p>
+            
+            <Alert className="mb-4">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Atenção!</AlertTitle>
+              <AlertDescription>
+                Memorize essa palavra e não mostre para os outros jogadores!
+              </AlertDescription>
+            </Alert>
+          </div>
+          
+          <DialogFooter className="sm:justify-center">
+            <DialogClose asChild>
+              <Button type="button" className="bg-purple-700 hover:bg-purple-800">
+                Entendi e memorizei!
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </GameLayout>
   );
 }
