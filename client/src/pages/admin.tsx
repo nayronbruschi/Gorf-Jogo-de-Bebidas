@@ -562,7 +562,7 @@ export default function Admin() {
         
         {/* 3 Boxes principais */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-purple-900/30 backdrop-blur-lg border-purple-700/50">
+          <Card className="bg-purple-900 shadow-lg border-purple-800">
             <CardHeader>
               <CardTitle className="text-white flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -573,23 +573,23 @@ export default function Admin() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center justify-center py-10 text-center">
-                <div className="w-16 h-16 rounded-full bg-purple-600/20 flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-16 h-16 rounded-full bg-purple-800 flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <h3 className="text-white text-lg font-medium mb-2">Configurar Banners</h3>
-                <p className="text-white/60 text-sm mb-6">
+                <p className="text-white text-sm mb-6">
                   Gerencie os banners promocionais que aparecem na página inicial do aplicativo.
                 </p>
-                <Button onClick={() => navigate("/admin/banners")}>
+                <Button onClick={() => navigate("/admin/banners")} className="bg-purple-700 hover:bg-purple-600 text-white">
                   Acessar Banners
                 </Button>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="bg-purple-900/30 backdrop-blur-lg border-purple-700/50">
+          <Card className="bg-purple-900 shadow-lg border-purple-800">
             <CardHeader>
               <CardTitle className="text-white flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -600,23 +600,23 @@ export default function Admin() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center justify-center py-10 text-center">
-                <div className="w-16 h-16 rounded-full bg-purple-600/20 flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-16 h-16 rounded-full bg-purple-800 flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                   </svg>
                 </div>
                 <h3 className="text-white text-lg font-medium mb-2">Testar Dados Geográficos</h3>
-                <p className="text-white/60 text-sm mb-6">
+                <p className="text-white text-sm mb-6">
                   Simule usuários em várias localidades do Brasil para testar a visualização geográfica no dashboard.
                 </p>
-                <Button onClick={() => window.location.href = "/admin/geo-test"} className="bg-purple-600 hover:bg-purple-700">
+                <Button onClick={() => window.location.href = "/admin/geo-test"} className="bg-purple-700 hover:bg-purple-600 text-white">
                   Iniciar Simulação
                 </Button>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="bg-purple-900/30 backdrop-blur-lg border-purple-700/50">
+          <Card className="bg-purple-900 shadow-lg border-purple-800">
             <CardHeader>
               <CardTitle className="text-white flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -628,17 +628,17 @@ export default function Admin() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center justify-center py-10 text-center">
-                <div className="w-16 h-16 rounded-full bg-purple-600/20 flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-16 h-16 rounded-full bg-purple-800 flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
                 <h3 className="text-white text-lg font-medium mb-2">Configurações Avançadas</h3>
-                <p className="text-white/60 text-sm mb-6">
+                <p className="text-white text-sm mb-6">
                   Configure opções avançadas do sistema e parâmetros do aplicativo.
                 </p>
-                <Button disabled className="bg-purple-700/50 hover:bg-purple-700/80">
+                <Button disabled className="bg-purple-700/50 hover:bg-purple-600 text-white">
                   Em desenvolvimento
                 </Button>
               </div>
