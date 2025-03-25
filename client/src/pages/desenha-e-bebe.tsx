@@ -188,9 +188,19 @@ export default function DesenhaEBebe() {
   }, [estadoJogo, tempo, config.tempo]);
 
   // Inicializar o contexto do canvas quando componente montar
+  // Ajustar tamanho do canvas ao entrar no modo desenho
   useEffect(() => {
     if (canvasRef.current && estadoJogo === "desenho") {
       const canvas = canvasRef.current;
+      
+      // Ajustar tamanho do canvas para preencher o contêiner
+      const container = canvas.parentElement;
+      if (container) {
+        // Definir tamanho baseado no contêiner com margem adequada
+        canvas.width = Math.min(container.clientWidth - 20, 800);
+        canvas.height = Math.min(window.innerHeight * 0.5, 500);
+      }
+      
       const context = canvas.getContext("2d");
       if (context) {
         context.lineCap = "round";
@@ -206,10 +216,12 @@ export default function DesenhaEBebe() {
     }
   }, [estadoJogo, corPincel, tamanhoPincel]);
 
-  // Funções de desenho
+  // Funções de desenho com correção de offset
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!ctx) return;
     setIsDrawing(true);
+    
+    e.preventDefault(); // Prevenir comportamento padrão
     
     let clientX, clientY;
     
@@ -228,8 +240,10 @@ export default function DesenhaEBebe() {
     if (!canvas) return;
     
     const rect = canvas.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
+    
+    // Corrigir coordenadas considerando a diferença entre as dimensões do canvas no DOM e suas dimensões internas
+    const x = ((clientX - rect.left) / rect.width) * canvas.width;
+    const y = ((clientY - rect.top) / rect.height) * canvas.height;
     
     ctx.beginPath();
     ctx.moveTo(x, y);
@@ -239,6 +253,8 @@ export default function DesenhaEBebe() {
   const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing || !ctx) return;
     
+    e.preventDefault(); // Prevenir comportamento padrão
+    
     let clientX, clientY;
     
     if ('touches' in e) {
@@ -256,8 +272,10 @@ export default function DesenhaEBebe() {
     if (!canvas) return;
     
     const rect = canvas.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
+    
+    // Corrigir coordenadas considerando a diferença entre as dimensões do canvas no DOM e suas dimensões internas
+    const x = ((clientX - rect.left) / rect.width) * canvas.width;
+    const y = ((clientY - rect.top) / rect.height) * canvas.height;
     
     ctx.strokeStyle = corPincel;
     ctx.lineWidth = tamanhoPincel;
@@ -827,19 +845,19 @@ export default function DesenhaEBebe() {
             
             <CardContent className="space-y-4">
               <div className="relative bg-white border rounded-lg overflow-hidden">
-                <canvas
-                  ref={canvasRef}
-                  width={640}
-                  height={480}
-                  className="w-full touch-none"
-                  onMouseDown={startDrawing}
-                  onMouseMove={draw}
-                  onMouseUp={stopDrawing}
-                  onMouseLeave={stopDrawing}
-                  onTouchStart={startDrawing}
-                  onTouchMove={draw}
-                  onTouchEnd={stopDrawing}
-                />
+                <div className="relative w-full flex justify-center">
+                  <canvas
+                    ref={canvasRef}
+                    className="border-4 border-gray-300 bg-white rounded-lg shadow-lg w-full h-[400px] touch-none"
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
+                    onTouchStart={startDrawing}
+                    onTouchMove={draw}
+                    onTouchEnd={stopDrawing}
+                  />
+                </div>
                 
                 <div className="absolute bottom-4 left-4 flex gap-2 bg-white/80 p-2 rounded-lg shadow">
                   <div className="flex gap-1">
@@ -997,12 +1015,10 @@ export default function DesenhaEBebe() {
             
             <CardContent className="space-y-4">
               {config.modoRepresentacao === "desenho" && (
-                <div className="bg-white border rounded-lg overflow-hidden">
+                <div className="bg-white border-4 border-gray-300 rounded-lg overflow-hidden shadow-lg flex justify-center">
                   <canvas
                     ref={canvasRef}
-                    width={640}
-                    height={480}
-                    className="w-full"
+                    className="w-full h-[400px]"
                   />
                 </div>
               )}
