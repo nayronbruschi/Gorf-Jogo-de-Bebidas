@@ -168,7 +168,9 @@ export async function registerRoutes(app: Express) {
       }
 
       const file = req.file;
-      const destPath = path.join(BUCKET_PATH, file.originalname);
+      // Tornar o nome do arquivo único usando timestamp
+      const uniqueFilename = `${Date.now()}-${file.originalname.replace(/\s+/g, '_')}`;
+      const destPath = path.join(BUCKET_PATH, uniqueFilename);
 
       // Garantir que o diretório existe
       const dir = path.dirname(destPath);
@@ -181,7 +183,7 @@ export async function registerRoutes(app: Express) {
       console.log('Arquivo movido para:', destPath);
 
       // Retornar a URL do arquivo
-      const url = `/api/images/${file.originalname}`;
+      const url = `/api/images/${uniqueFilename}`;
       res.json({ url });
     } catch (error) {
       console.error('Erro no upload:', error);

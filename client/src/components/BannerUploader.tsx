@@ -78,15 +78,15 @@ export function BannerUploader() {
   };
 
   return (
-    <Card className="bg-purple-900/30 backdrop-blur-lg border-purple-700/50">
+    <Card className="bg-white shadow border border-gray-100">
       <CardHeader>
-        <CardTitle className="text-white">Upload de Banners</CardTitle>
+        <CardTitle className="text-purple-900">Upload de Banners</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div className="p-4 bg-purple-800/20 rounded-lg border border-purple-700/20 mb-4">
-            <h3 className="text-white font-semibold mb-2">⚠️ Importante</h3>
-            <p className="text-white/80 text-sm">
+          <div className="p-4 bg-purple-50 rounded-lg border border-purple-100 mb-4">
+            <h3 className="text-purple-900 font-semibold mb-2">⚠️ Importante</h3>
+            <p className="text-purple-800 text-sm">
               Os textos dos banners são exibidos em cor branca sobre a imagem. Para melhor visibilidade, 
               recomendamos usar imagens com fundo escuro ou com um gradiente. Evite banners com fundo totalmente branco.
             </p>
@@ -101,12 +101,12 @@ export function BannerUploader() {
           </div>
           
           <div className="space-y-4">
-            <label className="text-sm text-white/60">Selecione o banner</label>
+            <label className="text-sm text-gray-600">Selecione o banner</label>
             <Select
               value={selectedBanner}
               onValueChange={setSelectedBanner}
             >
-              <SelectTrigger className="bg-white/10 border-white/20 text-white">
+              <SelectTrigger className="border-gray-300 text-gray-700">
                 <SelectValue placeholder="Selecione o banner" />
               </SelectTrigger>
               <SelectContent>
@@ -122,12 +122,12 @@ export function BannerUploader() {
           {Object.entries(bannerUrls).map(([number, url]) => (
             <div key={number} className="mt-4">
               <div className="flex justify-between items-center mb-2">
-                <p className="text-sm text-white/60">Banner {number}</p>
-                <div className="text-xs px-2 py-0.5 rounded bg-purple-700/30 text-white/80">
+                <p className="text-sm text-gray-600">Banner {number}</p>
+                <div className="text-xs px-2 py-0.5 rounded bg-purple-100 text-purple-700">
                   {number === selectedBanner ? "Selecionado" : ""}
                 </div>
               </div>
-              <div className="relative rounded-lg overflow-hidden border border-white/10">
+              <div className="relative rounded-lg overflow-hidden border border-gray-200">
                 <img 
                   src={url} 
                   alt={`Banner ${number}`} 
