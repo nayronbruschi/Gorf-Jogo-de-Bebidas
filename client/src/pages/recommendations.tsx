@@ -105,18 +105,18 @@ export default function Recommendations() {
           <div className="space-y-6">
             {/* TOP RECOMMENDATION */}
             {recommendations.length > 0 && (
-              <Card className="border-2 border-yellow-400 overflow-hidden">
-                <div className="absolute top-0 right-0 bg-yellow-400 text-black px-4 py-1 rounded-bl-lg font-medium text-sm flex items-center">
-                  <Star className="h-4 w-4 mr-1 fill-black" />
+              <Card className="border-2 border-yellow-500 overflow-hidden">
+                <div className="absolute top-0 right-0 bg-yellow-600 text-white px-4 py-1 rounded-bl-lg font-medium text-sm flex items-center">
+                  <Star className="h-4 w-4 mr-1 fill-white" />
                   {recommendations[0].matchScore}% de compatibilidade
                 </div>
                 
-                <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-500 text-white">
+                <CardHeader className="bg-gradient-to-r from-purple-700 to-blue-600 text-white">
                   <div className="flex items-center">
                     <Trophy className="h-6 w-6 mr-2 text-yellow-300" />
                     <CardTitle>Jogo Ideal para Você</CardTitle>
                   </div>
-                  <CardDescription className="text-purple-100">
+                  <CardDescription className="text-white">
                     Compatibilidade máxima com seu perfil
                   </CardDescription>
                 </CardHeader>
@@ -124,17 +124,17 @@ export default function Recommendations() {
                 <CardContent className="pt-6">
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-2xl font-bold">{recommendations[0].name}</h3>
-                      <p className="text-muted-foreground">{recommendations[0].description}</p>
+                      <h3 className="text-2xl font-bold text-gray-900">{recommendations[0].name}</h3>
+                      <p className="text-gray-700">{recommendations[0].description}</p>
                     </div>
                     
                     <div className="space-y-2">
-                      <h4 className="font-medium text-sm uppercase text-muted-foreground">Por que jogar:</h4>
+                      <h4 className="font-medium text-sm uppercase text-gray-700">Por que jogar:</h4>
                       <ul className="space-y-2">
                         {recommendations[0].reasonsToPlay.map((reason, index) => (
                           <li key={index} className="flex items-start">
-                            <ThumbsUp className="h-5 w-5 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
-                            <span>{reason}</span>
+                            <ThumbsUp className="h-5 w-5 mr-2 text-green-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-800">{reason}</span>
                           </li>
                         ))}
                       </ul>
@@ -142,14 +142,14 @@ export default function Recommendations() {
                     
                     <div className="flex flex-wrap gap-2 mt-2">
                       {recommendations[0].tags.map((tag) => (
-                        <Badge key={tag} variant="secondary">{tag}</Badge>
+                        <Badge key={tag} variant="secondary" className="bg-purple-100 text-purple-800">{tag}</Badge>
                       ))}
                     </div>
                   </div>
                 </CardContent>
                 
                 <CardFooter className="bg-gray-50 border-t">
-                  <Button className="w-full" asChild>
+                  <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white" asChild>
                     <Link href={recommendations[0].route}>
                       Jogar Agora <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
@@ -165,31 +165,31 @@ export default function Recommendations() {
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
                       <CardTitle className="text-lg">{game.name}</CardTitle>
-                      <Badge variant="outline" className="ml-2 bg-purple-50">
+                      <Badge className="ml-2 bg-purple-700 text-white font-medium">
                         {game.matchScore}%
                       </Badge>
                     </div>
-                    <CardDescription className="line-clamp-2">{game.description}</CardDescription>
+                    <CardDescription className="line-clamp-2 text-gray-700">{game.description}</CardDescription>
                   </CardHeader>
                   
                   <CardContent className="pt-0">
                     <div className="flex flex-wrap gap-1 mt-2">
                       {game.tags.slice(0, 3).map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
+                        <Badge key={tag} variant="secondary" className="text-xs bg-purple-100 text-purple-800">{tag}</Badge>
                       ))}
                       {game.tags.length > 3 && (
-                        <Badge variant="outline" className="text-xs">+{game.tags.length - 3}</Badge>
+                        <Badge variant="outline" className="text-xs text-gray-700 border-gray-400">+{game.tags.length - 3}</Badge>
                       )}
                     </div>
                     
-                    <div className="mt-2 text-sm">
+                    <div className="mt-2 text-sm text-gray-800">
                       <span className="font-medium">Por que jogar: </span>
                       {game.reasonsToPlay[0]}
                     </div>
                   </CardContent>
                   
                   <CardFooter className="pt-2 border-t">
-                    <Button variant="ghost" className="w-full" asChild>
+                    <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white" asChild>
                       <Link href={game.route}>
                         Jogar <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
