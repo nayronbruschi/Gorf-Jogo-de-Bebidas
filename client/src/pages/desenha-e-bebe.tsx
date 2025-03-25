@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { shuffle } from "@/lib/utils";
 import { GameLayout } from "@/components/GameLayout";
+import { startGameSession, updateGameStats } from "@/lib/firebase";
 import { 
   Check,
   Crown, 
@@ -328,6 +329,14 @@ export default function DesenhaEBebe() {
         variant: "destructive",
       });
       return;
+    }
+    
+    // Registra o jogo nas estatísticas do usuário
+    if (window.authState?.user?.uid) {
+      // Registrar o início da sessão de jogo
+      startGameSession(window.authState.user.uid, "Desenha e Bebe");
+      // Atualizar as estatísticas do jogo (jogos recentes)
+      updateGameStats(window.authState.user.uid, "Desenha e Bebe");
     }
     
     setRodadaAtual(1);
