@@ -223,6 +223,13 @@ export const games: GameType[] = [
     route: "/classic"
   },
   {
+    id: "desenha-e-bebe",
+    name: "Desenha e Bebe",
+    description: "Desenhe, adivinhe e... quem falhar, bebe!",
+    icon: Palette,
+    route: "/desenha-e-bebe"
+  },
+  {
     id: "guess-who",
     name: "Quem Sou Eu",
     description: "Adivinhe quem você é neste jogo divertido!",
