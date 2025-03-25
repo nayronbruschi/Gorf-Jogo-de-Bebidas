@@ -409,6 +409,8 @@ export default function DesenhaEBebe() {
   };
 
   const iniciarAdivinhacao = () => {
+    // Preservar o desenho atual durante a transição para a fase de adivinhação
+    // Não limpa o canvas aqui para manter o desenho
     setTempo(config.tempo);
     setEstadoJogo("adivinhacao");
   };
@@ -848,7 +850,7 @@ export default function DesenhaEBebe() {
                 <div className="relative w-full flex justify-center">
                   <canvas
                     ref={canvasRef}
-                    className="border-4 border-gray-300 bg-white rounded-lg shadow-lg w-full h-[400px] touch-none"
+                    className="border-4 border-gray-300 bg-white rounded-lg shadow-lg w-full h-[500px] touch-none"
                     onMouseDown={startDrawing}
                     onMouseMove={draw}
                     onMouseUp={stopDrawing}
@@ -1018,7 +1020,7 @@ export default function DesenhaEBebe() {
                 <div className="bg-white border-4 border-gray-300 rounded-lg overflow-hidden shadow-lg flex justify-center">
                   <canvas
                     ref={canvasRef}
-                    className="w-full h-[400px]"
+                    className="w-full h-[500px]"
                   />
                 </div>
               )}
@@ -1289,8 +1291,8 @@ export default function DesenhaEBebe() {
   };
 
   return (
-    <GameLayout title="Desenha e Bebe" showPlayers={false}>
-      <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
+    <GameLayout title="" showPlayers={false}>
+      <div className="flex justify-center items-center min-h-[calc(100vh-150px)]">
         {renderizarConteudo()}
       </div>
       
