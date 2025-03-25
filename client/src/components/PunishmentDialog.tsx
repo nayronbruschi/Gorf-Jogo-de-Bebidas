@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
@@ -59,7 +60,7 @@ export function PunishmentDialog({
   onAcceptPunishment,
   onGenerateNewPunishment,
 }: PunishmentDialogProps) {
-  const [punishment, setPunishment] = React.useState(
+  const [punishment, setPunishment] = useState(
     punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)]
   );
   const punishmentDrinks = 1; // Placeholder -  needs proper implementation
