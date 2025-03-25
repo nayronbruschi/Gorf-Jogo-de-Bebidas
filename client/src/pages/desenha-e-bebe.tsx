@@ -9,8 +9,9 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { shuffle } from "@/lib/utils";
 import { GameLayout } from "@/components/GameLayout";
@@ -30,7 +31,8 @@ import {
   AlertTriangle,
   Drama,
   Target,
-  Timer
+  Timer,
+  Eye
 } from "lucide-react";
 
 // Categorias do jogo
@@ -724,9 +726,9 @@ export default function DesenhaEBebe() {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle className="text-xl font-bold">Rodada {rodadaAtual}/{config.rodadas}</CardTitle>
-                  <CardDescription>
-                    Vez de: <span className="font-bold">{jogadores[jogadorAtual]?.nome}</span>
+                  <CardTitle className="text-xl font-bold text-black">Rodada {rodadaAtual}/{config.rodadas}</CardTitle>
+                  <CardDescription className="text-black text-base">
+                    Vez de: <span className="font-bold text-black">{jogadores[jogadorAtual]?.nome}</span>
                   </CardDescription>
                 </div>
                 
@@ -738,41 +740,88 @@ export default function DesenhaEBebe() {
             
             <CardContent className="space-y-4">
               <div className="text-center p-8 bg-white rounded-lg border">
-                <h2 className="text-2xl font-bold mb-2 text-black">Sua palavra é:</h2>
-                <div className="text-4xl font-bold text-black mb-4">
-                  {palavraAtual}
-                </div>
-                
-                <p className="text-sm text-black">
-                  Dificuldade: {dificuldadeAtual}/3
-                </p>
-                
-                <div className="my-4">
+                <div className="mb-6">
+                  <div className="bg-purple-100 p-4 rounded-lg border border-purple-300 mb-4">
+                    <Avatar className="h-20 w-20 mx-auto mb-2">
+                      <AvatarFallback className="bg-purple-600 text-white text-xl">
+                        {jogadores[jogadorAtual]?.nome.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <h2 className="text-xl font-bold text-black mb-1">{jogadores[jogadorAtual]?.nome}</h2>
+                    <p className="text-sm text-black">é seu turno para {config.modoRepresentacao === "desenho" ? "desenhar" : "fazer mímica"}</p>
+                  </div>
+                  
                   <Alert>
                     <AlertTriangle className="h-4 w-4" />
                     <AlertTitle>Atenção!</AlertTitle>
                     <AlertDescription>
-                      Não mostre essa tela aos outros jogadores!
+                      Apenas {jogadores[jogadorAtual]?.nome} deve ver a palavra secreta.
+                      Os outros jogadores não devem olhar para a tela agora!
                     </AlertDescription>
                   </Alert>
                 </div>
+                
+                <Button 
+                  onClick={() => {
+                    toast({
+                      title: "Palavra revelada",
+                      description: `A palavra é: ${palavraAtual}`,
+                      variant: "default",
+                    });
+                    
+                    Dialog.create({
+                      title: "Sua palavra secreta",
+                      content: (
+                        <div className="p-6 bg-white rounded-lg border text-center">
+                          <h2 className="text-2xl font-bold mb-2 text-black">Sua palavra é:</h2>
+                          <div className="text-4xl font-bold text-purple-800 mb-4 p-4 bg-purple-100 rounded-lg border border-purple-300">
+                            {palavraAtual}
+                          </div>
+                          
+                          <p className="text-sm text-gray-600 mb-4">
+                            Dificuldade: {dificuldadeAtual}/3 • Categoria: {CATEGORIAS.find(c => c.id === categoriaAtual)?.nome}
+                          </p>
+                          
+                          <Alert className="mb-4">
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertTitle>Atenção!</AlertTitle>
+                            <AlertDescription>
+                              Memorize essa palavra e não mostre para os outros jogadores!
+                            </AlertDescription>
+                          </Alert>
+                          
+                          <Button 
+                            onClick={() => Dialog.close()} 
+                            className="w-full bg-purple-700 hover:bg-purple-800"
+                          >
+                            Entendi e memorizei!
+                          </Button>
+                        </div>
+                      )
+                    });
+                  }}
+                  className="bg-purple-700 hover:bg-purple-800 w-full mb-4"
+                >
+                  <Eye className="mr-2 h-4 w-4" />
+                  Revelar Minha Palavra
+                </Button>
               </div>
             </CardContent>
             
             <CardFooter>
               <Button 
                 onClick={iniciarAtividade}
-                className="w-full bg-purple-700 hover:bg-purple-800"
+                className="w-full bg-green-600 hover:bg-green-700"
               >
                 {config.modoRepresentacao === "desenho" ? (
                   <>
                     <Pencil className="mr-2 h-4 w-4" />
-                    Começar a Desenhar
+                    Estou Pronto Para Desenhar
                   </>
                 ) : (
                   <>
                     <Drama className="mr-2 h-4 w-4" />
-                    Começar a Mímica
+                    Estou Pronto Para Fazer Mímica
                   </>
                 )}
               </Button>
@@ -1038,8 +1087,8 @@ export default function DesenhaEBebe() {
                   ? "bg-green-100 border-green-500 border" 
                   : "bg-red-100 border-red-500 border"
               }`}>
-                <p className="text-lg mb-2">
-                  A palavra era: <span className="font-bold">{palavraAtual}</span>
+                <p className="text-lg mb-2 text-black">
+                  A palavra era: <span className="font-bold text-black">{palavraAtual}</span>
                 </p>
                 
                 {resultadoRodada === "acerto" ? (
