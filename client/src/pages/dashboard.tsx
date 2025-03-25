@@ -155,7 +155,7 @@ export default function Dashboard() {
           )}
 
           {/* Recomendação de Jogo */}
-          <GameRecommendationCard className="bg-white/10 backdrop-blur-lg border-none" />
+          <GameRecommendationCard className="bg-white border-gray-200 shadow-md" />
 
           {/* Estatísticas */}
           <div className="grid grid-cols-2 gap-4">

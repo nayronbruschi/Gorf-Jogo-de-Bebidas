@@ -540,7 +540,7 @@ export default function Admin() {
                 </svg>
                 Mapa de Usuários no Brasil
               </div>
-              <div className="text-sm text-white/60">
+              <div className="text-sm text-purple-900 font-medium">
                 {userStats.userLocations.reduce((total, loc) => total + loc.count, 0)} usuários no total
               </div>
             </CardTitle>
@@ -549,9 +549,9 @@ export default function Admin() {
             <div className="mb-4">
               <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-4">
                 {userStats.userLocations.slice(0, 5).map((location, index) => (
-                  <div key={location.city} className="flex items-center justify-between bg-purple-900/20 p-2 rounded-md">
+                  <div key={location.city} className="flex items-center justify-between bg-purple-900/90 p-2 rounded-md">
                     <div className="text-white font-medium">{location.city}</div>
-                    <div className="text-purple-300 text-sm">{location.count} usuário{location.count > 1 ? 's' : ''}</div>
+                    <div className="text-white text-sm font-medium">{location.count} usuário{location.count > 1 ? 's' : ''}</div>
                   </div>
                 ))}
               </div>
