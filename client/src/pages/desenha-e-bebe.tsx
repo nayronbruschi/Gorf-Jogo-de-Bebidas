@@ -389,7 +389,7 @@ export default function DesenhaEBebe() {
     const jogadoresAtualizados = [...jogadores];
     
     if (resultado === "acerto") {
-      // Desenhista ganha 1 ponto
+      // Jogador que desenhou/mimicou ganha 1 ponto
       jogadoresAtualizados[jogadorAtual].pontos += 1;
       jogadoresAtualizados[jogadorAtual].acertos += 1;
       
@@ -398,6 +398,15 @@ export default function DesenhaEBebe() {
         description: `${jogadoresAtualizados[jogadorAtual].nome} ganhou 1 ponto!`,
         variant: "default",
       });
+      
+      // Verifica se o jogador atingiu a meta de pontos para vencer
+      if (jogadoresAtualizados[jogadorAtual].pontos >= config.metaVitoria) {
+        toast({
+          title: "Meta atingida!",
+          description: `${jogadoresAtualizados[jogadorAtual].nome} atingiu ${config.metaVitoria} pontos!`,
+          variant: "default",
+        });
+      }
     } else {
       // Se errou, bebe conforme a dificuldade
       const nivelBebida = NIVEIS_BEBIDA.find(n => n.dificuldade === dificuldadeAtual) || NIVEIS_BEBIDA[0];
@@ -415,6 +424,12 @@ export default function DesenhaEBebe() {
   };
 
   const proximaRodada = () => {
+    // Verifica se o jogador atual atingiu a meta de pontos
+    if (jogadores[jogadorAtual].pontos >= config.metaVitoria) {
+      setEstadoJogo("fim");
+      return;
+    }
+    
     // Avança para o próximo jogador
     const novoJogadorAtual = (jogadorAtual + 1) % jogadores.length;
     setJogadorAtual(novoJogadorAtual);
@@ -424,7 +439,7 @@ export default function DesenhaEBebe() {
       const novaRodada = rodadaAtual + 1;
       setRodadaAtual(novaRodada);
       
-      // Verifica se o jogo acabou
+      // Verifica se o jogo acabou pelo número de rodadas
       if (novaRodada > config.rodadas) {
         setEstadoJogo("fim");
         return;
@@ -628,14 +643,35 @@ export default function DesenhaEBebe() {
                   <div className="bg-white p-4 rounded-lg shadow-sm border">
                     <h3 className="text-lg font-bold text-purple-800 mb-3">Como jogar:</h3>
                     <ol className="list-decimal pl-5 space-y-3 text-gray-800">
-                      <li className="bg-purple-50 p-2 rounded">Um jogador recebe uma palavra para desenhar.</li>
-                      <li className="bg-purple-50 p-2 rounded">O jogador tem <span className="font-bold text-purple-700">{config.tempo} segundos</span> para desenhar a palavra.</li>
-                      <li className="bg-purple-50 p-2 rounded">Os outros jogadores têm <span className="font-bold text-purple-700">{config.tempo} segundos</span> para adivinhar.</li>
-                      <li className="bg-purple-50 p-2 rounded">Se os jogadores adivinharem, o desenhista ganha <span className="font-bold text-green-600">1 ponto</span>.</li>
-                      <li className="bg-purple-50 p-2 rounded">Se ninguém adivinhar, o desenhista <span className="font-bold text-red-600">bebe</span> conforme a dificuldade da palavra.</li>
-                      <li className="bg-purple-50 p-2 rounded">A cada rodada, um novo jogador desenha.</li>
-                      <li className="bg-purple-50 p-2 rounded">O jogo termina após <span className="font-bold text-purple-700">{config.rodadas} rodadas</span> completas.</li>
-                      <li className="bg-purple-50 p-2 rounded">Vence quem tiver mais pontos ao final.</li>
+                      <li className="bg-purple-50 p-2 rounded">
+                        Um jogador recebe uma palavra para {config.modoRepresentacao === "desenho" ? "desenhar" : "fazer mímica"}.
+                      </li>
+                      <li className="bg-purple-50 p-2 rounded">
+                        O jogador tem <span className="font-bold text-purple-700">{config.tempo} segundos</span> para 
+                        {config.modoRepresentacao === "desenho" 
+                          ? " desenhar a palavra" 
+                          : " representar a palavra usando apenas gestos (sem falar ou emitir sons)"
+                        }.
+                      </li>
+                      <li className="bg-purple-50 p-2 rounded">
+                        Os outros jogadores têm <span className="font-bold text-purple-700">{config.tempo} segundos</span> para adivinhar.
+                      </li>
+                      <li className="bg-purple-50 p-2 rounded">
+                        Se os jogadores adivinharem, o {config.modoRepresentacao === "desenho" ? "desenhista" : "mímico"} ganha <span className="font-bold text-green-600">1 ponto</span>.
+                      </li>
+                      <li className="bg-purple-50 p-2 rounded">
+                        Se ninguém adivinhar, o jogador <span className="font-bold text-red-600">bebe</span> conforme a dificuldade da palavra.
+                      </li>
+                      <li className="bg-purple-50 p-2 rounded">
+                        A cada rodada, um novo jogador {config.modoRepresentacao === "desenho" ? "desenha" : "faz mímica"}.
+                      </li>
+                      <li className="bg-purple-50 p-2 rounded">
+                        O primeiro jogador a atingir <span className="font-bold text-purple-700">{config.metaVitoria} pontos</span> vence o jogo.
+                      </li>
+                      <li className="bg-purple-50 p-2 rounded">
+                        Se nenhum jogador atingir a meta, o jogo acaba após <span className="font-bold text-purple-700">{config.rodadas} rodadas</span> completas,
+                        e vence quem tiver mais pontos.
+                      </li>
                     </ol>
                     
                     <h3 className="text-lg font-bold text-purple-800 mt-6 mb-3">Níveis de bebida:</h3>
