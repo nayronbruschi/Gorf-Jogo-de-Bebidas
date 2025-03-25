@@ -1064,10 +1064,10 @@ export default function DesenhaEBebe() {
               
               <div className="space-y-2">
                 <h3 className="font-medium">Os jogadores acertaram?</h3>
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-2">
                   <Button 
                     onClick={() => handleResultado("acerto")} 
-                    className="flex-1 bg-green-600 hover:bg-green-700"
+                    className="w-full bg-green-600 hover:bg-green-700"
                   >
                     <Check className="mr-2 h-4 w-4" />
                     Sim! Alguém acertou
@@ -1075,7 +1075,7 @@ export default function DesenhaEBebe() {
                   
                   <Button 
                     onClick={() => handleResultado("erro")} 
-                    className="flex-1 bg-red-600 hover:bg-red-700"
+                    className="w-full bg-red-600 hover:bg-red-700"
                   >
                     <SkipForward className="mr-2 h-4 w-4" />
                     Não, ninguém acertou
