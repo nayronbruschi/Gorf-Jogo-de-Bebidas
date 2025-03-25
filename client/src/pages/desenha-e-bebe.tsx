@@ -106,8 +106,11 @@ type Jogador = {
   bebidas: number;
 };
 
+// Modo de representação
+type ModoRepresentacao = "desenho" | "mimica";
+
 // Estado do jogo
-type EstadoJogo = "configuracao" | "jogo" | "desenho" | "adivinhacao" | "resultado" | "fim";
+type EstadoJogo = "configuracao" | "jogo" | "desenho" | "mimica" | "adivinhacao" | "resultado" | "fim";
 
 // Configurações do jogo
 type ConfigJogo = {
@@ -115,6 +118,8 @@ type ConfigJogo = {
   rodadas: number;
   categorias: string[];
   maxJogadores: number;
+  modoRepresentacao: ModoRepresentacao;
+  metaVitoria: number; // Quantidade de pontos necessários para vencer
 };
 
 export default function DesenhaEBebe() {
@@ -127,7 +132,9 @@ export default function DesenhaEBebe() {
     tempo: 60,
     rodadas: 3,
     categorias: CATEGORIAS.map(c => c.id),
-    maxJogadores: 8
+    maxJogadores: 8,
+    modoRepresentacao: "desenho",
+    metaVitoria: 5
   });
   const [rodadaAtual, setRodadaAtual] = useState(0);
   const [jogadorAtual, setJogadorAtual] = useState(0);
@@ -520,6 +527,53 @@ export default function DesenhaEBebe() {
                         onValueChange={(value) => setConfig({...config, rodadas: value[0]})}
                       />
                     </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="meta">Pontos para vencer: {config.metaVitoria}</Label>
+                      <Slider
+                        id="meta"
+                        min={3}
+                        max={15}
+                        step={1}
+                        value={[config.metaVitoria]}
+                        onValueChange={(value) => setConfig({...config, metaVitoria: value[0]})}
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label>Modo de representação</Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div 
+                          className={`cursor-pointer p-4 rounded-lg border-2 flex flex-col items-center ${
+                            config.modoRepresentacao === "desenho" 
+                              ? "border-purple-600 bg-purple-50" 
+                              : "border-gray-200 hover:border-purple-300"
+                          }`}
+                          onClick={() => setConfig({...config, modoRepresentacao: "desenho"})}
+                        >
+                          <Palette className="h-8 w-8 mb-2 text-purple-700" />
+                          <span className="font-medium">Desenho</span>
+                          <span className="text-xs text-gray-500 text-center mt-1">
+                            Desenhe a palavra para os outros adivinharem
+                          </span>
+                        </div>
+                        
+                        <div 
+                          className={`cursor-pointer p-4 rounded-lg border-2 flex flex-col items-center ${
+                            config.modoRepresentacao === "mimica" 
+                              ? "border-purple-600 bg-purple-50" 
+                              : "border-gray-200 hover:border-purple-300"
+                          }`}
+                          onClick={() => setConfig({...config, modoRepresentacao: "mimica"})}
+                        >
+                          <Drama className="h-8 w-8 mb-2 text-purple-700" />
+                          <span className="font-medium">Mímica</span>
+                          <span className="text-xs text-gray-500 text-center mt-1">
+                            Faça mímicas para representar a palavra
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                     
                     <div className="space-y-2">
                       <Label>Categorias</Label>
@@ -562,27 +616,39 @@ export default function DesenhaEBebe() {
                 </TabsContent>
                 
                 <TabsContent value="regras" className="space-y-4 mt-4">
-                  <div className="prose max-w-none">
-                    <h3>Como jogar:</h3>
-                    <ol className="list-decimal pl-5 space-y-2">
-                      <li>Um jogador recebe uma palavra para desenhar.</li>
-                      <li>O jogador tem {config.tempo} segundos para desenhar a palavra.</li>
-                      <li>Os outros jogadores têm {config.tempo} segundos para adivinhar.</li>
-                      <li>Se os jogadores adivinharem, o desenhista ganha 1 ponto.</li>
-                      <li>Se ninguém adivinhar, o desenhista bebe conforme a dificuldade da palavra.</li>
-                      <li>A cada rodada, um novo jogador desenha.</li>
-                      <li>O jogo termina após {config.rodadas} rodadas completas.</li>
-                      <li>Vence quem tiver mais pontos ao final.</li>
+                  <div className="bg-white p-4 rounded-lg shadow-sm border">
+                    <h3 className="text-lg font-bold text-purple-800 mb-3">Como jogar:</h3>
+                    <ol className="list-decimal pl-5 space-y-3 text-gray-800">
+                      <li className="bg-purple-50 p-2 rounded">Um jogador recebe uma palavra para desenhar.</li>
+                      <li className="bg-purple-50 p-2 rounded">O jogador tem <span className="font-bold text-purple-700">{config.tempo} segundos</span> para desenhar a palavra.</li>
+                      <li className="bg-purple-50 p-2 rounded">Os outros jogadores têm <span className="font-bold text-purple-700">{config.tempo} segundos</span> para adivinhar.</li>
+                      <li className="bg-purple-50 p-2 rounded">Se os jogadores adivinharem, o desenhista ganha <span className="font-bold text-green-600">1 ponto</span>.</li>
+                      <li className="bg-purple-50 p-2 rounded">Se ninguém adivinhar, o desenhista <span className="font-bold text-red-600">bebe</span> conforme a dificuldade da palavra.</li>
+                      <li className="bg-purple-50 p-2 rounded">A cada rodada, um novo jogador desenha.</li>
+                      <li className="bg-purple-50 p-2 rounded">O jogo termina após <span className="font-bold text-purple-700">{config.rodadas} rodadas</span> completas.</li>
+                      <li className="bg-purple-50 p-2 rounded">Vence quem tiver mais pontos ao final.</li>
                     </ol>
                     
-                    <h3 className="mt-4">Níveis de bebida:</h3>
-                    <ul className="list-disc pl-5 space-y-2">
+                    <h3 className="text-lg font-bold text-purple-800 mt-6 mb-3">Níveis de bebida:</h3>
+                    <div className="grid gap-3">
                       {NIVEIS_BEBIDA.map((nivel) => (
-                        <li key={nivel.dificuldade}>
-                          <strong>Dificuldade {nivel.dificuldade}:</strong> {nivel.quantidade} - {nivel.descricao}
-                        </li>
+                        <div key={nivel.dificuldade} className={`p-3 rounded-lg border ${
+                          nivel.dificuldade === 1 ? 'bg-green-50 border-green-200' :
+                          nivel.dificuldade === 2 ? 'bg-yellow-50 border-yellow-200' :
+                          'bg-red-50 border-red-200'
+                        }`}>
+                          <div className="font-bold mb-1 flex items-center">
+                            <span className={`inline-block w-4 h-4 rounded-full mr-2 ${
+                              nivel.dificuldade === 1 ? 'bg-green-500' :
+                              nivel.dificuldade === 2 ? 'bg-yellow-500' :
+                              'bg-red-500'
+                            }`}></span>
+                            Dificuldade {nivel.dificuldade}: {nivel.quantidade}
+                          </div>
+                          <p className="text-gray-700 text-sm">{nivel.descricao}</p>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   </div>
                 </TabsContent>
               </Tabs>
@@ -728,9 +794,9 @@ export default function DesenhaEBebe() {
                 </div>
                 
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
-                  className="absolute bottom-4 right-4 bg-white/80"
+                  className="absolute bottom-4 right-4 bg-white text-black font-medium shadow border-gray-300"
                   onClick={limparCanvas}
                 >
                   Limpar
@@ -861,14 +927,14 @@ export default function DesenhaEBebe() {
                 <h3 className="font-medium mb-2">Placar atual:</h3>
                 <div className="space-y-2">
                   {[...jogadores].sort((a, b) => b.pontos - a.pontos).map((jogador) => (
-                    <div key={jogador.id} className="flex justify-between items-center">
-                      <span>{jogador.nome}</span>
+                    <div key={jogador.id} className="flex justify-between items-center p-1 rounded hover:bg-gray-200">
+                      <span className="font-medium">{jogador.nome}</span>
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-green-100">
+                        <Badge className="bg-green-600 text-white font-medium">
                           <Trophy className="mr-1 h-3 w-3" />
                           {jogador.pontos}
                         </Badge>
-                        <Badge variant="outline" className="bg-red-100">
+                        <Badge className="bg-red-600 text-white font-medium">
                           <HelpCircle className="mr-1 h-3 w-3" />
                           {jogador.bebidas}
                         </Badge>
