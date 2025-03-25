@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
 import { insertPlayerSchema, updatePlayerPointsSchema, gameSettingsSchema } from "@shared/schema";
@@ -11,12 +11,21 @@ const upload = multer({ dest: 'tmp/uploads/' });
 
 const BUCKET_PATH = "replit-objstore-40b80319-33b5-4913-8c43-e847afc83215";
 
+// Estender o tipo de Express Request para incluir userId
+declare global {
+  namespace Express {
+    interface Request {
+      userId?: string;
+    }
+  }
+}
+
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
 
   // Middleware para verificar se o userId está presente
-  const requireUserId = (req: any, res: any, next: any) => {
-    const userId = req.headers['x-user-id'];
+  const requireUserId = (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.headers['x-user-id'] as string;
     if (!userId) {
       return res.status(401).json({ message: "Usuário não autenticado" });
     }

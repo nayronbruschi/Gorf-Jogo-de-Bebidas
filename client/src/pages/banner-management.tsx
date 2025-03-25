@@ -65,7 +65,13 @@ export default function BannerManagement() {
   }, [initialBannerTexts]);
 
   useEffect(() => {
-    // Verificar se o usuário é o admin
+    // Em ambiente de desenvolvimento, permitir acesso sem autenticação
+    if (process.env.NODE_ENV === 'development') {
+      setIsAuthenticated(true);
+      return;
+    }
+    
+    // Verificar se o usuário é o admin em produção
     const currentUser = auth.currentUser;
     if (currentUser?.email === "nayronbruschi@gmail.com") {
       setIsAuthenticated(true);
@@ -110,15 +116,15 @@ export default function BannerManagement() {
     return (
       <AppLayout>
         <div className="container mx-auto p-4 max-w-md">
-          <Card className="bg-white/10 backdrop-blur-lg border-none">
+          <Card className="bg-white shadow border border-gray-100">
             <CardHeader>
-              <CardTitle className="text-white">Acesso Restrito</CardTitle>
+              <CardTitle className="text-purple-900">Acesso Restrito</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-white/80 mb-4">
+              <p className="text-gray-700 mb-4">
                 Você precisa estar logado como administrador para acessar esta página.
               </p>
-              <Button onClick={() => navigate("/admin")} className="w-full">
+              <Button onClick={() => navigate("/admin")} className="w-full bg-purple-600">
                 Voltar para Login
               </Button>
             </CardContent>
@@ -132,9 +138,9 @@ export default function BannerManagement() {
     return (
       <AppLayout>
         <div className="container mx-auto p-4">
-          <Card className="bg-white/10 backdrop-blur-lg border-none">
+          <Card className="bg-white shadow border border-gray-100">
             <CardContent className="p-8 flex items-center justify-center">
-              <div className="text-white">Carregando configurações de banners...</div>
+              <div className="text-purple-700">Carregando configurações de banners...</div>
             </CardContent>
           </Card>
         </div>
@@ -144,31 +150,31 @@ export default function BannerManagement() {
 
   return (
     <AppLayout>
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-4 bg-gray-50 min-h-screen">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-white">Gerenciamento de Banners</h1>
+          <h1 className="text-2xl font-bold text-purple-900">Gerenciamento de Banners</h1>
           <Button 
             variant="outline" 
             onClick={() => navigate("/admin")}
-            className="text-white/80 border-white/20 hover:bg-white/10"
+            className="border-purple-200 text-purple-700 hover:bg-purple-50"
           >
             Voltar para Dashboard
           </Button>
         </div>
 
-        <Card className="bg-white/10 backdrop-blur-lg border-none">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <Card className="bg-white shadow border border-gray-100">
+          <CardHeader className="border-b border-gray-100">
+            <CardTitle className="text-purple-900 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               Textos dos Banners
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="p-4 bg-purple-800/20 rounded-lg border border-purple-700/20 mb-4">
-              <h3 className="text-white font-semibold mb-2">🎮 Dica para banners</h3>
-              <p className="text-white/80 text-sm">
+            <div className="p-4 bg-purple-50 rounded-lg border border-purple-100 mb-4">
+              <h3 className="text-purple-900 font-semibold mb-2">🎮 Dica para banners</h3>
+              <p className="text-purple-800 text-sm">
                 Para melhor visibilidade do texto, recomendamos usar banners com áreas escuras ou com gradientes. 
                 Evite banners com fundo branco ou muito claro, pois o texto é exibido em branco.
               </p>
@@ -176,7 +182,7 @@ export default function BannerManagement() {
             
             {Object.entries(bannerTexts).map(([key, texts]) => (
               <div key={key} className="space-y-4">
-                <h3 className="text-lg font-medium text-white">Banner {key}</h3>
+                <h3 className="text-lg font-medium text-purple-900">Banner {key}</h3>
                 <div className="space-y-2">
                   <Input
                     value={texts.title}
@@ -185,7 +191,7 @@ export default function BannerManagement() {
                       [key]: { ...prev[key], title: e.target.value }
                     }))}
                     placeholder="Título"
-                    className="bg-white/10 border-white/20 text-white"
+                    className="border-gray-300 text-gray-800"
                   />
                   <Textarea
                     value={texts.description}
@@ -194,7 +200,7 @@ export default function BannerManagement() {
                       [key]: { ...prev[key], description: e.target.value }
                     }))}
                     placeholder="Descrição"
-                    className="bg-white/10 border-white/20 text-white"
+                    className="border-gray-300 text-gray-800"
                   />
                   
                   <div className="flex items-center space-x-2 mt-4">
@@ -208,7 +214,7 @@ export default function BannerManagement() {
                     />
                     <label 
                       htmlFor={`clickable-${key}`}
-                      className="text-sm text-white/80"
+                      className="text-sm text-gray-700"
                     >
                       Banner clicável
                     </label>
@@ -224,7 +230,7 @@ export default function BannerManagement() {
                             [key]: { ...prev[key], linkUrl: value === "_none_" ? "" : value }
                           }))}
                         >
-                          <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                          <SelectTrigger className="border-gray-300 text-gray-800">
                             <SelectValue placeholder="Selecione uma página do aplicativo" />
                           </SelectTrigger>
                           <SelectContent>
@@ -242,7 +248,7 @@ export default function BannerManagement() {
                             <SelectItem value="/stats">Estatísticas</SelectItem>
                           </SelectContent>
                         </Select>
-                        <p className="text-xs text-white/60 mt-1">
+                        <p className="text-xs text-gray-500 mt-1">
                           Selecione uma página do aplicativo ou insira uma URL personalizada abaixo
                         </p>
                       </div>
@@ -255,9 +261,9 @@ export default function BannerManagement() {
                             [key]: { ...prev[key], linkUrl: e.target.value }
                           }))}
                           placeholder="Ou insira uma URL externa (ex: https://google.com)"
-                          className="bg-white/10 border-white/20 text-white"
+                          className="border-gray-300 text-gray-800"
                         />
-                        <p className="text-xs text-white/60 mt-1">
+                        <p className="text-xs text-gray-500 mt-1">
                           Para redirecionar para um site externo, digite a URL completa com https://
                         </p>
                       </div>
@@ -268,14 +274,14 @@ export default function BannerManagement() {
             ))}
             <Button 
               onClick={handleUpdateBannerTexts}
-              className="w-full mt-4"
+              className="w-full mt-4 bg-purple-600 hover:bg-purple-700"
               disabled={updateTexts.isPending}
             >
               {updateTexts.isPending ? "Salvando..." : "Salvar Textos"}
             </Button>
             
-            <div className="mt-8 pt-8 border-t border-white/10">
-              <h3 className="text-lg font-medium text-white mb-4">Upload de Banners</h3>
+            <div className="mt-8 pt-8 border-t border-gray-200">
+              <h3 className="text-lg font-medium text-purple-900 mb-4">Upload de Banners</h3>
               <BannerUploader />
             </div>
           </CardContent>

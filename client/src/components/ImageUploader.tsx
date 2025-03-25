@@ -75,18 +75,18 @@ export function ImageUploader({ onUploadComplete, multiple = false }: ImageUploa
     <div className="space-y-4">
       <label
         className={`relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors
-          ${isUploading ? 'border-purple-500 bg-purple-500/10' : 'border-white/20 hover:border-purple-500/50 bg-white/5 hover:bg-white/10'}`}
+          ${isUploading ? 'border-purple-500 bg-purple-100' : 'border-gray-300 hover:border-purple-500 bg-gray-50 hover:bg-purple-50'}`}
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
           {isUploading ? (
             <>
-              <Loader2 className="h-8 w-8 text-purple-500 animate-spin mb-2" />
-              <p className="text-sm text-purple-500">Fazendo upload...</p>
+              <Loader2 className="h-8 w-8 text-purple-600 animate-spin mb-2" />
+              <p className="text-sm text-purple-600 font-medium">Fazendo upload...</p>
             </>
           ) : (
             <>
-              <Image className="h-8 w-8 text-white/60 mb-2" />
-              <p className="text-sm text-white/60">
+              <Image className="h-8 w-8 text-gray-500 mb-2" />
+              <p className="text-sm text-gray-500">
                 {multiple ? "Arraste ou clique para selecionar várias imagens" : "Arraste ou clique para selecionar uma imagem"}
               </p>
             </>
