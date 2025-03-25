@@ -368,9 +368,9 @@ export default function Admin() {
   
   return (
     <AppLayout>
-      <div className="container mx-auto p-4 space-y-8">
+      <div className="container mx-auto p-4 space-y-8 bg-[#f1f1f1] min-h-screen rounded-lg">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <h1 className="text-2xl font-bold text-white">Dashboard Admin</h1>
+          <h1 className="text-2xl font-bold text-purple-900">Dashboard Admin</h1>
           
           <div className="flex flex-col md:flex-row items-end gap-2">
             <div className="flex gap-2">
@@ -408,7 +408,7 @@ export default function Admin() {
               </Button>
             </div>
             
-            <div className="text-sm text-white/60">
+            <div className="text-sm text-purple-800">
               Último acesso: {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
             </div>
           </div>
@@ -467,9 +467,9 @@ export default function Admin() {
         </div>
         
         {/* Gráfico de acessos */}
-        <Card className="bg-white/10 backdrop-blur-lg border-none mb-8">
+        <Card className="bg-white shadow border-none mb-8">
           <CardHeader>
-            <CardTitle className="text-white flex items-center">
+            <CardTitle className="text-purple-900 flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
               </svg>
@@ -492,24 +492,24 @@ export default function Admin() {
                     </defs>
                     <XAxis 
                       dataKey="date" 
-                      stroke="#f8fafc80"
-                      tick={{ fill: '#f8fafc80' }}
+                      stroke="#6b7280"
+                      tick={{ fill: '#6b7280' }}
                     />
                     <YAxis 
-                      stroke="#f8fafc80"
-                      tick={{ fill: '#f8fafc80' }}
+                      stroke="#6b7280"
+                      tick={{ fill: '#6b7280' }}
                     />
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f8fafc20" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <Tooltip 
                       contentStyle={{ 
-                        backgroundColor: '#1e1b4b', 
-                        border: 'none', 
+                        backgroundColor: '#ffffff', 
+                        border: '1px solid #e5e7eb', 
                         borderRadius: '8px',
-                        color: '#ffffff'
+                        color: '#4b5563'
                       }}
                     />
                     <Legend 
-                      wrapperStyle={{ color: '#f8fafc80' }} 
+                      wrapperStyle={{ color: '#6b7280' }} 
                     />
                     <Area 
                       type="monotone" 
@@ -523,7 +523,7 @@ export default function Admin() {
                 </ResponsiveContainer>
               ) : (
                 <div className="flex items-center justify-center h-full">
-                  <p className="text-white/50">Carregando dados...</p>
+                  <p className="text-gray-400">Carregando dados...</p>
                 </div>
               )}
             </div>
@@ -531,9 +531,9 @@ export default function Admin() {
         </Card>
         
         {/* Mapa de calor */}
-        <Card className="bg-white/10 backdrop-blur-lg border-none mb-8">
+        <Card className="bg-white shadow border-none mb-8">
           <CardHeader>
-            <CardTitle className="text-white flex items-center justify-between">
+            <CardTitle className="text-purple-900 flex items-center justify-between">
               <div className="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
