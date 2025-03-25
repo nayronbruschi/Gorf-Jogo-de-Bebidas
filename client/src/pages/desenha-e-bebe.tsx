@@ -724,12 +724,12 @@ export default function DesenhaEBebe() {
         
         return (
           <Card className="w-full max-w-xl">
-            <CardHeader>
+            <CardHeader className="bg-purple-700 text-white rounded-t-lg">
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle className="text-xl font-bold text-black">Rodada {rodadaAtual}/{config.rodadas}</CardTitle>
-                  <CardDescription className="text-black text-base">
-                    Vez de: <span className="font-bold text-black">{jogadores[jogadorAtual]?.nome}</span>
+                  <CardTitle className="text-xl font-bold text-white">Rodada {rodadaAtual}/{config.rodadas}</CardTitle>
+                  <CardDescription className="text-white text-base">
+                    Vez de: <span className="font-bold text-white">{jogadores[jogadorAtual]?.nome}</span>
                   </CardDescription>
                 </div>
                 
@@ -764,11 +764,6 @@ export default function DesenhaEBebe() {
                 
                 <Button 
                   onClick={() => {
-                    toast({
-                      title: "Palavra revelada",
-                      description: `Memorize-a e não mostre aos outros!`,
-                      variant: "default",
-                    });
                     setPalavraDialogOpen(true);
                   }}
                   className="bg-purple-700 hover:bg-purple-800 w-full mb-4"
@@ -891,10 +886,10 @@ export default function DesenhaEBebe() {
             <CardFooter>
               <Button 
                 onClick={iniciarAdivinhacao} 
-                className="w-full"
+                className="w-full bg-purple-700 hover:bg-purple-800"
               >
                 <SkipForward className="mr-2 h-4 w-4" />
-                Pronto! Hora de adivinhar
+                Finalizar desenho
               </Button>
             </CardFooter>
           </Card>
@@ -962,8 +957,8 @@ export default function DesenhaEBebe() {
                 onClick={iniciarAdivinhacao} 
                 className="w-full bg-purple-700 hover:bg-purple-800"
               >
-                <SkipForward className="mr-2 h-4 w-4" />
-                Pronto! Hora de adivinhar
+                <Drama className="mr-2 h-4 w-4" />
+                Iniciar mímica
               </Button>
             </CardContent>
           </Card>
