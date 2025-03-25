@@ -158,6 +158,7 @@ export default function DesenhaEBebe() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
   const [corPincel, setCorPincel] = useState("#000000");
+  const [desenhoAtual, setDesenhoAtual] = useState<string | null>(null);
   const [tamanhoPincel, setTamanhoPincel] = useState(5);
   const [ultimaPosicao, setUltimaPosicao] = useState({ x: 0, y: 0 });
 
@@ -171,6 +172,13 @@ export default function DesenhaEBebe() {
           if (prevTempo <= 1) {
             clearInterval(interval);
             if (estadoJogo === "desenho") {
+              // Quando o tempo acabar no modo desenho, captura o desenho atual antes de mudar para adivinhação
+              if (canvasRef.current && config.modoRepresentacao === "desenho") {
+                // Salvar o desenho como uma URL de dados (data URL)
+                const desenhoURL = canvasRef.current.toDataURL('image/png');
+                setDesenhoAtual(desenhoURL);
+              }
+              
               setEstadoJogo("adivinhacao");
               setTempo(config.tempo);
             } else {
@@ -185,7 +193,7 @@ export default function DesenhaEBebe() {
     }
     
     return () => clearInterval(interval);
-  }, [estadoJogo, tempo, config.tempo]);
+  }, [estadoJogo, tempo, config.tempo, config.modoRepresentacao]);
 
   // Inicializar o contexto do canvas quando componente montar
   // Ajustar tamanho do canvas ao entrar no modo desenho
@@ -409,8 +417,13 @@ export default function DesenhaEBebe() {
   };
 
   const iniciarAdivinhacao = () => {
-    // Preservar o desenho atual durante a transição para a fase de adivinhação
-    // Não limpa o canvas aqui para manter o desenho
+    // Capturar o desenho atual e salvá-lo antes de mudar de estado
+    if (canvasRef.current && config.modoRepresentacao === "desenho") {
+      // Salvar o desenho como uma URL de dados (data URL)
+      const desenhoURL = canvasRef.current.toDataURL('image/png');
+      setDesenhoAtual(desenhoURL);
+    }
+    
     setTempo(config.tempo);
     setEstadoJogo("adivinhacao");
   };
@@ -1018,10 +1031,20 @@ export default function DesenhaEBebe() {
             <CardContent className="space-y-4">
               {config.modoRepresentacao === "desenho" && (
                 <div className="bg-white border-4 border-gray-300 rounded-lg overflow-hidden shadow-lg flex justify-center">
-                  <canvas
-                    ref={canvasRef}
-                    className="w-full h-[500px]"
-                  />
+                  {desenhoAtual ? (
+                    // Mostrar a imagem capturada se disponível
+                    <img 
+                      src={desenhoAtual} 
+                      alt="Desenho"
+                      className="w-full h-[500px] object-contain" 
+                    />
+                  ) : (
+                    // Manter o canvas como fallback
+                    <canvas
+                      ref={canvasRef}
+                      className="w-full h-[500px]"
+                    />
+                  )}
                 </div>
               )}
               
