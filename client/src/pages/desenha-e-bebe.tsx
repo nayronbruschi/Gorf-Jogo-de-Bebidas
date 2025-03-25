@@ -27,7 +27,10 @@ import {
   PlayCircle,
   ArrowLeft,
   Palette,
-  AlertTriangle
+  AlertTriangle,
+  Drama,
+  Target,
+  Timer
 } from "lucide-react";
 
 // Categorias do jogo
@@ -357,7 +360,7 @@ export default function DesenhaEBebe() {
     setPalavrasUsadas([...palavrasUsadas, palavraAleatoria]);
   };
 
-  const iniciarDesenho = () => {
+  const iniciarAtividade = () => {
     setTempo(config.tempo);
     setTempoDecorrido(0);
     
@@ -366,7 +369,13 @@ export default function DesenhaEBebe() {
     jogadoresAtualizados[jogadorAtual].vezes += 1;
     setJogadores(jogadoresAtualizados);
     
-    setEstadoJogo("desenho");
+    // Direciona para o modo selecionado (desenho ou mímica)
+    setEstadoJogo(config.modoRepresentacao);
+  };
+  
+  const iniciarMimica = () => {
+    setTempo(config.tempo);
+    setEstadoJogo("adivinhacao");
   };
 
   const iniciarAdivinhacao = () => {
@@ -716,11 +725,20 @@ export default function DesenhaEBebe() {
             
             <CardFooter>
               <Button 
-                onClick={iniciarDesenho} 
+                onClick={iniciarAtividade}
                 className="w-full bg-purple-700 hover:bg-purple-800"
               >
-                <Pencil className="mr-2 h-4 w-4" />
-                Começar a Desenhar
+                {config.modoRepresentacao === "desenho" ? (
+                  <>
+                    <Pencil className="mr-2 h-4 w-4" />
+                    Começar a Desenhar
+                  </>
+                ) : (
+                  <>
+                    <Drama className="mr-2 h-4 w-4" />
+                    Começar a Mímica
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -826,15 +844,17 @@ export default function DesenhaEBebe() {
           </Card>
         );
         
-      case "adivinhacao":
+      case "mimica":
         return (
           <Card className="w-full max-w-3xl">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle>Hora de adivinhar!</CardTitle>
+                  <CardTitle>
+                    {jogadores[jogadorAtual]?.nome} está fazendo mímica...
+                  </CardTitle>
                   <CardDescription>
-                    Desenho de <span className="font-bold">{jogadores[jogadorAtual]?.nome}</span>
+                    Palavra: <span className="font-bold">[Secreta]</span>
                   </CardDescription>
                 </div>
                 
@@ -846,14 +866,100 @@ export default function DesenhaEBebe() {
             </CardHeader>
             
             <CardContent className="space-y-4">
-              <div className="bg-white border rounded-lg overflow-hidden">
-                <canvas
-                  ref={canvasRef}
-                  width={640}
-                  height={480}
-                  className="w-full"
-                />
+              <div className="bg-purple-50 p-8 border rounded-lg text-center">
+                <div className="mb-6 flex justify-center">
+                  <Drama className="h-32 w-32 text-purple-400 animate-pulse" />
+                </div>
+                
+                <div className="text-center mb-4">
+                  <p className="text-sm">
+                    <Drama className="inline mr-1 h-4 w-4" />
+                    Você está representando: <span className="font-bold text-purple-800">{palavraAtual}</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Use apenas gestos! Não pode falar ou fazer sons!
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-2 text-sm mt-8">
+                  <div className="bg-white p-3 rounded-lg border shadow-sm">
+                    <Target className="h-6 w-6 mx-auto mb-1 text-purple-600" />
+                    <p className="font-medium">Categoria</p>
+                    <p className="font-bold text-purple-700">{CATEGORIAS.find(c => c.id === categoriaAtual)?.nome}</p>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded-lg border shadow-sm">
+                    <Timer className="h-6 w-6 mx-auto mb-1 text-purple-600" />
+                    <p className="font-medium">Tempo</p>
+                    <p className="font-bold text-purple-700">{tempo} segundos</p>
+                  </div>
+                  
+                  <div className="bg-white p-3 rounded-lg border shadow-sm">
+                    <AlertTriangle className="h-6 w-6 mx-auto mb-1 text-purple-600" />
+                    <p className="font-medium">Dificuldade</p>
+                    <p className="font-bold text-purple-700">{dificuldadeAtual}</p>
+                  </div>
+                </div>
               </div>
+              
+              <Button 
+                onClick={iniciarAdivinhacao} 
+                className="w-full bg-purple-700 hover:bg-purple-800"
+              >
+                <SkipForward className="mr-2 h-4 w-4" />
+                Pronto! Hora de adivinhar
+              </Button>
+            </CardContent>
+          </Card>
+        );
+      
+      case "adivinhacao":
+        return (
+          <Card className="w-full max-w-3xl">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Hora de adivinhar!</CardTitle>
+                  <CardDescription>
+                    {config.modoRepresentacao === "desenho" 
+                      ? `Desenho de ${jogadores[jogadorAtual]?.nome}`
+                      : `Mímica de ${jogadores[jogadorAtual]?.nome}`
+                    }
+                  </CardDescription>
+                </div>
+                
+                <Badge variant="outline" className="text-lg font-bold">
+                  <Clock className="mr-1 h-4 w-4" />
+                  {tempo}s
+                </Badge>
+              </div>
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
+              {config.modoRepresentacao === "desenho" && (
+                <div className="bg-white border rounded-lg overflow-hidden">
+                  <canvas
+                    ref={canvasRef}
+                    width={640}
+                    height={480}
+                    className="w-full"
+                  />
+                </div>
+              )}
+              
+              {config.modoRepresentacao === "mimica" && (
+                <div className="bg-purple-50 p-8 border rounded-lg text-center">
+                  <div className="mb-4 flex justify-center">
+                    <Drama className="h-20 w-20 text-purple-600" />
+                  </div>
+                  <p className="text-lg font-medium text-purple-800 mb-2">
+                    {jogadores[jogadorAtual]?.nome} está fazendo mímica!
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Os outros jogadores devem adivinhar a palavra.
+                  </p>
+                </div>
+              )}
               
               <div className="space-y-2">
                 <h3 className="font-medium">Os jogadores acertaram?</h3>
@@ -925,19 +1031,40 @@ export default function DesenhaEBebe() {
               
               <div className="bg-gray-100 p-4 rounded-lg">
                 <h3 className="font-medium mb-2">Placar atual:</h3>
-                <div className="space-y-2">
+                <div className="space-y-4">
                   {[...jogadores].sort((a, b) => b.pontos - a.pontos).map((jogador) => (
-                    <div key={jogador.id} className="flex justify-between items-center p-1 rounded hover:bg-gray-200">
-                      <span className="font-medium">{jogador.nome}</span>
-                      <div className="flex items-center gap-2">
-                        <Badge className="bg-green-600 text-white font-medium">
-                          <Trophy className="mr-1 h-3 w-3" />
-                          {jogador.pontos}
-                        </Badge>
-                        <Badge className="bg-red-600 text-white font-medium">
-                          <HelpCircle className="mr-1 h-3 w-3" />
-                          {jogador.bebidas}
-                        </Badge>
+                    <div key={jogador.id} className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{jogador.nome}</span>
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-green-600 text-white font-medium">
+                            <Trophy className="mr-1 h-3 w-3" />
+                            {jogador.pontos}
+                          </Badge>
+                          <Badge className="bg-red-600 text-white font-medium">
+                            <HelpCircle className="mr-1 h-3 w-3" />
+                            {jogador.bebidas}
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      {/* Trilha de progresso */}
+                      <div className="w-full h-6 bg-gray-200 rounded-full overflow-hidden relative">
+                        <div 
+                          className="h-full bg-purple-600 rounded-full transition-all duration-500 ease-out flex items-center justify-end pr-1"
+                          style={{ width: `${Math.min(100, (jogador.pontos / config.metaVitoria) * 100)}%` }}
+                        >
+                          {jogador.pontos > 0 && (
+                            <span className="text-white text-xs font-bold">
+                              {Math.round((jogador.pontos / config.metaVitoria) * 100)}%
+                            </span>
+                          )}
+                        </div>
+                        <div className="absolute top-0 right-0 bottom-0 flex items-center pr-2">
+                          <span className="text-xs text-gray-500 font-medium">
+                            Meta: {config.metaVitoria}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))}
