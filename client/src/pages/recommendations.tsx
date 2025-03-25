@@ -125,16 +125,16 @@ export default function Recommendations() {
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-2xl font-bold text-gray-900">{recommendations[0].name}</h3>
-                      <p className="text-gray-700">{recommendations[0].description}</p>
+                      <p className="text-gray-900">{recommendations[0].description}</p>
                     </div>
                     
                     <div className="space-y-2">
-                      <h4 className="font-medium text-sm uppercase text-gray-700">Por que jogar:</h4>
+                      <h4 className="font-medium text-sm uppercase text-gray-900">Por que jogar:</h4>
                       <ul className="space-y-2">
                         {recommendations[0].reasonsToPlay.map((reason, index) => (
                           <li key={index} className="flex items-start">
-                            <ThumbsUp className="h-5 w-5 mr-2 text-green-600 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-800">{reason}</span>
+                            <ThumbsUp className="h-5 w-5 mr-2 text-green-700 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-900">{reason}</span>
                           </li>
                         ))}
                       </ul>
@@ -142,13 +142,13 @@ export default function Recommendations() {
                     
                     <div className="flex flex-wrap gap-2 mt-2">
                       {recommendations[0].tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="bg-purple-100 text-purple-800">{tag}</Badge>
+                        <Badge key={tag} variant="secondary" className="bg-purple-200 text-purple-900 font-medium">{tag}</Badge>
                       ))}
                     </div>
                   </div>
                 </CardContent>
                 
-                <CardFooter className="bg-gray-50 border-t">
+                <CardFooter className="bg-purple-100 border-t border-purple-200">
                   <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white" asChild>
                     <Link href={recommendations[0].route}>
                       Jogar Agora <ArrowRight className="ml-2 h-4 w-4" />
@@ -169,27 +169,27 @@ export default function Recommendations() {
                         {game.matchScore}%
                       </Badge>
                     </div>
-                    <CardDescription className="line-clamp-2 text-gray-700">{game.description}</CardDescription>
+                    <CardDescription className="line-clamp-2 text-gray-900">{game.description}</CardDescription>
                   </CardHeader>
                   
                   <CardContent className="pt-0">
                     <div className="flex flex-wrap gap-1 mt-2">
                       {game.tags.slice(0, 3).map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs bg-purple-100 text-purple-800">{tag}</Badge>
+                        <Badge key={tag} variant="secondary" className="text-xs bg-purple-200 text-purple-900 font-medium">{tag}</Badge>
                       ))}
                       {game.tags.length > 3 && (
-                        <Badge variant="outline" className="text-xs text-gray-700 border-gray-400">+{game.tags.length - 3}</Badge>
+                        <Badge variant="outline" className="text-xs text-gray-900 border-gray-500 font-medium">+{game.tags.length - 3}</Badge>
                       )}
                     </div>
                     
-                    <div className="mt-2 text-sm text-gray-800">
-                      <span className="font-medium">Por que jogar: </span>
+                    <div className="mt-2 text-sm text-gray-900">
+                      <span className="font-semibold">Por que jogar: </span>
                       {game.reasonsToPlay[0]}
                     </div>
                   </CardContent>
                   
-                  <CardFooter className="pt-2 border-t">
-                    <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white" asChild>
+                  <CardFooter className="pt-2 border-t border-gray-200 bg-gray-50">
+                    <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white" asChild>
                       <Link href={game.route}>
                         Jogar <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>

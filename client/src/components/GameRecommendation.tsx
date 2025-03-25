@@ -99,7 +99,7 @@ export function GameRecommendationCard({ className }: GameRecommendationCardProp
 
   return (
     <Card className={`${className} overflow-hidden`}>
-      <CardHeader className="bg-gradient-to-r from-purple-700 to-blue-600 text-white pb-3">
+      <CardHeader className="bg-gradient-to-r from-purple-800 to-blue-700 text-white py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Sparkles className="h-5 w-5 mr-2 text-yellow-300" />
@@ -115,19 +115,19 @@ export function GameRecommendationCard({ className }: GameRecommendationCardProp
         <div className="space-y-3">
           <div>
             <h3 className="text-xl font-bold text-gray-900">{recommendation.name}</h3>
-            <p className="text-gray-700 text-sm mt-1 line-clamp-2">{recommendation.description}</p>
+            <p className="text-gray-900 text-sm mt-1 line-clamp-2">{recommendation.description}</p>
           </div>
           
           {recommendation.reasonsToPlay.length > 0 && (
             <div className="flex items-start">
-              <ThumbsUp className="h-4 w-4 mr-2 text-green-600 flex-shrink-0 mt-0.5" />
-              <span className="text-sm text-gray-800">{recommendation.reasonsToPlay[0]}</span>
+              <ThumbsUp className="h-4 w-4 mr-2 text-green-700 flex-shrink-0 mt-0.5" />
+              <span className="text-sm text-gray-900">{recommendation.reasonsToPlay[0]}</span>
             </div>
           )}
           
           <div className="flex flex-wrap gap-1 pt-1">
             {recommendation.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-xs bg-purple-100 text-purple-800">{tag}</Badge>
+              <Badge key={tag} variant="secondary" className="text-xs bg-purple-200 text-purple-900 font-medium">{tag}</Badge>
             ))}
           </div>
         </div>
@@ -135,7 +135,7 @@ export function GameRecommendationCard({ className }: GameRecommendationCardProp
       
       <CardFooter className="border-t pt-3 pb-3">
         <div className="flex justify-between w-full">
-          <Button variant="outline" size="sm" className="border-purple-200 text-purple-700 hover:bg-purple-50" asChild>
+          <Button variant="outline" size="sm" className="border-purple-300 text-purple-800 hover:bg-purple-50 hover:text-purple-900" asChild>
             <Link href="/recommendations">
               Ver mais
             </Link>

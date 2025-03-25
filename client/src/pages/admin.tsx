@@ -368,7 +368,7 @@ export default function Admin() {
   
   return (
     <AppLayout>
-      <div className="container mx-auto p-4 space-y-8 bg-[#f1f1f1] min-h-screen rounded-lg">
+      <div className="container mx-auto p-4 space-y-8 bg-white min-h-screen rounded-lg">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <h1 className="text-2xl font-bold text-purple-900">Dashboard Admin</h1>
           
@@ -376,7 +376,7 @@ export default function Admin() {
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
-                className={`${dateRange?.from ? (isSameDay(dateRange.from, subDays(new Date(), 7)) ? 'bg-purple-700/50' : 'bg-white/10') : 'bg-white/10'} text-white text-xs`}
+                className={`${dateRange?.from ? (isSameDay(dateRange.from, subDays(new Date(), 7)) ? 'bg-purple-800 text-white' : 'bg-white text-purple-900 border-purple-300') : 'bg-white text-purple-900 border-purple-300'} text-xs font-medium`}
                 onClick={() => setDateRange({
                   from: subDays(new Date(), 7),
                   to: new Date()
@@ -387,7 +387,7 @@ export default function Admin() {
               
               <Button 
                 variant="outline" 
-                className={`${dateRange?.from ? (isSameDay(dateRange.from, subDays(new Date(), 30)) ? 'bg-purple-700/50' : 'bg-white/10') : 'bg-white/10'} text-white text-xs`}
+                className={`${dateRange?.from ? (isSameDay(dateRange.from, subDays(new Date(), 30)) ? 'bg-purple-800 text-white' : 'bg-white text-purple-900 border-purple-300') : 'bg-white text-purple-900 border-purple-300'} text-xs font-medium`}
                 onClick={() => setDateRange({
                   from: subDays(new Date(), 30),
                   to: new Date()
@@ -398,7 +398,7 @@ export default function Admin() {
               
               <Button 
                 variant="outline" 
-                className={`${dateRange?.from ? (isSameDay(dateRange.from, subDays(new Date(), 90)) ? 'bg-purple-700/50' : 'bg-white/10') : 'bg-white/10'} text-white text-xs`}
+                className={`${dateRange?.from ? (isSameDay(dateRange.from, subDays(new Date(), 90)) ? 'bg-purple-800 text-white' : 'bg-white text-purple-900 border-purple-300') : 'bg-white text-purple-900 border-purple-300'} text-xs font-medium`}
                 onClick={() => setDateRange({
                   from: subDays(new Date(), 90),
                   to: new Date()
@@ -408,7 +408,7 @@ export default function Admin() {
               </Button>
             </div>
             
-            <div className="text-sm text-purple-800">
+            <div className="text-sm text-purple-900 font-medium">
               Último acesso: {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
             </div>
           </div>
