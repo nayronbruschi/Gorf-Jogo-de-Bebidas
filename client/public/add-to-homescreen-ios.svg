@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="230" viewBox="0 0 300 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="230" rx="10" fill="#F3F4F6"/>
+  
+  <!-- Safari Address Bar -->
+  <rect x="20" y="20" width="260" height="35" rx="8" fill="#FFFFFF" stroke="#D1D5DB" stroke-width="1"/>
+  <circle cx="37" cy="37" r="7" fill="#F87171"/>
+  <circle cx="57" cy="37" r="7" fill="#FBBF24"/>
+  <circle cx="77" cy="37" r="7" fill="#34D399"/>
+  <rect x="97" y="31" width="140" height="12" rx="6" fill="#E5E7EB"/>
+  
+  <!-- Share Menu -->
+  <rect x="60" y="75" width="180" height="120" rx="10" fill="#FFFFFF" stroke="#D1D5DB" stroke-width="1"/>
+  
+  <!-- Share Icons Row 1 -->
+  <circle cx="95" cy="105" r="15" fill="#E5E7EB"/>
+  <circle cx="135" cy="105" r="15" fill="#E5E7EB"/>
+  <circle cx="175" cy="105" r="15" fill="#E5E7EB"/>
+  <circle cx="215" cy="105" r="15" fill="#E5E7EB"/>
+  
+  <!-- Share Icons Row 2 -->
+  <circle cx="95" cy="145" r="15" fill="#E5E7EB"/>
+  <circle cx="135" cy="145" r="15" fill="#E5E7EB"/>
+  <circle cx="175" cy="145" r="15" fill="#E5E7EB"/>
+  <circle cx="215" cy="145" r="15" fill="#E5E7EB"/>
+  
+  <!-- Add to Home Screen Button -->
+  <rect x="70" y="175" width="160" height="15" rx="3" fill="#F3F4F6"/>
+  <rect x="90" y="175" width="120" height="15" rx="3" fill="#E5E7EB"/>
+  <path d="M82 175L82 190" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M77 180L87 180" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
