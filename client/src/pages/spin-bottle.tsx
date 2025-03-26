@@ -128,6 +128,7 @@ export default function SpinBottle() {
         title: "Imagem atualizada",
         description: "Sua imagem personalizada foi configurada com sucesso!",
       });
+      return true;
     } catch (error) {
       console.error('Erro ao configurar imagem:', error);
       toast({
@@ -135,6 +136,7 @@ export default function SpinBottle() {
         description: "Não foi possível configurar sua imagem personalizada.",
         variant: "destructive",
       });
+      return false;
     } finally {
       setIsUploading(false);
     }
@@ -160,8 +162,9 @@ export default function SpinBottle() {
       const data = await response.json();
       
       // Salvar a referência à nova imagem
-      await handleImageUpload(data.url);
+      const success = await handleImageUpload(data.url);
       
+      return success;
     } catch (error) {
       console.error('Erro ao processar imagem:', error);
       toast({
@@ -169,6 +172,7 @@ export default function SpinBottle() {
         description: "Não foi possível processar a imagem para remover o fundo.",
         variant: "destructive",
       });
+      return false;
     } finally {
       setIsUploading(false);
     }
@@ -176,11 +180,26 @@ export default function SpinBottle() {
   
   const resetBottleImage = async () => {
     try {
-      // Definir de volta para a imagem padrão
-      const defaultUrl = "https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/Garrafa-2.png?alt=media&token=fb17efb1-9110-4f2e-9875-2ba87f63f25e";
-      await handleImageUpload(defaultUrl);
+      // Definir de volta para a imagem padrão local
+      const defaultUrl = "/api/images/default-bottle.webp";
+      const success = await handleImageUpload(defaultUrl);
+      
+      if (success) {
+        toast({
+          title: "Garrafa restaurada",
+          description: "A imagem padrão da garrafa foi restaurada com sucesso."
+        });
+      }
+      
+      return success;
     } catch (error) {
       console.error('Erro ao resetar imagem:', error);
+      toast({
+        title: "Erro ao restaurar",
+        description: "Não foi possível restaurar a imagem padrão da garrafa.",
+        variant: "destructive"
+      });
+      return false;
     }
   };
 
