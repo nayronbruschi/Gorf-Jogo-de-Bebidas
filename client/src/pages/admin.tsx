@@ -593,6 +593,33 @@ export default function Admin() {
             <CardHeader>
               <CardTitle className="text-white flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                Gerenciamento de Tags
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center justify-center py-10 text-center">
+                <div className="w-16 h-16 rounded-full bg-purple-800 flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
+                </div>
+                <h3 className="text-white text-lg font-medium mb-2">Configurar Tags</h3>
+                <p className="text-white text-sm mb-6">
+                  Gerencie as tags de destaque que aparecem nos cards de jogos na página principal.
+                </p>
+                <Button onClick={() => navigate("/admin/featured-tags")} className="bg-purple-700 hover:bg-purple-600 text-white">
+                  Acessar Tags
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-purple-900 shadow-lg border-purple-800">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
                 Dados Geográficos

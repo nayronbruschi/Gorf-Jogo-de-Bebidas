@@ -32,8 +32,9 @@ export function GameCard({
           <div className="absolute top-0 right-0 w-20 h-20 bg-purple-500/10 rounded-bl-full"></div>
           
           {isFeatured && (
-            <div className="absolute top-2 right-2 bg-gradient-to-r from-purple-600 to-purple-800 text-white text-xs font-bold px-2 py-1 rounded-md shadow-sm z-10">
-              {featureTag}
+            <div className="absolute top-2 right-2 bg-gradient-to-br from-purple-600 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-md shadow-md z-10 flex items-center space-x-1">
+              <span className="block h-1.5 w-1.5 rounded-full bg-white animate-pulse"></span>
+              <span>{featureTag}</span>
             </div>
           )}
           
