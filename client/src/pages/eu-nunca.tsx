@@ -271,13 +271,13 @@ export default function EuNunca() {
   
   return (
     <GameLayout title="" showPlayers={false}>
-      <div className="flex justify-center items-center min-h-[calc(100vh-80px)] p-4 bg-gradient-to-b from-purple-900 to-purple-800">
+      <div className="w-full h-full flex justify-center items-center py-10 px-4">
         <div className="w-full max-w-lg bg-white rounded-lg shadow-xl overflow-hidden">
-          <div className="bg-purple-700 text-white p-4">
+          <div className="bg-gradient-to-r from-purple-800 to-purple-600 text-white p-5">
             <div className="flex justify-center items-center">
-              <h2 className="text-2xl font-bold">Eu Nunca</h2>
+              <h2 className="text-2xl font-bold text-white">Eu Nunca</h2>
             </div>
-            <p className="text-purple-200 mt-1 text-center">
+            <p className="text-white mt-2 text-center font-medium">
               Quem já fez, bebe! Simples assim.
             </p>
           </div>
