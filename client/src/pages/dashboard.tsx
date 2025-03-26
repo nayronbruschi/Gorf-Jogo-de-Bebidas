@@ -63,18 +63,18 @@ export default function Dashboard() {
       <div className="min-h-screen w-full">
         <div className="container mx-auto px-4 py-6 space-y-6">
           {/* Banners */}
-          <section className="pb-2 overflow-hidden rounded-xl">
+          <section className="pb-4 overflow-hidden rounded-xl">
             <PromotionalBanner />
           </section>
 
           {/* Ad Banner */}
-          <section className="pb-1">
+          <section className="pb-4">
             <AdBanner />
           </section>
 
           {/* Carrossel de Jogos em Destaque */}
-          <section className="pt-0 pb-2">
-            <h2 className="text-white text-lg font-medium mb-1">Jogos em destaque</h2>
+          <section className="pt-0 pb-4">
+            <h2 className="text-white text-lg font-medium mb-3 ml-1">Jogos em destaque</h2>
             <Carousel
               className="w-full"
               opts={{
