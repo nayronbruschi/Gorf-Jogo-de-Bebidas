@@ -26,18 +26,8 @@ export default function FeaturedTags() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   // Buscar as tags de destaque da API
-  const { data: initialFeaturedTags, isLoading } = useQuery({
-    queryKey: ['/api/featured-tags'],
-    queryFn: async () => {
-      try {
-        const response = await apiRequest("GET", '/api/featured-tags', undefined);
-        const data = await response.json();
-        return data as FeaturedGameTags;
-      } catch (error) {
-        console.error("Erro ao carregar tags de destaque:", error);
-        return {};
-      }
-    }
+  const { data: initialFeaturedTags, isLoading } = useQuery<FeaturedGameTags>({
+    queryKey: ['/api/featured-tags']
   });
 
   // Estado local para as tags de destaque
