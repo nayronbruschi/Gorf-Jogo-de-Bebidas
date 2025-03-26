@@ -7,7 +7,7 @@ import fs from "fs";
 import path from "path";
 import sharp from "sharp";
 // @ts-ignore - não há tipos para rembg-node
-import rembg from "rembg-node";
+import { Rembg } from "rembg-node";
 
 // Configurar o multer para armazenar os arquivos temporariamente
 const upload = multer({ dest: 'tmp/uploads/' });
@@ -357,7 +357,11 @@ export async function registerRoutes(app: Express) {
       
       // Remover o fundo da imagem
       console.log('Removendo fundo da imagem...');
-      const outputBuffer = await rembg(resizedImageBuffer);
+      const rembg = new Rembg({
+        logging: true
+      });
+      const processedSharp = await rembg.remove(sharp(resizedImageBuffer));
+      const outputBuffer = await processedSharp.toBuffer();
       
       // Gerar um nome de arquivo único
       const uniqueFilename = `bottle-${Date.now()}.png`;
