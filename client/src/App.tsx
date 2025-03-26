@@ -35,6 +35,7 @@ import Profile from "@/pages/profile";
 import Onboarding from "@/pages/onboarding";
 import Recommendations from "@/pages/recommendations";
 import DesenhaEBebe from "@/pages/desenha-e-bebe";
+import EuNunca from "@/pages/eu-nunca";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading } = useAuth();
@@ -132,6 +133,9 @@ function Router() {
       </Route>
       <Route path="/desenha-e-bebe">
         <ProtectedRoute component={DesenhaEBebe} />
+      </Route>
+      <Route path="/eu-nunca">
+        <ProtectedRoute component={EuNunca} />
       </Route>
       <Route component={NotFound} />
     </Switch>

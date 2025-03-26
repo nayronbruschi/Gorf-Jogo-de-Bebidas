@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { FaGlassCheers } from "react-icons/fa";
 import { 
-  Button, 
   Card, 
   CardContent, 
   CardHeader, 
@@ -10,6 +9,7 @@ import {
   CardDescription,
   CardFooter
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -33,7 +33,7 @@ import { GameLayout } from "@/components/GameLayout";
 import { startGameSession, updateGameStats } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
-import { AlertTriangle, Info, Wine, Eye, Plus, Pill, Smile, Fire, Zap, HelpCircle, Settings } from "lucide-react";
+import { AlertTriangle, Info, Wine, Eye, Plus, Pill, Smile, Flame, Zap, HelpCircle, Settings } from "lucide-react";
 
 // Categorias de perguntas para o jogo Eu Nunca
 type QuestionCategory = "comuns" | "pesadas" | "eroticas" | "drogas" | "mistas";
@@ -171,7 +171,7 @@ const todasQuestoes: QuestionsByCategory = {
 // Ícones para cada categoria
 const categoriasIcons = {
   comuns: Smile,
-  pesadas: Fire,
+  pesadas: Flame,
   eroticas: Eye,
   drogas: Pill,
   mistas: Zap
@@ -390,7 +390,7 @@ export default function EuNunca() {
                     className={categoriaAtual === "pesadas" ? "bg-purple-700 hover:bg-purple-800" : ""}
                     onClick={() => mudarCategoria("pesadas")}
                   >
-                    <Fire className="mr-2 h-4 w-4" />
+                    <Flame className="mr-2 h-4 w-4" />
                     Pesadas (Intensas)
                   </Button>
                   
