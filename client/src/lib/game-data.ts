@@ -234,7 +234,7 @@ export const games: GameType[] = [
     name: "Eu Nunca",
     description: "Quem já fez, bebe! Jogo de perguntas indiscretas.",
     icon: Wine,
-    route: "/eu-nunca"
+    route: "/eu-nunca/categorias"
   },
   {
     id: "guess-who",

@@ -162,8 +162,13 @@ export default function EuNuncaJogo() {
   const [mostrarTutorial, setMostrarTutorial] = useState(false);
   const [animatingOut, setAnimatingOut] = useState(false);
   
+  interface Player {
+    id: string;
+    name: string;
+  }
+  
   // Buscar jogadores
-  const { data: players = [] } = useQuery({
+  const { data: players = [] } = useQuery<Player[]>({
     queryKey: ["/api/players"],
   });
   
@@ -264,7 +269,7 @@ export default function EuNuncaJogo() {
                       
                       {players.length > 0 && (
                         <div className="mt-6 bg-purple-50 p-3 rounded-lg">
-                          <p className="text-sm text-purple-700 font-medium">Jogadores: {players.map(p => p.name).join(', ')}</p>
+                          <p className="text-sm text-purple-700 font-medium">Jogadores: {players.map((p: Player) => p.name).join(', ')}</p>
                         </div>
                       )}
                     </div>

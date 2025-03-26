@@ -5,9 +5,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Play } from "lucide-react";
 
+interface Player {
+  id: string;
+  name: string;
+}
+
 export default function EuNuncaJogadores() {
   const [, navigate] = useLocation();
-  const { data: players = [] } = useQuery({
+  const { data: players = [] } = useQuery<Player[]>({
     queryKey: ["/api/players"],
   });
 
