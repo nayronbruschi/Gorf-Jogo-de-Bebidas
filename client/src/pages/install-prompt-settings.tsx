@@ -57,6 +57,7 @@ export default function InstallPromptSettings() {
         url: '/api/install-prompt-config',
         method: 'POST',
         data,
+        headers: { 'Content-Type': 'application/json' }
       });
     },
     onSuccess: () => {

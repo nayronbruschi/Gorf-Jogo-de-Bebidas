@@ -3,6 +3,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "@/components/ui/button";
 import { X, Download, Plus } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useQuery } from "@tanstack/react-query";
+import { InstallPromptConfig } from "../../../shared/schema";
 
 interface InstallAppPromptProps {
   open: boolean;
@@ -11,7 +13,23 @@ interface InstallAppPromptProps {
 
 export function InstallAppPrompt({ open, onOpenChange }: InstallAppPromptProps) {
   const [platform, setPlatform] = useState<"ios" | "android" | "other">("other");
+  const [showPrompt, setShowPrompt] = useState(false);
   const isMobile = useIsMobile();
+
+  // Buscar a configuração do popup
+  const { data: config } = useQuery({
+    queryKey: ['/api/install-prompt-config'],
+    queryFn: async () => {
+      try {
+        const response = await fetch('/api/install-prompt-config');
+        if (!response.ok) return null;
+        return response.json() as Promise<InstallPromptConfig>;
+      } catch (error) {
+        console.error("Erro ao buscar configuração do popup:", error);
+        return null;
+      }
+    },
+  });
 
   useEffect(() => {
     // Detectar a plataforma
@@ -25,6 +43,39 @@ export function InstallAppPrompt({ open, onOpenChange }: InstallAppPromptProps) 
     }
   }, []);
 
+  useEffect(() => {
+    // Verificar se deve mostrar o popup de acordo com a configuração e o histórico
+    if (!config || !config.enabled) {
+      setShowPrompt(false);
+      return;
+    }
+
+    // Verificar se está dentro do período de exibição (se especificado)
+    const now = new Date();
+    if (config.startDate && new Date(config.startDate) > now) {
+      setShowPrompt(false);
+      return;
+    }
+    if (config.endDate && new Date(config.endDate) < now) {
+      setShowPrompt(false);
+      return;
+    }
+
+    // Verificar a frequência a partir do localStorage
+    const lastDismissed = localStorage.getItem('installPromptDismissed');
+    if (lastDismissed) {
+      const lastDate = new Date(lastDismissed);
+      const daysDiff = Math.floor((now.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+      if (daysDiff < config.frequency) {
+        setShowPrompt(false);
+        return;
+      }
+    }
+
+    // Se chegou até aqui, deve mostrar o popup
+    setShowPrompt(true);
+  }, [config]);
+
   const handleDismiss = () => {
     // Salvar no localStorage que o popup foi dispensado hoje
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
@@ -32,8 +83,8 @@ export function InstallAppPrompt({ open, onOpenChange }: InstallAppPromptProps) 
     onOpenChange(false);
   };
 
-  // Se não for um dispositivo móvel, não mostrar o popup
-  if (!isMobile) {
+  // Se não for um dispositivo móvel ou não deve mostrar o popup, não renderizar
+  if (!isMobile || !showPrompt) {
     return null;
   }
 
@@ -59,7 +110,15 @@ export function InstallAppPrompt({ open, onOpenChange }: InstallAppPromptProps) 
                 </ol>
               </div>
               <div className="flex justify-center">
-                <img src="/api/images/add-to-homescreen-ios.png" alt="Instruções iOS" className="h-32 object-contain" />
+                <img
+                  src="/api/images/add-to-homescreen-ios.svg"
+                  alt="Instruções iOS"
+                  className="h-48 object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "../assets/add-to-homescreen-ios.svg";
+                  }}
+                />
               </div>
             </div>
           )}
@@ -75,7 +134,15 @@ export function InstallAppPrompt({ open, onOpenChange }: InstallAppPromptProps) 
                 </ol>
               </div>
               <div className="flex justify-center">
-                <img src="/api/images/add-to-homescreen-android.png" alt="Instruções Android" className="h-32 object-contain" />
+                <img
+                  src="/api/images/add-to-homescreen-android.svg"
+                  alt="Instruções Android"
+                  className="h-48 object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "../assets/add-to-homescreen-android.svg";
+                  }}
+                />
               </div>
             </div>
           )}
