@@ -195,6 +195,16 @@ export default function EuNunca() {
     }
   }, []);
   
+  // Registrar quando o jogo é iniciado pela primeira vez
+  useEffect(() => {
+    if (perguntaAtual) {
+      const userId = localStorage.getItem('dev_session');
+      if (userId) {
+        updateGameStats(userId, "Eu Nunca");
+      }
+    }
+  }, [perguntaAtual]);
+  
   // Função para salvar que o tutorial foi visto
   const fecharTutorial = () => {
     localStorage.setItem("euNuncaTutorialVisto", "true");
@@ -271,7 +281,7 @@ export default function EuNunca() {
   
   return (
     <GameLayout title="" showPlayers={false}>
-      <div className="w-full h-full flex justify-center items-center py-10 px-4">
+      <div className="w-full h-full min-h-screen bg-gradient-to-b from-purple-900 to-purple-700 py-10 px-4 flex justify-center items-center">
         <div className="w-full max-w-lg bg-white rounded-lg shadow-xl overflow-hidden">
           <div className="bg-gradient-to-r from-purple-800 to-purple-600 text-white p-5">
             <div className="flex justify-center items-center">
@@ -283,11 +293,11 @@ export default function EuNunca() {
           </div>
           
           <div className="p-6">
-            <Tabs defaultValue="jogo" className="mb-4">
+            <Tabs defaultValue="categorias" className="mb-4">
               <TabsList className="w-full bg-purple-100">
-                <TabsTrigger value="jogo" className="flex-1 data-[state=active]:bg-purple-700 data-[state=active]:text-white">Jogo</TabsTrigger>
                 <TabsTrigger value="categorias" className="flex-1 data-[state=active]:bg-purple-700 data-[state=active]:text-white">Categorias</TabsTrigger>
-                <TabsTrigger value="regras" className="flex-1 data-[state=active]:bg-purple-700 data-[state=active]:text-white">Regras</TabsTrigger>
+                <TabsTrigger value="regras" className="flex-1 data-[state=active]:bg-purple-700 data-[state=active]:text-white">Como Jogar</TabsTrigger>
+                <TabsTrigger value="jogo" className="flex-1 data-[state=active]:bg-purple-700 data-[state=active]:text-white">Jogo</TabsTrigger>
               </TabsList>
               
               <TabsContent value="jogo" className="space-y-6 pt-4">
@@ -295,7 +305,7 @@ export default function EuNunca() {
                   <div className="text-center space-y-8">
                     <div className="bg-purple-100 p-6 rounded-lg border-2 border-purple-300 shadow-lg">
                       <CategoriaIcon className="mx-auto h-12 w-12 text-purple-700 mb-4" />
-                      <p className="text-xl font-bold text-black mb-1">{perguntaAtual}</p>
+                      <p className="text-xl font-bold text-purple-900 mb-1">{perguntaAtual}</p>
                       <p className="text-sm text-purple-700">
                         Categoria: {categoriasNomes[categoriaAtual]}
                       </p>
@@ -308,19 +318,6 @@ export default function EuNunca() {
                       >
                         Próxima Pergunta
                       </Button>
-                      
-                      <Button 
-                        variant="outline" 
-                        className="w-full border-purple-300"
-                        onClick={() => {
-                          const selectTab = document.querySelector('[data-state="inactive"][value="categorias"]');
-                          if (selectTab) {
-                            (selectTab as HTMLElement).click();
-                          }
-                        }}
-                      >
-                        Mudar Categoria
-                      </Button>
                     </div>
                   </div>
                 ) : (
@@ -328,11 +325,11 @@ export default function EuNunca() {
                     <div className="flex justify-center">
                       <FaGlassCheers className="text-purple-700 h-20 w-20" />
                     </div>
-                    <p className="text-lg">
+                    <p className="text-lg text-purple-900 font-medium">
                       Clique no botão abaixo para começar o jogo com perguntas da categoria {categoriasNomes[categoriaAtual]}.
                     </p>
                     <Button 
-                      className="bg-purple-700 hover:bg-purple-800 text-white"
+                      className="w-full bg-purple-700 hover:bg-purple-800 text-white text-lg py-6"
                       onClick={gerarNovaPergunta}
                     >
                       Iniciar Jogo
@@ -342,8 +339,8 @@ export default function EuNunca() {
               </TabsContent>
               
               <TabsContent value="categorias" className="space-y-4 pt-4">
-                <p className="text-sm text-gray-600 mb-2">
-                  Escolha a categoria de perguntas:
+                <p className="text-sm text-purple-900 font-medium mb-2">
+                  Escolha a categoria de perguntas para o jogo:
                 </p>
                 
                 <div className="grid grid-cols-1 gap-3">
@@ -392,6 +389,20 @@ export default function EuNunca() {
                     Misturadas (Todas)
                   </Button>
                 </div>
+                
+                <div className="mt-4 flex justify-center">
+                  <Button 
+                    onClick={() => {
+                      const selectTab = document.querySelector('[data-state="inactive"][value="regras"]');
+                      if (selectTab) {
+                        (selectTab as HTMLElement).click();
+                      }
+                    }}
+                    className="bg-purple-700 hover:bg-purple-800 text-white mt-2"
+                  >
+                    Próximo: Ver Como Jogar
+                  </Button>
+                </div>
               </TabsContent>
               
               <TabsContent value="regras" className="space-y-4 pt-4">
@@ -420,17 +431,30 @@ export default function EuNunca() {
                     </div>
                   </div>
                 </div>
+                
+                <div className="mt-4 flex justify-center">
+                  <Button 
+                    onClick={() => {
+                      const selectTab = document.querySelector('[data-state="inactive"][value="jogo"]');
+                      if (selectTab) {
+                        (selectTab as HTMLElement).click();
+                      }
+                      if (!perguntaAtual) {
+                        gerarNovaPergunta();
+                      }
+                    }}
+                    className="bg-purple-700 hover:bg-purple-800 text-white mt-2"
+                  >
+                    Iniciar Jogo
+                  </Button>
+                </div>
               </TabsContent>
             </Tabs>
           </div>
           
-          <div className="flex justify-between p-4 bg-purple-700 text-white">
-            <Button variant="secondary" onClick={voltarMenu} className="bg-white text-purple-700 hover:bg-gray-100">
-              Voltar ao Menu
-            </Button>
-            
+          <div className="flex justify-center p-4 bg-purple-700 text-white">
             <Button 
-              className="bg-white text-purple-700 hover:bg-gray-100"
+              className="bg-white text-purple-700 hover:bg-gray-100 w-full text-lg font-medium py-6"
               onClick={() => {
                 const selectTab = document.querySelector('[data-state="inactive"][value="jogo"]');
                 if (selectTab) {
@@ -441,7 +465,7 @@ export default function EuNunca() {
                 }
               }}
             >
-              {perguntaAtual ? "Continuar Jogando" : "Iniciar Jogo"}
+              {perguntaAtual ? "Continuar Jogando" : "Começar a Jogar"}
             </Button>
           </div>
         </div>

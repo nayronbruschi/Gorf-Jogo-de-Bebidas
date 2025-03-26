@@ -4,6 +4,7 @@ import { GameCard } from "@/components/GameCard";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { games } from "@/lib/game-data";
+import { motion } from "framer-motion";
 
 export default function GameModes() {
   // Scroll to top when component mounts
@@ -34,19 +35,54 @@ export default function GameModes() {
 
     cleanupData();
   }, []);
+  
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1 }
+  };
 
   return (
     <GameLayout title="Escolha seu modo de jogo">
-      <div className="grid grid-cols-1 gap-6">
-        {games.map((game) => (
-          <GameCard
-            key={game.id}
-            title={game.name}
-            description={game.description}
-            icon={game.icon}
-            href={game.route}
-          />
-        ))}
+      <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-700 -mt-8 -mx-4 px-4 pt-8 pb-16">
+        <div className="max-w-4xl mx-auto">
+          <motion.div 
+            className="text-center mb-8"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-3xl font-bold text-white mb-2">Divirta-se com o Gorf</h1>
+            <p className="text-purple-200">Escolha um dos modos de jogo abaixo para começar</p>
+          </motion.div>
+          
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            variants={container}
+            initial="hidden"
+            animate="show"
+          >
+            {games.map((game) => (
+              <motion.div key={game.id} variants={item}>
+                <GameCard
+                  title={game.name}
+                  description={game.description}
+                  icon={game.icon}
+                  href={game.route}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </GameLayout>
   );
