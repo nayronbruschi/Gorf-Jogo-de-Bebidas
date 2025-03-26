@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
-import { insertPlayerSchema, updatePlayerPointsSchema, gameSettingsSchema } from "@shared/schema";
+import { insertPlayerSchema, updatePlayerPointsSchema, gameSettingsSchema, installPromptConfigSchema } from "@shared/schema";
 import multer from "multer";
 import fs from "fs";
 import path from "path";
@@ -342,7 +342,9 @@ export async function registerRoutes(app: Express) {
         // Configuração padrão se o arquivo não existir
         const defaultConfig = {
           enabled: true,
-          delayInSeconds: 3
+          frequency: 1,
+          startDate: null,
+          endDate: null
         };
         res.json(defaultConfig);
       }
@@ -355,10 +357,13 @@ export async function registerRoutes(app: Express) {
   // Rota para atualizar configurações do popup de instalação
   app.post("/api/install-prompt-config", (req, res) => {
     try {
-      const { enabled, delayInSeconds } = req.body;
+      const result = installPromptConfigSchema.safeParse(req.body);
       
-      if (enabled === undefined) {
-        return res.status(400).json({ message: "Configuração de habilitação do popup não fornecida" });
+      if (!result.success) {
+        return res.status(400).json({ 
+          message: "Configurações de popup inválidas", 
+          errors: result.error.errors 
+        });
       }
       
       const filePath = path.join(BUCKET_PATH, "install_prompt_config.json");
@@ -370,12 +375,12 @@ export async function registerRoutes(app: Express) {
       }
       
       // Salvar as configurações
-      fs.writeFileSync(filePath, JSON.stringify({ 
-        enabled, 
-        delayInSeconds: delayInSeconds || 3 
-      }, null, 2));
+      fs.writeFileSync(filePath, JSON.stringify(result.data, null, 2));
       
-      res.json({ message: "Configurações do popup atualizadas com sucesso" });
+      res.json({ 
+        message: "Configurações do popup atualizadas com sucesso",
+        config: result.data
+      });
     } catch (error) {
       console.error('Erro ao salvar configurações do popup de instalação:', error);
       res.status(500).json({ message: "Erro ao salvar configurações do popup" });

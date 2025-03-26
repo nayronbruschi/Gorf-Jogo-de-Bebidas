@@ -41,6 +41,7 @@ import Onboarding from "@/pages/onboarding";
 import Recommendations from "@/pages/recommendations";
 import DesenhaEBebe from "@/pages/desenha-e-bebe";
 import EuNunca from "@/pages/eu-nunca";
+import InstallPromptSettings from "@/pages/install-prompt-settings";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading } = useAuth();
@@ -84,6 +85,9 @@ function Router() {
       </Route>
       <Route path="/admin/geo-test">
         <ProtectedRoute component={AdminGeoTest} />
+      </Route>
+      <Route path="/admin/install-prompt">
+        <ProtectedRoute component={InstallPromptSettings} />
       </Route>
       <Route path="/profile">
         <ProtectedRoute component={Profile} />
