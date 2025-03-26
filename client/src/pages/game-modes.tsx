@@ -66,7 +66,7 @@ export default function GameModes() {
 
   return (
     <GameLayout title="">
-      <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-700 -mt-8 -mx-4 px-4 pt-8 pb-16">
+      <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-700 -mx-4 px-4 pt-4 pb-16">
         <div className="max-w-4xl mx-auto">
           <motion.div 
             className="text-center mb-8"

@@ -262,7 +262,17 @@ export default function SpinBottle() {
           </motion.div>
         </div>
 
-        <div className="flex w-full max-w-md justify-between gap-4">
+        <div className="flex flex-col w-full max-w-md gap-4">
+          <Button
+            size="lg"
+            onClick={spinBottle}
+            disabled={isSpinning}
+            className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white py-6 text-xl"
+          >
+            <RotateCcw className="mr-2 h-6 w-6" />
+            {isSpinning ? "Girando..." : "Girar Garrafa"}
+          </Button>
+          
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button 
@@ -332,16 +342,6 @@ export default function SpinBottle() {
               </div>
             </DialogContent>
           </Dialog>
-          
-          <Button
-            size="lg"
-            onClick={spinBottle}
-            disabled={isSpinning}
-            className="flex-1 bg-purple-900 hover:bg-purple-950 text-white hover:text-white"
-          >
-            <RotateCcw className="mr-2 h-5 w-5" />
-            {isSpinning ? "Girando..." : "Girar Garrafa"}
-          </Button>
         </div>
 
       </div>
