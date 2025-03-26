@@ -142,6 +142,15 @@ export default function DesenhaEBebe() {
     modoRepresentacao: "desenho",
     metaVitoria: 5
   });
+  
+  // Registrar o jogo nas estatísticas do usuário quando a página for carregada
+  useEffect(() => {
+    const userId = localStorage.getItem('dev_session');
+    if (userId) {
+      startGameSession(userId, "Desenha e Bebe");
+      updateGameStats(userId, "Desenha e Bebe");
+    }
+  }, []);
   const [rodadaAtual, setRodadaAtual] = useState(0);
   const [jogadorAtual, setJogadorAtual] = useState(0);
   const [palavraAtual, setPalavraAtual] = useState("");
@@ -358,11 +367,12 @@ export default function DesenhaEBebe() {
     }
     
     // Registra o jogo nas estatísticas do usuário
-    if (window.authState?.user?.uid) {
+    const userId = localStorage.getItem('dev_session');
+    if (userId) {
       // Registrar o início da sessão de jogo
-      startGameSession(window.authState.user.uid, "Desenha e Bebe");
+      startGameSession(userId, "Desenha e Bebe");
       // Atualizar as estatísticas do jogo (jogos recentes)
-      updateGameStats(window.authState.user.uid, "Desenha e Bebe");
+      updateGameStats(userId, "Desenha e Bebe");
     }
     
     setRodadaAtual(1);
