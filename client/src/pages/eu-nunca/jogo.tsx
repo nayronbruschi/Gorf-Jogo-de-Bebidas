@@ -239,10 +239,9 @@ export default function EuNuncaJogo() {
   
   return (
     <GameLayout title="">
-      <div className="w-full min-h-screen flex flex-col items-center justify-center py-8 px-4">
+      <div className="w-full min-h-screen flex flex-col items-center justify-start pt-4 px-4">
         <div className="max-w-lg w-full flex flex-col items-center">
-          <div className="mb-8 text-center">
-            <h2 className="text-3xl font-bold text-white mb-2">Eu Nunca</h2>
+          <div className="mb-4 text-center">
             <p className="text-white/80 text-lg">
               Categoria: {categoriasNomes[categoriaAtual]}
             </p>
@@ -256,7 +255,7 @@ export default function EuNuncaJogo() {
                 animate={{ opacity: animatingOut ? 0 : 1, y: animatingOut ? -20 : 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
-                className="w-full mb-10"
+                className="w-full mb-6"
               >
                 <Card className="p-0 overflow-hidden bg-white border-purple-300 shadow-lg">
                   <CardContent className="p-0">
@@ -279,26 +278,14 @@ export default function EuNuncaJogo() {
             )}
           </AnimatePresence>
           
-          <div className="flex flex-col md:flex-row gap-4 w-full">
+          <div className="w-full">
             <Button
-              className="flex-1 bg-purple-700 hover:bg-purple-800 text-white py-6 text-lg"
+              className="w-full bg-purple-900 hover:bg-purple-950 text-white py-6 text-lg"
               onClick={gerarNovaPergunta}
             >
               <RefreshCcw className="mr-2 h-5 w-5" />
               Próxima Pergunta
             </Button>
-            
-            <Button
-              className="flex-1 bg-white/20 hover:bg-white/30 text-white py-6 text-lg"
-              onClick={voltarMenu}
-            >
-              <ChevronRight className="mr-2 h-5 w-5" />
-              Sair do Jogo
-            </Button>
-          </div>
-          
-          <div className="mt-6 text-white/60 text-sm text-center">
-            <p>Tenha responsabilidade. Beba com moderação.</p>
           </div>
         </div>
       </div>
@@ -306,7 +293,7 @@ export default function EuNuncaJogo() {
       {/* Tutorial */}
       {mostrarTutorial && (
         <TutorialOverlay onClose={fecharTutorial}>
-          <div className="space-y-4 text-white">
+          <div className="space-y-4 text-purple-900">
             <h3 className="text-2xl font-bold">Como Jogar "Eu Nunca"</h3>
             
             <div className="space-y-2">
@@ -328,13 +315,6 @@ export default function EuNuncaJogo() {
               <p className="flex items-center">
                 <span className="bg-purple-700 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-2">4</span>
                 Clique em "Próxima Pergunta" para continuar o jogo.
-              </p>
-            </div>
-            
-            <div className="mt-4 p-3 bg-orange-900/50 rounded-lg flex items-start">
-              <AlertTriangle className="h-5 w-5 text-orange-300 mt-0.5 mr-2 flex-shrink-0" />
-              <p className="text-sm text-orange-200">
-                Lembre-se: Jogar com honestidade é mais divertido! E sempre beba com responsabilidade.
               </p>
             </div>
           </div>
