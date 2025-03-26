@@ -294,29 +294,29 @@ export default function EuNuncaJogo() {
       {mostrarTutorial && (
         <TutorialOverlay onClose={fecharTutorial}>
           <div className="space-y-4 text-purple-900">
-            <h3 className="text-2xl font-bold">Como Jogar "Eu Nunca"</h3>
+            <h3 className="text-2xl font-bold text-center mb-4">Como Jogar "Eu Nunca"</h3>
             
-            <div className="space-y-2">
-              <p className="flex items-center">
-                <span className="bg-purple-700 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-2">1</span>
-                Um jogador lê em voz alta a afirmação que aparece na tela.
-              </p>
+            <ul className="space-y-4">
+              <li className="flex items-start">
+                <div className="bg-purple-900 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">1</div>
+                <div>Um jogador lê em voz alta a afirmação que aparece na tela.</div>
+              </li>
               
-              <p className="flex items-center">
-                <span className="bg-purple-700 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-2">2</span>
-                Todos os jogadores que <strong>já fizeram</strong> o que está na afirmação devem beber.
-              </p>
+              <li className="flex items-start">
+                <div className="bg-purple-900 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">2</div>
+                <div>Todos os jogadores que <strong>já fizeram</strong> o que está na afirmação devem beber.</div>
+              </li>
               
-              <p className="flex items-center">
-                <span className="bg-purple-700 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-2">3</span>
-                O grupo pode comentar e fazer perguntas sobre as experiências.
-              </p>
+              <li className="flex items-start">
+                <div className="bg-purple-900 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">3</div>
+                <div>O grupo pode comentar e fazer perguntas sobre as experiências.</div>
+              </li>
               
-              <p className="flex items-center">
-                <span className="bg-purple-700 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-2">4</span>
-                Clique em "Próxima Pergunta" para continuar o jogo.
-              </p>
-            </div>
+              <li className="flex items-start">
+                <div className="bg-purple-900 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">4</div>
+                <div>Clique em "Próxima Pergunta" para continuar o jogo.</div>
+              </li>
+            </ul>
           </div>
         </TutorialOverlay>
       )}

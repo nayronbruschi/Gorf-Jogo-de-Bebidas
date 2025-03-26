@@ -51,8 +51,14 @@ export default function GameModes() {
     show: { y: 0, opacity: 1 }
   };
 
+  // Simulação de jogos em destaque - isso seria configurado no painel de admin
+  const featuredGames = {
+    "eu-nunca": { isFeatured: true, tag: "Em Destaque" },
+    "desenha-e-bebe": { isFeatured: true, tag: "Novo!" }
+  };
+
   return (
-    <GameLayout title="Escolha seu modo de jogo">
+    <GameLayout title="">
       <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-700 -mt-8 -mx-4 px-4 pt-8 pb-16">
         <div className="max-w-4xl mx-auto">
           <motion.div 
@@ -61,8 +67,7 @@ export default function GameModes() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-3xl font-bold text-white mb-2">Divirta-se com o Gorf</h1>
-            <p className="text-purple-200">Escolha um dos modos de jogo abaixo para começar</p>
+            <p className="text-purple-200 text-xl">Escolha um dos modos de jogo abaixo para começar</p>
           </motion.div>
           
           <motion.div 
@@ -71,16 +76,21 @@ export default function GameModes() {
             initial="hidden"
             animate="show"
           >
-            {games.map((game) => (
-              <motion.div key={game.id} variants={item}>
-                <GameCard
-                  title={game.name}
-                  description={game.description}
-                  icon={game.icon}
-                  href={game.route}
-                />
-              </motion.div>
-            ))}
+            {games.map((game) => {
+              const featured = featuredGames[game.id as keyof typeof featuredGames];
+              return (
+                <motion.div key={game.id} variants={item}>
+                  <GameCard
+                    title={game.name}
+                    description={game.description}
+                    icon={game.icon}
+                    href={game.route}
+                    isFeatured={featured?.isFeatured}
+                    featureTag={featured?.tag}
+                  />
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </div>
