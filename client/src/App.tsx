@@ -1,4 +1,3 @@
-import React from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -40,7 +39,7 @@ import GuessWhoGame from "@/pages/guess-who-game";
 import Profile from "@/pages/profile";
 import Onboarding from "@/pages/onboarding";
 import Recommendations from "@/pages/recommendations";
-// Importação substituída por lazy loading
+import DesenhaEBebe from "@/pages/desenha-e-bebe";
 import EuNunca from "@/pages/eu-nunca";
 import InstallPromptSettings from "@/pages/install-prompt-settings";
 
@@ -145,16 +144,7 @@ function Router() {
         <ProtectedRoute component={GuessWhoGame} />
       </Route>
       <Route path="/desenha-e-bebe">
-        <ProtectedRoute component={React.lazy(() => import("./pages/desenha-e-bebe"))} />
-      </Route>
-      <Route path="/desenha-e-bebe/jogadores">
-        <ProtectedRoute component={React.lazy(() => import("./pages/desenha-e-bebe/jogadores"))} />
-      </Route>
-      <Route path="/desenha-e-bebe/configuracoes">
-        <ProtectedRoute component={React.lazy(() => import("./pages/desenha-e-bebe/configuracoes"))} />
-      </Route>
-      <Route path="/desenha-e-bebe/jogo">
-        <ProtectedRoute component={React.lazy(() => import("./pages/desenha-e-bebe/jogo"))} />
+        <ProtectedRoute component={DesenhaEBebe} />
       </Route>
       <Route path="/eu-nunca">
         <ProtectedRoute component={EuNuncaRedirect} />
@@ -176,9 +166,7 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <React.Suspense fallback={<LoadingScreen />}>
-        <Router />
-      </React.Suspense>
+      <Router />
       <Toaster />
     </QueryClientProvider>
   );
