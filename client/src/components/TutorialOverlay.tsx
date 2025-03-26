@@ -3,11 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface TutorialOverlay {
+interface TutorialOverlayProps {
   onClose: () => void;
+  children?: React.ReactNode;
 }
 
-export function TutorialOverlay({ onClose }: TutorialOverlay) {
+export function TutorialOverlay({ onClose, children }: TutorialOverlayProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const tutorialSteps = [
     {
@@ -90,44 +91,61 @@ export function TutorialOverlay({ onClose }: TutorialOverlay) {
           </div>
 
           <div className="space-y-6 mb-8">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentStep}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="p-4 rounded-lg bg-purple-50 border-2 border-purple-700"
-              >
-                <div className="bg-white rounded-lg p-2 mb-4 shadow-sm">
-                  {tutorialSteps[currentStep].image}
-                </div>
-                <h4 className="font-semibold text-purple-900 mb-2">{tutorialSteps[currentStep].title}</h4>
-                <p className="text-gray-700">{tutorialSteps[currentStep].text}</p>
-              </motion.div>
-            </AnimatePresence>
+            {children ? (
+              <div className="p-4 rounded-lg bg-purple-50 border-2 border-purple-700">
+                {children}
+              </div>
+            ) : (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentStep}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="p-4 rounded-lg bg-purple-50 border-2 border-purple-700"
+                >
+                  <div className="bg-white rounded-lg p-2 mb-4 shadow-sm">
+                    {tutorialSteps[currentStep].image}
+                  </div>
+                  <h4 className="font-semibold text-purple-900 mb-2">{tutorialSteps[currentStep].title}</h4>
+                  <p className="text-gray-700">{tutorialSteps[currentStep].text}</p>
+                </motion.div>
+              </AnimatePresence>
+            )}
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-500">
-              Passo {currentStep + 1} de {tutorialSteps.length}
-            </span>
-            <div className="flex gap-2">
-              {currentStep > 0 && (
-                <Button
-                  variant="outline"
-                  onClick={handleBack}
-                  className="text-white bg-purple-700 hover:bg-purple-800 border-purple-700"
-                >
-                  Voltar
-                </Button>
-              )}
+            {children ? (
               <Button
-                onClick={handleNext}
-                className="bg-purple-700 hover:bg-purple-800 text-white"
+                onClick={onClose}
+                className="bg-purple-700 hover:bg-purple-800 text-white w-full"
               >
-                {currentStep === tutorialSteps.length - 1 ? 'Começar' : 'Próximo'}
+                Entendi, vamos jogar!
               </Button>
-            </div>
+            ) : (
+              <>
+                <span className="text-sm text-gray-500">
+                  Passo {currentStep + 1} de {tutorialSteps.length}
+                </span>
+                <div className="flex gap-2">
+                  {currentStep > 0 && (
+                    <Button
+                      variant="outline"
+                      onClick={handleBack}
+                      className="text-white bg-purple-700 hover:bg-purple-800 border-purple-700"
+                    >
+                      Voltar
+                    </Button>
+                  )}
+                  <Button
+                    onClick={handleNext}
+                    className="bg-purple-700 hover:bg-purple-800 text-white"
+                  >
+                    {currentStep === tutorialSteps.length - 1 ? 'Começar' : 'Próximo'}
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

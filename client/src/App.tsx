@@ -28,6 +28,10 @@ import TouchGame from "@/pages/touch-game";
 import SpinBottle from "@/pages/spin-bottle";
 import CoinFlip from "@/pages/coin-flip";
 import Cards from "@/pages/cards";
+import EuNuncaRedirect from "@/pages/eu-nunca";
+import EuNuncaCategorias from "@/pages/eu-nunca/categorias";
+import EuNuncaJogadores from "@/pages/eu-nunca/jogadores";
+import EuNuncaJogo from "@/pages/eu-nunca/jogo";
 import GuessWhoPlayers from "@/pages/guess-who-players";
 import GuessWhoTheme from "@/pages/guess-who-theme";
 import GuessWhoGame from "@/pages/guess-who-game";
@@ -135,7 +139,16 @@ function Router() {
         <ProtectedRoute component={DesenhaEBebe} />
       </Route>
       <Route path="/eu-nunca">
-        <ProtectedRoute component={EuNunca} />
+        <ProtectedRoute component={EuNuncaRedirect} />
+      </Route>
+      <Route path="/eu-nunca/categorias">
+        <ProtectedRoute component={EuNuncaCategorias} />
+      </Route>
+      <Route path="/eu-nunca/jogadores">
+        <ProtectedRoute component={EuNuncaJogadores} />
+      </Route>
+      <Route path="/eu-nunca/jogo">
+        <ProtectedRoute component={EuNuncaJogo} />
       </Route>
       <Route component={NotFound} />
     </Switch>
