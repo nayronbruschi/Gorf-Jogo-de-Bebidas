@@ -5,6 +5,8 @@ import { insertPlayerSchema, updatePlayerPointsSchema, gameSettingsSchema } from
 import multer from "multer";
 import fs from "fs";
 import path from "path";
+import sharp from "sharp";
+import rembg from "rembg-node";
 
 // Configurar o multer para armazenar os arquivos temporariamente
 const upload = multer({ dest: 'tmp/uploads/' });
@@ -324,6 +326,116 @@ export async function registerRoutes(app: Express) {
     } catch (error) {
       console.error('Erro ao obter tags de destaque:', error);
       res.status(500).json({ message: "Erro ao obter tags de destaque" });
+    }
+  });
+  
+  // Rota para upload de imagem com remoção de fundo para a garrafa
+  app.post("/api/upload-bottle-image", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "Nenhum arquivo enviado" });
+      }
+
+      const file = req.file;
+      
+      // Processar a imagem com sharp e remover o fundo
+      console.log('Processando imagem para remover fundo...');
+      
+      // Ler o arquivo para um buffer
+      const inputBuffer = fs.readFileSync(file.path);
+      
+      // Redimensionar a imagem para um tamanho adequado antes de remover o fundo
+      const resizedImageBuffer = await sharp(inputBuffer)
+        .resize({
+          width: 500,
+          height: 500,
+          fit: 'inside',
+          withoutEnlargement: true
+        })
+        .toBuffer();
+      
+      // Remover o fundo da imagem
+      console.log('Removendo fundo da imagem...');
+      const outputBuffer = await removeBackgroundFromImageBuffer({
+        buffer: resizedImageBuffer,
+        alpha: true
+      });
+      
+      // Gerar um nome de arquivo único
+      const uniqueFilename = `bottle-${Date.now()}.png`;
+      const destPath = path.join(BUCKET_PATH, uniqueFilename);
+      
+      // Garantir que o diretório existe
+      const dir = path.dirname(destPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      // Salvar a imagem processada
+      fs.writeFileSync(destPath, outputBuffer);
+      console.log('Imagem com fundo removido salva em:', destPath);
+      
+      // Remover o arquivo temporário original
+      fs.unlinkSync(file.path);
+      
+      // Retornar a URL da imagem processada
+      const url = `/api/images/${uniqueFilename}`;
+      res.json({ url });
+    } catch (error) {
+      console.error('Erro ao processar imagem para garrafa:', error);
+      res.status(500).json({ 
+        message: "Erro ao processar imagem da garrafa", 
+        error: error instanceof Error ? error.message : 'Erro desconhecido'
+      });
+    }
+  });
+  
+  // Rota para obter a imagem da garrafa atual
+  app.get("/api/bottle-image", (req, res) => {
+    try {
+      // Verifica se existe uma imagem personalizada para a garrafa
+      const bottlePath = path.join(BUCKET_PATH, "user_bottle_image.json");
+      
+      if (fs.existsSync(bottlePath)) {
+        const bottleData = JSON.parse(fs.readFileSync(bottlePath, 'utf-8'));
+        res.json(bottleData);
+      } else {
+        // Retorna a URL da garrafa padrão
+        res.json({ 
+          url: "https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/Garrafa-2.png?alt=media&token=fb17efb1-9110-4f2e-9875-2ba87f63f25e" 
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao obter imagem da garrafa:', error);
+      res.status(500).json({ message: "Erro ao obter imagem da garrafa" });
+    }
+  });
+  
+  // Rota para salvar a referência à imagem da garrafa atual
+  app.post("/api/bottle-image", (req, res) => {
+    try {
+      const { url } = req.body;
+      
+      if (!url) {
+        return res.status(400).json({ message: "URL da imagem não fornecida" });
+      }
+      
+      const bottlePath = path.join(BUCKET_PATH, "user_bottle_image.json");
+      
+      // Garantir que o diretório existe
+      const dir = path.dirname(bottlePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      // Salvar a referência à imagem da garrafa
+      fs.writeFileSync(bottlePath, JSON.stringify({ url }, null, 2));
+      console.log('Referência à imagem da garrafa salva:', url);
+      
+      res.json({ message: "Imagem da garrafa atualizada com sucesso", url });
+    } catch (error) {
+      console.error('Erro ao salvar imagem da garrafa:', error);
+      res.status(500).json({ message: "Erro ao salvar imagem da garrafa" });
     }
   });
 

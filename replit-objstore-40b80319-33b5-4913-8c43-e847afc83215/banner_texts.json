@@ -1,7 +1,9 @@
 {
   "1": {
     "title": "Bem-vindo(a) ao Gorf",
-    "description": "O melhor app para suas festas"
+    "description": "O melhor app para suas festas",
+    "isClickable": true,
+    "linkUrl": "/cards"
   },
   "2": {
     "title": "Jogue no Modo Clássico",
