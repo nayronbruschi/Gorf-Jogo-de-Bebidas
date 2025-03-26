@@ -198,9 +198,10 @@ export default function EuNunca() {
   
   // Registrar o início do jogo nas estatísticas
   useEffect(() => {
-    if (window.authState?.user?.uid) {
-      startGameSession(window.authState.user.uid, "Eu Nunca");
-      updateGameStats(window.authState.user.uid, "Eu Nunca");
+    const userId = localStorage.getItem('dev_session');
+    if (userId) {
+      startGameSession(userId, "Eu Nunca");
+      updateGameStats(userId, "Eu Nunca");
     }
     
     // Verificar se é a primeira vez que o jogo é aberto

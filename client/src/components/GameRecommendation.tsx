@@ -135,7 +135,7 @@ export function GameRecommendationCard({ className }: GameRecommendationCardProp
       
       <CardFooter className="border-t pt-3 pb-3">
         <div className="flex justify-between w-full">
-          <Button variant="outline" size="sm" className="border-purple-300 text-purple-800 hover:bg-purple-50 hover:text-purple-900" asChild>
+          <Button variant="ghost" size="sm" className="text-purple-700 hover:text-purple-900 hover:bg-transparent font-medium" asChild>
             <Link href="/recommendations">
               Ver mais
             </Link>
