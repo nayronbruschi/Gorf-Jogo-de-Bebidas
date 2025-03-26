@@ -149,7 +149,7 @@ export default function SpinBottle() {
       const formData = new FormData();
       formData.append('file', file);
       
-      // Enviar para processamento com remoção de fundo
+      // Enviar para processamento de imagem
       const response = await fetch('/api/upload-bottle-image', {
         method: 'POST',
         body: formData,
@@ -161,17 +161,15 @@ export default function SpinBottle() {
       
       const data = await response.json();
       
-      // Mostrar mensagem de fallback se necessário
-      if (data.usedFallback) {
-        toast({
-          title: "Imagem processada com limitações",
-          description: "Não foi possível remover o fundo automaticamente, mas sua imagem foi aplicada.",
-          variant: "warning",
-        });
-      }
-      
       // Salvar a referência à nova imagem
       const success = await handleImageUpload(data.url);
+      
+      if (success) {
+        toast({
+          title: "Imagem atualizada",
+          description: "Sua imagem foi processada e aplicada com sucesso.",
+        });
+      }
       
       return success;
     } catch (error) {
@@ -280,7 +278,7 @@ export default function SpinBottle() {
               <DialogHeader>
                 <DialogTitle>Personalizar a Garrafa</DialogTitle>
                 <DialogDescription>
-                  Faça upload de uma imagem sua para usar como garrafa! O fundo será removido automaticamente.
+                  Faça upload de uma imagem sua para usar como garrafa! A imagem será otimizada automaticamente.
                 </DialogDescription>
               </DialogHeader>
               
@@ -311,7 +309,7 @@ export default function SpinBottle() {
                   />
                   
                   <p className="text-xs text-gray-500">
-                    Dica: Use fotos com fundo uniforme para melhor resultado na remoção automática do fundo.
+                    Dica: Use imagens claras e nítidas para melhor resultado.
                   </p>
                 </div>
                 
