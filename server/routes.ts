@@ -330,6 +330,58 @@ export async function registerRoutes(app: Express) {
     }
   });
   
+  // Rota para obter configurações do popup de instalação
+  app.get("/api/install-prompt-config", (req, res) => {
+    try {
+      const filePath = path.join(BUCKET_PATH, "install_prompt_config.json");
+      
+      if (fs.existsSync(filePath)) {
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        res.json(data);
+      } else {
+        // Configuração padrão se o arquivo não existir
+        const defaultConfig = {
+          enabled: true,
+          delayInSeconds: 3
+        };
+        res.json(defaultConfig);
+      }
+    } catch (error) {
+      console.error('Erro ao obter configurações do popup de instalação:', error);
+      res.status(500).json({ message: "Erro ao obter configurações do popup" });
+    }
+  });
+  
+  // Rota para atualizar configurações do popup de instalação
+  app.post("/api/install-prompt-config", (req, res) => {
+    try {
+      const { enabled, delayInSeconds } = req.body;
+      
+      if (enabled === undefined) {
+        return res.status(400).json({ message: "Configuração de habilitação do popup não fornecida" });
+      }
+      
+      const filePath = path.join(BUCKET_PATH, "install_prompt_config.json");
+      
+      // Garantir que o diretório existe
+      const dir = path.dirname(filePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      // Salvar as configurações
+      fs.writeFileSync(filePath, JSON.stringify({ 
+        enabled, 
+        delayInSeconds: delayInSeconds || 3 
+      }, null, 2));
+      
+      res.json({ message: "Configurações do popup atualizadas com sucesso" });
+    } catch (error) {
+      console.error('Erro ao salvar configurações do popup de instalação:', error);
+      res.status(500).json({ message: "Erro ao salvar configurações do popup" });
+    }
+  });
+  
   // Rota para upload de imagem para a garrafa (apenas redimensionamento)
   app.post("/api/upload-bottle-image", upload.single('file'), async (req, res) => {
     let tempFile = null;
