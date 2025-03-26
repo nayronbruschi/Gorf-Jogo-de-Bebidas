@@ -1,22 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { FaGlassCheers } from "react-icons/fa";
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription,
-  CardFooter
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,14 +11,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GameLayout } from "@/components/GameLayout";
 import { startGameSession, updateGameStats } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
-import { AlertTriangle, Info, Wine, Eye, Plus, Pill, Smile, Flame, Zap, HelpCircle, Settings } from "lucide-react";
+import { AlertTriangle, Info, Eye, Pill, Smile, Flame, Zap } from "lucide-react";
 
 // Categorias de perguntas para o jogo Eu Nunca
 type QuestionCategory = "comuns" | "pesadas" | "eroticas" | "drogas" | "mistas";
@@ -257,11 +241,6 @@ export default function EuNunca() {
     setCategoriaAtual(novaCategoria);
     setPerguntasUsadas([]);
     setPerguntaAtual(null);
-    
-    toast({
-      title: `Categoria alterada para ${categoriasNomes[novaCategoria]}`,
-      description: "Uma nova pergunta será gerada",
-    });
   };
   
   // Confirmar seleção de categoria adulta
@@ -292,32 +271,23 @@ export default function EuNunca() {
   
   return (
     <GameLayout title="" showPlayers={false}>
-      <div className="flex justify-center items-center min-h-[calc(100vh-140px)] p-4 bg-gradient-to-b from-purple-900 to-purple-800">
-        <Card className="w-full max-w-lg">
-          <CardHeader className="bg-purple-700 text-white rounded-t-lg">
-            <div className="flex justify-between items-center">
-              <CardTitle className="text-2xl font-bold">Eu Nunca</CardTitle>
-              <Settings 
-                className="h-6 w-6 cursor-pointer hover:text-purple-300"
-                onClick={() => {
-                  toast({
-                    title: "Configurações",
-                    description: "Selecione a categoria desejada abaixo",
-                  });
-                }}
-              />
+      <div className="flex justify-center items-center min-h-[calc(100vh-80px)] p-4 bg-gradient-to-b from-purple-900 to-purple-800">
+        <div className="w-full max-w-lg bg-white rounded-lg shadow-xl overflow-hidden">
+          <div className="bg-purple-700 text-white p-4">
+            <div className="flex justify-center items-center">
+              <h2 className="text-2xl font-bold">Eu Nunca</h2>
             </div>
-            <CardDescription className="text-purple-200">
+            <p className="text-purple-200 mt-1 text-center">
               Quem já fez, bebe! Simples assim.
-            </CardDescription>
-          </CardHeader>
+            </p>
+          </div>
           
-          <CardContent className="pt-6 pb-4">
-            <Tabs defaultValue="jogo" className="mb-6">
-              <TabsList className="w-full">
-                <TabsTrigger value="jogo" className="flex-1">Jogo</TabsTrigger>
-                <TabsTrigger value="categorias" className="flex-1">Categorias</TabsTrigger>
-                <TabsTrigger value="regras" className="flex-1">Regras</TabsTrigger>
+          <div className="p-6">
+            <Tabs defaultValue="jogo" className="mb-4">
+              <TabsList className="w-full bg-purple-100">
+                <TabsTrigger value="jogo" className="flex-1 data-[state=active]:bg-purple-700 data-[state=active]:text-white">Jogo</TabsTrigger>
+                <TabsTrigger value="categorias" className="flex-1 data-[state=active]:bg-purple-700 data-[state=active]:text-white">Categorias</TabsTrigger>
+                <TabsTrigger value="regras" className="flex-1 data-[state=active]:bg-purple-700 data-[state=active]:text-white">Regras</TabsTrigger>
               </TabsList>
               
               <TabsContent value="jogo" className="space-y-6 pt-4">
@@ -333,7 +303,7 @@ export default function EuNunca() {
                     
                     <div className="flex flex-col gap-4">
                       <Button 
-                        className="w-full bg-purple-700 hover:bg-purple-800"
+                        className="w-full bg-purple-700 hover:bg-purple-800 text-white"
                         onClick={gerarNovaPergunta}
                       >
                         Próxima Pergunta
@@ -362,7 +332,7 @@ export default function EuNunca() {
                       Clique no botão abaixo para começar o jogo com perguntas da categoria {categoriasNomes[categoriaAtual]}.
                     </p>
                     <Button 
-                      className="bg-purple-700 hover:bg-purple-800"
+                      className="bg-purple-700 hover:bg-purple-800 text-white"
                       onClick={gerarNovaPergunta}
                     >
                       Iniciar Jogo
@@ -379,7 +349,7 @@ export default function EuNunca() {
                 <div className="grid grid-cols-1 gap-3">
                   <Button 
                     variant={categoriaAtual === "comuns" ? "default" : "outline"}
-                    className={categoriaAtual === "comuns" ? "bg-purple-700 hover:bg-purple-800" : ""}
+                    className={categoriaAtual === "comuns" ? "bg-purple-700 hover:bg-purple-800 text-white" : ""}
                     onClick={() => mudarCategoria("comuns")}
                   >
                     <Smile className="mr-2 h-4 w-4" />
@@ -388,7 +358,7 @@ export default function EuNunca() {
                   
                   <Button 
                     variant={categoriaAtual === "pesadas" ? "default" : "outline"}
-                    className={categoriaAtual === "pesadas" ? "bg-purple-700 hover:bg-purple-800" : ""}
+                    className={categoriaAtual === "pesadas" ? "bg-purple-700 hover:bg-purple-800 text-white" : ""}
                     onClick={() => mudarCategoria("pesadas")}
                   >
                     <Flame className="mr-2 h-4 w-4" />
@@ -397,7 +367,7 @@ export default function EuNunca() {
                   
                   <Button 
                     variant={categoriaAtual === "eroticas" ? "default" : "outline"}
-                    className={categoriaAtual === "eroticas" ? "bg-purple-700 hover:bg-purple-800" : ""}
+                    className={categoriaAtual === "eroticas" ? "bg-purple-700 hover:bg-purple-800 text-white" : ""}
                     onClick={() => mudarCategoria("eroticas")}
                   >
                     <Eye className="mr-2 h-4 w-4" />
@@ -406,7 +376,7 @@ export default function EuNunca() {
                   
                   <Button 
                     variant={categoriaAtual === "drogas" ? "default" : "outline"}
-                    className={categoriaAtual === "drogas" ? "bg-purple-700 hover:bg-purple-800" : ""}
+                    className={categoriaAtual === "drogas" ? "bg-purple-700 hover:bg-purple-800 text-white" : ""}
                     onClick={() => mudarCategoria("drogas")}
                   >
                     <Pill className="mr-2 h-4 w-4" />
@@ -415,7 +385,7 @@ export default function EuNunca() {
                   
                   <Button 
                     variant={categoriaAtual === "mistas" ? "default" : "outline"}
-                    className={categoriaAtual === "mistas" ? "bg-purple-700 hover:bg-purple-800" : ""}
+                    className={categoriaAtual === "mistas" ? "bg-purple-700 hover:bg-purple-800 text-white" : ""}
                     onClick={() => mudarCategoria("mistas")}
                   >
                     <Zap className="mr-2 h-4 w-4" />
@@ -452,15 +422,15 @@ export default function EuNunca() {
                 </div>
               </TabsContent>
             </Tabs>
-          </CardContent>
+          </div>
           
-          <CardFooter className="flex justify-between bg-gray-50 rounded-b-lg">
-            <Button variant="outline" onClick={voltarMenu}>
+          <div className="flex justify-between p-4 bg-purple-700 text-white">
+            <Button variant="secondary" onClick={voltarMenu} className="bg-white text-purple-700 hover:bg-gray-100">
               Voltar ao Menu
             </Button>
             
             <Button 
-              className="bg-purple-700 hover:bg-purple-800"
+              className="bg-white text-purple-700 hover:bg-gray-100"
               onClick={() => {
                 const selectTab = document.querySelector('[data-state="inactive"][value="jogo"]');
                 if (selectTab) {
@@ -473,14 +443,9 @@ export default function EuNunca() {
             >
               {perguntaAtual ? "Continuar Jogando" : "Iniciar Jogo"}
             </Button>
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
       </div>
-      
-      {/* Tutorial Overlay */}
-      {mostrarTutorial && (
-        <TutorialOverlay onClose={fecharTutorial} />
-      )}
       
       {/* Alerta de conteúdo adulto */}
       <AlertDialog open={mostrarAlertaAdulto} onOpenChange={setMostrarAlertaAdulto}>
