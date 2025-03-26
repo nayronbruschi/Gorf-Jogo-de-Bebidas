@@ -68,13 +68,13 @@ export default function Dashboard() {
           </section>
 
           {/* Ad Banner */}
-          <section className="pb-2">
+          <section className="pb-1">
             <AdBanner />
           </section>
 
-          {/* Carrossel de Todos os Jogos */}
-          <section className="pb-2">
-            <h2 className="text-white text-lg font-medium mb-2">Todos os Jogos</h2>
+          {/* Carrossel de Jogos em Destaque */}
+          <section className="pt-0 pb-2">
+            <h2 className="text-white text-lg font-medium mb-1">Jogos em destaque</h2>
             <Carousel
               className="w-full"
               opts={{
