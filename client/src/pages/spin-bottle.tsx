@@ -161,6 +161,15 @@ export default function SpinBottle() {
       
       const data = await response.json();
       
+      // Mostrar mensagem de fallback se necessário
+      if (data.usedFallback) {
+        toast({
+          title: "Imagem processada com limitações",
+          description: "Não foi possível remover o fundo automaticamente, mas sua imagem foi aplicada.",
+          variant: "warning",
+        });
+      }
+      
       // Salvar a referência à nova imagem
       const success = await handleImageUpload(data.url);
       
@@ -169,7 +178,7 @@ export default function SpinBottle() {
       console.error('Erro ao processar imagem:', error);
       toast({
         title: "Erro no processamento",
-        description: "Não foi possível processar a imagem para remover o fundo.",
+        description: "Não foi possível processar a imagem. Tente uma imagem menor ou em formato diferente.",
         variant: "destructive",
       });
       return false;

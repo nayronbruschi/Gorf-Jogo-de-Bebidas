@@ -332,20 +332,21 @@ export async function registerRoutes(app: Express) {
   
   // Rota para upload de imagem com remoção de fundo para a garrafa
   app.post("/api/upload-bottle-image", upload.single('file'), async (req, res) => {
+    let tempFile = null;
     try {
       if (!req.file) {
         return res.status(400).json({ message: "Nenhum arquivo enviado" });
       }
 
-      const file = req.file;
+      tempFile = req.file;
       
       // Processar a imagem com sharp e remover o fundo
       console.log('Processando imagem para remover fundo...');
       
       // Ler o arquivo para um buffer
-      const inputBuffer = fs.readFileSync(file.path);
+      const inputBuffer = fs.readFileSync(tempFile.path);
       
-      // Redimensionar a imagem para um tamanho adequado antes de remover o fundo
+      // Redimensionar a imagem para um tamanho adequado
       const resizedImageBuffer = await sharp(inputBuffer)
         .resize({
           width: 500,
@@ -355,13 +356,24 @@ export async function registerRoutes(app: Express) {
         })
         .toBuffer();
       
-      // Remover o fundo da imagem
-      console.log('Removendo fundo da imagem...');
-      const rembg = new Rembg({
-        logging: true
-      });
-      const processedSharp = await rembg.remove(sharp(resizedImageBuffer));
-      const outputBuffer = await processedSharp.toBuffer();
+      let outputBuffer;
+      let usedFallback = false;
+      
+      try {
+        // Tentar remover o fundo da imagem
+        console.log('Tentando remover fundo da imagem...');
+        const rembg = new Rembg({
+          logging: true
+        });
+        const processedSharp = await rembg.remove(sharp(resizedImageBuffer));
+        outputBuffer = await processedSharp.toBuffer();
+        console.log('Fundo removido com sucesso');
+      } catch (rembgError) {
+        // Em caso de falha, usar a imagem redimensionada como fallback
+        console.warn('Falha ao remover fundo, usando imagem redimensionada como fallback:', rembgError);
+        outputBuffer = resizedImageBuffer;
+        usedFallback = true;
+      }
       
       // Gerar um nome de arquivo único
       const uniqueFilename = `bottle-${Date.now()}.png`;
@@ -375,16 +387,38 @@ export async function registerRoutes(app: Express) {
       
       // Salvar a imagem processada
       fs.writeFileSync(destPath, outputBuffer);
-      console.log('Imagem com fundo removido salva em:', destPath);
+      console.log('Imagem salva em:', destPath);
       
       // Remover o arquivo temporário original
-      fs.unlinkSync(file.path);
+      try {
+        if (tempFile && fs.existsSync(tempFile.path)) {
+          fs.unlinkSync(tempFile.path);
+        }
+      } catch (unlinkError) {
+        console.warn('Aviso: não foi possível excluir o arquivo temporário', unlinkError);
+      }
       
       // Retornar a URL da imagem processada
       const url = `/api/images/${uniqueFilename}`;
-      res.json({ url });
+      res.json({ 
+        url,
+        usedFallback, 
+        message: usedFallback 
+          ? 'Não foi possível remover o fundo, mas a imagem foi processada com sucesso' 
+          : 'Imagem processada com sucesso' 
+      });
     } catch (error) {
       console.error('Erro ao processar imagem para garrafa:', error);
+      
+      // Tentar excluir o arquivo temporário em caso de erro
+      try {
+        if (tempFile && fs.existsSync(tempFile.path)) {
+          fs.unlinkSync(tempFile.path);
+        }
+      } catch (unlinkError) {
+        console.warn('Aviso: não foi possível excluir o arquivo temporário', unlinkError);
+      }
+      
       res.status(500).json({ 
         message: "Erro ao processar imagem da garrafa", 
         error: error instanceof Error ? error.message : 'Erro desconhecido'
