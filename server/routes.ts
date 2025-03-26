@@ -6,6 +6,7 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 import sharp from "sharp";
+// @ts-ignore - não há tipos para rembg-node
 import rembg from "rembg-node";
 
 // Configurar o multer para armazenar os arquivos temporariamente
@@ -356,10 +357,7 @@ export async function registerRoutes(app: Express) {
       
       // Remover o fundo da imagem
       console.log('Removendo fundo da imagem...');
-      const outputBuffer = await removeBackgroundFromImageBuffer({
-        buffer: resizedImageBuffer,
-        alpha: true
-      });
+      const outputBuffer = await rembg(resizedImageBuffer);
       
       // Gerar um nome de arquivo único
       const uniqueFilename = `bottle-${Date.now()}.png`;

@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Camera, RefreshCcw } from "lucide-react";
 import { auth, updateGameStats } from "@/lib/firebase";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ImageUploader } from "@/components/ImageUploader";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SpinBottle() {
   const [rotation, setRotation] = useState(0);
@@ -11,8 +14,38 @@ export default function SpinBottle() {
   const [isDragging, setIsDragging] = useState(false);
   const [startAngle, setStartAngle] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [bottleImage, setBottleImage] = useState<string>("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const { toast } = useToast();
 
+  // Carrega a imagem personalizada ou a padrão
   useEffect(() => {
+    const loadBottleImage = async () => {
+      try {
+        const response = await fetch('/api/bottle-image');
+        if (response.ok) {
+          const data = await response.json();
+          setBottleImage(data.url);
+          
+          // Pré-carregar a imagem
+          const img = new Image();
+          img.src = data.url;
+          img.onload = () => setImageLoaded(true);
+        } else {
+          console.error('Erro ao buscar imagem da garrafa');
+          // Usar imagem padrão em caso de erro
+          setBottleImage("https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/Garrafa-2.png?alt=media&token=fb17efb1-9110-4f2e-9875-2ba87f63f25e");
+          setImageLoaded(true);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar imagem da garrafa:', error);
+        // Usar imagem padrão em caso de erro
+        setBottleImage("https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/Garrafa-2.png?alt=media&token=fb17efb1-9110-4f2e-9875-2ba87f63f25e");
+        setImageLoaded(true);
+      }
+    };
+
     const trackGameOpen = async () => {
       try {
         const userId = auth.currentUser?.uid;
@@ -24,11 +57,7 @@ export default function SpinBottle() {
       }
     };
 
-    // Pré-carregar a imagem
-    const img = new Image();
-    img.src = "https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/Garrafa-2.png?alt=media&token=fb17efb1-9110-4f2e-9875-2ba87f63f25e";
-    img.onload = () => setImageLoaded(true);
-
+    loadBottleImage();
     trackGameOpen();
   }, []);
 
@@ -72,6 +101,86 @@ export default function SpinBottle() {
     setIsDragging(false);
     if (Math.abs(rotation % 360) > 50) {
       spinBottle();
+    }
+  };
+  
+  const handleImageUpload = async (imageUrl: string) => {
+    setIsUploading(true);
+    try {
+      // Enviar a imagem para processamento de remoção de fundo
+      const response = await fetch('/api/bottle-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: imageUrl }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Falha ao salvar imagem da garrafa');
+      }
+      
+      // Atualiza a imagem da garrafa
+      setBottleImage(imageUrl);
+      setIsDialogOpen(false);
+      
+      toast({
+        title: "Imagem atualizada",
+        description: "Sua imagem personalizada foi configurada com sucesso!",
+      });
+    } catch (error) {
+      console.error('Erro ao configurar imagem:', error);
+      toast({
+        title: "Erro ao atualizar imagem",
+        description: "Não foi possível configurar sua imagem personalizada.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  
+  const handleUploadWithBgRemoval = async (file: File) => {
+    setIsUploading(true);
+    try {
+      // Criar FormData para envio do arquivo
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      // Enviar para processamento com remoção de fundo
+      const response = await fetch('/api/upload-bottle-image', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Falha ao processar imagem');
+      }
+      
+      const data = await response.json();
+      
+      // Salvar a referência à nova imagem
+      await handleImageUpload(data.url);
+      
+    } catch (error) {
+      console.error('Erro ao processar imagem:', error);
+      toast({
+        title: "Erro no processamento",
+        description: "Não foi possível processar a imagem para remover o fundo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  
+  const resetBottleImage = async () => {
+    try {
+      // Definir de volta para a imagem padrão
+      const defaultUrl = "https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/Garrafa-2.png?alt=media&token=fb17efb1-9110-4f2e-9875-2ba87f63f25e";
+      await handleImageUpload(defaultUrl);
+    } catch (error) {
+      console.error('Erro ao resetar imagem:', error);
     }
   };
 
@@ -119,7 +228,7 @@ export default function SpinBottle() {
             }}
           >
             <img
-              src="https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/Garrafa-2.png?alt=media&token=fb17efb1-9110-4f2e-9875-2ba87f63f25e"
+              src={bottleImage}
               alt="Garrafa"
               className="w-3/4 h-3/4 object-contain"
               draggable="false"
@@ -127,15 +236,88 @@ export default function SpinBottle() {
           </motion.div>
         </div>
 
-        <Button
-          size="lg"
-          onClick={spinBottle}
-          disabled={isSpinning}
-          className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white px-8 py-6 text-xl"
-        >
-          <RotateCcw className="mr-2 h-5 w-5" />
-          {isSpinning ? "Girando..." : "Girar Garrafa"}
-        </Button>
+        <div className="flex w-full max-w-md justify-between gap-4">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="bg-purple-700 hover:bg-purple-800 text-white hover:text-white"
+                disabled={isSpinning || isUploading}
+              >
+                <Camera className="mr-2 h-5 w-5" />
+                Personalizar Garrafa
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Personalizar a Garrafa</DialogTitle>
+                <DialogDescription>
+                  Faça upload de uma imagem sua para usar como garrafa! O fundo será removido automaticamente.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                <div className="rounded-lg overflow-hidden bg-gray-50 p-2">
+                  <p className="text-sm text-gray-500 mb-2">Sua imagem atual:</p>
+                  <div className="flex justify-center">
+                    <img 
+                      src={bottleImage} 
+                      alt="Garrafa atual" 
+                      className="h-48 object-contain"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <h3 className="text-md font-medium">Enviar nova imagem</h3>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="w-full"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        handleUploadWithBgRemoval(e.target.files[0]);
+                      }
+                    }}
+                    disabled={isUploading}
+                  />
+                  
+                  <p className="text-xs text-gray-500">
+                    Dica: Use fotos com fundo uniforme para melhor resultado na remoção automática do fundo.
+                  </p>
+                </div>
+                
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={resetBottleImage}
+                  disabled={isUploading}
+                >
+                  <RefreshCcw className="mr-2 h-4 w-4" />
+                  Restaurar garrafa padrão
+                </Button>
+                
+                {isUploading && (
+                  <div className="flex justify-center items-center">
+                    <div className="w-8 h-8 border-4 border-t-purple-500 border-r-purple-500 border-b-transparent border-l-transparent rounded-full animate-spin mr-2" />
+                    <span>Processando imagem...</span>
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+          
+          <Button
+            size="lg"
+            onClick={spinBottle}
+            disabled={isSpinning}
+            className="flex-1 bg-purple-900 hover:bg-purple-950 text-white hover:text-white"
+          >
+            <RotateCcw className="mr-2 h-5 w-5" />
+            {isSpinning ? "Girando..." : "Girar Garrafa"}
+          </Button>
+        </div>
+
       </div>
     </GameLayout>
   );
