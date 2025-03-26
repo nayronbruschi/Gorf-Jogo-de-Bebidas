@@ -2,14 +2,12 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { GameLayout } from "@/components/GameLayout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, UserPlus, PlayCircle, HelpCircle } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { startGameSession, updateGameStats } from "@/lib/firebase";
+import { X as CrossIcon, Plus as PlusIcon, ArrowRight as ArrowRightIcon, ChevronUp as ChevronUpIcon, ChevronDown as ChevronDownIcon, Trash as TrashIcon } from "lucide-react";
 
 // Tipo de jogador
 type Jogador = {
@@ -24,77 +22,108 @@ type Jogador = {
 export default function DesenhaEBebeJogadores() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const [jogadores, setJogadores] = useState<Jogador[]>([]);
   const [novoJogador, setNovoJogador] = useState("");
-  const [regrasDialogOpen, setRegrasDialogOpen] = useState(false);
+  const [jogadores, setJogadores] = useState<Jogador[]>([]);
   
-  // Registrar o jogo nas estatísticas do usuário quando a página for carregada
+  // Carregar jogadores do localStorage
   useEffect(() => {
-    const userId = localStorage.getItem('dev_session');
-    if (userId) {
-      startGameSession(userId, "Desenha e Bebe");
-      updateGameStats(userId, "Desenha e Bebe");
+    const jogadoresSalvos = localStorage.getItem('desenhaEBebeJogadores');
+    if (jogadoresSalvos) {
+      try {
+        setJogadores(JSON.parse(jogadoresSalvos));
+      } catch (error) {
+        console.error("Erro ao carregar jogadores:", error);
+      }
     }
   }, []);
   
-  // Funções para gerenciar jogadores
+  // Salvar jogadores no localStorage
+  useEffect(() => {
+    localStorage.setItem('desenhaEBebeJogadores', JSON.stringify(jogadores));
+  }, [jogadores]);
+  
   const adicionarJogador = () => {
-    if (!novoJogador.trim()) return;
+    if (novoJogador.trim() === "") {
+      toast({
+        title: "Nome inválido",
+        description: "Digite um nome para o jogador",
+        variant: "destructive",
+      });
+      return;
+    }
     
     if (jogadores.length >= 8) {
       toast({
-        title: "Limite de jogadores atingido",
-        description: "Máximo de 8 jogadores permitido",
+        title: "Limite de jogadores",
+        description: "O jogo suporta no máximo 8 jogadores",
         variant: "destructive",
       });
       return;
     }
     
-    if (jogadores.some(j => j.nome.toLowerCase() === novoJogador.toLowerCase())) {
+    if (jogadores.some(j => j.nome.toLowerCase() === novoJogador.trim().toLowerCase())) {
       toast({
-        title: "Jogador já existe",
-        description: "Use um nome diferente",
+        title: "Nome duplicado",
+        description: "Já existe um jogador com esse nome",
         variant: "destructive",
       });
       return;
     }
     
-    setJogadores([
-      ...jogadores,
-      {
-        id: Date.now().toString(),
-        nome: novoJogador,
-        pontos: 0,
-        acertos: 0,
-        vezes: 0,
-        bebidas: 0
-      }
-    ]);
+    const novoJogadorObj: Jogador = {
+      id: Math.random().toString(36).substring(2, 9),
+      nome: novoJogador.trim(),
+      pontos: 0,
+      acertos: 0,
+      vezes: 0,
+      bebidas: 0
+    };
     
+    setJogadores([...jogadores, novoJogadorObj]);
     setNovoJogador("");
   };
-
+  
   const removerJogador = (id: string) => {
     setJogadores(jogadores.filter(j => j.id !== id));
   };
   
-  const iniciarJogo = () => {
+  const moverJogadorParaCima = (index: number) => {
+    if (index <= 0) return;
+    
+    const novosJogadores = [...jogadores];
+    const temp = novosJogadores[index];
+    novosJogadores[index] = novosJogadores[index - 1];
+    novosJogadores[index - 1] = temp;
+    
+    setJogadores(novosJogadores);
+  };
+  
+  const moverJogadorParaBaixo = (index: number) => {
+    if (index >= jogadores.length - 1) return;
+    
+    const novosJogadores = [...jogadores];
+    const temp = novosJogadores[index];
+    novosJogadores[index] = novosJogadores[index + 1];
+    novosJogadores[index + 1] = temp;
+    
+    setJogadores(novosJogadores);
+  };
+  
+  const prosseguir = () => {
     if (jogadores.length < 2) {
       toast({
         title: "Jogadores insuficientes",
-        description: "Adicione pelo menos 2 jogadores para começar",
+        description: "Adicione pelo menos 2 jogadores para jogar",
         variant: "destructive",
       });
       return;
     }
     
-    // Salvar jogadores no localStorage para compartilhar entre as páginas
+    // Salvar jogadores e ir para a página de configurações
     localStorage.setItem('desenhaEBebeJogadores', JSON.stringify(jogadores));
-    
-    // Navegar para a página de configurações
     navigate("/desenha-e-bebe/configuracoes");
   };
-
+  
   // Cores para os avatares dos jogadores
   const coresAvatar = [
     "bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-red-500", 
@@ -108,141 +137,127 @@ export default function DesenhaEBebeJogadores() {
   return (
     <GameLayout title="Desenha e Bebe" showPlayers={false}>
       <div className="flex justify-center items-center min-h-[calc(100vh-150px)]">
-        <Card className="w-full max-w-3xl">
+        <Card className="w-full max-w-md">
           <CardHeader className="bg-gradient-to-r from-purple-800 to-purple-900 text-white rounded-t-lg">
             <CardTitle className="text-2xl font-bold text-center">Jogadores</CardTitle>
-            <CardDescription className="text-center text-gray-200">
-              Adicione jogadores para começar a diversão!
-            </CardDescription>
           </CardHeader>
           
-          <CardContent className="space-y-6 pt-6">
-            <div className="flex space-x-2">
-              <Input
-                placeholder="Nome do jogador"
-                value={novoJogador}
-                onChange={(e) => setNovoJogador(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    adicionarJogador();
-                  }
-                }}
-                className="flex-1"
-              />
-              <Button onClick={adicionarJogador} className="bg-purple-700 hover:bg-purple-800">
-                <UserPlus className="mr-2 h-4 w-4" />
-                Adicionar
-              </Button>
+          <CardContent className="pt-6 pb-4">
+            <div className="mb-6">
+              <div className="flex space-x-2">
+                <Input
+                  value={novoJogador}
+                  onChange={(e) => setNovoJogador(e.target.value)}
+                  placeholder="Nome do jogador"
+                  className="flex-1"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      adicionarJogador();
+                    }
+                  }}
+                />
+                <Button 
+                  onClick={adicionarJogador} 
+                  className="bg-purple-700 hover:bg-purple-800"
+                >
+                  <PlusIcon className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
             
-            {jogadores.length > 0 ? (
-              <div className="space-y-2">
-                <div className="text-lg font-semibold text-purple-900 mb-2">Jogadores ({jogadores.length}/8):</div>
-                {jogadores.map((jogador, index) => (
+            <div className="space-y-2">
+              {jogadores.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <p>Adicione jogadores para começar</p>
+                </div>
+              ) : (
+                jogadores.map((jogador, index) => (
                   <div 
                     key={jogador.id} 
-                    className="flex justify-between items-center p-3 border rounded-lg hover:bg-gray-50"
+                    className="flex items-center justify-between p-3 rounded-lg bg-white border border-gray-200 hover:bg-gray-50"
                   >
-                    <div className="flex items-center space-x-3">
-                      <Avatar className={coresAvatar[index % coresAvatar.length]}>
+                    <div className="flex items-center">
+                      <Avatar className={`${coresAvatar[index % coresAvatar.length]} h-9 w-9 mr-3`}>
                         <AvatarFallback className="text-white">
                           {getInitials(jogador.nome)}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="font-medium text-gray-800">{jogador.nome}</span>
+                      <div>
+                        <p className="font-medium">{jogador.nome}</p>
+                      </div>
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => removerJogador(jogador.id)}
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    
+                    <div className="flex items-center space-x-1">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8" 
+                        onClick={() => moverJogadorParaCima(index)}
+                        disabled={index === 0}
+                      >
+                        <ChevronUpIcon className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8" 
+                        onClick={() => moverJogadorParaBaixo(index)}
+                        disabled={index === jogadores.length - 1}
+                      >
+                        <ChevronDownIcon className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50" 
+                        onClick={() => removerJogador(jogador.id)}
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                ))}
+                ))
+              )}
+            </div>
+            
+            {jogadores.length > 0 && (
+              <div className="flex items-center justify-between mt-4">
+                <Badge variant="outline" className="text-sm">
+                  {jogadores.length} {jogadores.length === 1 ? 'jogador' : 'jogadores'}
+                </Badge>
+                
+                <Badge 
+                  variant={jogadores.length >= 2 ? "default" : "destructive"}
+                  className="text-sm"
+                >
+                  {jogadores.length >= 2 ? 'Pronto para jogar' : 'Mínimo de 2 jogadores'}
+                </Badge>
               </div>
-            ) : (
-              <Alert>
-                <HelpCircle className="h-4 w-4" />
-                <AlertTitle>Nenhum jogador adicionado</AlertTitle>
-                <AlertDescription>
-                  Adicione pelo menos 2 jogadores para começar o jogo.
-                </AlertDescription>
-              </Alert>
             )}
           </CardContent>
           
-          <CardFooter className="flex flex-col sm:flex-row justify-between gap-2 pt-2">
+          <CardFooter className="flex justify-between">
             <Button 
               variant="outline" 
-              onClick={() => setRegrasDialogOpen(true)}
-              className="w-full sm:w-auto border-purple-200 text-purple-700"
+              onClick={() => navigate("/desenha-e-bebe")}
+              className="border-purple-200 text-purple-700"
             >
-              <HelpCircle className="mr-2 h-4 w-4" />
-              Regras
+              <CrossIcon className="mr-2 h-4 w-4" />
+              Cancelar
             </Button>
             
             <Button 
-              onClick={iniciarJogo} 
+              onClick={prosseguir}
+              className="bg-purple-700 hover:bg-purple-800"
               disabled={jogadores.length < 2}
-              className="w-full sm:w-auto bg-purple-700 hover:bg-purple-800"
             >
-              <PlayCircle className="mr-2 h-4 w-4" />
+              <ArrowRightIcon className="mr-2 h-4 w-4" />
               Continuar
             </Button>
           </CardFooter>
         </Card>
       </div>
-      
-      {/* Dialog para mostrar as regras */}
-      <Dialog open={regrasDialogOpen} onOpenChange={setRegrasDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-center text-xl">Regras do Jogo</DialogTitle>
-            <DialogDescription className="text-center">
-              Como jogar Desenha e Bebe
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <h3 className="font-bold text-purple-900">Como funciona:</h3>
-              <p className="text-sm text-gray-700">
-                1. Um jogador recebe uma palavra secreta e deve desenhá-la ou mimicá-la.
-              </p>
-              <p className="text-sm text-gray-700">
-                2. Os outros precisam adivinhar a palavra dentro do tempo limite.
-              </p>
-              <p className="text-sm text-gray-700">
-                3. Se adivinharem, o jogador que desenhou ganha pontos. Caso contrário, bebe!
-              </p>
-              <p className="text-sm text-gray-700">
-                4. O jogo continua até que alguém atinja a pontuação de vitória.
-              </p>
-            </div>
-            
-            <div className="space-y-2">
-              <h3 className="font-bold text-purple-900">Dicas:</h3>
-              <p className="text-sm text-gray-700">
-                • O jogador que desenha NÃO pode falar ou escrever letras/números.
-              </p>
-              <p className="text-sm text-gray-700">
-                • Você pode personalizar o tempo, as categorias de palavras e mais nas configurações.
-              </p>
-              <p className="text-sm text-gray-700">
-                • Quanto mais difícil a categoria, mais goles terá que beber em caso de erro!
-              </p>
-            </div>
-          </div>
-          
-          <DialogFooter className="sm:justify-center">
-            <Button type="button" className="bg-purple-700 hover:bg-purple-800" onClick={() => setRegrasDialogOpen(false)}>
-              Entendi
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </GameLayout>
   );
 }
