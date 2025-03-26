@@ -191,7 +191,7 @@ export default function BannerManagement() {
                       [key]: { ...prev[key], title: e.target.value }
                     }))}
                     placeholder="Título"
-                    className="border-gray-300 text-gray-800"
+                    className="border-purple-200 text-purple-900 bg-purple-50/50 focus-visible:ring-purple-400"
                   />
                   <Textarea
                     value={texts.description}
@@ -200,7 +200,7 @@ export default function BannerManagement() {
                       [key]: { ...prev[key], description: e.target.value }
                     }))}
                     placeholder="Descrição"
-                    className="border-gray-300 text-gray-800"
+                    className="border-purple-200 text-purple-900 bg-purple-50/50 focus-visible:ring-purple-400"
                   />
                   
                   <div className="flex items-center space-x-2 mt-4">
@@ -211,10 +211,11 @@ export default function BannerManagement() {
                         ...prev,
                         [key]: { ...prev[key], isClickable: checked }
                       }))}
+                      className="data-[state=checked]:bg-purple-700"
                     />
                     <label 
                       htmlFor={`clickable-${key}`}
-                      className="text-sm text-gray-700"
+                      className="text-sm text-purple-800"
                     >
                       Banner clicável
                     </label>
@@ -230,10 +231,10 @@ export default function BannerManagement() {
                             [key]: { ...prev[key], linkUrl: value === "_none_" ? "" : value }
                           }))}
                         >
-                          <SelectTrigger className="border-gray-300 text-gray-800">
+                          <SelectTrigger className="border-purple-200 text-purple-900 bg-purple-50/50 focus-visible:ring-purple-400">
                             <SelectValue placeholder="Selecione uma página do aplicativo" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-white border-purple-200">
                             <SelectItem value="_none_">Nenhuma (selecione)</SelectItem>
                             <SelectItem value="/dashboard">Dashboard</SelectItem>
                             <SelectItem value="/game-modes">Modos de Jogo</SelectItem>
@@ -248,7 +249,7 @@ export default function BannerManagement() {
                             <SelectItem value="/stats">Estatísticas</SelectItem>
                           </SelectContent>
                         </Select>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-purple-600 mt-1">
                           Selecione uma página do aplicativo ou insira uma URL personalizada abaixo
                         </p>
                       </div>
@@ -261,9 +262,9 @@ export default function BannerManagement() {
                             [key]: { ...prev[key], linkUrl: e.target.value }
                           }))}
                           placeholder="Ou insira uma URL externa (ex: https://google.com)"
-                          className="border-gray-300 text-gray-800"
+                          className="border-purple-200 text-purple-900 bg-purple-50/50 focus-visible:ring-purple-400"
                         />
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-purple-600 mt-1">
                           Para redirecionar para um site externo, digite a URL completa com https://
                         </p>
                       </div>
