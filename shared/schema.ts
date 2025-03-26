@@ -109,5 +109,22 @@ export type InsertCustomGame = z.infer<typeof insertCustomGameSchema>;
 export type InsertUserProfile = z.infer<typeof userProfileSchema>;
 export type InsertUserGameStats = z.infer<typeof userGameStatsSchema>;
 
+// Interface para configurações do popup de instalação
+export interface InstallPromptConfig {
+  enabled: boolean;
+  frequency: number; // Em dias
+  startDate: string | null; // Data de início da exibição
+  endDate: string | null; // Data de término da exibição
+}
+
+export const installPromptConfigSchema = z.object({
+  enabled: z.boolean(),
+  frequency: z.number().min(1).max(30),
+  startDate: z.string().nullable(),
+  endDate: z.string().nullable(),
+});
+
+export type InsertInstallPromptConfig = z.infer<typeof installPromptConfigSchema>;
+
 export const intensityLevels = ["Leve", "Moderado", "Hard"] as const;
 export const gameModes = ["Clássico", "Roleta", "Verdade ou Desafio"] as const;

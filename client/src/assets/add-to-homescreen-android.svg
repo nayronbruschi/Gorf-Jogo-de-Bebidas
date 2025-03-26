@@ -1,0 +1,9 @@
+<svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="200" rx="10" fill="#F8F9FA"/>
+  <rect x="50" y="30" width="200" height="40" rx="5" fill="#1A73E8"/>
+  <text x="150" y="55" font-family="Arial" font-size="16" fill="white" text-anchor="middle">Adicionar à Tela Inicial</text>
+  <path d="M150 80L130 100H170L150 80Z" fill="#5F6368"/>
+  <rect x="70" y="110" width="160" height="60" rx="5" fill="white" stroke="#5F6368" stroke-width="1"/>
+  <text x="150" y="140" font-family="Arial" font-size="14" fill="#202124" text-anchor="middle">Toque em</text>
+  <text x="150" y="160" font-family="Arial" font-size="14" fill="#202124" text-anchor="middle">e depois em "Instalar aplicativo"</text>
+</svg>
