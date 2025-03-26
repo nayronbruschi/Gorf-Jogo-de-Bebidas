@@ -402,9 +402,9 @@ export async function registerRoutes(app: Express) {
         const bottleData = JSON.parse(fs.readFileSync(bottlePath, 'utf-8'));
         res.json(bottleData);
       } else {
-        // Retorna a URL da garrafa padrão
+        // Retorna a URL da garrafa padrão (imagem local)
         res.json({ 
-          url: "https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/Garrafa-2.png?alt=media&token=fb17efb1-9110-4f2e-9875-2ba87f63f25e" 
+          url: "/api/images/default-bottle.webp" 
         });
       }
     } catch (error) {

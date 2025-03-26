@@ -35,13 +35,13 @@ export default function SpinBottle() {
         } else {
           console.error('Erro ao buscar imagem da garrafa');
           // Usar imagem padrão em caso de erro
-          setBottleImage("https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/Garrafa-2.png?alt=media&token=fb17efb1-9110-4f2e-9875-2ba87f63f25e");
+          setBottleImage("/api/images/default-bottle.webp");
           setImageLoaded(true);
         }
       } catch (error) {
         console.error('Erro ao buscar imagem da garrafa:', error);
         // Usar imagem padrão em caso de erro
-        setBottleImage("https://firebasestorage.googleapis.com/v0/b/gorf-jogo-de-bebidas.firebasestorage.app/o/Garrafa-2.png?alt=media&token=fb17efb1-9110-4f2e-9875-2ba87f63f25e");
+        setBottleImage("/api/images/default-bottle.webp");
         setImageLoaded(true);
       }
     };
