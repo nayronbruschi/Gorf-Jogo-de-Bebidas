@@ -511,5 +511,64 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  // Rota para obter a configuração do popup de instalação
+  app.get("/api/install-prompt-config", (req, res) => {
+    try {
+      const configPath = path.join(BUCKET_PATH, "install_prompt_config.json");
+      
+      if (fs.existsSync(configPath)) {
+        const configData = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+        res.json(configData);
+      } else {
+        // Retorna a configuração padrão
+        const defaultConfig = {
+          enabled: true,
+          frequency: 7,
+          startDate: null,
+          endDate: null
+        };
+        res.json(defaultConfig);
+      }
+    } catch (error) {
+      console.error('Erro ao obter configuração do popup:', error);
+      res.status(500).json({ message: "Erro ao obter configuração do popup" });
+    }
+  });
+  
+  // Rota para salvar a configuração do popup de instalação
+  app.post("/api/install-prompt-config", (req, res) => {
+    try {
+      const { enabled, frequency, startDate, endDate } = req.body;
+      
+      if (typeof enabled !== 'boolean' || typeof frequency !== 'number') {
+        return res.status(400).json({ message: "Parâmetros inválidos" });
+      }
+      
+      const configPath = path.join(BUCKET_PATH, "install_prompt_config.json");
+      
+      // Garantir que o diretório existe
+      const dir = path.dirname(configPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      // Salvar a configuração
+      const configData = {
+        enabled,
+        frequency,
+        startDate,
+        endDate
+      };
+      
+      fs.writeFileSync(configPath, JSON.stringify(configData, null, 2));
+      console.log('Configuração do popup de instalação salva');
+      
+      res.json({ message: "Configuração atualizada com sucesso", config: configData });
+    } catch (error) {
+      console.error('Erro ao salvar configuração do popup:', error);
+      res.status(500).json({ message: "Erro ao salvar configuração do popup" });
+    }
+  });
+
   return httpServer;
 }

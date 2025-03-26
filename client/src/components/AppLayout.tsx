@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut } from "lucide-react";
 import { GorfLogo } from "@/components/GorfLogo";
+import { InstallAppPrompt } from "@/components/InstallAppPrompt";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useAuthMenu } from "@/hooks/use-auth-menu";
@@ -16,6 +17,7 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   const [location, navigate] = useLocation();
   const [open, setOpen] = useState(false);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const user = auth.currentUser;
   const isDashboard = location === "/dashboard";
@@ -26,6 +28,43 @@ export function AppLayout({ children }: AppLayoutProps) {
       setDisplayName(user.displayName || user.email?.split('@')[0] || "Usuário");
     }
   }, [user]);
+
+  // Verificar se o popup de instalação deve ser mostrado
+  useEffect(() => {
+    // Verificar se já está instalado como PWA
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    
+    if (isStandalone) {
+      // Se já estiver instalado, não mostrar o popup
+      return;
+    }
+
+    // Verificar se o popup já foi dispensado hoje
+    const lastDismissed = localStorage.getItem('installPromptDismissed');
+    if (!lastDismissed) {
+      // Se nunca foi dispensado, mostrar após 2 segundos
+      const timer = setTimeout(() => {
+        setShowInstallPrompt(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+
+    // Se foi dispensado recentemente, não mostrar
+    const lastDate = new Date(lastDismissed);
+    const now = new Date();
+    const daysDiff = Math.floor((now.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    // Por padrão, mostrar a cada 7 dias se a configuração não estiver disponível
+    const defaultFrequency = 7;
+    
+    if (daysDiff >= defaultFrequency) {
+      // Se passou o período de frequência, mostrar após 2 segundos
+      const timer = setTimeout(() => {
+        setShowInstallPrompt(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -124,6 +163,12 @@ export function AppLayout({ children }: AppLayoutProps) {
       <main className="flex-1 pt-16 pb-safe">
         {children}
       </main>
+
+      {/* Popup de instalação */}
+      <InstallAppPrompt
+        open={showInstallPrompt}
+        onOpenChange={setShowInstallPrompt}
+      />
     </div>
   );
 }
