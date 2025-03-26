@@ -289,6 +289,43 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  // Rota para salvar as tags de destaque
+  app.post("/api/featured-tags", async (req, res) => {
+    try {
+      const featuredTagsPath = path.join(BUCKET_PATH, "featured_tags.json");
+      
+      // Verifica se o diretório existe, caso contrário cria
+      const dir = path.dirname(featuredTagsPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      // Salva as tags de destaque no arquivo
+      fs.writeFileSync(featuredTagsPath, JSON.stringify(req.body, null, 2));
+      console.log('Tags de destaque salvas em:', featuredTagsPath);
+      res.json({ message: "Tags de destaque atualizadas com sucesso" });
+    } catch (error) {
+      console.error('Erro ao salvar tags de destaque:', error);
+      res.status(500).json({ message: "Erro ao salvar tags de destaque" });
+    }
+  });
+
+  // Rota para obter as tags de destaque
+  app.get("/api/featured-tags", (req, res) => {
+    try {
+      const featuredTagsPath = path.join(BUCKET_PATH, "featured_tags.json");
+      if (fs.existsSync(featuredTagsPath)) {
+        const tags = JSON.parse(fs.readFileSync(featuredTagsPath, 'utf-8'));
+        res.json(tags);
+      } else {
+        // Retorna objeto vazio se o arquivo não existir
+        res.json({});
+      }
+    } catch (error) {
+      console.error('Erro ao obter tags de destaque:', error);
+      res.status(500).json({ message: "Erro ao obter tags de destaque" });
+    }
+  });
 
   return httpServer;
 }

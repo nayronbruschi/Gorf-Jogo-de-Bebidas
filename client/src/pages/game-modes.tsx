@@ -1,12 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GameLayout } from "@/components/GameLayout";
 import { GameCard } from "@/components/GameCard";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { games } from "@/lib/game-data";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+
+interface FeaturedGameTags {
+  [gameId: string]: {
+    isFeatured: boolean;
+    tagText?: string;
+  };
+}
 
 export default function GameModes() {
+  // Buscar tags de destaque da API
+  const { data: featuredTags = {} as FeaturedGameTags } = useQuery<FeaturedGameTags>({
+    queryKey: ['/api/featured-tags'],
+  });
+
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -51,12 +64,6 @@ export default function GameModes() {
     show: { y: 0, opacity: 1 }
   };
 
-  // Simulação de jogos em destaque - isso seria configurado no painel de admin
-  const featuredGames = {
-    "eu-nunca": { isFeatured: true, tag: "Em Destaque" },
-    "desenha-e-bebe": { isFeatured: true, tag: "Novo!" }
-  };
-
   return (
     <GameLayout title="">
       <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-700 -mt-8 -mx-4 px-4 pt-8 pb-16">
@@ -77,7 +84,7 @@ export default function GameModes() {
             animate="show"
           >
             {games.map((game) => {
-              const featured = featuredGames[game.id as keyof typeof featuredGames];
+              const gameTag = featuredTags?.[game.id];
               return (
                 <motion.div key={game.id} variants={item}>
                   <GameCard
@@ -85,8 +92,8 @@ export default function GameModes() {
                     description={game.description}
                     icon={game.icon}
                     href={game.route}
-                    isFeatured={featured?.isFeatured}
-                    featureTag={featured?.tag}
+                    isFeatured={gameTag?.isFeatured}
+                    featureTag={gameTag?.tagText}
                   />
                 </motion.div>
               );
