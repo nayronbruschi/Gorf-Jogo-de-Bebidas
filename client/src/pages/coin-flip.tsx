@@ -28,13 +28,23 @@ export default function CoinFlip() {
   const flipCoin = () => {
     if (isFlipping) return;
 
-    setIsFlipping(true);
-    setResult(null);
+    // Fazer o sorteio imediatamente, mas não mostrar ainda
     const newResult = Math.random() < 0.5 ? "cara" : "coroa";
-
-    // Atrasar a exibição do resultado até a animação terminar
+    
+    // Ocultar o resultado anterior e iniciar a animação
+    setIsFlipping(true);
+    setResult(null); // Limpar o resultado anterior para não mostrar ícones durante o giro
+    
+    // Definir o resultado para que a animação termine mostrando a face correta
+    // Mas ainda não mostrar o texto nem o ícone
     setTimeout(() => {
+      // Definimos o resultado antes de terminar a animação
+      // para garantir que mostrará a face correta
       setResult(newResult);
+    }, 1400);
+
+    // Finalizar a animação e mostrar tudo
+    setTimeout(() => {
       setIsFlipping(false);
     }, 1500);
   };
@@ -52,7 +62,7 @@ export default function CoinFlip() {
           <motion.div
             className="w-full h-full [transform-style:preserve-3d]"
             animate={isFlipping ? {
-              rotateX: [0, 720],
+              rotateX: [0, 720, 0],
               y: [0, -200, 0],
             } : {
               rotateY: result === "coroa" ? 180 : 0
