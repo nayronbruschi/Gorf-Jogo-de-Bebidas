@@ -7,6 +7,7 @@ import { auth, updateGameStats } from "@/lib/firebase";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ImageUploader } from "@/components/ImageUploader";
 import { useToast } from "@/hooks/use-toast";
+import { AdBanner } from "@/components/AdBanner";
 
 export default function SpinBottle() {
   const [rotation, setRotation] = useState(0);
@@ -272,6 +273,11 @@ export default function SpinBottle() {
             <RotateCcw className="mr-2 h-6 w-6" />
             {isSpinning ? "Girando..." : "Girar Garrafa"}
           </Button>
+          
+          {/* Banner de anúncios */}
+          <div className="w-full mt-2 mb-2">
+            <AdBanner position="bottom" />
+          </div>
           
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
