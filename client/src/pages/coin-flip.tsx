@@ -28,23 +28,16 @@ export default function CoinFlip() {
   const flipCoin = () => {
     if (isFlipping) return;
 
-    // Fazer o sorteio imediatamente, mas não mostrar ainda
+    // Fazer o sorteio imediatamente
     const newResult = Math.random() < 0.5 ? "cara" : "coroa";
     
-    // Ocultar o resultado anterior e iniciar a animação
+    // Iniciar a animação e esconder o resultado anterior
     setIsFlipping(true);
-    setResult(null); // Limpar o resultado anterior para não mostrar ícones durante o giro
+    setResult(null);
     
-    // Definir o resultado para que a animação termine mostrando a face correta
-    // Mas ainda não mostrar o texto nem o ícone
+    // Definir o resultado e encerrar a animação ao mesmo tempo
     setTimeout(() => {
-      // Definimos o resultado antes de terminar a animação
-      // para garantir que mostrará a face correta
       setResult(newResult);
-    }, 1400);
-
-    // Finalizar a animação e mostrar tudo
-    setTimeout(() => {
       setIsFlipping(false);
     }, 1500);
   };
@@ -82,7 +75,7 @@ export default function CoinFlip() {
             >
               <div className="relative w-2/3 h-2/3">
                 <div className="absolute inset-0 rounded-full bg-yellow-300 flex items-center justify-center">
-                  {!isFlipping && result === "cara" && (
+                  {result === "cara" && !isFlipping && (
                     <SmilePlus className="w-2/3 h-2/3 text-yellow-700" />
                   )}
                 </div>
@@ -97,7 +90,7 @@ export default function CoinFlip() {
             >
               <div className="relative w-2/3 h-2/3">
                 <div className="absolute inset-0 rounded-full bg-yellow-300 flex items-center justify-center">
-                  {!isFlipping && result === "coroa" && (
+                  {result === "coroa" && !isFlipping && (
                     <Crown className="w-2/3 h-2/3 text-yellow-700" />
                   )}
                 </div>
@@ -106,10 +99,10 @@ export default function CoinFlip() {
           </motion.div>
         </div>
 
-        {!isFlipping && result && (
+        {result && (
           <motion.div
             initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
+            animate={{ scale: isFlipping ? 0 : 1 }}
             className="text-2xl font-bold text-white"
           >
             {result.toUpperCase()}!
