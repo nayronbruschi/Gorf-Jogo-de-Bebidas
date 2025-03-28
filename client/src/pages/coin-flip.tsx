@@ -72,7 +72,9 @@ export default function CoinFlip() {
             >
               <div className="relative w-2/3 h-2/3">
                 <div className="absolute inset-0 rounded-full bg-yellow-300 flex items-center justify-center">
-                  <SmilePlus className="w-2/3 h-2/3 text-yellow-700" />
+                  {!isFlipping && result === "cara" && (
+                    <SmilePlus className="w-2/3 h-2/3 text-yellow-700" />
+                  )}
                 </div>
               </div>
             </div>
@@ -85,7 +87,9 @@ export default function CoinFlip() {
             >
               <div className="relative w-2/3 h-2/3">
                 <div className="absolute inset-0 rounded-full bg-yellow-300 flex items-center justify-center">
-                  <Crown className="w-2/3 h-2/3 text-yellow-700" />
+                  {!isFlipping && result === "coroa" && (
+                    <Crown className="w-2/3 h-2/3 text-yellow-700" />
+                  )}
                 </div>
               </div>
             </div>
