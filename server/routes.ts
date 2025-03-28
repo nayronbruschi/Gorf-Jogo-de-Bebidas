@@ -12,6 +12,11 @@ import { Rembg } from "rembg-node";
 // Configurar o multer para armazenar os arquivos temporariamente
 const upload = multer({ dest: 'tmp/uploads/' });
 
+// Função auxiliar para garantir que o parâmetro string nunca seja undefined
+const ensureString = (value: string | undefined): string => {
+  return value || '';
+};
+
 const BUCKET_PATH = "replit-objstore-40b80319-33b5-4913-8c43-e847afc83215";
 
 // Estender o tipo de Express Request para incluir userId
@@ -28,7 +33,7 @@ export async function registerRoutes(app: Express) {
 
   // Middleware para verificar se o userId está presente
   const requireUserId = (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.headers['x-user-id'] as string;
+    const userId = ensureString(req.headers['x-user-id'] as string | undefined);
     if (!userId) {
       return res.status(401).json({ message: "Usuário não autenticado" });
     }
@@ -39,7 +44,7 @@ export async function registerRoutes(app: Express) {
   // Player routes
   app.get("/api/players", requireUserId, async (req, res) => {
     try {
-      const players = await storage.getPlayers(req.userId);
+      const players = await storage.getPlayers(ensureString(req.userId));
       res.json(players);
     } catch (error) {
       console.error('Erro ao buscar jogadores:', error);
@@ -174,14 +179,18 @@ export async function registerRoutes(app: Express) {
 
   // Rota de upload de imagens
   app.post("/api/upload", upload.single('file'), async (req, res) => {
+    let tempFile;
     try {
       if (!req.file) {
         return res.status(400).json({ message: "Nenhum arquivo enviado" });
       }
 
-      const file = req.file;
-      // Tornar o nome do arquivo único usando timestamp
-      const uniqueFilename = `${Date.now()}-${file.originalname.replace(/\s+/g, '_')}`;
+      tempFile = req.file;
+      const isImage = /\.(jpe?g|png|gif|webp|svg)$/i.test(tempFile.originalname);
+      
+      // Gerar nome de arquivo único
+      const timestamp = Date.now();
+      const uniqueFilename = `${timestamp}-${tempFile.originalname.replace(/\s+/g, '_')}`;
       const destPath = path.join(BUCKET_PATH, uniqueFilename);
 
       // Garantir que o diretório existe
@@ -190,15 +199,74 @@ export async function registerRoutes(app: Express) {
         fs.mkdirSync(dir, { recursive: true });
       }
 
-      // Mover o arquivo para o bucket
-      fs.renameSync(file.path, destPath);
-      console.log('Arquivo movido para:', destPath);
+      // Se for uma imagem, otimizá-la
+      if (isImage) {
+        console.log('Otimizando imagem...');
+        
+        // Ler o arquivo para um buffer
+        const inputBuffer = fs.readFileSync(tempFile.path);
+        
+        // Determinar o formato de saída com base na extensão original
+        const format = tempFile.originalname.match(/\.webp$/i) ? 'webp' : 
+                      tempFile.originalname.match(/\.png$/i) ? 'png' : 
+                      tempFile.originalname.match(/\.gif$/i) ? 'gif' : 'jpeg';
+        
+        // Otimizar a imagem
+        let sharpInstance = sharp(inputBuffer)
+          .resize({
+            width: 1200,
+            height: 1200,
+            fit: 'inside',
+            withoutEnlargement: true
+          });
+          
+        // Configurar opções de formato específicas
+        if (format === 'jpeg') {
+          sharpInstance = sharpInstance.jpeg({ quality: 80 });
+        } else if (format === 'png') {
+          sharpInstance = sharpInstance.png({ compressionLevel: 9 });
+        } else if (format === 'webp') {
+          sharpInstance = sharpInstance.webp({ quality: 80 });
+        }
+        
+        // Processar e salvar a imagem
+        const outputBuffer = await sharpInstance.toBuffer();
+        fs.writeFileSync(destPath, outputBuffer);
+        
+        console.log('Imagem otimizada salva em:', destPath);
+      } else {
+        // Para arquivos que não são imagens, apenas movê-los
+        fs.renameSync(tempFile.path, destPath);
+        console.log('Arquivo movido para:', destPath);
+      }
+      
+      // Remover o arquivo temporário
+      try {
+        if (tempFile && fs.existsSync(tempFile.path)) {
+          fs.unlinkSync(tempFile.path);
+        }
+      } catch (unlinkError) {
+        console.warn('Aviso: não foi possível excluir o arquivo temporário', unlinkError);
+      }
 
       // Retornar a URL do arquivo
       const url = `/api/images/${uniqueFilename}`;
-      res.json({ url });
+      res.json({ 
+        url,
+        message: isImage ? 'Imagem otimizada com sucesso' : 'Arquivo enviado com sucesso'
+      });
     } catch (error) {
       console.error('Erro no upload:', error);
+      
+      // Tentar excluir o arquivo temporário em caso de erro
+      try {
+        if (tempFile && fs.existsSync(tempFile.path)) {
+          fs.unlinkSync(tempFile.path);
+        }
+      } catch (unlinkError) {
+        console.warn('Aviso: não foi possível excluir o arquivo temporário', unlinkError);
+      }
+      
       res.status(500).json({ message: "Erro ao fazer upload do arquivo" });
     }
   });
@@ -211,7 +279,47 @@ export async function registerRoutes(app: Express) {
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ message: "Imagem não encontrada" });
     }
-
+    
+    // Verificar a extensão do arquivo para determinar o tipo de conteúdo
+    const ext = path.extname(filename).toLowerCase();
+    let contentType = 'application/octet-stream'; // Padrão para arquivos desconhecidos
+    
+    // Mapear extensões comuns para seus tipos MIME
+    const mimeTypes: Record<string, string> = {
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.png': 'image/png',
+      '.gif': 'image/gif',
+      '.webp': 'image/webp',
+      '.svg': 'image/svg+xml',
+      '.pdf': 'application/pdf',
+      '.mp4': 'video/mp4',
+      '.mp3': 'audio/mpeg'
+    };
+    
+    if (ext in mimeTypes) {
+      contentType = mimeTypes[ext];
+    }
+    
+    // Definir cabeçalhos para cache e tipo de conteúdo
+    const ONE_MONTH = 60 * 60 * 24 * 30; // 30 dias em segundos
+    
+    // Definir cabeçalhos de cache para browsers e proxies
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', `public, max-age=${ONE_MONTH}, immutable`);
+    res.setHeader('Expires', new Date(Date.now() + ONE_MONTH * 1000).toUTCString());
+    
+    // Suporte à validação de cache com ETag
+    const stats = fs.statSync(filePath);
+    const etag = `W/"${stats.size}-${stats.mtime.getTime()}"`;
+    res.setHeader('ETag', etag);
+    
+    // Verificar se podemos enviar resposta 304 Not Modified
+    const ifNoneMatch = req.headers['if-none-match'];
+    if (ifNoneMatch && ifNoneMatch === etag) {
+      return res.status(304).end();
+    }
+    
     res.sendFile(filePath, { root: process.cwd() });
   });
 

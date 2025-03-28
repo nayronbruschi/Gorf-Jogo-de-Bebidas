@@ -5,43 +5,46 @@ import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/use-auth";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { SplashScreen } from "@/components/SplashScreen";
+import { Suspense, lazy } from "react";
 
-// Pages
+// Página inicial e autenticação carregadas imediatamente
 import NotFound from "@/pages/not-found";
 import Auth from "@/pages/auth";
-import Dashboard from "@/pages/dashboard";
-import Stats from "@/pages/stats";
-import GameModes from "@/pages/game-modes";
-import Admin from "@/pages/admin";
-import BannerManagement from "@/pages/banner-management";
-import FeaturedTags from "@/pages/featured-tags";
-import AdminGeoTest from "@/pages/admin-geo-test";
-import ClassicStart from "@/pages/classic-start";
-import ClassicPlayers from "@/pages/classic-players";
-import ClassicMode from "@/pages/classic-mode";
-import RouletteStart from "@/pages/roulette-start";
-import RoulettePlayers from "@/pages/roulette-players";
-import RouletteMode from "@/pages/roulette-mode";
-import RouletteWinner from "@/pages/roulette-winner";
-import TruthOrDare from "@/pages/truth-or-dare";
-import ManagePlayers from "@/pages/manage-players";
-import TouchGame from "@/pages/touch-game";
-import SpinBottle from "@/pages/spin-bottle";
-import CoinFlip from "@/pages/coin-flip";
-import Cards from "@/pages/cards";
-import EuNuncaRedirect from "@/pages/eu-nunca";
-import EuNuncaCategorias from "@/pages/eu-nunca/categorias";
-import EuNuncaJogadores from "@/pages/eu-nunca/jogadores";
-import EuNuncaJogo from "@/pages/eu-nunca/jogo";
-import GuessWhoPlayers from "@/pages/guess-who-players";
-import GuessWhoTheme from "@/pages/guess-who-theme";
-import GuessWhoGame from "@/pages/guess-who-game";
-import Profile from "@/pages/profile";
-import Onboarding from "@/pages/onboarding";
-import Recommendations from "@/pages/recommendations";
-import DesenhaEBebe from "@/pages/desenha-e-bebe";
-import EuNunca from "@/pages/eu-nunca";
-import InstallPromptSettings from "@/pages/install-prompt-settings";
+
+// Páginas carregadas com lazy loading
+const Dashboard = lazy(() => import("@/pages/dashboard"));
+const Stats = lazy(() => import("@/pages/stats"));
+const GameModes = lazy(() => import("@/pages/game-modes"));
+const Admin = lazy(() => import("@/pages/admin"));
+const BannerManagement = lazy(() => import("@/pages/banner-management"));
+const FeaturedTags = lazy(() => import("@/pages/featured-tags"));
+const AdminGeoTest = lazy(() => import("@/pages/admin-geo-test"));
+const ClassicStart = lazy(() => import("@/pages/classic-start"));
+const ClassicPlayers = lazy(() => import("@/pages/classic-players"));
+const ClassicMode = lazy(() => import("@/pages/classic-mode"));
+const RouletteStart = lazy(() => import("@/pages/roulette-start"));
+const RoulettePlayers = lazy(() => import("@/pages/roulette-players"));
+const RouletteMode = lazy(() => import("@/pages/roulette-mode"));
+const RouletteWinner = lazy(() => import("@/pages/roulette-winner"));
+const TruthOrDare = lazy(() => import("@/pages/truth-or-dare"));
+const ManagePlayers = lazy(() => import("@/pages/manage-players"));
+const TouchGame = lazy(() => import("@/pages/touch-game"));
+const SpinBottle = lazy(() => import("@/pages/spin-bottle"));
+const CoinFlip = lazy(() => import("@/pages/coin-flip"));
+const Cards = lazy(() => import("@/pages/cards"));
+const EuNuncaRedirect = lazy(() => import("@/pages/eu-nunca"));
+const EuNuncaCategorias = lazy(() => import("@/pages/eu-nunca/categorias"));
+const EuNuncaJogadores = lazy(() => import("@/pages/eu-nunca/jogadores"));
+const EuNuncaJogo = lazy(() => import("@/pages/eu-nunca/jogo"));
+const GuessWhoPlayers = lazy(() => import("@/pages/guess-who-players"));
+const GuessWhoTheme = lazy(() => import("@/pages/guess-who-theme"));
+const GuessWhoGame = lazy(() => import("@/pages/guess-who-game"));
+const Profile = lazy(() => import("@/pages/profile"));
+const Onboarding = lazy(() => import("@/pages/onboarding"));
+const Recommendations = lazy(() => import("@/pages/recommendations"));
+const DesenhaEBebe = lazy(() => import("@/pages/desenha-e-bebe"));
+const EuNunca = lazy(() => import("@/pages/eu-nunca"));
+const InstallPromptSettings = lazy(() => import("@/pages/install-prompt-settings"));
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading } = useAuth();
@@ -54,7 +57,11 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
     return <Route path="/auth" component={Auth} />;
   }
 
-  return <Component />;
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <Component />
+    </Suspense>
+  );
 }
 
 function Router() {

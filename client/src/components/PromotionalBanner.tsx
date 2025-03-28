@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import useEmblaCarousel from "embla-carousel-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useLocation } from "wouter";
+import { LazyImage } from "@/components/LazyImage";
 
 interface BannerUrls {
   [key: string]: string;
@@ -109,10 +110,12 @@ export function PromotionalBanner() {
                     }`}
                     onClick={() => handleBannerClick(banner)}
                   >
-                    <img
+                    <LazyImage
                       src={banner.url}
                       alt={`Banner ${index + 1}`}
                       className="w-full h-full object-cover rounded-lg"
+                      placeholderClassName="w-full h-full"
+                      loadingHeight="160px"
                     />
                     <div className="absolute bottom-0 left-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent w-full rounded-b-lg">
                       <h3 className="text-white text-xl font-bold mb-1 text-shadow">{banner.title}</h3>
