@@ -151,15 +151,8 @@ export default function BannerManagement() {
   return (
     <AppLayout>
       <div className="container mx-auto p-4 bg-gray-50 min-h-screen">
-        <div className="flex justify-between items-center mb-8">
+        <div className="mb-8">
           <h1 className="text-2xl font-bold text-purple-900">Gerenciamento de Banners</h1>
-          <Button 
-            variant="outline" 
-            onClick={() => navigate("/admin")}
-            className="border-purple-200 text-purple-700 hover:bg-purple-50"
-          >
-            Voltar para Dashboard
-          </Button>
         </div>
 
         <Card className="bg-white shadow border border-gray-100">
@@ -235,18 +228,18 @@ export default function BannerManagement() {
                             <SelectValue placeholder="Selecione uma página do aplicativo" />
                           </SelectTrigger>
                           <SelectContent className="bg-white border-purple-200">
-                            <SelectItem value="_none_">Nenhuma (selecione)</SelectItem>
-                            <SelectItem value="/dashboard">Dashboard</SelectItem>
-                            <SelectItem value="/game-modes">Modos de Jogo</SelectItem>
-                            <SelectItem value="/classic">Modo Clássico</SelectItem>
-                            <SelectItem value="/truth-or-dare">Verdade ou Desafio</SelectItem>
-                            <SelectItem value="/spin-bottle">Girar a Garrafa</SelectItem>
-                            <SelectItem value="/touch-game">Toque na Sorte</SelectItem>
-                            <SelectItem value="/coin-flip">Cara ou Coroa</SelectItem>
-                            <SelectItem value="/cards">Jogo de Cartas</SelectItem>
-                            <SelectItem value="/guess-who/theme">Quem Sou Eu</SelectItem>
-                            <SelectItem value="/profile">Perfil</SelectItem>
-                            <SelectItem value="/stats">Estatísticas</SelectItem>
+                            <SelectItem className="text-purple-900 focus:bg-purple-50 data-[selected]:bg-purple-100 data-[selected]:text-purple-900" value="_none_">Nenhuma (selecione)</SelectItem>
+                            <SelectItem className="text-purple-900 focus:bg-purple-50 data-[selected]:bg-purple-100 data-[selected]:text-purple-900" value="/dashboard">Dashboard</SelectItem>
+                            <SelectItem className="text-purple-900 focus:bg-purple-50 data-[selected]:bg-purple-100 data-[selected]:text-purple-900" value="/game-modes">Modos de Jogo</SelectItem>
+                            <SelectItem className="text-purple-900 focus:bg-purple-50 data-[selected]:bg-purple-100 data-[selected]:text-purple-900" value="/classic">Modo Clássico</SelectItem>
+                            <SelectItem className="text-purple-900 focus:bg-purple-50 data-[selected]:bg-purple-100 data-[selected]:text-purple-900" value="/truth-or-dare">Verdade ou Desafio</SelectItem>
+                            <SelectItem className="text-purple-900 focus:bg-purple-50 data-[selected]:bg-purple-100 data-[selected]:text-purple-900" value="/spin-bottle">Girar a Garrafa</SelectItem>
+                            <SelectItem className="text-purple-900 focus:bg-purple-50 data-[selected]:bg-purple-100 data-[selected]:text-purple-900" value="/touch-game">Toque na Sorte</SelectItem>
+                            <SelectItem className="text-purple-900 focus:bg-purple-50 data-[selected]:bg-purple-100 data-[selected]:text-purple-900" value="/coin-flip">Cara ou Coroa</SelectItem>
+                            <SelectItem className="text-purple-900 focus:bg-purple-50 data-[selected]:bg-purple-100 data-[selected]:text-purple-900" value="/cards">Jogo de Cartas</SelectItem>
+                            <SelectItem className="text-purple-900 focus:bg-purple-50 data-[selected]:bg-purple-100 data-[selected]:text-purple-900" value="/guess-who/theme">Quem Sou Eu</SelectItem>
+                            <SelectItem className="text-purple-900 focus:bg-purple-50 data-[selected]:bg-purple-100 data-[selected]:text-purple-900" value="/profile">Perfil</SelectItem>
+                            <SelectItem className="text-purple-900 focus:bg-purple-50 data-[selected]:bg-purple-100 data-[selected]:text-purple-900" value="/stats">Estatísticas</SelectItem>
                           </SelectContent>
                         </Select>
                         <p className="text-xs text-purple-600 mt-1">

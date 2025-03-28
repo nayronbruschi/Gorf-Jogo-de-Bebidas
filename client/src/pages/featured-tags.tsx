@@ -160,15 +160,8 @@ export default function FeaturedTags() {
   return (
     <AppLayout>
       <div className="container mx-auto p-4 bg-gray-50 min-h-screen">
-        <div className="flex justify-between items-center mb-8">
+        <div className="mb-8">
           <h1 className="text-2xl font-bold text-purple-900">Gerenciamento de Tags de Destaque</h1>
-          <Button 
-            variant="outline" 
-            onClick={() => navigate("/admin")}
-            className="border-purple-200 text-purple-700 hover:bg-purple-50"
-          >
-            Voltar para Dashboard
-          </Button>
         </div>
 
         <Card className="bg-white shadow border border-gray-100">

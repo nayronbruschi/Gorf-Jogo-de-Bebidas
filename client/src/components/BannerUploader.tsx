@@ -106,13 +106,13 @@ export function BannerUploader() {
               value={selectedBanner}
               onValueChange={setSelectedBanner}
             >
-              <SelectTrigger className="border-gray-300 text-gray-700">
+              <SelectTrigger className="border-purple-200 bg-white text-purple-900 focus-visible:ring-purple-400">
                 <SelectValue placeholder="Selecione o banner" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">Banner 1</SelectItem>
-                <SelectItem value="2">Banner 2</SelectItem>
-                <SelectItem value="3">Banner 3</SelectItem>
+              <SelectContent className="bg-white border-purple-200">
+                <SelectItem value="1" className="text-purple-900">Banner 1</SelectItem>
+                <SelectItem value="2" className="text-purple-900">Banner 2</SelectItem>
+                <SelectItem value="3" className="text-purple-900">Banner 3</SelectItem>
               </SelectContent>
             </Select>
           </div>
