@@ -67,9 +67,9 @@ export default function Dashboard() {
             <PromotionalBanner />
           </section>
 
-          {/* Ad Banner */}
+          {/* Ad Banner - Bloco_Ad_Dashboard */}
           <section className="mb-6">
-            <AdBanner />
+            <AdBanner slot="4976890273" />
           </section>
 
           {/* Carrossel de Jogos em Destaque */}

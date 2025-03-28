@@ -3,9 +3,10 @@ import { useEffect, useState, useRef } from 'react';
 interface AdBannerProps {
   className?: string;
   position?: 'top' | 'middle' | 'bottom';
+  slot?: string; // Slot ID específico para a inserção do anúncio
 }
 
-export function AdBanner({ className, position = 'top' }: AdBannerProps) {
+export function AdBanner({ className, position = 'top', slot }: AdBannerProps) {
   const [error, setError] = useState<string | null>(null);
   const [isAdLoaded, setIsAdLoaded] = useState(false);
   const [clicked, setClicked] = useState(false);
@@ -96,8 +97,8 @@ export function AdBanner({ className, position = 'top' }: AdBannerProps) {
       <ins
         className="adsbygoogle"
         style={{ display: 'block', width: '100%', height: '100%' }}
-        data-ad-client={import.meta.env.VITE_ADSENSE_CLIENT_ID}
-        data-ad-slot={import.meta.env.VITE_ADSENSE_SLOT_ID || ''}
+        data-ad-client="ca-pub-2437408673546853"
+        data-ad-slot={slot || import.meta.env.VITE_ADSENSE_SLOT_ID || ''}
         data-ad-format="auto"
         data-full-width-responsive="true"
       />
