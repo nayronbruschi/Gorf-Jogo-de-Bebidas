@@ -62,7 +62,7 @@ export default function CoinFlip() {
           <motion.div
             className="w-full h-full [transform-style:preserve-3d]"
             animate={isFlipping ? {
-              rotateX: [0, 720, 0],
+              rotateX: [0, 720],
               y: [0, -200, 0],
             } : {
               rotateY: result === "coroa" ? 180 : 0
