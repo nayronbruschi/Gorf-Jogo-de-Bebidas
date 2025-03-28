@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { ImageUploader } from "@/components/ImageUploader";
 import { useToast } from "@/hooks/use-toast";
 import { AdBanner } from "@/components/AdBanner";
+import { SocialShareMenu } from "@/components/SocialShareMenu";
 
 export default function SpinBottle() {
   const [rotation, setRotation] = useState(0);
@@ -279,75 +280,86 @@ export default function SpinBottle() {
             <AdBanner position="bottom" />
           </div>
           
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                variant="outline" 
-                className="bg-purple-700 hover:bg-purple-800 text-white hover:text-white"
-                disabled={isSpinning || isUploading}
-              >
-                <Camera className="mr-2 h-5 w-5" />
-                Personalizar Garrafa
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Personalizar a Garrafa</DialogTitle>
-                <DialogDescription>
-                  Faça upload de uma imagem sua para usar como garrafa! A imagem será otimizada automaticamente.
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="space-y-6">
-                <div className="rounded-lg overflow-hidden bg-gray-50 p-2">
-                  <p className="text-sm text-gray-500 mb-2">Sua imagem atual:</p>
-                  <div className="flex justify-center">
-                    <img 
-                      src={bottleImage} 
-                      alt="Garrafa atual" 
-                      className="h-48 object-contain"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <h3 className="text-md font-medium">Enviar nova imagem</h3>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="w-full"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        handleUploadWithBgRemoval(e.target.files[0]);
-                      }
-                    }}
-                    disabled={isUploading}
-                  />
-                  
-                  <p className="text-xs text-gray-500">
-                    Dica: Use imagens claras e nítidas para melhor resultado.
-                  </p>
-                </div>
-                
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={resetBottleImage}
-                  disabled={isUploading}
+          <div className="flex gap-2">
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className="bg-purple-700 hover:bg-purple-800 text-white hover:text-white flex-1"
+                  disabled={isSpinning || isUploading}
                 >
-                  <RefreshCcw className="mr-2 h-4 w-4" />
-                  Restaurar garrafa padrão
+                  <Camera className="mr-2 h-5 w-5" />
+                  Personalizar Garrafa
                 </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Personalizar a Garrafa</DialogTitle>
+                  <DialogDescription>
+                    Faça upload de uma imagem sua para usar como garrafa! A imagem será otimizada automaticamente.
+                  </DialogDescription>
+                </DialogHeader>
                 
-                {isUploading && (
-                  <div className="flex justify-center items-center">
-                    <div className="w-8 h-8 border-4 border-t-purple-500 border-r-purple-500 border-b-transparent border-l-transparent rounded-full animate-spin mr-2" />
-                    <span>Processando imagem...</span>
+                <div className="space-y-6">
+                  <div className="rounded-lg overflow-hidden bg-gray-50 p-2">
+                    <p className="text-sm text-gray-500 mb-2">Sua imagem atual:</p>
+                    <div className="flex justify-center">
+                      <img 
+                        src={bottleImage} 
+                        alt="Garrafa atual" 
+                        className="h-48 object-contain"
+                      />
+                    </div>
                   </div>
-                )}
-              </div>
-            </DialogContent>
-          </Dialog>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-md font-medium">Enviar nova imagem</h3>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="w-full"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          handleUploadWithBgRemoval(e.target.files[0]);
+                        }
+                      }}
+                      disabled={isUploading}
+                    />
+                    
+                    <p className="text-xs text-gray-500">
+                      Dica: Use imagens claras e nítidas para melhor resultado.
+                    </p>
+                  </div>
+                  
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={resetBottleImage}
+                    disabled={isUploading}
+                  >
+                    <RefreshCcw className="mr-2 h-4 w-4" />
+                    Restaurar garrafa padrão
+                  </Button>
+                  
+                  {isUploading && (
+                    <div className="flex justify-center items-center">
+                      <div className="w-8 h-8 border-4 border-t-purple-500 border-r-purple-500 border-b-transparent border-l-transparent rounded-full animate-spin mr-2" />
+                      <span>Processando imagem...</span>
+                    </div>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+            
+            <SocialShareMenu
+              gameTitle="Girar a Garrafa"
+              gameDescription="Quem será o escolhido? Jogue com seus amigos!"
+              buttonVariant="outline"
+              buttonSize="default"
+              className="bg-purple-700 hover:bg-purple-800 text-white hover:text-white flex-1"
+              showLabel={true}
+            />
+          </div>
         </div>
 
       </div>

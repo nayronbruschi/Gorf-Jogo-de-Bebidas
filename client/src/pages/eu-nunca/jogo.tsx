@@ -10,6 +10,7 @@ import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { AlertTriangle, RefreshCcw, ChevronRight } from "lucide-react";
 import { startGameSession, updateGameStats } from "@/lib/firebase";
 import { useQuery } from "@tanstack/react-query";
+import { SocialShareMenu } from "@/components/SocialShareMenu";
 
 // Categorias de perguntas para o jogo Eu Nunca
 type QuestionCategory = "comuns" | "pesadas" | "eroticas" | "drogas" | "mistas";
@@ -278,7 +279,7 @@ export default function EuNuncaJogo() {
             )}
           </AnimatePresence>
           
-          <div className="w-full">
+          <div className="w-full space-y-4">
             <Button
               className="w-full bg-purple-900 hover:bg-purple-950 text-white py-6 text-lg"
               onClick={gerarNovaPergunta}
@@ -286,6 +287,17 @@ export default function EuNuncaJogo() {
               <RefreshCcw className="mr-2 h-5 w-5" />
               Próxima Pergunta
             </Button>
+            
+            <div className="flex justify-center">
+              <SocialShareMenu 
+                gameTitle="Eu Nunca"
+                gameDescription="Jogo de perguntas indiscretas! Quem já fez, bebe!"
+                buttonVariant="outline"
+                buttonSize="sm"
+                showLabel={true}
+                className="bg-purple-700 hover:bg-purple-800 text-white hover:text-white"
+              />
+            </div>
           </div>
         </div>
       </div>
