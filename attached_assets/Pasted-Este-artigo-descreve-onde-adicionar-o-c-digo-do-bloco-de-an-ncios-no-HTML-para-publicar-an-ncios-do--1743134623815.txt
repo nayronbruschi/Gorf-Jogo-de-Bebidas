@@ -1,0 +1,66 @@
+Este artigo descreve onde adicionar o código do bloco de anúncios no HTML para publicar anúncios do AdSense.
+
+Caso não saiba como funciona o HTML, deve consultar primeiro as instruções sobre como colar código do anúncio nas páginas HTML, consoante as ferramentas que usar. Antes de continuar, também deve saber as diferenças entre o código do AdSense e o código do bloco de anúncios.
+
+Sugestão: para receber ajuda com HTML, experimente pesquisar recursos online com termos como "noções básicas de HTML"
+Nesta página
+Onde adicionar o código do bloco de anúncios
+Como posicionar anúncios no seu site com HTML
+Onde adicionar o código do bloco de anúncios
+Depois de obter e copiar o código do bloco de anúncios, tem de o colar entre as etiquetas <body> e </body> da página. Se colar o código do anúncio fora das etiquetas <body>, os seus anúncios não serão apresentados corretamente.
+
+Nota: este é apenas um exemplo de código que mostra onde adicionar o código do bloco de anúncios. Não use este código exatamente no código do seu próprio site.
+Exemplo de uma página HTML antes da adição do código do bloco de anúncios
+<html>
+   <head>
+      Isto é o cabeçalho da sua página.
+      <title>Página HTML de exemplo</title>
+   </head>
+   <body>
+      Isto é o corpo da sua página.
+   </body>
+</html>
+Exemplo de uma página HTML após a adição do código do bloco de anúncios à etiqueta <body>
+<html>
+   <head>
+      Isto é o cabeçalho da sua página.
+      <title>Página HTML de exemplo</title>
+   </head>
+   <body>
+      Isto é o corpo da sua página.
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1234567890123456" crossorigin="anonymous"></script>
+<!-- Homepage Leaderboard -->
+<ins class="adsbygoogle"
+style="display:inline-block;width:728px;height:90px"
+data-ad-client="ca-pub-1234567890123456"
+data-ad-slot="1234567890"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+   </body>
+   </html>
+Como posicionar anúncios no seu site com HTML
+À semelhança do que acontece com os outros elementos do site (imagens, parágrafos, etc.), pode alterar a posição dos seus anúncios Google com etiquetas HTML (<div>, <table>, etc.). Por exemplo, se colocar o código do anúncio entre as etiquetas HTML <div align="center"> e </div>, os anúncios são apresentados no centro da página.
+
+Exemplo de um elemento <div> HTML usado para posicionar um anúncio na etiqueta <body>
+<html>
+   <head>
+      Isto é o cabeçalho da sua página.
+      <title>Página HTML de exemplo</title>
+   </head>
+   <body>
+      Isto é o corpo da sua página.
+      <div align="center">
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1234567890123456" crossorigin="anonymous"></script>
+<!-- Homepage Leaderboard -->
+<ins class="adsbygoogle"
+style="display:inline-block;width:728px;height:90px"
+data-ad-client="ca-pub-1234567890123456"
+data-ad-slot="1234567890"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+      </div>
+   </body>
+   </html>
+

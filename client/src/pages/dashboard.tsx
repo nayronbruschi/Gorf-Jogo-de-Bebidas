@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GamepadIcon, History, Trophy, Clock, Play, Sparkles } from "lucide-react";
 import { PromotionalBanner } from "@/components/PromotionalBanner";
-import { AdBanner } from "@/components/AdBanner";
-import { GoogleAdSense } from "@/components/GoogleAdSense";
+import { GoogleAdBlock } from "@/components/GoogleAdBlock";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { games } from "@/lib/game-data";
 import { auth, getUserProfile } from "@/lib/firebase";
@@ -70,7 +69,7 @@ export default function Dashboard() {
 
           {/* Ad Banner - Bloco_Ad_Dashboard */}
           <section className="mb-6">
-            <GoogleAdSense 
+            <GoogleAdBlock 
               slot="4976890273" 
               className="w-full"
             />
