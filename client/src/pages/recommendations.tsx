@@ -84,7 +84,8 @@ export default function Recommendations() {
           </p>
         </div>
 
-        <Separator className="my-6" />
+        {/* Removendo a linha preta */}
+        <div className="h-6"></div>
 
         {recommendations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -95,7 +96,7 @@ export default function Recommendations() {
             <p className="text-muted-foreground mt-2 max-w-md">
               Complete seu perfil e jogue mais jogos para recebermos mais informações sobre suas preferências.
             </p>
-            <Button className="mt-6" asChild>
+            <Button className="mt-6 bg-purple-700 hover:bg-purple-800 text-white" asChild>
               <Link href="/profile">
                 Completar Perfil
               </Link>

@@ -21,24 +21,33 @@ export default function SpinBottle() {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
-  // Carrega a imagem personalizada ou a padrão
+  // Carrega a imagem padrão ou a temporária da sessão atual
   useEffect(() => {
     const loadBottleImage = async () => {
       try {
-        const response = await fetch('/api/bottle-image');
-        if (response.ok) {
-          const data = await response.json();
-          setBottleImage(data.url);
-          
-          // Pré-carregar a imagem
-          const img = new Image();
-          img.src = data.url;
-          img.onload = () => setImageLoaded(true);
-        } else {
-          console.error('Erro ao buscar imagem da garrafa');
-          // Usar imagem padrão em caso de erro
-          setBottleImage("/api/images/default-bottle.webp");
+        // Verificar se há uma imagem temporária na sessão
+        const tempBottleImage = sessionStorage.getItem('tempBottleImage');
+        
+        if (tempBottleImage) {
+          setBottleImage(tempBottleImage);
           setImageLoaded(true);
+        } else {
+          // Se não houver imagem temporária, carregar a padrão
+          const response = await fetch('/api/bottle-image');
+          if (response.ok) {
+            const data = await response.json();
+            setBottleImage(data.url);
+            
+            // Pré-carregar a imagem
+            const img = new Image();
+            img.src = data.url;
+            img.onload = () => setImageLoaded(true);
+          } else {
+            console.error('Erro ao buscar imagem da garrafa');
+            // Usar imagem padrão em caso de erro
+            setBottleImage("/api/images/default-bottle.webp");
+            setImageLoaded(true);
+          }
         }
       } catch (error) {
         console.error('Erro ao buscar imagem da garrafa:', error);
@@ -109,26 +118,16 @@ export default function SpinBottle() {
   const handleImageUpload = async (imageUrl: string) => {
     setIsUploading(true);
     try {
-      // Enviar a imagem para processamento de remoção de fundo
-      const response = await fetch('/api/bottle-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: imageUrl }),
-      });
+      // Salvar a imagem temporariamente apenas na sessão atual
+      sessionStorage.setItem('tempBottleImage', imageUrl);
       
-      if (!response.ok) {
-        throw new Error('Falha ao salvar imagem da garrafa');
-      }
-      
-      // Atualiza a imagem da garrafa
+      // Atualiza a imagem da garrafa no estado
       setBottleImage(imageUrl);
       setIsDialogOpen(false);
       
       toast({
         title: "Imagem atualizada",
-        description: "Sua imagem personalizada foi configurada com sucesso!",
+        description: "Sua imagem personalizada foi configurada para esta sessão de jogo!",
       });
       return true;
     } catch (error) {
