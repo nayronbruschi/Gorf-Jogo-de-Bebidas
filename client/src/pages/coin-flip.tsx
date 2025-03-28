@@ -48,7 +48,7 @@ export default function CoinFlip() {
           </p>
         </div>
 
-        <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
+        <div className="relative w-[85vw] h-[85vw] max-w-[500px] max-h-[500px]">
           <motion.div
             className="w-full h-full [transform-style:preserve-3d]"
             animate={isFlipping ? {
@@ -67,12 +67,12 @@ export default function CoinFlip() {
             {/* Face da moeda (Cara) */}
             <div 
               className="absolute w-full h-full rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 
-                         [backface-visibility:hidden] flex items-center justify-center border-8 border-yellow-300
-                         shadow-lg"
+                         [backface-visibility:hidden] flex items-center justify-center border-[12px] border-yellow-300
+                         shadow-xl"
             >
               <div className="relative w-2/3 h-2/3">
                 <div className="absolute inset-0 rounded-full bg-yellow-300 flex items-center justify-center">
-                  <SmilePlus className="w-28 h-28 text-yellow-700" />
+                  <SmilePlus className="w-2/3 h-2/3 text-yellow-700" />
                 </div>
               </div>
             </div>
@@ -81,11 +81,11 @@ export default function CoinFlip() {
             <div 
               className="absolute w-full h-full rounded-full bg-gradient-to-br from-yellow-500 to-yellow-700 
                          [backface-visibility:hidden] [transform:rotateY(180deg)] flex items-center justify-center 
-                         border-8 border-yellow-300 shadow-lg"
+                         border-[12px] border-yellow-300 shadow-xl"
             >
               <div className="relative w-2/3 h-2/3">
                 <div className="absolute inset-0 rounded-full bg-yellow-300 flex items-center justify-center">
-                  <Crown className="w-28 h-28 text-yellow-700" />
+                  <Crown className="w-2/3 h-2/3 text-yellow-700" />
                 </div>
               </div>
             </div>

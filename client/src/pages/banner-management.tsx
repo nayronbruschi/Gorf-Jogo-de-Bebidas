@@ -250,10 +250,17 @@ export default function BannerManagement() {
                       <div>
                         <Input
                           value={texts.linkUrl?.startsWith("http") ? texts.linkUrl : ""}
-                          onChange={(e) => setBannerTexts(prev => ({
-                            ...prev,
-                            [key]: { ...prev[key], linkUrl: e.target.value }
-                          }))}
+                          onChange={(e) => {
+                            // Garantir que a dropdown seja limpa quando digitarmos uma URL externa
+                            const newValue = e.target.value;
+                            setBannerTexts(prev => ({
+                              ...prev,
+                              [key]: { 
+                                ...prev[key], 
+                                linkUrl: newValue 
+                              }
+                            }));
+                          }}
                           placeholder="Ou insira uma URL externa (ex: https://google.com)"
                           className="border-purple-200 text-purple-900 bg-purple-50/50 focus-visible:ring-purple-400"
                         />

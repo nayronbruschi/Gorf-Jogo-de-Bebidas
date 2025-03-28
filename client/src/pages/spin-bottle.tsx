@@ -27,12 +27,25 @@ export default function SpinBottle() {
       try {
         // Verificar se há uma imagem temporária na sessão
         const tempBottleImage = sessionStorage.getItem('tempBottleImage');
+        const bottleImageExpiry = sessionStorage.getItem('bottleImageExpiry');
         
-        if (tempBottleImage) {
+        // Verificar se temos uma imagem temporária e se ela não expirou
+        // Consideramos que a imagem expira após deixar o jogo (nova sessão no jogo)
+        const isValid = tempBottleImage && bottleImageExpiry && 
+                      // Se a página foi recarregada (não saiu do jogo), a imagem é válida
+                      (document.referrer.includes('spin-bottle') || 
+                       window.location.href.includes('spin-bottle'));
+        
+        if (isValid) {
+          // A imagem é válida, usá-la
           setBottleImage(tempBottleImage);
           setImageLoaded(true);
         } else {
-          // Se não houver imagem temporária, carregar a padrão
+          // Limpar qualquer imagem temporária inválida
+          sessionStorage.removeItem('tempBottleImage');
+          sessionStorage.removeItem('bottleImageExpiry');
+          
+          // Carregar a imagem padrão
           const response = await fetch('/api/bottle-image');
           if (response.ok) {
             const data = await response.json();
@@ -119,7 +132,9 @@ export default function SpinBottle() {
     setIsUploading(true);
     try {
       // Salvar a imagem temporariamente apenas na sessão atual
+      // Definimos uma expiração para a imagem temporária (apenas durante a sessão atual)
       sessionStorage.setItem('tempBottleImage', imageUrl);
+      sessionStorage.setItem('bottleImageExpiry', Date.now().toString());
       
       // Atualiza a imagem da garrafa no estado
       setBottleImage(imageUrl);

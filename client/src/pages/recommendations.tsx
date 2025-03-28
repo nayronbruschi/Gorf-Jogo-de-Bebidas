@@ -107,10 +107,7 @@ export default function Recommendations() {
             {/* TOP RECOMMENDATION */}
             {recommendations.length > 0 && (
               <Card className="border-2 border-yellow-500 overflow-hidden">
-                <div className="absolute top-0 right-0 bg-yellow-600 text-white px-4 py-1 rounded-bl-lg font-medium text-sm flex items-center">
-                  <Star className="h-4 w-4 mr-1 fill-white" />
-                  {recommendations[0].matchScore}% de compatibilidade
-                </div>
+
                 
                 <CardHeader className="bg-gradient-to-r from-purple-700 to-blue-600 text-white">
                   <div className="flex items-center">
@@ -150,7 +147,7 @@ export default function Recommendations() {
                 </CardContent>
                 
                 <CardFooter className="bg-purple-900 border-t border-purple-800">
-                  <Button className="w-full bg-purple-800 hover:bg-purple-700 text-white" asChild>
+                  <Button className="w-full bg-purple-900 hover:bg-purple-950 text-white" asChild>
                     <Link href={recommendations[0].route}>
                       Jogar Agora <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
@@ -190,7 +187,7 @@ export default function Recommendations() {
                   </CardContent>
                   
                   <CardFooter className="pt-2 border-t border-purple-800 bg-purple-900">
-                    <Button className="w-full bg-purple-800 hover:bg-purple-700 text-white" asChild>
+                    <Button className="w-full bg-purple-900 hover:bg-purple-950 text-white" asChild>
                       <Link href={game.route}>
                         Jogar <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
