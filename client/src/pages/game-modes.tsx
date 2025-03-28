@@ -6,6 +6,7 @@ import { queryClient } from "@/lib/queryClient";
 import { games } from "@/lib/game-data";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
+import { AdBanner } from "@/components/AdBanner";
 
 interface FeaturedGameTags {
   [gameId: string]: {
@@ -69,12 +70,22 @@ export default function GameModes() {
       <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-700 -mx-4 px-4 pt-4 pb-16">
         <div className="max-w-4xl mx-auto">
           <motion.div 
-            className="text-center mb-8"
+            className="text-center mb-6"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
             <p className="text-purple-200 text-xl">Escolha um dos modos de jogo abaixo para começar</p>
+          </motion.div>
+          
+          {/* Banner de anúncios */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mb-6"
+          >
+            <AdBanner position="middle" />
           </motion.div>
           
           <motion.div 
