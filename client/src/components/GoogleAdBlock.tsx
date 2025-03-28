@@ -28,7 +28,7 @@ export function GoogleAdBlock({ slot, className = '' }: GoogleAdBlockProps) {
     return (
       <div 
         className={`w-full bg-gradient-to-r from-purple-100 to-purple-200 flex items-center justify-center rounded-lg ${className}`}
-        style={{ minHeight: '100px' }}
+        style={{ minHeight: '90px', height: '90px', width: '728px', maxWidth: '100%' }}
       >
         <div className="flex flex-col items-center p-4">
           <p className="text-purple-700 text-sm font-medium mb-1">Anúncio Google AdSense</p>
@@ -40,12 +40,16 @@ export function GoogleAdBlock({ slot, className = '' }: GoogleAdBlockProps) {
 
   // Em produção, inserimos o HTML exato fornecido pelo Google AdSense
   const adCode = `
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2437408673546853"
+     crossorigin="anonymous"></script>
+    <!-- Bloco_Ad_Dashboard -->
     <ins class="adsbygoogle"
-         style="display:block"
+         style="display:inline-block;width:728px;height:90px"
          data-ad-client="ca-pub-2437408673546853"
-         data-ad-slot="${slot}"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
+         data-ad-slot="${slot}"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
   `;
 
   return (
