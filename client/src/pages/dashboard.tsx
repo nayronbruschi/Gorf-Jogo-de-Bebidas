@@ -68,10 +68,10 @@ export default function Dashboard() {
           </section>
 
           {/* Ad Banner - Bloco_Ad_Dashboard */}
-          <section className="mb-6">
+          <section className="mb-6 flex justify-center">
             <GoogleAdBlock 
               slot="4976890273" 
-              className="w-full"
+              className="max-w-full overflow-hidden"
             />
           </section>
 
