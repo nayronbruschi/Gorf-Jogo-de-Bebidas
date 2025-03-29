@@ -15,7 +15,7 @@ const config: CapacitorConfig = {
     contentInset: 'automatic',
     backgroundColor: '#000000',
     preferredContentMode: 'mobile',
-    limitsNavigationsToAppBoundDomains: true
+    limitsNavigationsToAppBoundDomains: false
   }
 };
 
