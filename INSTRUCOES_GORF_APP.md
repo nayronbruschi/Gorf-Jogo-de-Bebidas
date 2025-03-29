@@ -1,120 +1,146 @@
-# Instruções para Compilação e Distribuição do App Gorf
+# Instruções para o Gorf App
 
-## Visão Geral
-Este documento contém instruções detalhadas sobre como compilar e distribuir o aplicativo Gorf para plataformas iOS e Android. O app Gorf utiliza o framework Capacitor para empacotar um aplicativo web em um aplicativo nativo.
-
-## Pré-requisitos
-- Xcode instalado (para iOS)
-- Android Studio instalado (para Android)
-- Node.js e npm instalados
-- Conta de desenvolvedor Apple (para distribuição iOS)
-- Conta de desenvolvedor Google Play (para distribuição Android)
+Este documento fornece instruções detalhadas sobre como trabalhar com o Gorf App, incluindo como atualizar o código, publicar novas versões e solucionar problemas comuns.
 
 ## Estrutura do Projeto
-O projeto consiste em:
-- Aplicação web React/Vite que redireciona para o site online Gorf
-- Configuração Capacitor para iOS e Android
-- Recursos de interface personalizados
 
-## 1. Compilação para iOS
+O Gorf foi construído como um aplicativo web e adaptado para plataformas móveis usando Capacitor. A estrutura básica é:
 
-### 1.1 Abrir o projeto no Xcode
+- **Aplicativo Web:** Hospedado em https://gorf-jogo-de-bebidas.replit.app/
+- **Aplicativo iOS:** Wrapper nativo que carrega o aplicativo web hospedado
+- **Aplicativo Android:** Wrapper nativo que carrega o aplicativo web hospedado
+
+## Fluxo de Trabalho para Atualizações
+
+Quando precisar atualizar o aplicativo, siga este fluxo de trabalho:
+
+1. **Atualize o aplicativo web**: Faça todas as alterações necessárias na versão da web e teste-as
+2. **Atualize os aplicativos móveis**: Sincronize as alterações com as plataformas nativas:
+
 ```bash
-# No diretório raiz do projeto
-npx cap open ios
+# Atualize a versão do aplicativo em capacitor.config.ts (se necessário)
+# Sincronize as alterações
+npx cap sync
 ```
 
-Isso abrirá o projeto iOS no Xcode.
+3. **Teste em dispositivos reais ou emuladores**:
 
-### 1.2 Configurações do Projeto no Xcode
-1. Clique no projeto "App" no navegador de projetos.
-2. Na guia "Signing & Capabilities", selecione sua equipe de desenvolvimento.
-3. Personalize o Bundle ID se necessário (atualmente configurado como `com.gorf.app`).
-4. Certifique-se de que o alvo é "App" e não "App Clip" ao fazer alterações.
-
-### 1.3 Compilação e Teste
-1. Selecione um dispositivo ou simulador para testar.
-2. Clique no botão de reprodução para compilar e executar o aplicativo.
-3. Verifique se o redirecionamento para o site Gorf funciona corretamente.
-
-### 1.4 Preparação para Distribuição
-1. No Xcode, vá para Product > Archive.
-2. Siga as instruções para validar e distribuir o aplicativo.
-3. Escolha "App Store Connect" para distribuir na App Store.
-4. Siga os prompts para concluir o upload.
-
-### 1.5 Configuração na App Store Connect
-1. Faça login na [App Store Connect](https://appstoreconnect.apple.com/).
-2. Crie uma nova entrada de aplicativo ou selecione a existente.
-3. Preencha todas as informações necessárias (descrição, screenshots, etc).
-4. Submeta o aplicativo para revisão.
-
-## 2. Compilação para Android
-
-### 2.1 Abrir o projeto no Android Studio
 ```bash
-# No diretório raiz do projeto
+# Para iOS
+npx cap open ios
+# Para Android
 npx cap open android
 ```
 
-Isso abrirá o projeto Android no Android Studio.
+4. **Envie as atualizações para as lojas**
 
-### 2.2 Configurações do Projeto no Android Studio
-1. Abra o arquivo `build.gradle` do módulo do aplicativo.
-2. Verifique se as versões mínima, alvo e de compilação do SDK estão definidas corretamente.
-3. Verifique se o nome do pacote (applicationId) corresponde a `com.gorf.app`.
+## Gestão de Versões
 
-### 2.3 Compilação e Teste
-1. Selecione um dispositivo ou emulador para testar.
-2. Clique no botão de reprodução para compilar e executar o aplicativo.
-3. Verifique se o redirecionamento para o site Gorf funciona corretamente.
+Quando lançar uma nova versão, atualize os seguintes arquivos:
 
-### 2.4 Geração do APK/Bundle para Distribuição
-1. No Android Studio, vá para Build > Generate Signed Bundle/APK.
-2. Escolha APK ou Android App Bundle (recomendado para a Play Store).
-3. Crie ou use uma chave de assinatura existente.
-4. Selecione o tipo de versão (geralmente "release").
-5. Aguarde a compilação ser concluída.
+1. **capacitor.config.ts**: Atualize a propriedade `version`
+2. **Xcode**: Atualize `Version` e `Build` nas configurações do projeto iOS
+3. **Android Studio**: Atualize `versionCode` e `versionName` no arquivo `build.gradle`
 
-### 2.5 Distribuição na Google Play Store
-1. Faça login no [Google Play Console](https://play.google.com/console/).
-2. Crie um novo aplicativo ou selecione o existente.
-3. Preencha todas as informações necessárias (descrição, screenshots, etc).
-4. Faça upload do APK ou Bundle gerado.
-5. Submeta o aplicativo para revisão.
+## Componentes Principais
 
-## 3. Atualizações do Aplicativo
+### 1. Redirecionamento Web
 
-### 3.1 Atualização do Conteúdo Web
-1. Modifique o arquivo `dist/index.html` conforme necessário.
-2. Execute `npx cap copy` para copiar as alterações para as plataformas nativas.
-3. Execute `npx cap sync` para sincronizar as configurações.
+O aplicativo móvel redireciona para a versão web hospedada. Isso é configurado em:
 
-### 3.2 Atualização da Configuração do Capacitor
-1. Modifique o arquivo `capacitor.config.ts` conforme necessário.
-2. Execute `npx cap copy` para copiar as alterações.
-3. Execute `npx cap sync` para sincronizar as configurações.
+- **iOS**: Arquivo `index.html` na pasta `ios/App/App/public`
+- **Android**: Arquivo `index.html` na pasta `android/app/src/main/assets/public`
 
-### 3.3 Distribuição de Atualizações
-Siga as mesmas etapas descritas nas seções 1.4-1.5 (iOS) e 2.4-2.5 (Android) para distribuir versões atualizadas.
+Se precisar alterar a URL de destino, edite esses arquivos.
 
-## 4. Solução de Problemas Comuns
+### 2. Permissões de Rede
 
-### 4.1 Problemas de Compilação
-- **Erro de Assinatura no Xcode**: Verifique se a equipe de desenvolvimento está selecionada corretamente.
-- **Erro de Versão no Android**: Certifique-se de que a versionCode foi incrementada para cada nova versão.
+Para garantir que o aplicativo possa acessar a internet:
 
-### 4.2 Problemas de Redirecionamento
-- Verifique se as permissões de internet estão configuradas em ambas as plataformas.
-- Certifique-se de que `limitsNavigationsToAppBoundDomains` está definido como `false` para iOS.
-- Verifique se `android:usesCleartextTraffic="true"` está definido no arquivo AndroidManifest.xml.
+- **iOS**: Configurado em `Info.plist`
+- **Android**: Configurado em `AndroidManifest.xml`
 
-### 4.3 Outros Problemas
-- Para problemas específicos, consulte a [documentação do Capacitor](https://capacitorjs.com/docs).
-- Para problemas com a distribuição na App Store, consulte as [diretrizes da App Store](https://developer.apple.com/app-store/review/guidelines/).
-- Para problemas com a distribuição na Play Store, consulte as [políticas do desenvolvedor do Google Play](https://play.google.com/about/developer-content-policy/).
+## Hospedagem e Domínio
 
-## 5. Recursos Adicionais
+O aplicativo web está hospedado em:
+- **URL**: https://gorf-jogo-de-bebidas.replit.app/
+
+Se este domínio mudar:
+1. Atualize os arquivos `index.html` em ambas as plataformas
+2. Construa novas versões dos aplicativos
+3. Envie as atualizações para as lojas
+
+## Recursos
+
+### Ícones do Aplicativo
+
+Os ícones são criados automaticamente usando o script `prepare_icons.js`. Se você quiser atualizar o ícone do aplicativo:
+
+1. Substitua o arquivo `attached_assets/LOGOGORF.png` por sua nova imagem (mantenha o mesmo nome)
+2. Execute o script para gerar novos ícones:
+
+```bash
+node prepare_icons.js
+```
+
+3. Sincronize com as plataformas nativas:
+
+```bash
+npx cap sync
+```
+
+### Splash Screen (Tela Inicial)
+
+Para personalizar a tela inicial:
+
+1. Crie imagens para diferentes tamanhos de tela (consulte a documentação do Capacitor)
+2. Substitua os arquivos de splash screen nas respectivas pastas de plataforma
+
+## Solução de Problemas
+
+### Problemas de Conexão
+
+Se o aplicativo não carregar a versão web:
+
+1. Verifique se a URL no arquivo `index.html` está correta
+2. Verifique se o site está acessível publicamente
+3. Confirme que as permissões de rede estão configuradas corretamente
+
+### Problemas de Build iOS
+
+Se encontrar problemas ao construir o projeto iOS:
+
+1. Verifique se o Xcode está atualizado
+2. Limpe o projeto (Product > Clean Build Folder)
+3. Verifique os certificados e perfis de provisionamento
+
+### Problemas de Build Android
+
+Se encontrar problemas ao construir o projeto Android:
+
+1. Verifique se o Android Studio está atualizado
+2. Execute "Sync Project with Gradle Files"
+3. Verifique a configuração do JDK
+
+## Processo de Atualização nas Lojas
+
+### App Store (iOS)
+
+1. Abra o projeto no Xcode
+2. Atualize a versão e o número de build
+3. Archive o projeto (Product > Archive)
+4. Submeta através do Xcode Organizer
+
+### Google Play (Android)
+
+1. Abra o projeto no Android Studio
+2. Atualize versionCode e versionName
+3. Gere um APK ou App Bundle assinado
+4. Faça login no Google Play Console e envie a nova versão
+
+## Recursos Adicionais
+
 - [Documentação do Capacitor](https://capacitorjs.com/docs)
-- [Guia de submissão na App Store](https://developer.apple.com/app-store/submissions/)
-- [Guia de publicação na Google Play](https://developer.android.com/studio/publish)
+- [README-MOBILE.md](./README-MOBILE.md) - Guia para publicação nas lojas
+- [GUIA_VISUAL_XCODE.md](./GUIA_VISUAL_XCODE.md) - Guia visual do Xcode
+- [GUIA_RAPIDO_ANDROID.md](./GUIA_RAPIDO_ANDROID.md) - Guia rápido para Android
