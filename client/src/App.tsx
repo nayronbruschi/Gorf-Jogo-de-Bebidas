@@ -45,6 +45,7 @@ const Recommendations = lazy(() => import("@/pages/recommendations"));
 const DesenhaEBebe = lazy(() => import("@/pages/desenha-e-bebe"));
 const EuNunca = lazy(() => import("@/pages/eu-nunca"));
 const InstallPromptSettings = lazy(() => import("@/pages/install-prompt-settings"));
+const QualMeuNome = lazy(() => import("@/pages/QualMeuNome"));
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading } = useAuth();
@@ -164,6 +165,9 @@ function Router() {
       </Route>
       <Route path="/eu-nunca/jogo">
         <ProtectedRoute component={EuNuncaJogo} />
+      </Route>
+      <Route path="/qual-meu-nome">
+        <ProtectedRoute component={QualMeuNome} />
       </Route>
       <Route component={NotFound} />
     </Switch>
