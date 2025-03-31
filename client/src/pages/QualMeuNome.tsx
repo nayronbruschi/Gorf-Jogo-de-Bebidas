@@ -1,97 +1,117 @@
-import { useEffect, useState } from 'react';
-import { GameLayout } from '@/components/GameLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { 
-  Dialog,
-  DialogContent,
+  User2, 
+  XCircle, 
+  Clock, 
+  Trophy, 
+  ThumbsUp, 
+  ThumbsDown, 
+  Info
+} from 'lucide-react';
+
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription 
+} from '@/components/ui/card';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
   DialogDescription,
-  DialogHeader,
-  DialogTitle,
   DialogFooter
 } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
+import { 
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { GameLayout } from '@/components/GameLayout';
 import { AdBanner } from '@/components/AdBanner';
-import { User2, Trophy, Clock, ChevronRight, XCircle, CheckCircle2, TimerIcon } from 'lucide-react';
-import { Label } from '@/components/ui/label';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
+import { Player, GameSettings } from '@shared/schema';
 
-interface Player {
-  id: string;
-  name: string;
-  points: number;
-  isActive: boolean;
-  challengesCompleted: number;
-  drinksCompleted: number;
-}
+type CardType = string;
 
-function QualMeuNomeGame() {
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
-  const [playerName, setPlayerName] = useState('');
+export default function QualMeuNome() {
+  const queryClient = useQueryClient();
+  
+  // Estado do jogo
   const [gameStarted, setGameStarted] = useState(false);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
+  const [currentTurnPlayer, setCurrentTurnPlayer] = useState<Player | null>(null);
   const [roundNumber, setRoundNumber] = useState(1);
-  const [currentCard, setCurrentCard] = useState<string | null>(null);
-  const [showCard, setShowCard] = useState(false);
+  const [currentCategory, setCurrentCategory] = useState("Personalidades");
+  const [lightningRound, setLightningRound] = useState(false);
   const [timer, setTimer] = useState(30);
   const [timerRunning, setTimerRunning] = useState(false);
+  const [showCard, setShowCard] = useState(false);
+  const [currentCard, setCurrentCard] = useState<string | null>(null);
   const [guess, setGuess] = useState('');
-  const [score, setScore] = useState(0);
+  const [cards, setCards] = useState<CardType[]>([]);
+  const [passedCards, setPassedCards] = useState<CardType[]>([]);
+  const [correctGuesses, setCorrectGuesses] = useState<CardType[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const [gameSettings, setGameSettings] = useState<GameSettings>({
+    maxPoints: 10,
+    currentPlayerId: null
+  });
+  
+  // Modais
   const [openRules, setOpenRules] = useState(false);
   const [openRoundInfo, setOpenRoundInfo] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState('títulos');
-  const [lightningRound, setLightningRound] = useState(false);
-  const [cards, setCards] = useState<string[]>([]);
-  const [currentTurnPlayer, setCurrentTurnPlayer] = useState<Player | null>(null);
-  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
-  const [showResults, setShowResults] = useState(false);
-  const [gameSettings, setGameSettings] = useState({ maxPoints: 15 });
-  const [passedCards, setPassedCards] = useState<string[]>([]);
-  const [correctGuesses, setCorrectGuesses] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  // Dados para cartas
-  const allCardData = [
-    "João", "Maria", "Pedro", "Ana", "Carlos", "Luiza", "Fernando", "Beatriz", 
-    "Roberto", "Juliana", "Lucas", "Fernanda", "Ricardo", "Camila", "Gustavo", 
-    "Mariana", "Rafael", "Carolina", "Bruno", "Amanda", "Gabriel", "Patricia", 
-    "Rodrigo", "Vanessa", "Felipe", "Manuela", "Leonardo", "Bianca", "Guilherme", 
-    "Laura", "Diego", "Leticia", "Marcelo", "Natalia", "Eduardo", "Daniela", 
-    "Paulo", "Isabela", "André", "Viviane", "Thiago", "Renata", "Alex", "Tatiana", 
-    "Vinicius", "Sabrina", "Matheus", "Monica", "Leandro", "Claudia"
+  
+  // Adição de jogador
+  const [playerName, setPlayerName] = useState('');
+  
+  // Dados das cartas - nomes de personalidades famosas, personagens, etc.
+  const allCardData: CardType[] = [
+    // Personalidades
+    "Albert Einstein", "Pelé", "Madonna", "Michael Jackson", "Frida Kahlo",
+    "Nelson Mandela", "Steve Jobs", "Marilyn Monroe", "Pablo Picasso", "Ayrton Senna",
+    "Elvis Presley", "Beyoncé", "Neymar", "Adele", "Walt Disney",
+    
+    // Personagens fictícios
+    "Harry Potter", "Darth Vader", "Mickey Mouse", "Super-Homem", "Batman",
+    "Mulher-Maravilha", "Bob Esponja", "Homem-Aranha", "Branca de Neve", "Cinderela",
+    "Simba", "Elsa", "Mario Bros", "Pikachu", "Sonic",
+    
+    // Personalidades brasileiras
+    "Machado de Assis", "Silvio Santos", "Xuxa", "Paulo Freire", "Carmen Miranda",
+    "Oscar Niemeyer", "Lula", "Caetano Veloso", "Tarsila do Amaral", "Tom Jobim",
+    "Senna", "Ziraldo", "Fernanda Montenegro", "Chico Buarque", "Zico"
   ];
-
-  // Busca jogadores
-  const { data: playerData, isLoading } = useQuery<Player[]>({
+  
+  // Consultas
+  const { data: playerData, isLoading } = useQuery({
     queryKey: ['/api/players'],
-    enabled: !gameStarted,
+    refetchInterval: 5000
   });
-
+  
+  const { data: settingsData } = useQuery({
+    queryKey: ['/api/game-settings'],
+    refetchInterval: 5000
+  });
+  
+  // Efeitos
   useEffect(() => {
-    if (playerData) {
-      setPlayers(playerData);
-      const active = playerData.find((p: Player) => p.isActive);
-      if (active) {
-        setCurrentPlayer(active);
-      }
+    if (playerData && Array.isArray(playerData)) {
+      setPlayers(playerData as Player[]);
     }
   }, [playerData]);
-
-  // Busca configurações do jogo
-  const { data: settingsData } = useQuery<{ maxPoints: number }>({
-    queryKey: ['/api/settings'],
-    enabled: !gameStarted,
-  });
-
+  
   useEffect(() => {
     if (settingsData) {
-      setGameSettings(settingsData);
+      setGameSettings(settingsData as GameSettings);
     }
   }, [settingsData]);
 
@@ -744,8 +764,8 @@ function QualMeuNomeGame() {
               <>
                 <h3 className="font-bold text-lg mb-2">Regras para a Rodada 3:</h3>
                 <ul className="list-disc list-inside space-y-2">
-                  <li>Apenas mímica é permitida</li>
-                  <li>Nenhuma palavra ou som pode ser emitido</li>
+                  <li>Você só pode fazer mímica</li>
+                  <li>Não pode falar nem fazer sons</li>
                   <li>Os jogadores têm apenas um palpite por carta</li>
                   <li>É permitido passar a carta</li>
                 </ul>
@@ -754,12 +774,12 @@ function QualMeuNomeGame() {
             
             {roundNumber === 4 && (
               <>
-                <h3 className="font-bold text-lg mb-2">Rodada Relâmpago!</h3>
+                <h3 className="font-bold text-lg mb-2">Rodada Relâmpago:</h3>
                 <ul className="list-disc list-inside space-y-2">
-                  <li>Cada jogador pega uma carta aleatória</li>
-                  <li>Os jogadores competem para adivinhar primeiro</li>
-                  <li>O primeiro a adivinhar ganha o ponto</li>
-                  <li>Cada jogador tem apenas uma chance por carta</li>
+                  <li>Tempo reduzido para 15 segundos</li>
+                  <li>Todas as cartas estão em jogo</li>
+                  <li>Não há restrições - use qualquer método</li>
+                  <li>Pontuação dobrada para cada acerto</li>
                 </ul>
               </>
             )}
@@ -770,7 +790,7 @@ function QualMeuNomeGame() {
               onClick={() => setOpenRoundInfo(false)}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              Começar Rodada
+              Começar!
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -780,50 +800,47 @@ function QualMeuNomeGame() {
       <Dialog open={showResults} onOpenChange={setShowResults}>
         <DialogContent className="max-w-md bg-white">
           <DialogHeader>
-            <DialogTitle className="text-blue-800 text-xl">Fim do Jogo!</DialogTitle>
+            <DialogTitle className="text-blue-800 text-xl">Fim de Jogo!</DialogTitle>
             <DialogDescription className="text-slate-600">
-              Veja os resultados finais
+              Veja quem venceu "Qual Meu Nome"
             </DialogDescription>
           </DialogHeader>
           
           <div className="py-4">
             <h3 className="font-bold text-lg mb-4 text-center">Placar Final</h3>
             
-            {/* Ordenar jogadores por pontuação */}
-            {players
-              .sort((a, b) => b.points - a.points)
-              .map((player, index) => (
-                <div 
-                  key={player.id} 
-                  className={`flex items-center justify-between p-3 rounded-lg mb-2 ${
-                    index === 0 
-                      ? 'bg-yellow-100 border border-yellow-300' 
-                      : 'bg-slate-50 border border-slate-200'
-                  }`}
-                >
-                  <div className="flex items-center">
-                    {index === 0 && <Trophy className="w-5 h-5 mr-2 text-yellow-600" />}
-                    <span className="font-medium">{player.name}</span>
+            <div className="space-y-4">
+              {players
+                .sort((a, b) => b.points - a.points)
+                .map((player, index) => (
+                  <div 
+                    key={player.id} 
+                    className={`flex items-center justify-between p-3 rounded-lg ${
+                      index === 0 
+                        ? 'bg-yellow-100 border border-yellow-300' 
+                        : 'bg-slate-50 border border-slate-200'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      {index === 0 && <Trophy className="w-5 h-5 mr-2 text-yellow-600" />}
+                      <span className="font-medium">{player.name}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-xl font-bold">{player.points}</span>
+                      <span className="text-sm text-slate-500 ml-1">pontos</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-xl font-bold">{player.points}</span>
-                    <span className="text-xs text-slate-500 ml-1">pts</span>
-                  </div>
-                </div>
-              ))
-            }
+                ))}
+            </div>
           </div>
           
           <DialogFooter className="flex flex-col sm:flex-row gap-2">
             <Button 
               variant="outline"
-              onClick={() => {
-                setShowResults(false);
-                setGameStarted(false);
-              }}
-              className="w-full sm:w-auto border-slate-300"
+              onClick={() => setGameStarted(false)}
+              className="w-full sm:w-auto"
             >
-              Voltar ao Menu
+              Menu Principal
             </Button>
             <Button 
               onClick={() => {
@@ -840,5 +857,3 @@ function QualMeuNomeGame() {
     </GameLayout>
   );
 }
-
-export default QualMeuNomeGame;

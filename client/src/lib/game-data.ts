@@ -244,6 +244,13 @@ export const games: GameType[] = [
     route: "/guess-who/players"
   },
   {
+    id: "qual-meu-nome",
+    name: "Qual Meu Nome",
+    description: "Adivinhe nomes através de dicas em diferentes rodadas de desafios!",
+    icon: MessageSquare,
+    route: "/qual-meu-nome"
+  },
+  {
     id: "touch-game",
     name: "Toque na Sorte",
     description: "Teste sua sorte neste jogo interativo!",
