@@ -48,35 +48,69 @@ export default function ClassicStart() {
 
   return (
     <GameLayout title="">
-      <div className="flex flex-col items-center gap-8">
-        <div className="text-center max-w-lg">
-          <h3 className="text-2xl font-bold text-purple-900 mb-4">
+      <div className="container max-w-2xl mx-auto px-4 pt-8 pb-16">
+        {/* Header com título estilo Apple */}
+        <header className="text-center mb-10">
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-purple-600 mb-4">
+            GORF
+          </h1>
+          <div className="inline-flex items-center gap-1 px-4 py-1 rounded-full bg-purple-100 text-purple-800 text-sm font-medium mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            Modo Clássico
+          </div>
+          <h2 className="text-2xl font-bold text-purple-900 mb-2">
             Escolha os baralhos
-          </h3>
-          <p className="text-xl text-purple-900">
-            Selecione os tipos de desafios que você quer incluir no jogo.
+          </h2>
+          <p className="text-gray-600">
+            Selecione os tipos de desafios para adicionar ao jogo
           </p>
-        </div>
+        </header>
 
-        <div className="w-full max-w-lg space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Seleção de baralhos com design moderno */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-10">
+          <div className="grid grid-cols-1 gap-4">
             {decks.map((deck) => (
               <motion.button
                 key={deck.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
                 onClick={() => handleDeckToggle(deck.id)}
-                className={`p-4 rounded-lg text-left transition-colors ${
+                className={`p-5 rounded-xl text-left transition-all duration-200 ${
                   selectedDecks.has(deck.id)
-                    ? 'bg-white text-purple-700 border-4 border-purple-700'
-                    : 'bg-white/20 text-purple-900 hover:bg-white/30 border-2 border-purple-300'
+                    ? 'bg-gradient-to-r from-purple-50 to-white shadow-md border-l-4 border-purple-600'
+                    : 'bg-gray-50 hover:bg-white hover:shadow-sm border border-gray-100'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <deck.icon className="h-5 w-5" />
+                <div className="flex items-center gap-4">
+                  <div className={`rounded-full p-3 ${
+                    selectedDecks.has(deck.id)
+                      ? 'bg-purple-100 text-purple-700'
+                      : 'bg-gray-100 text-gray-500'
+                  }`}>
+                    <deck.icon className="h-6 w-6" />
+                  </div>
                   <div>
-                    <div className="font-semibold">{deck.name}</div>
-                    <div className="text-sm opacity-80">{deck.description}</div>
+                    <div className={`font-semibold text-lg ${
+                      selectedDecks.has(deck.id) ? 'text-purple-900' : 'text-gray-700'
+                    }`}>
+                      {deck.name}
+                    </div>
+                    <div className={`text-sm ${
+                      selectedDecks.has(deck.id) ? 'text-purple-700' : 'text-gray-500'
+                    }`}>
+                      {deck.description}
+                    </div>
+                  </div>
+                  <div className="ml-auto">
+                    {selectedDecks.has(deck.id) && (
+                      <div className="rounded-full bg-purple-100 p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.button>
@@ -84,14 +118,17 @@ export default function ClassicStart() {
           </div>
         </div>
 
-        <Button
-          size="lg"
-          onClick={handleContinue}
-          className="bg-gorf-green hover:bg-green-700 text-white text-xl px-8 py-6 flex items-center justify-center"
-        >
-          <Play className="mr-2 h-6 w-6" />
-          Continuar
-        </Button>
+        {/* Botão de ação com estilo Apple */}
+        <div className="text-center">
+          <Button
+            size="lg"
+            onClick={handleContinue}
+            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xl px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+          >
+            <Play className="mr-2 h-6 w-6" />
+            Continuar
+          </Button>
+        </div>
       </div>
     </GameLayout>
   );
