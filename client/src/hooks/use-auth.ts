@@ -69,79 +69,45 @@ export function useAuth() {
   useEffect(() => {
     console.log("[Auth] Iniciando listener de autenticação");
     
-    // Ambiente de desenvolvimento - criar uma verificação mock
-    const isDevelopment = window.location.hostname.includes('replit.dev') || 
-                          window.location.hostname.includes('localhost');
-    
-    if (isDevelopment) {
-      console.log("[Auth] Executando em ambiente de desenvolvimento, permitindo acesso sem Firebase");
-      // Verificar se temos uma sessão de desenvolvimento no localStorage
-      const mockSession = localStorage.getItem('dev_session');
-      
-      if (mockSession) {
-        console.log("[Auth] Sessão de desenvolvimento encontrada, continuando com sessão mock");
-        // Simular um usuário autenticado para desenvolvimento
-        setUser({ uid: 'dev-user-id', email: 'dev@example.com' } as any);
-        setIsNewUser(false);
-        
-        // Simular captura de localização
-        setTimeout(async () => {
+    // Código para todos os ambientes (desenvolvimento e produção)
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      try {
+        if (user) {
+          console.log("[Auth] Usuário autenticado:", user.uid);
+          
+          // Verificar se o usuário já tem perfil
+          const profile = await getUserProfile(user.uid);
+          setIsNewUser(!profile);
+          setUser(user);
+          
+          // Capturar a localização do usuário
           const location = await getUserLocation();
           if (location) {
             setUserLocation(location);
+            await saveUserLocation(user.uid, location);
           }
-          setLoading(false);
-        }, 500);
-      } else {
-        console.log("[Auth] Nenhuma sessão de desenvolvimento encontrada, iniciando como não autenticado");
+        } else {
+          console.log("[Auth] Usuário deslogado");
+          setUser(null);
+          setIsNewUser(false);
+          setUserLocation(null);
+        }
+      } catch (error) {
+        console.error("[Auth] Erro:", error);
+        toast({
+          variant: "destructive",
+          title: "Erro na autenticação",
+          description: "Por favor, tente fazer login novamente."
+        });
+      } finally {
         setLoading(false);
       }
-      
-      // Para ambiente de desenvolvimento, não há necessidade de cancelar inscrição
-      return () => {
-        console.log("[Auth] Limpando estado de desenvolvimento");
-      };
-    } else {
-      // Código normal para produção
-      const unsubscribe = auth.onAuthStateChanged(async (user) => {
-        try {
-          if (user) {
-            console.log("[Auth] Usuário autenticado:", user.uid);
-            
-            // Verificar se o usuário já tem perfil
-            const profile = await getUserProfile(user.uid);
-            setIsNewUser(!profile);
-            setUser(user);
-            
-            // Capturar a localização do usuário
-            const location = await getUserLocation();
-            if (location) {
-              setUserLocation(location);
-              await saveUserLocation(user.uid, location);
-            }
-          } else {
-            console.log("[Auth] Usuário deslogado");
-            setUser(null);
-            setIsNewUser(false);
-            setUserLocation(null);
-          }
-        } catch (error) {
-          console.error("[Auth] Erro:", error);
-          toast({
-            variant: "destructive",
-            title: "Erro na autenticação",
-            description: "Por favor, tente fazer login novamente."
-          });
-        } finally {
-          setLoading(false);
-        }
-      });
+    });
 
-      return () => {
-        console.log("[Auth] Limpando listener");
-        unsubscribe();
-      };
-    }
+    return () => {
+      console.log("[Auth] Limpando listener");
+      unsubscribe();
+    };
   }, [toast]);
 
   return {

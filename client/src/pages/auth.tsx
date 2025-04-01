@@ -78,15 +78,8 @@ export default function Auth() {
         console.error("Código do erro:", firebaseError.code);
         console.error("Mensagem do erro:", firebaseError.message);
         
-        // Modo de desenvolvimento/teste - permitir prosseguir mesmo sem autenticação Firebase
-        console.log("Prosseguindo em modo de teste (sem autenticação Firebase)");
-        toast({
-          title: "Modo de demonstração",
-          description: "Prosseguindo sem autenticação Firebase para ambiente de desenvolvimento"
-        });
-        
-        // Redirecionar para a página principal
-        setLocation("/dashboard");
+        // Relançar o erro para ser tratado no catch externo
+        throw firebaseError;
       }
     } catch (error: any) {
       console.error("Erro no login com Google:", error);
@@ -135,19 +128,8 @@ export default function Auth() {
         console.error("Erro na autenticação por email com Firebase:", firebaseError);
         console.error("Código do erro:", firebaseError.code);
         
-        // Para fins de desenvolvimento/demonstração, permitir prosseguir
-        if (email.includes("@") && password.length >= 6) {
-          console.log("Prosseguindo em modo de demonstração sem autenticação Firebase");
-          toast({
-            title: "Modo de demonstração",
-            description: "Prosseguindo sem autenticação Firebase para ambiente de desenvolvimento"
-          });
-          
-          // Redirecionar para a página principal
-          setLocation("/dashboard");
-        } else {
-          throw firebaseError;
-        }
+        // Relançar o erro para ser tratado no catch externo
+        throw firebaseError;
       }
     } catch (error: any) {
       console.error("Erro na autenticação por email:", error);

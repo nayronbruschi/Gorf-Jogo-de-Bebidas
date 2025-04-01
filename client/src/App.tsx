@@ -1,11 +1,11 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/use-auth";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { SplashScreen } from "@/components/SplashScreen";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 
 // Página inicial e autenticação carregadas imediatamente
 import NotFound from "@/pages/not-found";
@@ -49,13 +49,21 @@ const QualMeuNome = lazy(() => import("@/pages/QualMeuNome"));
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, loading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      // Redirecionar para a página de login quando não estiver autenticado
+      setLocation("/auth");
+    }
+  }, [isAuthenticated, loading, setLocation]);
 
   if (loading) {
     return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {
-    return <Route path="/auth" component={Auth} />;
+    return null; // Não renderiza nada enquanto redireciona
   }
 
   return (
