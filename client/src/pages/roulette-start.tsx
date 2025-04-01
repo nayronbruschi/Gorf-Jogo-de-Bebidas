@@ -79,8 +79,8 @@ export default function RouletteStart() {
                 onClick={() => setSelectedMode(key)}
                 className={`p-6 rounded-xl transition-all ${
                   selectedMode === key
-                    ? "bg-white text-purple-700 shadow-lg scale-105"
-                    : "bg-white/10 text-purple-900 hover:bg-white/20"
+                    ? "bg-white text-purple-700 shadow-lg scale-105 border-4 border-purple-700"
+                    : "bg-white/10 text-purple-900 hover:bg-white/20 border-2 border-purple-300"
                 }`}
               >
                 <div className="flex flex-col items-center gap-3">

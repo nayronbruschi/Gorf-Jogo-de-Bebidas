@@ -68,8 +68,8 @@ export default function ClassicStart() {
                 onClick={() => handleDeckToggle(deck.id)}
                 className={`p-4 rounded-lg text-left transition-colors ${
                   selectedDecks.has(deck.id)
-                    ? 'bg-white text-purple-700'
-                    : 'bg-white/20 text-white hover:bg-white/30'
+                    ? 'bg-white text-purple-700 border-4 border-purple-700'
+                    : 'bg-white/20 text-purple-900 hover:bg-white/30 border-2 border-purple-300'
                 }`}
               >
                 <div className="flex items-center gap-3">

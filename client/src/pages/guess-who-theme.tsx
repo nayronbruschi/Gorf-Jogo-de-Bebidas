@@ -93,8 +93,8 @@ export default function GuessWhoTheme() {
                 onClick={() => handleSelectTheme(theme.id)}
                 className={`flex flex-col items-center gap-2 p-6 h-auto ${
                   selectedTheme === theme.id
-                    ? 'bg-gorf-green hover:bg-gorf-green text-white'
-                    : 'bg-white hover:bg-purple-50 text-purple-900 hover:text-purple-900'
+                    ? 'bg-gorf-green hover:bg-gorf-green text-white border-4 border-purple-700'
+                    : 'bg-white hover:bg-purple-50 text-purple-900 hover:text-purple-900 border-2 border-purple-300'
                 }`}
                 variant="ghost"
               >
