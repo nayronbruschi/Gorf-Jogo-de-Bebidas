@@ -346,7 +346,7 @@ export default function ClassicMode() {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <Award className="h-5 w-5 text-white" />
-                <h3 className="text-xl font-bold text-white">Ranking</h3>
+                <h3 className="text-xl font-bold text-purple-900">Ranking</h3>
               </div>
               <Button
                 variant="ghost"
@@ -365,11 +365,11 @@ export default function ClassicMode() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {player === sortedPlayers[0] && <Crown className="h-4 w-4 text-yellow-400" />}
-                      <span className="text-white">{player.name}</span>
+                      <span className="text-purple-900">{player.name}</span>
                     </div>
-                    <span className="text-white font-bold">{player.points} pts</span>
+                    <span className="text-purple-900 font-bold">{player.points} pts</span>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-white/80">
+                  <div className="flex items-center gap-4 text-sm text-purple-900/80">
                     <div className="flex items-center gap-1">
                       <Beer className="h-4 w-4" />
                       <span>{player.drinksCompleted}</span>

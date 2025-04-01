@@ -80,7 +80,7 @@ export default function RouletteStart() {
                 className={`p-6 rounded-xl transition-all ${
                   selectedMode === key
                     ? "bg-white text-purple-700 shadow-lg scale-105"
-                    : "bg-white/10 text-white hover:bg-white/20"
+                    : "bg-white/10 text-purple-900 hover:bg-white/20"
                 }`}
               >
                 <div className="flex flex-col items-center gap-3">

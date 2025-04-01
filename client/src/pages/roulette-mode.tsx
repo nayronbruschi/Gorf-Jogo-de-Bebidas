@@ -196,7 +196,7 @@ export default function RouletteMode() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <Award className="h-5 w-5 text-white" />
-              <h3 className="text-xl font-bold text-white">Ranking</h3>
+              <h3 className="text-xl font-bold text-purple-900">Ranking</h3>
             </div>
             <Button
               variant="ghost"
@@ -212,8 +212,8 @@ export default function RouletteMode() {
                 key={player.id}
                 className="bg-white/10 p-3 rounded-lg flex items-center justify-between"
               >
-                <span className="text-white">{player.name}</span>
-                <div className="flex items-center gap-1 text-white/80">
+                <span className="text-purple-900">{player.name}</span>
+                <div className="flex items-center gap-1 text-purple-900/80">
                   <Beer className="h-4 w-4" />
                   <span>{player.points} {drinkTextPlural}</span>
                 </div>

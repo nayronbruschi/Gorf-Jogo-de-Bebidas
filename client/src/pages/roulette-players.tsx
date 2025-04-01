@@ -50,7 +50,7 @@ export default function RoulettePlayers() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Seção de Jogadores */}
         <section>
-          <h2 className="text-2xl font-bold text-white text-center mb-6">
+          <h2 className="text-2xl font-bold text-purple-900 text-center mb-6">
             Jogadores
           </h2>
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
@@ -60,19 +60,19 @@ export default function RoulettePlayers() {
 
         {/* Seção de Configurações */}
         <section>
-          <h2 className="text-2xl font-bold text-white text-center mb-6">
+          <h2 className="text-2xl font-bold text-purple-900 text-center mb-6">
             Configurações
           </h2>
           <Card className="bg-white/10 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-white text-2xl">Regras do Jogo</CardTitle>
-              <CardDescription className="text-white/80 text-lg">
+              <CardTitle className="text-purple-900 text-2xl">Regras do Jogo</CardTitle>
+              <CardDescription className="text-purple-900 text-lg">
                 Define os limites para cada rodada e para vencer o jogo
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-8">
               <div>
-                <label className="text-white text-lg mb-4 block">
+                <label className="text-purple-900 text-lg mb-4 block">
                   Máximo por rodada
                 </label>
                 <div className="flex items-center gap-2">
@@ -94,7 +94,7 @@ export default function RoulettePlayers() {
                     onChange={(e) => setMaxPerRound(e.target.value)}
                     min={gameMode === "shots" ? "1" : "2"}
                     max={gameMode === "shots" ? "5" : "15"}
-                    className="bg-white/20 text-white border-0 text-center text-xl"
+                    className="bg-white/20 text-purple-900 border-0 text-center text-xl"
                   />
                   <Button
                     type="button"
@@ -109,7 +109,7 @@ export default function RoulettePlayers() {
                     <Plus className="h-5 w-5" />
                   </Button>
                 </div>
-                <p className="text-white/60 text-base mt-2">
+                <p className="text-purple-900 text-base mt-2">
                   {gameMode === "shots"
                     ? "Número máximo de shots por rodada (1-5)"
                     : "Número máximo de goles por rodada (2-15)"}
@@ -117,7 +117,7 @@ export default function RoulettePlayers() {
               </div>
 
               <div>
-                <label className="text-white text-lg mb-4 block">
+                <label className="text-purple-900 text-lg mb-4 block">
                   Total para vencer
                 </label>
                 <div className="flex items-center gap-2">
@@ -136,7 +136,7 @@ export default function RoulettePlayers() {
                     onChange={(e) => setMaxToWin(e.target.value)}
                     min="10"
                     max="200"
-                    className="bg-white/20 text-white border-0 text-center text-xl"
+                    className="bg-white/20 text-purple-900 border-0 text-center text-xl"
                   />
                   <Button
                     type="button"
@@ -148,7 +148,7 @@ export default function RoulettePlayers() {
                     <Plus className="h-5 w-5" />
                   </Button>
                 </div>
-                <p className="text-white/60 text-base mt-2">
+                <p className="text-purple-900 text-base mt-2">
                   Quantidade total de {gameMode === "shots" ? "shots" : "goles"} para vencer o jogo
                 </p>
               </div>
