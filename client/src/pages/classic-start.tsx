@@ -50,10 +50,10 @@ export default function ClassicStart() {
     <GameLayout title="">
       <div className="flex flex-col items-center gap-8">
         <div className="text-center max-w-lg">
-          <h3 className="text-2xl font-bold text-white mb-4">
+          <h3 className="text-2xl font-bold text-purple-900 mb-4">
             Escolha os baralhos
           </h3>
-          <p className="text-xl text-white/80">
+          <p className="text-xl text-purple-900">
             Selecione os tipos de desafios que você quer incluir no jogo.
           </p>
         </div>

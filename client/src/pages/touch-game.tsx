@@ -189,25 +189,25 @@ export default function TouchGame() {
       <GameLayout title="Toque na Sorte">
         <div className="flex flex-col items-center gap-8 p-6">
           <div className="text-center space-y-4">
-            <Hand className="w-16 h-16 text-white mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">Como Jogar</h2>
-            <p className="text-white/80 text-lg leading-relaxed">
+            <Hand className="w-16 h-16 text-purple-900 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-purple-900 mb-2">Como Jogar</h2>
+            <p className="text-purple-900 text-lg leading-relaxed">
               1. Toque na tela com vários dedos ao mesmo tempo (até 5)
             </p>
-            <p className="text-white/80 text-lg leading-relaxed">
+            <p className="text-purple-900 text-lg leading-relaxed">
               2. Mantenha os dedos na tela por 3 segundos
             </p>
-            <p className="text-white/80 text-lg leading-relaxed">
+            <p className="text-purple-900 text-lg leading-relaxed">
               3. O jogo vai sortear aleatoriamente um dos dedos
             </p>
-            <p className="text-white/80 text-lg leading-relaxed">
+            <p className="text-purple-900 text-lg leading-relaxed">
               4. O dedo escolhido é o vencedor!
             </p>
           </div>
           <Button
             size="lg"
             onClick={() => setIsPlaying(true)}
-            className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-6 text-xl mt-8"
+            className="bg-gorf-green hover:bg-green-700 text-white px-8 py-6 text-xl mt-8"
           >
             Começar
           </Button>
@@ -231,7 +231,7 @@ export default function TouchGame() {
           {gameEnded ? (
             <Button
               onClick={resetGame}
-              className="bg-purple-700 hover:bg-purple-800 text-white"
+              className="bg-gorf-green hover:bg-green-700 text-white"
             >
               <RotateCcw className="mr-2 h-5 w-5" />
               Jogar de novo

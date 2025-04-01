@@ -69,7 +69,7 @@ export default function RouletteStart() {
       <div className="max-w-4xl mx-auto space-y-12">
         {/* Seção de Modos de Jogo */}
         <section>
-          <h2 className="text-2xl font-bold text-white text-center mb-6">
+          <h2 className="text-2xl font-bold text-purple-900 text-center mb-6">
             Modo de Jogo
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
