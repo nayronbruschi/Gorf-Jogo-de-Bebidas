@@ -422,9 +422,9 @@ export default function QualMeuNome() {
       {!gameStarted ? (
         <div className="container mx-auto p-4">
           <Card className="mb-6 bg-white shadow-md border-none">
-            <CardHeader className="pb-3 bg-blue-50 rounded-t-lg">
-              <CardTitle className="text-center text-blue-800">Qual Meu Nome</CardTitle>
-              <CardDescription className="text-center text-blue-600">
+            <CardHeader className="pb-3 bg-gorf-purple rounded-t-lg">
+              <CardTitle className="text-center text-white">Qual Meu Nome</CardTitle>
+              <CardDescription className="text-center text-white/90">
                 Descubra nomes através de dicas! Um jogo de adivinhação rápido e divertido.
               </CardDescription>
             </CardHeader>
@@ -436,13 +436,13 @@ export default function QualMeuNome() {
               
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-6">
                 <Button 
-                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+                  className="w-full sm:w-auto bg-gorf-purple hover:bg-purple-900 text-white"
                   onClick={() => setOpenRules(true)}
                 >
                   Ver Regras
                 </Button>
                 <Button 
-                  className="w-full sm:w-auto bg-green-600 hover:bg-green-700"
+                  className="w-full sm:w-auto bg-gorf-green hover:bg-green-700 text-white"
                   onClick={startGame}
                   disabled={players.length < 2}
                 >
@@ -453,8 +453,8 @@ export default function QualMeuNome() {
           </Card>
 
           <Card className="mb-6 bg-white shadow-md border-none">
-            <CardHeader className="pb-3 bg-blue-50 rounded-t-lg">
-              <CardTitle className="text-blue-800">Adicionar Jogadores</CardTitle>
+            <CardHeader className="pb-3 bg-gorf-purple rounded-t-lg">
+              <CardTitle className="text-white">Adicionar Jogadores</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="flex gap-2 mb-4">
@@ -466,7 +466,7 @@ export default function QualMeuNome() {
                 />
                 <Button 
                   onClick={addPlayer}
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-gorf-green hover:bg-green-700 text-white"
                 >
                   Adicionar
                 </Button>
@@ -543,7 +543,7 @@ export default function QualMeuNome() {
                 
                 {!timerRunning && !showCard && (
                   <Button 
-                    className="w-full mt-4 bg-green-600 hover:bg-green-700"
+                    className="w-full mt-4 bg-gorf-green hover:bg-green-700 text-white"
                     onClick={startTurn}
                   >
                     Ver Carta
@@ -564,7 +564,7 @@ export default function QualMeuNome() {
                   <div className="text-center">
                     <h2 className="text-3xl font-bold mb-6">{currentCard}</h2>
                     <Button 
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-gorf-green hover:bg-green-700 text-white"
                       onClick={startTimer}
                     >
                       Começar Tempo
@@ -589,7 +589,7 @@ export default function QualMeuNome() {
                         />
                         <Button 
                           onClick={checkGuess}
-                          className="bg-blue-600 hover:bg-blue-700"
+                          className="bg-gorf-purple hover:bg-purple-900 text-white"
                         >
                           Verificar
                         </Button>
@@ -717,7 +717,7 @@ export default function QualMeuNome() {
           <DialogFooter>
             <Button 
               onClick={() => setOpenRules(false)}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-gorf-purple hover:bg-purple-900 text-white"
             >
               Entendi
             </Button>
@@ -788,7 +788,7 @@ export default function QualMeuNome() {
           <DialogFooter>
             <Button 
               onClick={() => setOpenRoundInfo(false)}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-gorf-green hover:bg-green-700 text-white"
             >
               Começar!
             </Button>
@@ -847,7 +847,7 @@ export default function QualMeuNome() {
                 setShowResults(false);
                 startGame();
               }}
-              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+              className="w-full sm:w-auto bg-gorf-green hover:bg-green-700 text-white"
             >
               Jogar Novamente
             </Button>

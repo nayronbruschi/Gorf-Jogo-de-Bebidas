@@ -48,7 +48,7 @@ export function GameCard({
           <p className="text-slate-600 mb-6">{description}</p>
           
           <div className="flex justify-end mt-auto">
-            <div className="inline-flex items-center gap-1 text-sm font-medium px-3 py-1.5 rounded-md bg-green-400/10 text-green-600">
+            <div className="inline-flex items-center gap-1 text-sm font-medium px-3 py-1.5 rounded-md bg-gorf-green text-white">
               Jogar <ArrowRightIcon className="ml-1 h-4 w-4" />
             </div>
           </div>

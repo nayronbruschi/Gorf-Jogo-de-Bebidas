@@ -27,12 +27,12 @@ export function GameLayout({ children, title, className, showPlayers = true }: G
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <nav className="p-4 flex items-center justify-between relative bg-white shadow-md">
+      <nav className="p-4 flex items-center justify-between relative bg-gorf-purple shadow-md">
         <Button 
           variant="ghost" 
           size="icon"
           onClick={() => navigate("/dashboard")}
-          className="text-gorf-purple hover:bg-slate-100"
+          className="text-white hover:bg-purple-700"
         >
           <Home className="h-6 w-6" />
         </Button>

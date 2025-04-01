@@ -79,13 +79,13 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <header className="fixed top-0 left-0 right-0 z-40 bg-white shadow-md">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-gorf-purple shadow-md">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           {!isDashboard ? (
             <Button
               variant="ghost"
               size="icon"
-              className="text-gorf-purple hover:bg-slate-100"
+              className="text-white hover:bg-purple-700"
               onClick={() => navigate("/dashboard")}
             >
               {HomeIcon && <HomeIcon size={24} />}

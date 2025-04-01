@@ -109,9 +109,9 @@ export default function Dashboard() {
 
           {/* Bem-vindo ao Gorf */}
           <Card className="bg-white shadow-md border-slate-100">
-            <CardHeader className="bg-gradient-to-r from-purple-800 to-purple-700 text-white rounded-t-lg">
+            <CardHeader className="bg-gradient-to-r from-green-600 to-green-500 text-white rounded-t-lg">
               <CardTitle>Bem-vindo ao Gorf!</CardTitle>
-              <CardDescription className="text-white/80">
+              <CardDescription className="text-white/90">
                 Escolha um jogo para começar
               </CardDescription>
             </CardHeader>
@@ -119,7 +119,7 @@ export default function Dashboard() {
               <Button
                 size="lg"
                 onClick={() => navigate("/game-modes")}
-                className="w-full bg-gorf-purple hover:bg-purple-900 text-white"
+                className="w-full bg-gorf-green hover:bg-green-700 text-white"
               >
                 <GamepadIcon className="mr-2 h-5 w-5" />
                 Ver Todos os Jogos
@@ -130,7 +130,7 @@ export default function Dashboard() {
           {/* Último Jogo */}
           {lastGame && (
             <Card className="bg-white shadow-md border-slate-100">
-              <CardHeader className="bg-gradient-to-r from-green-500 to-green-400 text-white rounded-t-lg">
+              <CardHeader className="bg-gradient-to-r from-purple-800 to-purple-700 text-white rounded-t-lg">
                 <CardTitle className="flex items-center gap-2">
                   <History className="h-5 w-5" />
                   Último Jogo
@@ -148,7 +148,7 @@ export default function Dashboard() {
                 </div>
                 <Button
                   onClick={() => navigate(findGameRoute(lastGame.name))}
-                  className="w-full bg-gorf-green hover:bg-green-500 text-white"
+                  className="w-full bg-gorf-purple hover:bg-purple-900 text-white"
                 >
                   <Play className="mr-2 h-5 w-5" />
                   Jogar Novamente
@@ -163,21 +163,21 @@ export default function Dashboard() {
           {/* Estatísticas */}
           <div className="grid grid-cols-2 gap-4">
             <Card className="bg-white shadow-md border-slate-100">
-              <CardHeader className="bg-purple-800 text-white rounded-t-lg pb-3">
+              <CardHeader className="bg-green-600 text-white rounded-t-lg pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Trophy className="h-5 w-5" />
                   Total de Jogos
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-4">
-                <p className="text-3xl font-bold text-gorf-purple">
+                <p className="text-3xl font-bold text-gorf-green">
                   {userProfile?.gameStats?.totalGamesPlayed || 0}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="bg-white shadow-md border-slate-100">
-              <CardHeader className="bg-green-500 text-white rounded-t-lg pb-3">
+              <CardHeader className="bg-green-600 text-white rounded-t-lg pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Clock className="h-5 w-5" />
                   Tempo Total
