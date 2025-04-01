@@ -47,7 +47,7 @@ export default function ClassicPlayers() {
               disabled={players.length < 2}
               className={`px-8 py-6 flex items-center justify-center text-2xl ${
                 players.length >= 2 
-                  ? "bg-purple-900 hover:bg-purple-950 text-white"
+                  ? "bg-gorf-green hover:bg-green-700 text-white"
                   : "bg-white/20 hover:bg-white/30 text-white"
               }`}
             >

@@ -87,7 +87,7 @@ export default function ClassicStart() {
         <Button
           size="lg"
           onClick={handleContinue}
-          className="bg-purple-900 hover:bg-purple-950 text-white text-xl px-8 py-6 flex items-center justify-center"
+          className="bg-gorf-green hover:bg-green-700 text-white text-xl px-8 py-6 flex items-center justify-center"
         >
           <Play className="mr-2 h-6 w-6" />
           Continuar

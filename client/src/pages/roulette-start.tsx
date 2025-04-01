@@ -98,7 +98,7 @@ export default function RouletteStart() {
           <Button
             size="lg"
             onClick={handleStartGame}
-            className="bg-purple-900 hover:bg-purple-950 text-white text-xl px-8 py-6"
+            className="bg-gorf-green hover:bg-green-700 text-white text-xl px-8 py-6"
           >
             <Play className="mr-2 h-6 w-6" />
             Continuar

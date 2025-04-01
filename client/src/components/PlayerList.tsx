@@ -67,7 +67,7 @@ export function PlayerList({ selectedPlayers, onSelectedPlayersChange }: PlayerL
           type="submit"
           size="icon"
           disabled={addPlayer.isPending}
-          className="bg-purple-700 hover:bg-purple-800 min-w-[44px]"
+          className="bg-gorf-green hover:bg-green-700 min-w-[44px]"
         >
           <UserPlus className="h-4 w-4 text-white" />
         </Button>

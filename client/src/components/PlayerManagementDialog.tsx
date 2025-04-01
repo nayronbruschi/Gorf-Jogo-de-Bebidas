@@ -161,7 +161,7 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
               </div>
               <Button 
                 type="submit" 
-                className="bg-white/20 hover:bg-white/30 text-white"
+                className="bg-gorf-green hover:bg-green-700 text-white"
               >
                 Salvar
               </Button>
@@ -229,7 +229,7 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
                 type="submit"
                 size="icon"
                 disabled={addPlayer.isPending}
-                className="bg-white/20 hover:bg-white/30"
+                className="bg-gorf-green hover:bg-green-700"
               >
                 <UserPlus className="h-4 w-4" />
               </Button>
@@ -244,7 +244,7 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="w-full bg-white/10 hover:bg-white/20 text-white border-white/20"
+              className="w-full bg-gorf-green hover:bg-green-700 text-white border-green-600"
             >
               Voltar ao Jogo
             </Button>

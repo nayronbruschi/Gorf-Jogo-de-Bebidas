@@ -93,7 +93,7 @@ export default function GuessWhoTheme() {
                 onClick={() => handleSelectTheme(theme.id)}
                 className={`flex flex-col items-center gap-2 p-6 h-auto ${
                   selectedTheme === theme.id
-                    ? 'bg-purple-900 hover:bg-purple-900 text-white'
+                    ? 'bg-gorf-green hover:bg-gorf-green text-white'
                     : 'bg-white hover:bg-purple-50 text-purple-900 hover:text-purple-900'
                 }`}
                 variant="ghost"
@@ -109,7 +109,7 @@ export default function GuessWhoTheme() {
           size="lg"
           onClick={handleStartGame}
           disabled={!selectedTheme}
-          className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6 mt-4"
+          className="bg-gorf-green hover:bg-green-700 text-white px-8 py-6 mt-4"
         >
           <Play className="mr-2 h-6 w-6" />
           Iniciar Jogo
