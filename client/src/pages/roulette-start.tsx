@@ -67,38 +67,82 @@ export default function RouletteStart() {
   return (
     <GameLayout title="">
       <div className="max-w-4xl mx-auto space-y-12">
-        {/* Seção de Modos de Jogo */}
-        <section>
-          <h2 className="text-2xl font-bold text-purple-900 text-center mb-6">
-            Modo de Jogo
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Cabeçalho com estilo Apple */}
+        <header className="text-center mb-2">
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-purple-600">
+            GORF
+          </h1>
+          <p className="text-gray-500 text-sm mt-2 tracking-wide">Escolha como vai jogar</p>
+        </header>
+        
+        {/* Seção de Modos de Jogo com estilo Apple */}
+        <section className="mx-auto max-w-2xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {(Object.entries(modes) as [GameMode, typeof modes[GameMode]][]).map(([key, mode]) => (
-              <button
+              <div
                 key={key}
                 onClick={() => setSelectedMode(key)}
-                className={`p-6 rounded-xl transition-all ${
+                className={`relative rounded-2xl backdrop-blur-sm transition-all duration-300 overflow-hidden cursor-pointer h-64 group ${
                   selectedMode === key
-                    ? "bg-white text-purple-700 shadow-lg scale-105 border-4 border-purple-700"
-                    : "bg-white/10 text-purple-900 hover:bg-white/20 border-2 border-purple-300"
+                    ? "ring-4 ring-purple-500 shadow-xl scale-[1.02]"
+                    : "ring-2 ring-purple-300/50 shadow-md hover:shadow-lg"
                 }`}
               >
-                <div className="flex flex-col items-center gap-3">
-                  <mode.icon className="h-8 w-8" />
-                  <span className="text-lg font-semibold">{mode.name}</span>
-                  <span className="text-sm opacity-80 text-center">{mode.description}</span>
+                {/* Efeito de glassmorphism */}
+                <div className={`absolute inset-0 ${
+                  selectedMode === key
+                    ? "bg-gradient-to-br from-purple-100/80 to-white"
+                    : "bg-white/70 group-hover:bg-white/80"
+                }`}></div>
+                
+                {/* Círculo decorativo */}
+                <div className={`absolute -right-10 -top-10 w-40 h-40 rounded-full ${
+                  selectedMode === key
+                    ? key === "goles" ? "bg-blue-100/60" : "bg-orange-100/60"
+                    : "bg-gray-100/60" 
+                }`}></div>
+                
+                {/* Conteúdo */}
+                <div className="relative h-full p-6 flex flex-col items-center justify-between z-10">
+                  <div className="flex flex-col items-center text-center">
+                    {/* Ícone em círculo com gradiente */}
+                    <div className={`p-4 rounded-full mb-4 ${
+                      selectedMode === key
+                        ? key === "goles" 
+                          ? "bg-gradient-to-br from-blue-500 to-blue-700" 
+                          : "bg-gradient-to-br from-orange-500 to-red-600"
+                        : "bg-gradient-to-br from-purple-600 to-purple-800"
+                    }`}>
+                      <mode.icon className="h-10 w-10 text-white" />
+                    </div>
+                    
+                    <h3 className={`text-2xl font-bold mb-2 ${
+                      selectedMode === key ? "text-purple-900" : "text-purple-800"
+                    }`}>
+                      {mode.name}
+                    </h3>
+                    
+                    <p className="text-gray-600 text-sm leading-relaxed">{mode.description}</p>
+                  </div>
+                  
+                  {/* Indicador selecionado */}
+                  {selectedMode === key && (
+                    <div className="bg-gorf-green text-white px-4 py-1.5 rounded-full text-sm font-semibold mt-2">
+                      Selecionado
+                    </div>
+                  )}
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* Botão de Iniciar */}
-        <div className="flex justify-center">
+        {/* Botão de Iniciar estilo Apple */}
+        <div className="flex justify-center mt-10">
           <Button
             size="lg"
             onClick={handleStartGame}
-            className="bg-gorf-green hover:bg-green-700 text-white text-xl px-8 py-6"
+            className="bg-gradient-to-br from-gorf-green to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xl px-10 py-6 rounded-full shadow-lg transition-all hover:shadow-xl hover:scale-[1.02]"
           >
             <Play className="mr-2 h-6 w-6" />
             Continuar

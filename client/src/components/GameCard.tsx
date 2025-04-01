@@ -28,28 +28,34 @@ export function GameCard({
         whileTap={{ scale: 0.97 }}
         className="cursor-pointer h-full"
       >
-        <Card className="h-full p-6 bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-green-400/10 rounded-bl-full"></div>
+        <Card className="h-full p-0 bg-white rounded-2xl shadow-lg border-0 overflow-hidden relative backdrop-blur-sm">
+          {/* Efeito de vidro e gradiente no fundo */}
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-100/30 to-green-50/20 z-0"></div>
           
+          {/* Tag de destaque */}
           {isFeatured && (
-            <div className="absolute top-2 right-2 bg-gradient-to-r from-purple-800 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-md shadow-md z-10 flex items-center space-x-1">
-              <span className="block h-1.5 w-1.5 rounded-full bg-white animate-pulse"></span>
-              <span>{featureTag}</span>
+            <div className="absolute top-3 right-3 bg-gradient-to-r from-purple-700 to-purple-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg z-10 flex items-center space-x-1.5">
+              <span className="block h-2 w-2 rounded-full bg-white animate-pulse"></span>
+              <span className="tracking-wide">{featureTag}</span>
             </div>
           )}
           
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-gorf-purple rounded-xl shadow-sm">
-              <Icon className="h-6 w-6 text-white" />
+          <div className="p-6 relative z-1 flex flex-col h-full">
+            {/* Ícone destacado */}
+            <div className="mb-5 flex items-center gap-4">
+              <div className="p-3.5 bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl shadow-md flex items-center justify-center">
+                <Icon className="h-7 w-7 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-purple-900">{title}</h3>
             </div>
-            <h3 className="text-xl font-bold text-slate-800">{title}</h3>
-          </div>
-          
-          <p className="text-slate-600 mb-6">{description}</p>
-          
-          <div className="flex justify-end mt-auto">
-            <div className="inline-flex items-center gap-1 text-sm font-medium px-3 py-1.5 rounded-md bg-gorf-green text-white">
-              Jogar <ArrowRightIcon className="ml-1 h-4 w-4" />
+            
+            <p className="text-gray-600 mb-auto text-sm leading-relaxed">{description}</p>
+            
+            {/* Botão mais elegante */}
+            <div className="flex justify-end mt-5 pt-2 border-t border-gray-100">
+              <div className="inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full bg-gorf-green text-white shadow-sm hover:shadow-md transition-all">
+                Jogar <ArrowRightIcon className="ml-0.5 h-4 w-4" />
+              </div>
             </div>
           </div>
         </Card>
