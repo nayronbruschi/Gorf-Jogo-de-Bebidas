@@ -66,16 +66,16 @@ export default function GameModes() {
   };
 
   return (
-    <GameLayout title="">
-      <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-700 -mx-4 px-4 pt-4 pb-16">
+    <GameLayout title="Modos de Jogo">
+      <div className="min-h-screen bg-white -mx-4 px-4 pt-4 pb-16">
         <div className="max-w-4xl mx-auto">
           <motion.div 
-            className="text-center mb-6"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-purple-200 text-xl">Escolha um dos modos de jogo abaixo para começar</p>
+            <p className="text-slate-700 text-xl">Escolha um dos modos de jogo abaixo para começar</p>
           </motion.div>
           
           {/* Banner de anúncios */}
@@ -83,13 +83,13 @@ export default function GameModes() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mb-6"
+            className="mb-8"
           >
             <AdBanner position="middle" />
           </motion.div>
           
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
             variants={container}
             initial="hidden"
             animate="show"

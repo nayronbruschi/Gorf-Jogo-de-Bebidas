@@ -26,13 +26,13 @@ export function GameLayout({ children, title, className, showPlayers = true }: G
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-purple-800">
-      <nav className="p-4 flex items-center justify-between relative bg-black/20 backdrop-blur-sm">
+    <div className="min-h-screen bg-slate-50">
+      <nav className="p-4 flex items-center justify-between relative bg-white shadow-md">
         <Button 
           variant="ghost" 
           size="icon"
           onClick={() => navigate("/dashboard")}
-          className="text-white hover:bg-white/10"
+          className="text-gorf-purple hover:bg-slate-100"
         >
           <Home className="h-6 w-6" />
         </Button>
@@ -41,26 +41,26 @@ export function GameLayout({ children, title, className, showPlayers = true }: G
         </div>
         <Sheet>
           <SheetTrigger asChild>
-            <Avatar className="h-10 w-10 cursor-pointer hover:opacity-90 transition-opacity">
+            <Avatar className="h-10 w-10 cursor-pointer hover:opacity-90 transition-opacity border-2 border-gorf-purple">
               <AvatarImage src={user?.photoURL || ""} />
-              <AvatarFallback>
+              <AvatarFallback className="bg-gorf-purple text-white">
                 {user?.email?.[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </SheetTrigger>
-          <SheetContent side="right" className="w-80 bg-gray-900 p-0 border-none">
+          <SheetContent side="right" className="w-80 bg-white p-0 border-none shadow-xl">
             <div className="flex flex-col h-full">
-              <div className="p-6 border-b border-white/10">
+              <div className="p-6 border-b border-slate-200 bg-gorf-purple text-white">
                 <div className="flex items-center gap-4">
-                  <Avatar className="h-12 w-12">
+                  <Avatar className="h-12 w-12 border-2 border-white">
                     <AvatarImage src={user?.photoURL || ""} />
-                    <AvatarFallback>
+                    <AvatarFallback className="bg-white text-gorf-purple">
                       {user?.email?.[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-medium text-white">{user?.displayName || "Usuário"}</p>
-                    <p className="text-sm text-white/60">{user?.email}</p>
+                    <p className="font-medium">{user?.displayName || "Usuário"}</p>
+                    <p className="text-sm text-white/80">{user?.email}</p>
                   </div>
                 </div>
               </div>
@@ -70,10 +70,10 @@ export function GameLayout({ children, title, className, showPlayers = true }: G
                     <Button
                       key={item.href}
                       variant="ghost"
-                      className="w-full justify-start text-white hover:bg-white/10"
+                      className="w-full justify-start text-slate-800 hover:bg-slate-100"
                       onClick={() => navigate(item.href)}
                     >
-                      <item.icon className="mr-2 h-5 w-5" />
+                      <item.icon className="mr-2 h-5 w-5 text-gorf-purple" />
                       {item.label}
                     </Button>
                   ))}
@@ -89,7 +89,7 @@ export function GameLayout({ children, title, className, showPlayers = true }: G
         animate={{ opacity: 1, y: 0 }}
         className={cn("container mx-auto p-4", className)}
       >
-        {title && <h2 className="text-3xl font-bold text-white text-center mb-8">{title}</h2>}
+        {title && <h2 className="text-3xl font-bold text-gorf-purple text-center mb-8">{title}</h2>}
         {children}
       </motion.main>
     </div>

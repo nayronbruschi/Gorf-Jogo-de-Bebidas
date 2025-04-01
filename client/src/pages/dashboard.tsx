@@ -77,7 +77,7 @@ export default function Dashboard() {
 
           {/* Carrossel de Jogos em Destaque */}
           <section className="mb-6">
-            <h2 className="text-white text-lg font-medium mb-5 mx-2">Jogos em destaque</h2>
+            <h2 className="text-gorf-purple text-lg font-medium mb-5 mx-2">Jogos em destaque</h2>
             <Carousel
               className="w-full"
               opts={{
@@ -94,10 +94,10 @@ export default function Dashboard() {
                       className="flex flex-col items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
                       onClick={() => navigate(game.route)}
                     >
-                      <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
+                      <div className="w-14 h-14 rounded-full bg-gorf-purple flex items-center justify-center shadow-md">
                         <game.icon className="h-7 w-7 text-white" />
                       </div>
-                      <span className="text-xs text-white text-center mt-1 leading-tight h-8 whitespace-pre-line">
+                      <span className="text-xs font-medium text-slate-800 text-center mt-1 leading-tight h-8 whitespace-pre-line">
                         {formatGameName(game.name)}
                       </span>
                     </div>
@@ -108,18 +108,18 @@ export default function Dashboard() {
           </section>
 
           {/* Bem-vindo ao Gorf */}
-          <Card className="bg-white/10 backdrop-blur-lg border-none">
-            <CardHeader>
-              <CardTitle className="text-white">Bem-vindo ao Gorf!</CardTitle>
-              <CardDescription className="text-white/60">
+          <Card className="bg-white shadow-md border-slate-100">
+            <CardHeader className="bg-gradient-to-r from-purple-800 to-purple-700 text-white rounded-t-lg">
+              <CardTitle>Bem-vindo ao Gorf!</CardTitle>
+              <CardDescription className="text-white/80">
                 Escolha um jogo para começar
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <Button
                 size="lg"
                 onClick={() => navigate("/game-modes")}
-                className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                className="w-full bg-gorf-purple hover:bg-purple-900 text-white"
               >
                 <GamepadIcon className="mr-2 h-5 w-5" />
                 Ver Todos os Jogos
@@ -129,17 +129,17 @@ export default function Dashboard() {
 
           {/* Último Jogo */}
           {lastGame && (
-            <Card className="bg-white/10 backdrop-blur-lg border-none">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
+            <Card className="bg-white shadow-md border-slate-100">
+              <CardHeader className="bg-gradient-to-r from-green-500 to-green-400 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-2">
                   <History className="h-5 w-5" />
                   Último Jogo
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-white/90">
+              <CardContent className="pt-6 space-y-4">
+                <div className="text-slate-800">
                   <p className="text-lg font-semibold">{lastGame.name}</p>
-                  <p className="text-sm text-white/60">
+                  <p className="text-sm text-slate-500">
                     {formatDistanceToNow(new Date(lastGame.playedAt), {
                       addSuffix: true,
                       locale: ptBR
@@ -148,7 +148,7 @@ export default function Dashboard() {
                 </div>
                 <Button
                   onClick={() => navigate(findGameRoute(lastGame.name))}
-                  className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                  className="w-full bg-gorf-green hover:bg-green-500 text-white"
                 >
                   <Play className="mr-2 h-5 w-5" />
                   Jogar Novamente
@@ -158,33 +158,33 @@ export default function Dashboard() {
           )}
 
           {/* Recomendação de Jogo */}
-          <GameRecommendationCard className="bg-white border-gray-200 shadow-md" />
+          <GameRecommendationCard className="bg-white shadow-md border-slate-100" />
 
           {/* Estatísticas */}
           <div className="grid grid-cols-2 gap-4">
-            <Card className="bg-white/10 backdrop-blur-lg border-none">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
+            <Card className="bg-white shadow-md border-slate-100">
+              <CardHeader className="bg-purple-800 text-white rounded-t-lg pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
                   <Trophy className="h-5 w-5" />
                   Total de Jogos
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-white">
+              <CardContent className="pt-4">
+                <p className="text-3xl font-bold text-gorf-purple">
                   {userProfile?.gameStats?.totalGamesPlayed || 0}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/10 backdrop-blur-lg border-none">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
+            <Card className="bg-white shadow-md border-slate-100">
+              <CardHeader className="bg-green-500 text-white rounded-t-lg pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
                   <Clock className="h-5 w-5" />
                   Tempo Total
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-white">
+              <CardContent className="pt-4">
+                <p className="text-3xl font-bold text-gorf-green">
                   {Math.round((userProfile?.gameStats?.totalPlayTime || 0) / 60)}h
                 </p>
               </CardContent>
@@ -193,23 +193,23 @@ export default function Dashboard() {
 
           {/* Jogos Recentes */}
           {recentGames.length > 0 && (
-            <Card className="bg-white/10 backdrop-blur-lg border-none">
-              <CardHeader>
-                <CardTitle className="text-white">Jogos Recentes</CardTitle>
-                <CardDescription className="text-white/60">
+            <Card className="bg-white shadow-md border-slate-100">
+              <CardHeader className="bg-gradient-to-r from-purple-800 to-purple-600 text-white rounded-t-lg">
+                <CardTitle>Jogos Recentes</CardTitle>
+                <CardDescription className="text-white/80">
                   Seus últimos jogos
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="space-y-4">
                   {recentGames.map((game: any, index: number) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 rounded-lg bg-white/5"
+                      className="flex items-center justify-between p-3 rounded-lg bg-slate-100 shadow-sm"
                     >
                       <div>
-                        <p className="text-white font-medium">{game.name}</p>
-                        <p className="text-sm text-white/60">
+                        <p className="text-slate-800 font-medium">{game.name}</p>
+                        <p className="text-sm text-slate-500">
                           {formatDistanceToNow(new Date(game.playedAt), {
                             addSuffix: true,
                             locale: ptBR
@@ -219,7 +219,7 @@ export default function Dashboard() {
                       <Button
                         size="sm"
                         onClick={() => navigate(findGameRoute(game.name))}
-                        className="bg-purple-700 hover:bg-purple-800 text-white"
+                        className="bg-gorf-purple hover:bg-purple-900 text-white"
                       >
                         <Play className="h-4 w-4" />
                       </Button>

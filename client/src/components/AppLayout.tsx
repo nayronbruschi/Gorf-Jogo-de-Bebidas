@@ -78,14 +78,14 @@ export function AppLayout({ children }: AppLayoutProps) {
   const HomeIcon = menuItems[0]?.icon;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-950 to-black">
-      <header className="fixed top-0 left-0 right-0 z-40 bg-black/20 backdrop-blur-lg border-b border-white/5">
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-white shadow-md">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           {!isDashboard ? (
             <Button
               variant="ghost"
               size="icon"
-              className="text-white hover:bg-white/10"
+              className="text-gorf-purple hover:bg-slate-100"
               onClick={() => navigate("/dashboard")}
             >
               {HomeIcon && <HomeIcon size={24} />}
@@ -96,26 +96,26 @@ export function AppLayout({ children }: AppLayoutProps) {
           <div className="flex-1 flex justify-end">
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
-                <Avatar className="h-10 w-10 cursor-pointer hover:opacity-90 transition-opacity">
+                <Avatar className="h-10 w-10 cursor-pointer hover:opacity-90 transition-opacity border-2 border-gorf-purple">
                   <AvatarImage src={user?.photoURL || ""} />
-                  <AvatarFallback>
+                  <AvatarFallback className="bg-gorf-purple text-white">
                     {user?.email?.[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </SheetTrigger>
-              <SheetContent side="right" className="w-80 bg-gray-900 p-0 border-none">
+              <SheetContent side="right" className="w-80 bg-white p-0 border-none shadow-xl">
                 <div className="flex flex-col h-full">
-                  <div className="p-6 border-b border-white/10">
+                  <div className="p-6 border-b border-slate-200 bg-gorf-purple text-white">
                     <div className="flex items-center gap-4">
-                      <Avatar className="h-12 w-12">
+                      <Avatar className="h-12 w-12 border-2 border-white">
                         <AvatarImage src={user?.photoURL || ""} />
-                        <AvatarFallback>
+                        <AvatarFallback className="bg-white text-gorf-purple">
                           {user?.email?.[0].toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium text-white">{displayName}</p>
-                        <p className="text-sm text-white/60">{user?.email}</p>
+                        <p className="font-medium">{displayName}</p>
+                        <p className="text-sm text-white/80">{user?.email}</p>
                       </div>
                     </div>
                   </div>
@@ -128,13 +128,13 @@ export function AppLayout({ children }: AppLayoutProps) {
                           <li key={item.href}>
                             <Button
                               variant="ghost"
-                              className="w-full justify-start gap-2 text-white hover:bg-white/10"
+                              className="w-full justify-start gap-2 text-slate-800 hover:bg-slate-100"
                               onClick={() => {
                                 navigate(item.href);
                                 setOpen(false);
                               }}
                             >
-                              {Icon && <Icon size={20} />}
+                              {Icon && <Icon size={20} className="text-gorf-purple" />}
                               {item.label}
                             </Button>
                           </li>
@@ -143,10 +143,10 @@ export function AppLayout({ children }: AppLayoutProps) {
                     </ul>
                   </nav>
 
-                  <div className="p-4 border-t border-white/10">
+                  <div className="p-4 border-t border-slate-200">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start gap-2 text-red-400 hover:text-red-300 hover:bg-red-400/10"
+                      className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
                       onClick={handleSignOut}
                     >
                       <LogOut className="h-5 w-5" />
