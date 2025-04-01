@@ -316,7 +316,7 @@ export default function GuessWhoGame() {
                 setShowLoseScreen(false);
                 handleNextPlayer();
               }}
-              className="bg-blue-500 hover:bg-blue-700 text-white" // Changed button color
+              className="bg-gorf-green hover:bg-green-700 text-white" // Changed button color
             >
               Tomar 5 goles e continuar
             </Button>
@@ -348,7 +348,7 @@ export default function GuessWhoGame() {
               <Button
                 size="lg"
                 onClick={handleNextPlayer}
-                className="bg-blue-500 hover:bg-blue-700 text-white" // Changed button color
+                className="bg-gorf-green hover:bg-green-700 text-white" // Changed button color
               >
                 <RotateCcw className="mr-2 h-5 w-5" />
                 Continuar Jogando
@@ -357,7 +357,7 @@ export default function GuessWhoGame() {
             <Button
               size="lg"
               onClick={() => setLocation("/guess-who/theme")}
-              className="bg-blue-500 hover:bg-blue-700 text-white" // Changed button color
+              className="bg-gorf-green hover:bg-green-700 text-white" // Changed button color
             >
               <RotateCcw className="mr-2 h-5 w-5" />
               Escolher Outra Categoria
@@ -465,7 +465,7 @@ export default function GuessWhoGame() {
               <div className="flex gap-4">
                 <Button
                   onClick={handleGuess}
-                  className="bg-blue-500 hover:bg-blue-700 text-white px-8" // Changed button color
+                  className="bg-gorf-green hover:bg-green-700 text-white px-8"
                   size="lg"
                 >
                   Chutar
@@ -498,7 +498,7 @@ export default function GuessWhoGame() {
                 <Button
                   size="lg"
                   onClick={handleNextPlayer}
-                  className="bg-blue-500 hover:bg-blue-700 text-white" // Changed button color
+                  className="bg-gorf-green hover:bg-green-700 text-white"
                 >
                   <RotateCcw className="mr-2 h-5 w-5" />
                   Continuar Jogando
@@ -507,7 +507,7 @@ export default function GuessWhoGame() {
               <Button
                 size="lg"
                 onClick={() => setLocation("/guess-who/theme")}
-                className="bg-blue-500 hover:bg-blue-700 text-white" // Changed button color
+                className="bg-gorf-green hover:bg-green-700 text-white" // Changed button color
               >
                 <RotateCcw className="mr-2 h-5 w-5" />
                 Escolher Outra Categoria
@@ -541,7 +541,7 @@ export default function GuessWhoGame() {
                   setShowLoseScreen(false);
                   handleNextPlayer();
                 }}
-                className="bg-blue-500 hover:bg-blue-700 text-white" // Changed button color
+                className="bg-gorf-green hover:bg-green-700 text-white" // Changed button color
               >
                 Tomar 5 goles e continuar
               </Button>

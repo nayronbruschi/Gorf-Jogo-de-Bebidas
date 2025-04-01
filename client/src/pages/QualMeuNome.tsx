@@ -660,10 +660,10 @@ export default function QualMeuNome() {
           </DialogHeader>
           
           <Tabs defaultValue="introducao">
-            <TabsList className="grid grid-cols-3 mb-4">
-              <TabsTrigger value="introducao">Introdução</TabsTrigger>
-              <TabsTrigger value="rodadas">Rodadas</TabsTrigger>
-              <TabsTrigger value="pontuacao">Pontuação</TabsTrigger>
+            <TabsList className="grid grid-cols-3 mb-4 bg-purple-100">
+              <TabsTrigger value="introducao" className="data-[state=active]:bg-purple-700 data-[state=active]:text-white">Introdução</TabsTrigger>
+              <TabsTrigger value="rodadas" className="data-[state=active]:bg-purple-700 data-[state=active]:text-white">Rodadas</TabsTrigger>
+              <TabsTrigger value="pontuacao" className="data-[state=active]:bg-purple-700 data-[state=active]:text-white">Pontuação</TabsTrigger>
             </TabsList>
             
             <TabsContent value="introducao" className="text-slate-700">

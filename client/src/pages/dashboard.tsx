@@ -163,13 +163,13 @@ export default function Dashboard() {
           {/* Estatísticas */}
           <div className="grid grid-cols-2 gap-4">
             <Card className="bg-white shadow-md border-slate-100">
-              <CardHeader className="bg-green-600 text-white rounded-t-lg pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Trophy className="h-5 w-5" />
+              <CardHeader className="bg-green-600 text-white rounded-t-lg pb-3 flex flex-col items-center">
+                <Trophy className="h-7 w-7 mb-1" />
+                <CardTitle className="text-base text-center">
                   Total de Jogos
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-4">
+              <CardContent className="pt-4 text-center">
                 <p className="text-3xl font-bold text-gorf-green">
                   {userProfile?.gameStats?.totalGamesPlayed || 0}
                 </p>
@@ -177,13 +177,13 @@ export default function Dashboard() {
             </Card>
 
             <Card className="bg-white shadow-md border-slate-100">
-              <CardHeader className="bg-green-600 text-white rounded-t-lg pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Clock className="h-5 w-5" />
+              <CardHeader className="bg-green-600 text-white rounded-t-lg pb-3 flex flex-col items-center">
+                <Clock className="h-7 w-7 mb-1" />
+                <CardTitle className="text-base text-center">
                   Tempo Total
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-4">
+              <CardContent className="pt-4 text-center">
                 <p className="text-3xl font-bold text-gorf-green">
                   {Math.round((userProfile?.gameStats?.totalPlayTime || 0) / 60)}h
                 </p>

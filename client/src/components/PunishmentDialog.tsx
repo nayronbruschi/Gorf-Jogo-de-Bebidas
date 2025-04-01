@@ -6,6 +6,10 @@ interface PunishmentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   playerName: string;
+  punishment?: any; // Adicionado para compatibilidade com a Roleta
+  punishmentDrinks?: number; // Adicionado para compatibilidade com a Roleta
+  drinkText?: string; // Adicionado para compatibilidade com a Roleta
+  drinkTextPlural?: string; // Adicionado para compatibilidade com a Roleta
   onAcceptPunishment: () => void;
   onGenerateNewPunishment: () => void;
 }
@@ -57,15 +61,22 @@ export function PunishmentDialog({
   open,
   onOpenChange,
   playerName,
+  punishment: externalPunishment,
+  punishmentDrinks: externalPunishmentDrinks,
+  drinkText: externalDrinkText,
+  drinkTextPlural: externalDrinkTextPlural,
   onAcceptPunishment,
   onGenerateNewPunishment,
 }: PunishmentDialogProps) {
-  const [punishment, setPunishment] = useState(
+  const [internalPunishment, setInternalPunishment] = useState(
     punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)]
   );
-  const punishmentDrinks = 1; // Placeholder -  needs proper implementation
-  const drinkText = "gole"; // Placeholder
-  const drinkTextPlural = "Goles"; // Placeholder
+  
+  // Use props fornecidas ou valores padrão
+  const punishment = externalPunishment || internalPunishment;
+  const punishmentDrinks = externalPunishmentDrinks || 1;
+  const drinkText = externalDrinkText || "gole";
+  const drinkTextPlural = externalDrinkTextPlural || "Goles";
 
 
   const handleAcceptPunishment = () => {
@@ -100,18 +111,19 @@ export function PunishmentDialog({
           <div className="flex flex-col gap-2">
             <Button
               onClick={handleAcceptPunishment}
-              className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white text-xl py-6"
+              className="bg-gorf-green hover:bg-green-700 text-white hover:text-white text-xl py-6"
             >
               Fez o desafio
             </Button>
             <Button
               variant="outline"
               onClick={() => {
-                setPunishment(
+                setInternalPunishment(
                   punishmentChallenges[Math.floor(Math.random() * punishmentChallenges.length)]
                 );
+                onGenerateNewPunishment();
               }}
-              className="bg-white text-purple-700 hover:bg-purple-900 hover:text-white border-purple-700"
+              className="bg-white text-purple-700 hover:bg-gorf-green hover:text-white border-purple-700"
             >
               Beba mais um {drinkText} para gerar outro desafio
             </Button>

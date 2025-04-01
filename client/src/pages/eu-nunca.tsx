@@ -313,7 +313,7 @@ export default function EuNunca() {
                     
                     <div className="flex flex-col gap-4">
                       <Button 
-                        className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                        className="w-full bg-gorf-green hover:bg-green-700 text-white"
                         onClick={gerarNovaPergunta}
                       >
                         Próxima Pergunta
@@ -329,7 +329,7 @@ export default function EuNunca() {
                       Clique no botão abaixo para começar o jogo com perguntas da categoria {categoriasNomes[categoriaAtual]}.
                     </p>
                     <Button 
-                      className="w-full bg-purple-700 hover:bg-purple-800 text-white text-lg py-6"
+                      className="w-full bg-gorf-green hover:bg-green-700 text-white text-lg py-6"
                       onClick={gerarNovaPergunta}
                     >
                       Iniciar Jogo
@@ -346,7 +346,7 @@ export default function EuNunca() {
                 <div className="grid grid-cols-1 gap-3">
                   <Button 
                     variant={categoriaAtual === "comuns" ? "default" : "outline"}
-                    className={categoriaAtual === "comuns" ? "bg-purple-700 hover:bg-purple-800 text-white" : ""}
+                    className={categoriaAtual === "comuns" ? "bg-gorf-green hover:bg-green-700 text-white" : "text-purple-900 border-purple-300 hover:bg-purple-50"}
                     onClick={() => mudarCategoria("comuns")}
                   >
                     <Smile className="mr-2 h-4 w-4" />
@@ -355,7 +355,7 @@ export default function EuNunca() {
                   
                   <Button 
                     variant={categoriaAtual === "pesadas" ? "default" : "outline"}
-                    className={categoriaAtual === "pesadas" ? "bg-purple-700 hover:bg-purple-800 text-white" : ""}
+                    className={categoriaAtual === "pesadas" ? "bg-gorf-green hover:bg-green-700 text-white" : "text-purple-900 border-purple-300 hover:bg-purple-50"}
                     onClick={() => mudarCategoria("pesadas")}
                   >
                     <Flame className="mr-2 h-4 w-4" />
@@ -364,7 +364,7 @@ export default function EuNunca() {
                   
                   <Button 
                     variant={categoriaAtual === "eroticas" ? "default" : "outline"}
-                    className={categoriaAtual === "eroticas" ? "bg-purple-700 hover:bg-purple-800 text-white" : ""}
+                    className={categoriaAtual === "eroticas" ? "bg-gorf-green hover:bg-green-700 text-white" : "text-purple-900 border-purple-300 hover:bg-purple-50"}
                     onClick={() => mudarCategoria("eroticas")}
                   >
                     <Eye className="mr-2 h-4 w-4" />
@@ -373,7 +373,7 @@ export default function EuNunca() {
                   
                   <Button 
                     variant={categoriaAtual === "drogas" ? "default" : "outline"}
-                    className={categoriaAtual === "drogas" ? "bg-purple-700 hover:bg-purple-800 text-white" : ""}
+                    className={categoriaAtual === "drogas" ? "bg-gorf-green hover:bg-green-700 text-white" : "text-purple-900 border-purple-300 hover:bg-purple-50"}
                     onClick={() => mudarCategoria("drogas")}
                   >
                     <Pill className="mr-2 h-4 w-4" />
@@ -382,7 +382,7 @@ export default function EuNunca() {
                   
                   <Button 
                     variant={categoriaAtual === "mistas" ? "default" : "outline"}
-                    className={categoriaAtual === "mistas" ? "bg-purple-700 hover:bg-purple-800 text-white" : ""}
+                    className={categoriaAtual === "mistas" ? "bg-gorf-green hover:bg-green-700 text-white" : "text-purple-900 border-purple-300 hover:bg-purple-50"}
                     onClick={() => mudarCategoria("mistas")}
                   >
                     <Zap className="mr-2 h-4 w-4" />
@@ -398,7 +398,7 @@ export default function EuNunca() {
                         (selectTab as HTMLElement).click();
                       }
                     }}
-                    className="bg-purple-700 hover:bg-purple-800 text-white mt-2"
+                    className="bg-gorf-green hover:bg-green-700 text-white mt-2"
                   >
                     Próximo: Ver Como Jogar
                   </Button>
@@ -443,7 +443,7 @@ export default function EuNunca() {
                         gerarNovaPergunta();
                       }
                     }}
-                    className="bg-purple-700 hover:bg-purple-800 text-white mt-2"
+                    className="bg-gorf-green hover:bg-green-700 text-white mt-2"
                   >
                     Iniciar Jogo
                   </Button>
@@ -485,7 +485,7 @@ export default function EuNunca() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmarCategoriaAdulto} className="bg-purple-700 hover:bg-purple-800">
+            <AlertDialogAction onClick={confirmarCategoriaAdulto} className="bg-gorf-green hover:bg-green-700">
               Confirmar (+18)
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -506,7 +506,7 @@ export default function EuNunca() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmarCategoriaDrogas} className="bg-purple-700 hover:bg-purple-800">
+            <AlertDialogAction onClick={confirmarCategoriaDrogas} className="bg-gorf-green hover:bg-green-700">
               Confirmar
             </AlertDialogAction>
           </AlertDialogFooter>

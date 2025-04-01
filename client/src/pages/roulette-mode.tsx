@@ -179,7 +179,9 @@ export default function RouletteMode() {
                     size="lg"
                     onClick={handleRefusal}
                     variant="outline"
-                    className="bg-white border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700 w-full sm:w-auto justify-center"
+                    className={action === "refuse"
+                      ? "bg-purple-900 text-white hover:bg-purple-950 hover:text-white w-full sm:w-auto justify-center"
+                      : "bg-white border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700 w-full sm:w-auto justify-center"}
                   >
                     <X className="mr-2 h-5 w-5" />
                     Se recusou a beber
