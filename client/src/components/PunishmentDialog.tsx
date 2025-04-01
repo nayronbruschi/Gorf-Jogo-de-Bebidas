@@ -123,7 +123,7 @@ export function PunishmentDialog({
                 );
                 onGenerateNewPunishment();
               }}
-              className="bg-white text-purple-700 hover:bg-gorf-green hover:text-white border-purple-700"
+              className="bg-white text-purple-900 hover:bg-green-700 hover:text-white border-purple-900"
             >
               Beba mais um {drinkText} para gerar outro desafio
             </Button>

@@ -418,7 +418,7 @@ export default function GuessWhoGame() {
                 <Button
                   size="lg"
                   onClick={() => setReadyToStart(true)}
-                  className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6"
+                  className="bg-gorf-green hover:bg-green-700 text-white px-8 py-6"
                 >
                   <Play className="mr-2 h-6 w-6" />
                   Estou Pronto!

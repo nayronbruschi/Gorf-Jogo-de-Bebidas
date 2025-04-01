@@ -122,7 +122,7 @@ export default function RouletteMode() {
               <Button
                 size="lg"
                 onClick={selectRandomPlayer}
-                className="bg-purple-900 hover:bg-purple-950 text-white px-8 py-6 text-2xl"
+                className="bg-gorf-green hover:bg-green-700 text-white px-8 py-6 text-2xl"
               >
                 Sortear Jogador
               </Button>
@@ -169,8 +169,8 @@ export default function RouletteMode() {
                     onClick={handleDrink}
                     variant="outline"
                     className={action === "drink"
-                      ? "bg-purple-900 text-white hover:bg-purple-950 hover:text-white w-full sm:w-auto justify-center"
-                      : "bg-white border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700 w-full sm:w-auto justify-center"}
+                      ? "bg-gorf-green text-white hover:bg-green-700 hover:text-white w-full sm:w-auto justify-center"
+                      : "bg-white border-purple-900 text-purple-900 hover:bg-purple-50 hover:text-purple-900 w-full sm:w-auto justify-center"}
                   >
                     <Beer className="mr-2 h-5 w-5" />
                     Bebeu
@@ -180,8 +180,8 @@ export default function RouletteMode() {
                     onClick={handleRefusal}
                     variant="outline"
                     className={action === "refuse"
-                      ? "bg-purple-900 text-white hover:bg-purple-950 hover:text-white w-full sm:w-auto justify-center"
-                      : "bg-white border-purple-700 text-purple-700 hover:bg-purple-50 hover:text-purple-700 w-full sm:w-auto justify-center"}
+                      ? "bg-gorf-green text-white hover:bg-green-700 hover:text-white w-full sm:w-auto justify-center"
+                      : "bg-white border-purple-900 text-purple-900 hover:bg-purple-50 hover:text-purple-900 w-full sm:w-auto justify-center"}
                   >
                     <X className="mr-2 h-5 w-5" />
                     Se recusou a beber
@@ -231,7 +231,7 @@ export default function RouletteMode() {
               size="lg"
               onClick={handleNextPlayer}
               disabled={updatePoints.isPending}
-              className="bg-purple-900 hover:bg-purple-950 text-white hover:text-white px-8 py-6 text-xl w-full"
+              className="bg-gorf-green hover:bg-green-700 text-white hover:text-white px-8 py-6 text-xl w-full"
             >
               Sortear Próximo Jogador
             </Button>
