@@ -131,41 +131,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Último Jogo com estilo Apple */}
-          {lastGame && (
-            <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-purple-700 to-purple-600 text-white pb-6">
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <History className="h-5 w-5" />
-                  Último Jogo
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6 pb-6 space-y-5">
-                <div className="flex items-center gap-4">
-                  <div className="bg-purple-100 p-3 rounded-full">
-                    <GamepadIcon className="h-6 w-6 text-purple-700" />
-                  </div>
-                  <div>
-                    <p className="text-lg font-semibold text-gray-900">{lastGame.name}</p>
-                    <p className="text-sm text-gray-500">
-                      {formatDistanceToNow(new Date(lastGame.playedAt), {
-                        addSuffix: true,
-                        locale: ptBR
-                      })}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  onClick={() => navigate(findGameRoute(lastGame.name))}
-                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-5 rounded-full shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
-                >
-                  <Play className="mr-2 h-5 w-5" />
-                  Jogar Novamente
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-
           {/* Recomendação de Jogo com estilo Apple */}
           <GameRecommendationCard className="bg-white shadow-lg border-none rounded-2xl overflow-hidden" />
 
@@ -203,6 +168,41 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Último Jogo com estilo Apple */}
+          {lastGame && (
+            <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-purple-700 to-purple-600 text-white pb-6">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <History className="h-5 w-5" />
+                  Último Jogo
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 pb-6 space-y-5">
+                <div className="flex items-center gap-4">
+                  <div className="bg-purple-100 p-3 rounded-full">
+                    <GamepadIcon className="h-6 w-6 text-purple-700" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-gray-900">{lastGame.name}</p>
+                    <p className="text-sm text-gray-500">
+                      {formatDistanceToNow(new Date(lastGame.playedAt), {
+                        addSuffix: true,
+                        locale: ptBR
+                      })}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => navigate(findGameRoute(lastGame.name))}
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-5 rounded-full shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
+                >
+                  <Play className="mr-2 h-5 w-5" />
+                  Jogar Novamente
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Jogos Recentes com estilo Apple */}
           {recentGames.length > 0 && (
