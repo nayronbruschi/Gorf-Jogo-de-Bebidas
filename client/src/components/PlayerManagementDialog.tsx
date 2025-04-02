@@ -112,26 +112,26 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-none w-[95vw] lg:w-[80vw] xl:w-[60vw] h-[90vh] m-4 overflow-y-auto bg-gradient-to-br from-purple-500 to-pink-500">
+      <DialogContent className="mx-auto max-w-md w-full h-[90vh] overflow-y-auto bg-white rounded-lg">
         <div className="absolute right-4 top-4">
-          <DialogClose className="h-12 w-12 text-white hover:text-white/80 flex items-center justify-center">
-            <X className="h-8 w-8" />
+          <DialogClose className="h-8 w-8 text-gray-500 hover:text-gray-800 flex items-center justify-center">
+            <X className="h-5 w-5" />
           </DialogClose>
         </div>
 
-        <div className="max-w-4xl mx-auto p-8">
-          <h2 className="text-2xl font-bold text-white mb-8 text-center">Jogadores e pontuação</h2>
+        <div className="max-w-md mx-auto p-6">
+          <h2 className="text-2xl font-bold text-purple-800 mb-6 text-center">Jogadores e pontuação</h2>
 
           {/* Pontuação Máxima */}
-          <div className="bg-white/10 p-6 rounded-xl mb-8">
-            <h3 className="text-lg font-semibold text-white mb-4">Pontuação máxima</h3>
-            <form onSubmit={onUpdateMaxPoints} className="flex items-center gap-4">
+          <div className="border border-gray-200 bg-gray-50 p-5 rounded-xl mb-6">
+            <h3 className="text-lg font-semibold text-purple-800 mb-3">Pontuação máxima</h3>
+            <form onSubmit={onUpdateMaxPoints} className="flex items-center gap-3">
               <div className="flex items-center gap-2 flex-1">
                 <Button
                   type="button"
                   size="icon"
                   variant="outline"
-                  className="rounded-full w-8 h-8 flex items-center justify-center bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  className="rounded-full w-8 h-8 flex items-center justify-center bg-white border-gray-200 text-gray-600 hover:bg-gray-100"
                   onClick={() => {
                     const current = maxPointsForm.getValues("maxPoints");
                     maxPointsForm.setValue("maxPoints", Math.max(10, Number(current) - 10));
@@ -143,14 +143,14 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
                   type="number"
                   min="10"
                   max="1000"
-                  className="text-center bg-white/10 border-white/20 text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="text-center bg-white border border-gray-200 text-gray-800 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   {...maxPointsForm.register("maxPoints")}
                 />
                 <Button
                   type="button"
                   size="icon"
                   variant="outline"
-                  className="rounded-full w-8 h-8 flex items-center justify-center bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  className="rounded-full w-8 h-8 flex items-center justify-center bg-white border-gray-200 text-gray-600 hover:bg-gray-100"
                   onClick={() => {
                     const current = maxPointsForm.getValues("maxPoints");
                     maxPointsForm.setValue("maxPoints", Math.min(1000, Number(current) + 10));
@@ -161,7 +161,7 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
               </div>
               <Button 
                 type="submit" 
-                className="bg-gorf-green hover:bg-green-700 text-white"
+                className="bg-[#326800] hover:bg-green-800 text-white"
               >
                 Salvar
               </Button>
@@ -169,9 +169,9 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
           </div>
 
           {/* Lista de Jogadores */}
-          <div className="bg-white/10 p-6 rounded-xl mb-8">
-            <h3 className="text-lg font-semibold text-white mb-4">Jogadores</h3>
-            <div className="space-y-4">
+          <div className="border border-gray-200 bg-gray-50 p-5 rounded-xl mb-6">
+            <h3 className="text-lg font-semibold text-purple-800 mb-3">Jogadores</h3>
+            <div className="space-y-3">
               <AnimatePresence>
                 {sortedPlayers.map((player, index) => (
                   <motion.div
@@ -179,34 +179,34 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="bg-white/10 p-3 rounded space-y-2"
+                    className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm space-y-2"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        {hasPoints && index === 0 && <Crown className="h-4 w-4 text-yellow-400" />}
-                        <span className="text-white">{player.name}</span>
+                        {hasPoints && index === 0 && <Crown className="h-4 w-4 text-yellow-500" />}
+                        <span className="text-gray-800 font-medium">{player.name}</span>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => removePlayer.mutate(player.id)}
-                        className="text-white/50 hover:text-white"
+                        className="text-gray-400 hover:text-gray-600 hover:bg-gray-100"
                       >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
 
                     <div className="flex items-center gap-4 text-sm">
-                      <div className="flex items-center gap-1 text-white/80">
-                        <Award className="h-4 w-4" />
+                      <div className="flex items-center gap-1 text-gray-600">
+                        <Award className="h-4 w-4 text-purple-600" />
                         <span>{player.points} pts</span>
                       </div>
-                      <div className="flex items-center gap-1 text-white/80">
-                        <Beer className="h-4 w-4" />
+                      <div className="flex items-center gap-1 text-gray-600">
+                        <Beer className="h-4 w-4 text-amber-500" />
                         <span>{player.drinksCompleted}</span>
                       </div>
-                      <div className="flex items-center gap-1 text-white/80">
-                        <Target className="h-4 w-4" />
+                      <div className="flex items-center gap-1 text-gray-600">
+                        <Target className="h-4 w-4 text-green-600" />
                         <span>{player.challengesCompleted}</span>
                       </div>
                     </div>
@@ -217,34 +217,34 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
           </div>
 
           {/* Adicionar Jogador */}
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold text-white mb-4">Adicionar um novo jogador</h3>
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-purple-800 mb-3">Adicionar um novo jogador</h3>
             <form onSubmit={onSubmit} className="flex gap-2">
               <Input
                 placeholder="Nome do jogador"
                 {...form.register("name")}
-                className="flex-1 bg-white border-0 text-purple-700 placeholder:text-purple-400"
+                className="flex-1 bg-white border border-gray-300 text-gray-800 placeholder:text-gray-400 focus-visible:ring-purple-500"
               />
               <Button
                 type="submit"
                 size="icon"
                 disabled={addPlayer.isPending}
-                className="bg-gorf-green hover:bg-green-700"
+                className="bg-[#326800] hover:bg-green-800 text-white"
               >
                 <UserPlus className="h-4 w-4" />
               </Button>
             </form>
           </div>
 
-          <p className="text-sm text-white/80 text-center">
+          <p className="text-sm text-gray-500 text-center">
             Caso um jogador seja removido a pontuação dele será distribuída igualmente para os jogadores restantes.
           </p>
 
-          <div className="mt-8">
+          <div className="mt-6">
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="w-full bg-gorf-green hover:bg-green-700 text-white border-green-600"
+              className="w-full bg-[#326800] hover:bg-green-800 text-white border-green-700"
             >
               Voltar ao Jogo
             </Button>

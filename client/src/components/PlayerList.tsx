@@ -61,7 +61,7 @@ export function PlayerList({ selectedPlayers, onSelectedPlayersChange }: PlayerL
         <Input
           placeholder="Nome do jogador"
           {...form.register("name")}
-          className="bg-white border-0 text-purple-900 placeholder:text-purple-400 flex-1"
+          className="bg-white border border-gray-300 text-purple-900 placeholder:text-purple-400 flex-1 focus-visible:ring-purple-500"
         />
         <Button
           type="submit"

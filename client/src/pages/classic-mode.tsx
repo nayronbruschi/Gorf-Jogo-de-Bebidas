@@ -211,7 +211,7 @@ export default function ClassicMode() {
         </div>
 
         {/* Container principal com design moderno */}
-        <div className="pt-16 pb-8 px-4">
+        <div className="pt-12 pb-8 px-4">
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
               {/* Área principal de jogo (3/5 da largura) */}
@@ -269,31 +269,26 @@ export default function ClassicMode() {
                     <div className="space-y-4 mt-6">
                       <button
                         onClick={() => setCompletedChallenge(!completedChallenge)}
-                        className={`w-full flex items-center gap-3 p-4 rounded-xl cursor-pointer select-none text-left transition-all duration-200 ${
+                        className={`w-full flex items-center gap-3 p-3 rounded-xl cursor-pointer select-none text-left transition-all duration-200 ${
                           completedChallenge
-                            ? 'bg-purple-100 border-l-4 border-purple-600 shadow-md'
-                            : 'bg-gray-50 hover:bg-white hover:shadow-sm border border-gray-100'
+                            ? 'bg-[#326800] text-white shadow-md'
+                            : 'bg-white hover:bg-gray-50 hover:shadow-sm border border-gray-200'
                         }`}
                       >
-                        <div className={`rounded-full p-3 ${
-                          completedChallenge ? 'bg-purple-200 text-purple-700' : 'bg-gray-100 text-gray-500'
+                        <div className={`rounded-full p-2 ${
+                          completedChallenge ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-500'
                         }`}>
                           <Target className="h-5 w-5" />
                         </div>
-                        <div>
-                          <span className={`flex-1 font-medium ${
-                            completedChallenge ? 'text-purple-900' : 'text-gray-700'
+                        <div className="flex-1">
+                          <span className={`font-medium ${
+                            completedChallenge ? 'text-white' : 'text-gray-800'
                           }`}>
                             Completou o desafio
                           </span>
-                          <div className={`text-sm ${
-                            completedChallenge ? 'text-purple-700' : 'text-gray-500'
-                          }`}>
-                            Cumpriu o desafio proposto
-                          </div>
                         </div>
                         <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          completedChallenge ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-600'
+                          completedChallenge ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600'
                         }`}>
                           +{roundPoints}pts
                         </div>
@@ -301,31 +296,26 @@ export default function ClassicMode() {
 
                       <button
                         onClick={() => setHasDrunk(!hasDrunk)}
-                        className={`w-full flex items-center gap-3 p-4 rounded-xl cursor-pointer select-none text-left transition-all duration-200 ${
+                        className={`w-full flex items-center gap-3 p-3 rounded-xl cursor-pointer select-none text-left transition-all duration-200 ${
                           hasDrunk
-                            ? 'bg-green-100 border-l-4 border-green-600 shadow-md'
-                            : 'bg-gray-50 hover:bg-white hover:shadow-sm border border-gray-100'
+                            ? 'bg-purple-700 text-white shadow-md'
+                            : 'bg-white hover:bg-gray-50 hover:shadow-sm border border-gray-200'
                         }`}
                       >
-                        <div className={`rounded-full p-3 ${
-                          hasDrunk ? 'bg-green-200 text-green-700' : 'bg-gray-100 text-gray-500'
+                        <div className={`rounded-full p-2 ${
+                          hasDrunk ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-500'
                         }`}>
                           <Beer className="h-5 w-5" />
                         </div>
-                        <div>
-                          <span className={`flex-1 font-medium ${
-                            hasDrunk ? 'text-green-900' : 'text-gray-700'
+                        <div className="flex-1">
+                          <span className={`font-medium ${
+                            hasDrunk ? 'text-white' : 'text-gray-800'
                           }`}>
                             Bebeu {roundPoints} goles
                           </span>
-                          <div className={`text-sm ${
-                            hasDrunk ? 'text-green-700' : 'text-gray-500'
-                          }`}>
-                            Preferiu beber em vez do desafio
-                          </div>
                         </div>
                         <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          hasDrunk ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+                          hasDrunk ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-600'
                         }`}>
                           +{roundPoints}pts
                         </div>
