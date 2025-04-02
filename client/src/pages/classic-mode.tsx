@@ -211,11 +211,11 @@ export default function ClassicMode() {
         </div>
 
         {/* Container principal com design moderno */}
-        <div className="pt-12 pb-8 px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-              {/* Área principal de jogo (3/5 da largura) */}
-              <div className="lg:col-span-3">
+        <div className="pt-8 pb-8 px-2 md:px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
+              {/* Área principal de jogo (4/7 da largura) */}
+              <div className="lg:col-span-4">
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-full">
                   {/* Cabeçalho com jogador atual */}
                   <div className="bg-gradient-to-r from-purple-800 to-purple-700 px-6 py-4">
@@ -234,7 +234,7 @@ export default function ClassicMode() {
                   </div>
                   
                   {/* Conteúdo principal */}
-                  <div className="p-6 space-y-6">
+                  <div className="p-4 md:p-5 space-y-4">
                     {/* Desafio atual com animação */}
                     <AnimatePresence mode="wait">
                       {currentChallenge && (
@@ -416,8 +416,8 @@ export default function ClassicMode() {
                 </div>
               </div>
 
-              {/* Sidebar com ranking (2/5 da largura) */}
-              <div className="lg:col-span-2">
+              {/* Sidebar com ranking (3/7 da largura) */}
+              <div className="lg:col-span-3">
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-full">
                   <div className="bg-gradient-to-r from-purple-800 to-purple-700 px-6 py-5 flex items-center justify-between">
                     <h3 className="text-xl font-semibold text-white flex items-center gap-2">
@@ -434,7 +434,7 @@ export default function ClassicMode() {
                     </Button>
                   </div>
                   
-                  <div className="p-5">
+                  <div className="p-4 md:p-5">
                     {sortedPlayers.length > 0 ? (
                       <div className="divide-y divide-gray-100">
                         {sortedPlayers.map((player, index) => (

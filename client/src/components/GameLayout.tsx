@@ -87,7 +87,7 @@ export function GameLayout({ children, title, className, showPlayers = true }: G
       <motion.main
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={cn("container mx-auto p-4 -mt-2", className)}
+        className={cn("container mx-auto -mt-2", className)}
       >
         {children}
       </motion.main>

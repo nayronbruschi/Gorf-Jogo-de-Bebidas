@@ -236,19 +236,9 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
             </form>
           </div>
 
-          <p className="text-sm text-gray-500 text-center">
+          <p className="text-sm text-gray-500 text-center mt-6">
             Caso um jogador seja removido a pontuação dele será distribuída igualmente para os jogadores restantes.
           </p>
-
-          <div className="mt-6">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="w-full bg-[#326800] hover:bg-green-800 text-white border-green-700"
-            >
-              Voltar ao Jogo
-            </Button>
-          </div>
         </div>
       </DialogContent>
     </Dialog>
