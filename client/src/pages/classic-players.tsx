@@ -32,23 +32,14 @@ export default function ClassicPlayers() {
   return (
     <GameLayout title="">
       <div className="container max-w-xl mx-auto px-4 pt-8 pb-16">
-        {/* Header com título estilo Apple */}
+        {/* Header minimalista com badge apenas */}
         <header className="text-center mb-10">
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-purple-600 mb-4">
-            GORF
-          </h1>
           <div className="inline-flex items-center gap-1 px-4 py-1 rounded-full bg-purple-100 text-purple-800 text-sm font-medium mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
             Jogadores
           </div>
-          <h2 className="text-2xl font-bold text-white mb-3">
-            Gerenciar Jogadores
-          </h2>
-          <p className="text-white/80 max-w-md mx-auto">
-            Adicione pelo menos 2 jogadores para começar o jogo. Lembre-se que a ordem de adição será a ordem de jogo.
-          </p>
         </header>
 
         {/* Card principal com lista de jogadores */}

@@ -49,27 +49,18 @@ export default function ClassicStart() {
   return (
     <GameLayout title="">
       <div className="container max-w-2xl mx-auto px-4 pt-8 pb-16">
-        {/* Header com título estilo Apple */}
+        {/* Header com badge apenas */}
         <header className="text-center mb-10">
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-purple-600 mb-4">
-            GORF
-          </h1>
           <div className="inline-flex items-center gap-1 px-4 py-1 rounded-full bg-purple-100 text-purple-800 text-sm font-medium mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
             Modo Clássico
           </div>
-          <h2 className="text-2xl font-bold text-purple-900 mb-2">
-            Escolha os baralhos
-          </h2>
-          <p className="text-gray-600">
-            Selecione os tipos de desafios para adicionar ao jogo
-          </p>
         </header>
 
         {/* Seleção de baralhos com design moderno */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-10">
+        <div className="mb-10">
           <div className="grid grid-cols-1 gap-4">
             {decks.map((deck) => (
               <motion.button
