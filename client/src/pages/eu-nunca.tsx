@@ -281,58 +281,116 @@ export default function EuNunca() {
   
   return (
     <GameLayout title="" showPlayers={false}>
-      <div className="w-full h-full min-h-screen bg-gradient-to-b from-purple-900 to-purple-700 py-10 px-4 flex justify-center items-center">
-        <div className="w-full max-w-lg bg-white rounded-lg shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-purple-800 to-purple-600 text-white p-5">
+      <div className="w-full h-full min-h-screen bg-gradient-to-b from-purple-900 via-purple-800 to-purple-700 py-10 px-4 flex justify-center items-center">
+        <div className="w-full max-w-lg bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border-none">
+          <div className="bg-gradient-to-r from-purple-700 to-purple-500 text-white p-6 relative">
             <div className="flex justify-center items-center">
-              <h2 className="text-2xl font-bold text-white">Eu Nunca</h2>
+              <div className="absolute top-0 left-0 w-full h-full bg-[url('/glass-pattern.svg')] opacity-10"></div>
+              <h2 className="text-2xl font-bold text-white relative z-10">Eu Nunca</h2>
             </div>
-            <p className="text-white mt-2 text-center font-medium">
+            <p className="text-white/90 mt-2 text-center font-medium relative z-10">
               Quem já fez, bebe! Simples assim.
             </p>
           </div>
           
           <div className="p-6">
             <Tabs defaultValue="categorias" className="mb-4">
-              <TabsList className="w-full bg-purple-100">
-                <TabsTrigger value="categorias" className="flex-1 data-[state=active]:bg-purple-700 data-[state=active]:text-white">Categorias</TabsTrigger>
-                <TabsTrigger value="regras" className="flex-1 data-[state=active]:bg-purple-700 data-[state=active]:text-white">Como Jogar</TabsTrigger>
-                <TabsTrigger value="jogo" className="flex-1 data-[state=active]:bg-purple-700 data-[state=active]:text-white">Jogo</TabsTrigger>
+              <TabsList className="w-full grid grid-cols-3 bg-gray-100 rounded-full p-1.5">
+                <TabsTrigger value="categorias" className="rounded-full data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                  Categorias
+                </TabsTrigger>
+                <TabsTrigger value="regras" className="rounded-full data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Como Jogar
+                </TabsTrigger>
+                <TabsTrigger value="jogo" className="rounded-full data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Jogo
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="jogo" className="space-y-6 pt-4">
                 {perguntaAtual ? (
                   <div className="text-center space-y-8">
-                    <div className="bg-purple-100 p-6 rounded-lg border-2 border-purple-300 shadow-lg">
-                      <CategoriaIcon className="mx-auto h-12 w-12 text-purple-700 mb-4" />
-                      <p className="text-xl font-bold text-purple-900 mb-1">{perguntaAtual}</p>
-                      <p className="text-sm text-purple-700">
-                        Categoria: {categoriasNomes[categoriaAtual]}
-                      </p>
+                    <div className="bg-gradient-to-b from-purple-50 to-white p-8 rounded-2xl shadow-lg border border-purple-100 relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-600 to-purple-400"></div>
+                      
+                      <div className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-purple-100 mb-8 flex items-center justify-center">
+                        <div className="bg-purple-100 rounded-full p-3 mr-3">
+                          <CategoriaIcon className="h-8 w-8 text-purple-600" />
+                        </div>
+                        <div className="text-left">
+                          <p className="text-xs text-purple-500 font-medium">CATEGORIA</p>
+                          <p className="text-sm font-bold text-purple-900">{categoriasNomes[categoriaAtual]}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="mb-6">
+                        <p className="text-2xl font-bold text-gray-800 leading-tight">{perguntaAtual}</p>
+                      </div>
+                      
+                      <div className="flex items-center justify-center space-x-3 text-gray-500 text-sm mb-2">
+                        <FaGlassCheers className="text-purple-400 h-5 w-5" />
+                        <p>Quem já fez, bebe!</p>
+                      </div>
                     </div>
                     
                     <div className="flex flex-col gap-4">
                       <Button 
-                        className="w-full bg-gorf-green hover:bg-green-700 text-white"
+                        className="w-full bg-gorf-green hover:bg-green-700 text-white rounded-full py-6 shadow-md"
                         onClick={gerarNovaPergunta}
                       >
-                        Próxima Pergunta
+                        <div className="flex items-center justify-center w-full">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Próxima Pergunta
+                        </div>
                       </Button>
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center space-y-6">
-                    <div className="flex justify-center">
-                      <FaGlassCheers className="text-purple-700 h-20 w-20" />
+                  <div className="text-center space-y-8">
+                    <div className="bg-white/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-purple-100">
+                      <div className="flex flex-col items-center justify-center mb-6">
+                        <div className="bg-gradient-to-r from-purple-100 to-purple-50 p-6 rounded-full mb-6">
+                          <FaGlassCheers className="text-purple-600 h-16 w-16" />
+                        </div>
+                        
+                        <h3 className="text-xl font-bold text-gray-800 mb-2">
+                          Categoria: {categoriasNomes[categoriaAtual]}
+                        </h3>
+                        <p className="text-gray-600">
+                          Prepare-se para divertidas revelações com os amigos!
+                        </p>
+                      </div>
+                      
+                      <div className="bg-purple-50 p-4 rounded-xl border border-purple-100 mb-6">
+                        <p className="text-purple-800 font-medium text-sm">
+                          Quem já fez a ação mencionada, bebe! Simples assim.
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-lg text-purple-900 font-medium">
-                      Clique no botão abaixo para começar o jogo com perguntas da categoria {categoriasNomes[categoriaAtual]}.
-                    </p>
+                    
                     <Button 
-                      className="w-full bg-gorf-green hover:bg-green-700 text-white text-lg py-6"
+                      className="w-full bg-gorf-green hover:bg-green-700 text-white rounded-full py-7 shadow-md"
                       onClick={gerarNovaPergunta}
                     >
-                      Iniciar Jogo
+                      <div className="flex items-center justify-center w-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Iniciar Jogo
+                      </div>
                     </Button>
                   </div>
                 )}
@@ -343,51 +401,166 @@ export default function EuNunca() {
                   Escolha a categoria de perguntas para o jogo:
                 </p>
                 
-                <div className="grid grid-cols-1 gap-3">
-                  <Button 
-                    variant={categoriaAtual === "comuns" ? "default" : "outline"}
-                    className={categoriaAtual === "comuns" ? "bg-gorf-green hover:bg-green-700 text-white" : "text-purple-900 border-purple-300 hover:bg-purple-50"}
+                <div className="grid grid-cols-1 gap-4">
+                  <div 
+                    className={`flex items-center p-4 rounded-xl border transition-all cursor-pointer ${
+                      categoriaAtual === "comuns" 
+                        ? "bg-gradient-to-r from-green-50 to-green-100 border-green-200 shadow-sm" 
+                        : "bg-white border-gray-200 hover:border-purple-200 hover:bg-purple-50"
+                    }`}
                     onClick={() => mudarCategoria("comuns")}
                   >
-                    <Smile className="mr-2 h-4 w-4" />
-                    Comuns (Leves)
-                  </Button>
+                    <div className={`rounded-full p-3 mr-4 ${
+                      categoriaAtual === "comuns" ? "bg-gorf-green" : "bg-gray-100"
+                    }`}>
+                      <Smile className={`h-5 w-5 ${
+                        categoriaAtual === "comuns" ? "text-white" : "text-purple-400"
+                      }`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className={`font-bold ${
+                        categoriaAtual === "comuns" ? "text-green-800" : "text-gray-800"
+                      }`}>Comuns</h3>
+                      <p className={`text-xs ${
+                        categoriaAtual === "comuns" ? "text-green-700" : "text-gray-500"
+                      }`}>Perguntas leves para todas as idades</p>
+                    </div>
+                    {categoriaAtual === "comuns" && (
+                      <div className="bg-gorf-green text-white rounded-full p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
                   
-                  <Button 
-                    variant={categoriaAtual === "pesadas" ? "default" : "outline"}
-                    className={categoriaAtual === "pesadas" ? "bg-gorf-green hover:bg-green-700 text-white" : "text-purple-900 border-purple-300 hover:bg-purple-50"}
+                  <div 
+                    className={`flex items-center p-4 rounded-xl border transition-all cursor-pointer ${
+                      categoriaAtual === "pesadas" 
+                        ? "bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200 shadow-sm" 
+                        : "bg-white border-gray-200 hover:border-purple-200 hover:bg-purple-50"
+                    }`}
                     onClick={() => mudarCategoria("pesadas")}
                   >
-                    <Flame className="mr-2 h-4 w-4" />
-                    Pesadas (Intensas)
-                  </Button>
+                    <div className={`rounded-full p-3 mr-4 ${
+                      categoriaAtual === "pesadas" ? "bg-orange-500" : "bg-gray-100"
+                    }`}>
+                      <Flame className={`h-5 w-5 ${
+                        categoriaAtual === "pesadas" ? "text-white" : "text-purple-400"
+                      }`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className={`font-bold ${
+                        categoriaAtual === "pesadas" ? "text-orange-800" : "text-gray-800"
+                      }`}>Pesadas</h3>
+                      <p className={`text-xs ${
+                        categoriaAtual === "pesadas" ? "text-orange-700" : "text-gray-500"
+                      }`}>Perguntas mais intensas e provocativas</p>
+                    </div>
+                    {categoriaAtual === "pesadas" && (
+                      <div className="bg-orange-500 text-white rounded-full p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
                   
-                  <Button 
-                    variant={categoriaAtual === "eroticas" ? "default" : "outline"}
-                    className={categoriaAtual === "eroticas" ? "bg-gorf-green hover:bg-green-700 text-white" : "text-purple-900 border-purple-300 hover:bg-purple-50"}
+                  <div 
+                    className={`flex items-center p-4 rounded-xl border transition-all cursor-pointer ${
+                      categoriaAtual === "eroticas" 
+                        ? "bg-gradient-to-r from-red-50 to-red-100 border-red-200 shadow-sm" 
+                        : "bg-white border-gray-200 hover:border-purple-200 hover:bg-purple-50"
+                    }`}
                     onClick={() => mudarCategoria("eroticas")}
                   >
-                    <Eye className="mr-2 h-4 w-4" />
-                    Adulto (+18)
-                  </Button>
+                    <div className={`rounded-full p-3 mr-4 ${
+                      categoriaAtual === "eroticas" ? "bg-red-500" : "bg-gray-100"
+                    }`}>
+                      <Eye className={`h-5 w-5 ${
+                        categoriaAtual === "eroticas" ? "text-white" : "text-purple-400"
+                      }`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className={`font-bold ${
+                        categoriaAtual === "eroticas" ? "text-red-800" : "text-gray-800"
+                      }`}>Adulto</h3>
+                      <p className={`text-xs ${
+                        categoriaAtual === "eroticas" ? "text-red-700" : "text-gray-500"
+                      }`}>Conteúdo +18 com temas sensuais</p>
+                    </div>
+                    {categoriaAtual === "eroticas" && (
+                      <div className="bg-red-500 text-white rounded-full p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
                   
-                  <Button 
-                    variant={categoriaAtual === "drogas" ? "default" : "outline"}
-                    className={categoriaAtual === "drogas" ? "bg-gorf-green hover:bg-green-700 text-white" : "text-purple-900 border-purple-300 hover:bg-purple-50"}
+                  <div 
+                    className={`flex items-center p-4 rounded-xl border transition-all cursor-pointer ${
+                      categoriaAtual === "drogas" 
+                        ? "bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 shadow-sm" 
+                        : "bg-white border-gray-200 hover:border-purple-200 hover:bg-purple-50"
+                    }`}
                     onClick={() => mudarCategoria("drogas")}
                   >
-                    <Pill className="mr-2 h-4 w-4" />
-                    Substâncias
-                  </Button>
+                    <div className={`rounded-full p-3 mr-4 ${
+                      categoriaAtual === "drogas" ? "bg-blue-500" : "bg-gray-100"
+                    }`}>
+                      <Pill className={`h-5 w-5 ${
+                        categoriaAtual === "drogas" ? "text-white" : "text-purple-400"
+                      }`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className={`font-bold ${
+                        categoriaAtual === "drogas" ? "text-blue-800" : "text-gray-800"
+                      }`}>Substâncias</h3>
+                      <p className={`text-xs ${
+                        categoriaAtual === "drogas" ? "text-blue-700" : "text-gray-500"
+                      }`}>Temas sobre bebidas e substâncias</p>
+                    </div>
+                    {categoriaAtual === "drogas" && (
+                      <div className="bg-blue-500 text-white rounded-full p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
                   
-                  <Button 
-                    variant={categoriaAtual === "mistas" ? "default" : "outline"}
-                    className={categoriaAtual === "mistas" ? "bg-gorf-green hover:bg-green-700 text-white" : "text-purple-900 border-purple-300 hover:bg-purple-50"}
+                  <div 
+                    className={`flex items-center p-4 rounded-xl border transition-all cursor-pointer ${
+                      categoriaAtual === "mistas" 
+                        ? "bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200 shadow-sm" 
+                        : "bg-white border-gray-200 hover:border-purple-200 hover:bg-purple-50"
+                    }`}
                     onClick={() => mudarCategoria("mistas")}
                   >
-                    <Zap className="mr-2 h-4 w-4" />
-                    Misturadas (Todas)
-                  </Button>
+                    <div className={`rounded-full p-3 mr-4 ${
+                      categoriaAtual === "mistas" ? "bg-purple-600" : "bg-gray-100"
+                    }`}>
+                      <Zap className={`h-5 w-5 ${
+                        categoriaAtual === "mistas" ? "text-white" : "text-purple-400"
+                      }`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className={`font-bold ${
+                        categoriaAtual === "mistas" ? "text-purple-800" : "text-gray-800"
+                      }`}>Misturadas</h3>
+                      <p className={`text-xs ${
+                        categoriaAtual === "mistas" ? "text-purple-700" : "text-gray-500"
+                      }`}>Todas as categorias combinadas</p>
+                    </div>
+                    {categoriaAtual === "mistas" && (
+                      <div className="bg-purple-600 text-white rounded-full p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 
                 <div className="mt-4 flex justify-center">
@@ -405,29 +578,103 @@ export default function EuNunca() {
                 </div>
               </TabsContent>
               
-              <TabsContent value="regras" className="space-y-4 pt-4">
-                <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                  <h3 className="font-bold text-lg mb-2 text-purple-800">Como Jogar</h3>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                    <li>Uma pergunta "Eu Nunca..." será apresentada</li>
-                    <li>Todos que <strong>já fizeram</strong> a ação mencionada devem beber</li>
-                    <li>Quem nunca fez, não bebe</li>
-                    <li>Seja honesto(a)! O jogo fica mais divertido assim</li>
-                    <li>Você pode compartilhar histórias após cada rodada</li>
-                    <li>Escolha a categoria que melhor se adequa ao seu grupo</li>
-                  </ul>
+              <TabsContent value="regras" className="space-y-6 pt-4">
+                <div className="bg-gradient-to-b from-purple-50 to-white p-6 rounded-2xl shadow-md border border-purple-100 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-600 to-purple-400"></div>
+                  
+                  <div className="flex items-center mb-4">
+                    <div className="bg-purple-100 p-2 rounded-full mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-bold text-xl text-purple-900">Como Jogar</h3>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center bg-white rounded-lg p-3 shadow-sm border border-purple-50">
+                      <div className="bg-purple-100 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                        <span className="text-purple-700 font-bold">1</span>
+                      </div>
+                      <p className="text-gray-800">Uma pergunta <span className="font-semibold">"Eu Nunca..."</span> será apresentada</p>
+                    </div>
+                    
+                    <div className="flex items-center bg-white rounded-lg p-3 shadow-sm border border-purple-50">
+                      <div className="bg-purple-100 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                        <span className="text-purple-700 font-bold">2</span>
+                      </div>
+                      <p className="text-gray-800">Todos que <span className="font-semibold">já fizeram</span> a ação mencionada devem beber</p>
+                    </div>
+                    
+                    <div className="flex items-center bg-white rounded-lg p-3 shadow-sm border border-purple-50">
+                      <div className="bg-purple-100 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                        <span className="text-purple-700 font-bold">3</span>
+                      </div>
+                      <p className="text-gray-800">Quem nunca fez, não bebe</p>
+                    </div>
+                    
+                    <div className="flex items-center bg-white rounded-lg p-3 shadow-sm border border-purple-50">
+                      <div className="bg-purple-100 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                        <span className="text-purple-700 font-bold">4</span>
+                      </div>
+                      <p className="text-gray-800">Seja honesto(a)! O jogo fica mais divertido assim</p>
+                    </div>
+                    
+                    <div className="flex items-center bg-white rounded-lg p-3 shadow-sm border border-purple-50">
+                      <div className="bg-purple-100 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">
+                        <span className="text-purple-700 font-bold">5</span>
+                      </div>
+                      <p className="text-gray-800">Você pode compartilhar histórias após cada rodada</p>
+                    </div>
+                  </div>
                 </div>
                 
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                  <div className="flex items-start">
-                    <Info className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
-                    <div>
-                      <h3 className="font-bold text-lg mb-1 text-yellow-800">Dicas</h3>
-                      <ul className="text-sm text-yellow-700 space-y-1">
-                        <li>Categorias "Adulto" e "Substâncias" são recomendadas para maiores de 18 anos</li>
-                        <li>Jogue com responsabilidade e respeite os limites dos participantes</li>
-                        <li>Sempre tenha uma opção não-alcoólica disponível para quem não bebe</li>
-                      </ul>
+                <div className="bg-gradient-to-b from-amber-50 to-white p-6 rounded-2xl shadow-md border border-amber-100 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-300"></div>
+                  
+                  <div className="flex items-center mb-4">
+                    <div className="bg-amber-100 p-2 rounded-full mr-3">
+                      <Info className="h-6 w-6 text-amber-600" />
+                    </div>
+                    <h3 className="font-bold text-xl text-amber-800">Dicas Importantes</h3>
+                  </div>
+                  
+                  <div className="bg-white p-4 rounded-xl shadow-sm border border-amber-50 mb-3">
+                    <div className="flex items-start">
+                      <div className="bg-amber-100 p-1 rounded-full mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                      </div>
+                      <p className="text-gray-800 text-sm">
+                        Categorias <span className="font-medium text-red-600">"Adulto"</span> e <span className="font-medium text-blue-600">"Substâncias"</span> são recomendadas para maiores de 18 anos
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-4 rounded-xl shadow-sm border border-amber-50 mb-3">
+                    <div className="flex items-start">
+                      <div className="bg-amber-100 p-1 rounded-full mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                      </div>
+                      <p className="text-gray-800 text-sm">
+                        Jogue com responsabilidade e respeite os limites dos participantes
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-4 rounded-xl shadow-sm border border-amber-50">
+                    <div className="flex items-start">
+                      <div className="bg-amber-100 p-1 rounded-full mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                      </div>
+                      <p className="text-gray-800 text-sm">
+                        Sempre tenha uma opção não-alcoólica disponível para quem não bebe
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -473,19 +720,25 @@ export default function EuNunca() {
       
       {/* Alerta de conteúdo adulto */}
       <AlertDialog open={mostrarAlertaAdulto} onOpenChange={setMostrarAlertaAdulto}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white rounded-2xl shadow-lg border-none">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-red-400 rounded-t-2xl"></div>
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center">
-              <AlertTriangle className="h-5 w-5 text-amber-500 mr-2" />
+            <AlertDialogTitle className="flex items-center text-red-700 mt-2">
+              <div className="bg-red-100 p-2 rounded-full mr-2">
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+              </div>
               Conteúdo Adulto (+18)
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta categoria contém perguntas com conteúdo explícito de natureza sexual e só deve ser jogada por maiores de 18 anos em um ambiente adequado. Todos os participantes devem estar confortáveis com este tipo de conteúdo.
+            <AlertDialogDescription className="text-gray-700">
+              <div className="bg-red-50 p-4 rounded-xl border border-red-100 mt-2 mb-1">
+                Esta categoria contém perguntas com conteúdo explícito de natureza sexual e só deve ser jogada por maiores de 18 anos em um ambiente adequado.
+              </div>
+              <p className="mt-2 text-sm">Todos os participantes devem estar confortáveis com este tipo de conteúdo.</p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmarCategoriaAdulto} className="bg-gorf-green hover:bg-green-700">
+            <AlertDialogCancel className="rounded-full">Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmarCategoriaAdulto} className="bg-gorf-green hover:bg-green-700 rounded-full">
               Confirmar (+18)
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -494,24 +747,91 @@ export default function EuNunca() {
       
       {/* Alerta de conteúdo sobre drogas */}
       <AlertDialog open={mostrarAlertaDrogas} onOpenChange={setMostrarAlertaDrogas}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white rounded-2xl shadow-lg border-none">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-400 rounded-t-2xl"></div>
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center">
-              <AlertTriangle className="h-5 w-5 text-amber-500 mr-2" />
+            <AlertDialogTitle className="flex items-center text-blue-700 mt-2">
+              <div className="bg-blue-100 p-2 rounded-full mr-2">
+                <AlertTriangle className="h-5 w-5 text-blue-500" />
+              </div>
               Conteúdo Sensível
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta categoria contém perguntas relacionadas a álcool, drogas e substâncias. Lembre-se que o consumo de substâncias ilícitas é crime. Jogue com responsabilidade e esteja ciente dos riscos à saúde associados ao consumo de álcool e outras substâncias.
+            <AlertDialogDescription className="text-gray-700">
+              <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 mt-2 mb-1">
+                Esta categoria contém perguntas relacionadas a álcool, drogas e substâncias. Lembre-se que o consumo de substâncias ilícitas é crime.
+              </div>
+              <p className="mt-2 text-sm">Jogue com responsabilidade e esteja ciente dos riscos à saúde associados ao consumo de álcool e outras substâncias.</p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmarCategoriaDrogas} className="bg-gorf-green hover:bg-green-700">
+            <AlertDialogCancel className="rounded-full">Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmarCategoriaDrogas} className="bg-gorf-green hover:bg-green-700 rounded-full">
               Confirmar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      
+      {/* Tutorial do jogo */}
+      <TutorialOverlay
+        show={mostrarTutorial}
+        onClose={fecharTutorial}
+        title="Bem-vindo ao Eu Nunca!"
+        steps={[
+          {
+            title: "Escolha uma categoria",
+            description: "Selecione o tipo de perguntas que você quer jogar. Cada categoria tem um tema diferente.",
+            imagen: <div className="bg-white p-4 rounded-2xl shadow">
+              <div className="flex items-center p-4 rounded-xl border bg-gradient-to-r from-green-50 to-green-100 border-green-200 shadow-sm">
+                <div className="rounded-full p-3 mr-4 bg-gorf-green">
+                  <Smile className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-green-800">Comuns</h3>
+                  <p className="text-xs text-green-700">Perguntas leves para todas as idades</p>
+                </div>
+              </div>
+            </div>
+          },
+          {
+            title: "Conheça as regras",
+            description: "No jogo "Eu Nunca", todos que já fizeram a ação mencionada devem beber. Simples assim!",
+            imagen: <div className="flex items-center bg-white rounded-lg p-3 shadow-sm border">
+              <div className="bg-purple-100 rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                <span className="text-purple-700 font-bold">2</span>
+              </div>
+              <p className="text-gray-800">Todos que <span className="font-semibold">já fizeram</span> a ação mencionada devem beber</p>
+            </div>
+          },
+          {
+            title: "Jogue com responsabilidade",
+            description: "Respeite os limites dos participantes e tenha sempre uma opção não-alcoólica disponível.",
+            imagen: <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+              <div className="flex items-start">
+                <Info className="h-5 w-5 text-amber-600 mr-2 mt-0.5" />
+                <p className="text-amber-800 font-medium text-sm">
+                  Jogue com responsabilidade e respeite os limites dos participantes
+                </p>
+              </div>
+            </div>
+          },
+          {
+            title: "Vamos começar!",
+            description: "Clique em "Iniciar Jogo" e divirta-se com seus amigos neste jogo de revelações!",
+            imagen: <Button 
+              className="w-full bg-gorf-green hover:bg-green-700 text-white rounded-full py-4 shadow-md"
+            >
+              <div className="flex items-center justify-center w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Iniciar Jogo
+              </div>
+            </Button>
+          }
+        ]}
+      />
     </GameLayout>
   );
 }
