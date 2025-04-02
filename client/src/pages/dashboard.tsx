@@ -60,66 +60,80 @@ export default function Dashboard() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen w-full">
-        <div className="container mx-auto px-4 py-6 space-y-6">
-          {/* Banners */}
-          <section className="overflow-hidden rounded-xl mb-4">
+      <div className="min-h-screen w-full bg-gray-50">
+        <div className="container mx-auto px-4 py-6 space-y-8">
+          {/* Cabeçalho estilo Apple */}
+          <header className="text-center mb-4">
+            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-purple-600 mb-1">
+              GORF
+            </h1>
+            <p className="text-gray-500">Jogos de beber para animar sua festa</p>
+          </header>
+
+          {/* Banners com design moderno */}
+          <section className="overflow-hidden rounded-2xl shadow-lg mb-6">
             <PromotionalBanner />
           </section>
 
           {/* Ad Banner - Bloco_Ad_Dashboard */}
-          <section className="mb-6 flex justify-center">
+          <section className="mb-8 flex justify-center">
             <GoogleAdBlock 
               slot="4976890273" 
-              className="max-w-full overflow-hidden"
+              className="max-w-full overflow-hidden rounded-xl shadow-md"
             />
           </section>
 
-          {/* Carrossel de Jogos em Destaque */}
-          <section className="mb-6">
-            <h2 className="text-gorf-purple text-lg font-medium mb-5 mx-2">Jogos em destaque</h2>
-            <Carousel
-              className="w-full"
-              opts={{
-                align: "start",
-                dragFree: true,
-                skipSnaps: true,
-                inViewThreshold: 0.5,
-              }}
-            >
-              <CarouselContent className="-ml-2">
-                {games.map((game) => (
-                  <CarouselItem key={game.id} className="pl-2 basis-[28%] sm:basis-[22%]">
-                    <div
-                      className="flex flex-col items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => navigate(game.route)}
-                    >
-                      <div className="w-14 h-14 rounded-full bg-gorf-purple flex items-center justify-center shadow-md">
-                        <game.icon className="h-7 w-7 text-white" />
+          {/* Carrossel de Jogos em Destaque com estilo Apple */}
+          <section className="mb-8">
+            <h2 className="flex items-center gap-2 text-xl font-semibold text-purple-900 mb-5 ml-2">
+              <Sparkles className="h-5 w-5 text-purple-600" />
+              Jogos em destaque
+            </h2>
+            <div className="bg-white p-6 rounded-2xl shadow-md">
+              <Carousel
+                className="w-full"
+                opts={{
+                  align: "start",
+                  dragFree: true,
+                  skipSnaps: true,
+                  inViewThreshold: 0.5,
+                }}
+              >
+                <CarouselContent className="-ml-3">
+                  {games.map((game) => (
+                    <CarouselItem key={game.id} className="pl-3 basis-[28%] sm:basis-[20%]">
+                      <div
+                        className="flex flex-col items-center gap-2 cursor-pointer group transition-all"
+                        onClick={() => navigate(game.route)}
+                      >
+                        <div className="relative w-16 h-16">
+                          <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-800 rounded-full opacity-90 group-hover:opacity-100 transition-all shadow-md group-hover:shadow-lg"></div>
+                          <game.icon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8 text-white" />
+                        </div>
+                        <span className="text-sm font-medium text-gray-800 text-center mt-1 leading-tight h-8 whitespace-pre-line group-hover:text-purple-700 transition-colors">
+                          {formatGameName(game.name)}
+                        </span>
                       </div>
-                      <span className="text-xs font-medium text-slate-800 text-center mt-1 leading-tight h-8 whitespace-pre-line">
-                        {formatGameName(game.name)}
-                      </span>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </div>
           </section>
 
-          {/* Bem-vindo ao Gorf */}
-          <Card className="bg-white shadow-md border-slate-100">
-            <CardHeader className="bg-gradient-to-r from-green-600 to-green-500 text-white rounded-t-lg">
-              <CardTitle>Bem-vindo ao Gorf!</CardTitle>
-              <CardDescription className="text-white/90">
-                Escolha um jogo para começar
+          {/* Bem-vindo ao Gorf com estilo Apple */}
+          <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-green-500 to-green-400 text-white pb-6">
+              <CardTitle className="text-2xl">Bem-vindo ao Gorf!</CardTitle>
+              <CardDescription className="text-white/90 text-base">
+                Escolha um jogo para começar a diversão
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <Button
                 size="lg"
                 onClick={() => navigate("/game-modes")}
-                className="w-full bg-gorf-green hover:bg-green-700 text-white"
+                className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-6 rounded-full shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
               >
                 <GamepadIcon className="mr-2 h-5 w-5" />
                 Ver Todos os Jogos
@@ -127,28 +141,33 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Último Jogo */}
+          {/* Último Jogo com estilo Apple */}
           {lastGame && (
-            <Card className="bg-white shadow-md border-slate-100">
-              <CardHeader className="bg-gradient-to-r from-purple-800 to-purple-700 text-white rounded-t-lg">
-                <CardTitle className="flex items-center gap-2">
+            <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-purple-700 to-purple-600 text-white pb-6">
+                <CardTitle className="flex items-center gap-2 text-xl">
                   <History className="h-5 w-5" />
                   Último Jogo
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-6 space-y-4">
-                <div className="text-slate-800">
-                  <p className="text-lg font-semibold">{lastGame.name}</p>
-                  <p className="text-sm text-slate-500">
-                    {formatDistanceToNow(new Date(lastGame.playedAt), {
-                      addSuffix: true,
-                      locale: ptBR
-                    })}
-                  </p>
+              <CardContent className="pt-6 pb-6 space-y-5">
+                <div className="flex items-center gap-4">
+                  <div className="bg-purple-100 p-3 rounded-full">
+                    <GamepadIcon className="h-6 w-6 text-purple-700" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-gray-900">{lastGame.name}</p>
+                    <p className="text-sm text-gray-500">
+                      {formatDistanceToNow(new Date(lastGame.playedAt), {
+                        addSuffix: true,
+                        locale: ptBR
+                      })}
+                    </p>
+                  </div>
                 </div>
                 <Button
                   onClick={() => navigate(findGameRoute(lastGame.name))}
-                  className="w-full bg-gorf-purple hover:bg-purple-900 text-white"
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-5 rounded-full shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
                 >
                   <Play className="mr-2 h-5 w-5" />
                   Jogar Novamente
@@ -157,69 +176,78 @@ export default function Dashboard() {
             </Card>
           )}
 
-          {/* Recomendação de Jogo */}
-          <GameRecommendationCard className="bg-white shadow-md border-slate-100" />
+          {/* Recomendação de Jogo com estilo Apple */}
+          <GameRecommendationCard className="bg-white shadow-lg border-none rounded-2xl overflow-hidden" />
 
-          {/* Estatísticas */}
-          <div className="grid grid-cols-2 gap-4">
-            <Card className="bg-white shadow-md border-slate-100">
-              <CardHeader className="bg-green-600 text-white rounded-t-lg pb-3 flex flex-col items-center">
-                <Trophy className="h-7 w-7 mb-1" />
+          {/* Estatísticas com estilo Apple */}
+          <div className="grid grid-cols-2 gap-5">
+            <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-br from-green-500 to-green-400 text-white pb-4 flex flex-col items-center">
+                <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-2">
+                  <Trophy className="h-8 w-8" />
+                </div>
                 <CardTitle className="text-base text-center">
                   Total de Jogos
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-4 text-center">
-                <p className="text-3xl font-bold text-gorf-green">
+              <CardContent className="pt-5 pb-5 text-center">
+                <p className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-green-500">
                   {userProfile?.gameStats?.totalGamesPlayed || 0}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white shadow-md border-slate-100">
-              <CardHeader className="bg-green-600 text-white rounded-t-lg pb-3 flex flex-col items-center">
-                <Clock className="h-7 w-7 mb-1" />
+            <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-br from-green-500 to-green-400 text-white pb-4 flex flex-col items-center">
+                <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-2">
+                  <Clock className="h-8 w-8" />
+                </div>
                 <CardTitle className="text-base text-center">
                   Tempo Total
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-4 text-center">
-                <p className="text-3xl font-bold text-gorf-green">
+              <CardContent className="pt-5 pb-5 text-center">
+                <p className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-green-500">
                   {Math.round((userProfile?.gameStats?.totalPlayTime || 0) / 60)}h
                 </p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Jogos Recentes */}
+          {/* Jogos Recentes com estilo Apple */}
           {recentGames.length > 0 && (
-            <Card className="bg-white shadow-md border-slate-100">
-              <CardHeader className="bg-gradient-to-r from-purple-800 to-purple-600 text-white rounded-t-lg">
-                <CardTitle>Jogos Recentes</CardTitle>
-                <CardDescription className="text-white/80">
+            <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-purple-700 to-purple-600 text-white pb-6">
+                <CardTitle className="text-xl">Jogos Recentes</CardTitle>
+                <CardDescription className="text-white/90 text-base">
                   Seus últimos jogos
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pt-6">
+              <CardContent className="pt-6 pb-4">
                 <div className="space-y-4">
                   {recentGames.map((game: any, index: number) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 rounded-lg bg-slate-100 shadow-sm"
+                      className="flex items-center justify-between p-4 rounded-xl bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-md transition-all cursor-pointer"
+                      onClick={() => navigate(findGameRoute(game.name))}
                     >
-                      <div>
-                        <p className="text-slate-800 font-medium">{game.name}</p>
-                        <p className="text-sm text-slate-500">
-                          {formatDistanceToNow(new Date(game.playedAt), {
-                            addSuffix: true,
-                            locale: ptBR
-                          })}
-                        </p>
+                      <div className="flex items-center gap-3">
+                        <div className="bg-purple-100 p-2 rounded-full">
+                          <GamepadIcon className="h-5 w-5 text-purple-700" />
+                        </div>
+                        <div>
+                          <p className="text-gray-900 font-medium">{game.name}</p>
+                          <p className="text-sm text-gray-500">
+                            {formatDistanceToNow(new Date(game.playedAt), {
+                              addSuffix: true,
+                              locale: ptBR
+                            })}
+                          </p>
+                        </div>
                       </div>
                       <Button
                         size="sm"
-                        onClick={() => navigate(findGameRoute(game.name))}
-                        className="bg-gorf-purple hover:bg-purple-900 text-white"
+                        className="rounded-full bg-purple-100 hover:bg-purple-200 text-purple-700 p-2 h-9 w-9"
                       >
                         <Play className="h-4 w-4" />
                       </Button>

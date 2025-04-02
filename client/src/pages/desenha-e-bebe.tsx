@@ -527,20 +527,29 @@ export default function DesenhaEBebe() {
     switch (estadoJogo) {
       case "configuracao":
         return (
-          <Card className="w-full max-w-3xl">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-center">Desenha e Bebe</CardTitle>
-              <CardDescription className="text-center">
-                Desenhe, adivinhe e... quem falhar, bebe!
-              </CardDescription>
-            </CardHeader>
-            
-            <CardContent className="space-y-6">
+          <Card className="w-full max-w-3xl bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border-none overflow-hidden">            
+            <CardContent className="p-6 pt-8 space-y-8">
               <Tabs defaultValue="jogadores">
-                <TabsList className="w-full">
-                  <TabsTrigger value="jogadores" className="flex-1">Jogadores</TabsTrigger>
-                  <TabsTrigger value="configuracoes" className="flex-1">Configurações</TabsTrigger>
-                  <TabsTrigger value="regras" className="flex-1">Regras</TabsTrigger>
+                <TabsList className="w-full grid grid-cols-3 bg-gray-100 rounded-full p-1.5">
+                  <TabsTrigger value="jogadores" className="rounded-full data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292V4.354zM15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    Jogadores
+                  </TabsTrigger>
+                  <TabsTrigger value="configuracoes" className="rounded-full data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Configurações
+                  </TabsTrigger>
+                  <TabsTrigger value="regras" className="rounded-full data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Regras
+                  </TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="jogadores" className="space-y-4 mt-4">
@@ -775,17 +784,22 @@ export default function DesenhaEBebe() {
         const categoriaObj = CATEGORIAS.find(c => c.id === categoriaAtual);
         
         return (
-          <Card className="w-full max-w-xl">
-            <CardHeader className="bg-purple-700 text-white rounded-t-lg">
+          <Card className="w-full max-w-xl bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border-none overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-purple-700 to-purple-600 text-white pb-6">
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle className="text-xl font-bold text-white">Rodada {rodadaAtual}/{config.rodadas}</CardTitle>
-                  <CardDescription className="text-white text-base">
-                    Vez de: <span className="font-bold text-white">{jogadores[jogadorAtual]?.nome}</span>
-                  </CardDescription>
+                  <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 text-white text-sm font-medium mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Rodada {rodadaAtual}/{config.rodadas}
+                  </div>
+                  <CardTitle className="text-xl font-bold text-white">
+                    Vez de {jogadores[jogadorAtual]?.nome}
+                  </CardTitle>
                 </div>
                 
-                <Badge className={`${categoriaObj?.cor} text-white`}>
+                <Badge className="bg-white/20 text-white border-0 hover:bg-white/30 px-3 py-1 rounded-full">
                   {categoriaObj?.nome}
                 </Badge>
               </div>
@@ -1325,16 +1339,32 @@ export default function DesenhaEBebe() {
 
   return (
     <GameLayout title="" showPlayers={false}>
-      <div className="flex justify-center items-center min-h-[calc(100vh-150px)]">
+      {/* Header com título estilo Apple */}
+      <header className="text-center mb-6 pt-6">
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-purple-600 mb-2">
+          GORF
+        </h1>
+        <div className="inline-flex items-center gap-1 px-4 py-1 rounded-full bg-purple-100 text-purple-800 text-sm font-medium mb-2">
+          <Palette className="h-4 w-4" />
+          Desenha e Bebe
+        </div>
+        <p className="text-gray-500 max-w-md mx-auto">
+          Desenhe, adivinhe e... quem falhar, bebe!
+        </p>
+      </header>
+      
+      <div className="flex justify-center items-center min-h-[calc(100vh-200px)] px-4">
         {renderizarConteudo()}
       </div>
       
-      {/* Dialog para mostrar a palavra secreta */}
+      {/* Dialog para mostrar a palavra secreta com estilo Apple */}
       <Dialog open={palavraDialogOpen} onOpenChange={setPalavraDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border-none">
           <DialogHeader>
-            <DialogTitle className="text-center text-xl">Sua palavra secreta</DialogTitle>
-            <DialogDescription className="text-center">
+            <DialogTitle className="text-center text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-purple-600">
+              Sua palavra secreta
+            </DialogTitle>
+            <DialogDescription className="text-center text-gray-600">
               Memorize a palavra e não mostre para os outros jogadores
             </DialogDescription>
           </DialogHeader>
