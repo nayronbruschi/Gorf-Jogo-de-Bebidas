@@ -62,14 +62,6 @@ export default function Dashboard() {
     <AppLayout>
       <div className="min-h-screen w-full bg-gray-50">
         <div className="container mx-auto px-4 py-6 space-y-8">
-          {/* Cabeçalho estilo Apple */}
-          <header className="text-center mb-4">
-            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-purple-600 mb-1">
-              GORF
-            </h1>
-            <p className="text-gray-500">Jogos de beber para animar sua festa</p>
-          </header>
-
           {/* Banners com design moderno */}
           <section className="overflow-hidden rounded-2xl shadow-lg mb-6">
             <PromotionalBanner />
@@ -89,36 +81,34 @@ export default function Dashboard() {
               <Sparkles className="h-5 w-5 text-purple-600" />
               Jogos em destaque
             </h2>
-            <div className="bg-white p-6 rounded-2xl shadow-md">
-              <Carousel
-                className="w-full"
-                opts={{
-                  align: "start",
-                  dragFree: true,
-                  skipSnaps: true,
-                  inViewThreshold: 0.5,
-                }}
-              >
-                <CarouselContent className="-ml-3">
-                  {games.map((game) => (
-                    <CarouselItem key={game.id} className="pl-3 basis-[28%] sm:basis-[20%]">
-                      <div
-                        className="flex flex-col items-center gap-2 cursor-pointer group transition-all"
-                        onClick={() => navigate(game.route)}
-                      >
-                        <div className="relative w-16 h-16">
-                          <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-800 rounded-full opacity-90 group-hover:opacity-100 transition-all shadow-md group-hover:shadow-lg"></div>
-                          <game.icon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8 text-white" />
-                        </div>
-                        <span className="text-sm font-medium text-gray-800 text-center mt-1 leading-tight h-8 whitespace-pre-line group-hover:text-purple-700 transition-colors">
-                          {formatGameName(game.name)}
-                        </span>
+            <Carousel
+              className="w-full"
+              opts={{
+                align: "start",
+                dragFree: true,
+                skipSnaps: true,
+                inViewThreshold: 0.5,
+              }}
+            >
+              <CarouselContent>
+                {games.map((game) => (
+                  <CarouselItem key={game.id} className="basis-[28%] sm:basis-[20%]">
+                    <div
+                      className="flex flex-col items-center gap-2 cursor-pointer group transition-all"
+                      onClick={() => navigate(game.route)}
+                    >
+                      <div className="relative w-16 h-16">
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-800 rounded-full opacity-90 group-hover:opacity-100 transition-all shadow-md group-hover:shadow-lg"></div>
+                        <game.icon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8 text-white" />
                       </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-              </Carousel>
-            </div>
+                      <span className="text-sm font-medium text-gray-800 text-center mt-1 leading-tight h-8 whitespace-pre-line group-hover:text-purple-700 transition-colors">
+                        {formatGameName(game.name)}
+                      </span>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
           </section>
 
           {/* Bem-vindo ao Gorf com estilo Apple */}

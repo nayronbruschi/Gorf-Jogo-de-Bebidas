@@ -3,19 +3,36 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+interface TutorialStep {
+  title: string;
+  description?: string;
+  text?: string;
+  imagen?: React.ReactNode;
+  image?: React.ReactNode;
+  target?: string; // Para compatibilidade com o formato antigo
+}
+
 interface TutorialOverlayProps {
   onClose: () => void;
   children?: React.ReactNode;
+  show?: boolean;
+  title?: string;
+  steps?: TutorialStep[];
 }
 
-export function TutorialOverlay({ onClose, children }: TutorialOverlayProps) {
+export function TutorialOverlay({ onClose, children, show = true, title = "Como jogar", steps }: TutorialOverlayProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const tutorialSteps = [
+  
+  // Se o componente não deve ser mostrado, retorna null
+  if (!show) return null;
+  
+  // Usa os passos fornecidos ou os padrões
+  const tutorialSteps: TutorialStep[] = steps || [
     {
       target: "#points-settings",
       title: "Ajuste a Pontuação",
-      text: "Configure quantos pontos são necessários para vencer o jogo através do botão 'alterar' abaixo do objetivo.",
-      image: (
+      description: "Configure quantos pontos são necessários para vencer o jogo através do botão 'alterar' abaixo do objetivo.",
+      imagen: (
         <svg className="w-full h-32 mb-4" viewBox="0 0 300 60">
           <rect x="20" y="10" width="260" height="40" rx="8" fill="#F3E8FF" stroke="#7E22CE" strokeWidth="2"/>
           <text x="40" y="35" fill="#581C87" fontSize="14">Objetivo: 100 pontos</text>
@@ -26,8 +43,8 @@ export function TutorialOverlay({ onClose, children }: TutorialOverlayProps) {
     {
       target: "#player-management",
       title: "Gerencie os Jogadores",
-      text: "Acesse o ícone de jogadores no canto superior direito do ranking para adicionar, remover ou ver as estatísticas de cada jogador.",
-      image: (
+      description: "Acesse o ícone de jogadores no canto superior direito do ranking para adicionar, remover ou ver as estatísticas de cada jogador.",
+      imagen: (
         <svg className="w-full h-32 mb-4" viewBox="0 0 300 80">
           <rect x="20" y="10" width="260" height="60" rx="8" fill="#F3E8FF" stroke="#7E22CE" strokeWidth="2"/>
           <text x="40" y="40" fill="#581C87" fontSize="16" fontWeight="bold">Ranking</text>
@@ -41,8 +58,8 @@ export function TutorialOverlay({ onClose, children }: TutorialOverlayProps) {
     {
       target: "#challenge-actions",
       title: "Ações do Jogador",
-      text: "Na vez de cada jogador, escolha se ele completou o desafio, bebeu os goles indicados, ou ambos! Os pontos serão somados automaticamente.",
-      image: (
+      description: "Na vez de cada jogador, escolha se ele completou o desafio, bebeu os goles indicados, ou ambos! Os pontos serão somados automaticamente.",
+      imagen: (
         <svg className="w-full h-32 mb-4" viewBox="0 0 300 100">
           <rect x="30" y="10" width="240" height="35" rx="8" fill="#F3E8FF" stroke="#7E22CE" strokeWidth="2"/>
           <text x="50" y="32" fill="#581C87" fontSize="14">Completou o desafio</text>
@@ -79,7 +96,7 @@ export function TutorialOverlay({ onClose, children }: TutorialOverlayProps) {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="max-w-lg w-full bg-white rounded-xl p-6">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl font-bold text-purple-900">Como jogar</h3>
+            <h3 className="text-xl font-bold text-purple-900">{title}</h3>
             <Button
               variant="ghost"
               size="icon"
@@ -105,10 +122,10 @@ export function TutorialOverlay({ onClose, children }: TutorialOverlayProps) {
                   className="p-4 rounded-lg bg-purple-50 border-2 border-purple-700"
                 >
                   <div className="bg-white rounded-lg p-2 mb-4 shadow-sm">
-                    {tutorialSteps[currentStep].image}
+                    {tutorialSteps[currentStep].imagen}
                   </div>
                   <h4 className="font-semibold text-purple-900 mb-2">{tutorialSteps[currentStep].title}</h4>
-                  <p className="text-gray-700">{tutorialSteps[currentStep].text}</p>
+                  <p className="text-gray-700">{tutorialSteps[currentStep].description}</p>
                 </motion.div>
               </AnimatePresence>
             )}

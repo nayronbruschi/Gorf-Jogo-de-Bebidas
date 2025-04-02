@@ -795,7 +795,7 @@ export default function EuNunca() {
           },
           {
             title: "Conheça as regras",
-            description: "No jogo "Eu Nunca", todos que já fizeram a ação mencionada devem beber. Simples assim!",
+            description: "No jogo 'Eu Nunca', todos que já fizeram a ação mencionada devem beber. Simples assim!",
             imagen: <div className="flex items-center bg-white rounded-lg p-3 shadow-sm border">
               <div className="bg-purple-100 rounded-full w-8 h-8 flex items-center justify-center mr-3">
                 <span className="text-purple-700 font-bold">2</span>
@@ -817,7 +817,7 @@ export default function EuNunca() {
           },
           {
             title: "Vamos começar!",
-            description: "Clique em "Iniciar Jogo" e divirta-se com seus amigos neste jogo de revelações!",
+            description: "Clique em 'Iniciar Jogo' e divirta-se com seus amigos neste jogo de revelações!",
             imagen: <Button 
               className="w-full bg-gorf-green hover:bg-green-700 text-white rounded-full py-4 shadow-md"
             >

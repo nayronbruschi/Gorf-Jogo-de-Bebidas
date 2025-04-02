@@ -121,7 +121,7 @@ export function PromotionalBanner() {
                       <h3 className="text-white text-xl font-bold mb-1 text-shadow">{banner.title}</h3>
                       <p className="text-white/90 text-sm text-shadow-sm">{banner.description}</p>
                       {banner.isClickable && (
-                        <div className="mt-2 inline-flex items-center bg-purple-600/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
+                        <div className="mt-2 inline-flex items-center text-white text-xs px-2 py-1 rounded">
                           {banner.linkUrl?.startsWith('http') 
                             ? 'Visitar site externo' 
                             : 'Ver mais no aplicativo'}
