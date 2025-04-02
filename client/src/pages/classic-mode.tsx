@@ -207,9 +207,7 @@ export default function ClassicMode() {
           >
             <Home className="h-5 w-5" />
           </Button>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-purple-400 absolute left-1/2 transform -translate-x-1/2">
-            GORF
-          </h1>
+
         </div>
 
         {/* Container principal com design moderno */}

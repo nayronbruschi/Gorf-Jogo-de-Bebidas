@@ -104,7 +104,7 @@ export function WinnerScreen({ onPlayAgain }: WinnerScreenProps) {
 
         {/* Título com estilo chamativo */}
         <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-purple-900 mb-2">
-          Alguém deu GORF!
+          Temos um vencedor!
         </h2>
 
         <p className="text-gray-600 text-lg mb-8">

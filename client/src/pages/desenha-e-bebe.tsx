@@ -1341,9 +1341,7 @@ export default function DesenhaEBebe() {
     <GameLayout title="" showPlayers={false}>
       {/* Header com título estilo Apple */}
       <header className="text-center mb-6 pt-6">
-        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-purple-600 mb-2">
-          GORF
-        </h1>
+
         <div className="inline-flex items-center gap-1 px-4 py-1 rounded-full bg-purple-100 text-purple-800 text-sm font-medium mb-2">
           <Palette className="h-4 w-4" />
           Desenha e Bebe

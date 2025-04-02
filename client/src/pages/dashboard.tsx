@@ -111,10 +111,10 @@ export default function Dashboard() {
             </Carousel>
           </section>
 
-          {/* Bem-vindo ao Gorf com estilo Apple */}
+          {/* Card de boas-vindas com estilo Apple */}
           <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
             <CardHeader className="bg-[#326800] text-white pb-6">
-              <CardTitle className="text-2xl">Bem-vindo ao Gorf!</CardTitle>
+              <CardTitle className="text-2xl">Bem-vindo!</CardTitle>
               <CardDescription className="text-white/90 text-base">
                 Escolha um jogo para começar a diversão
               </CardDescription>

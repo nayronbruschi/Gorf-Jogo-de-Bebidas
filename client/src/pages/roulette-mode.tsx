@@ -102,7 +102,7 @@ export default function RouletteMode() {
 
   return (
     <GameLayout title="">
-      {/* Header com título GORF estilo Apple */}
+      {/* Header só com botão home */}
       <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-50">
         <Button
           variant="ghost"
@@ -112,9 +112,6 @@ export default function RouletteMode() {
         >
           <Home className="h-5 w-5" />
         </Button>
-        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-purple-400 absolute left-1/2 transform -translate-x-1/2">
-          GORF
-        </h1>
       </div>
 
       {/* Container principal com design moderno */}
