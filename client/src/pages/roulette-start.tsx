@@ -67,12 +67,8 @@ export default function RouletteStart() {
   return (
     <GameLayout title="">
       <div className="max-w-4xl mx-auto space-y-12">
-        {/* Cabeçalho com estilo Apple */}
+        {/* Cabeçalho minimalista */}
         <header className="text-center mb-2">
-          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-purple-600">
-            GORF
-          </h1>
-          <p className="text-gray-500 text-sm mt-2 tracking-wide">Escolha como vai jogar</p>
         </header>
         
         {/* Seção de Modos de Jogo com estilo Apple */}
@@ -108,29 +104,20 @@ export default function RouletteStart() {
                     {/* Ícone em círculo com gradiente */}
                     <div className={`p-4 rounded-full mb-4 ${
                       selectedMode === key
-                        ? key === "goles" 
-                          ? "bg-gradient-to-br from-blue-500 to-blue-700" 
-                          : "bg-gradient-to-br from-orange-500 to-red-600"
+                        ? "bg-gradient-to-br from-[#326800] to-green-700" 
                         : "bg-gradient-to-br from-purple-600 to-purple-800"
                     }`}>
                       <mode.icon className="h-10 w-10 text-white" />
                     </div>
                     
                     <h3 className={`text-2xl font-bold mb-2 ${
-                      selectedMode === key ? "text-purple-900" : "text-purple-800"
+                      selectedMode === key ? "text-[#326800]" : "text-purple-800"
                     }`}>
                       {mode.name}
                     </h3>
                     
                     <p className="text-gray-600 text-sm leading-relaxed">{mode.description}</p>
                   </div>
-                  
-                  {/* Indicador selecionado */}
-                  {selectedMode === key && (
-                    <div className="bg-gorf-green text-white px-4 py-1.5 rounded-full text-sm font-semibold mt-2">
-                      Selecionado
-                    </div>
-                  )}
                 </div>
               </div>
             ))}
@@ -142,7 +129,7 @@ export default function RouletteStart() {
           <Button
             size="lg"
             onClick={handleStartGame}
-            className="bg-gradient-to-br from-gorf-green to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xl px-10 py-6 rounded-full shadow-lg transition-all hover:shadow-xl hover:scale-[1.02]"
+            className="bg-[#326800] hover:bg-green-700 text-white text-xl px-10 py-6 rounded-full shadow-lg transition-all hover:shadow-xl hover:scale-[1.02]"
           >
             <Play className="mr-2 h-6 w-6" />
             Continuar

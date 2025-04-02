@@ -20,7 +20,7 @@ export default function RoulettePlayers() {
   const [maxPerRound, setMaxPerRound] = useState(gameMode === "shots" ? "3" : "10");
   const [maxToWin, setMaxToWin] = useState("15");
 
-  const { data: players = [] } = useQuery({
+  const { data: players = [] } = useQuery<any[]>({
     queryKey: ["/api/players"],
   });
 
@@ -47,15 +47,9 @@ export default function RoulettePlayers() {
 
   return (
     <GameLayout title="">
-      <div className="max-w-4xl mx-auto space-y-10 px-4">
-        {/* Cabeçalho estilo Apple */}
+      <div className="max-w-4xl mx-auto space-y-6 px-4 mt-4">
+        {/* Cabeçalho minimalista */}
         <header className="text-center">
-          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-purple-600">
-            GORF
-          </h1>
-          <p className="text-gray-500 text-sm mt-2 tracking-wide">
-            Configure sua partida
-          </p>
         </header>
 
         {/* Layout moderno em grid */}
@@ -76,9 +70,7 @@ export default function RoulettePlayers() {
                 </h2>
               </div>
               <div className="p-5">
-                <div className="shadow-sm rounded-xl overflow-hidden border border-gray-100">
-                  <PlayerList />
-                </div>
+                <PlayerList />
               </div>
             </div>
           </div>
@@ -220,7 +212,7 @@ export default function RoulettePlayers() {
             disabled={players.length < 2}
             className={`px-10 py-6 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 ${
               players.length >= 2
-                ? "bg-gradient-to-br from-gorf-green to-green-600 hover:from-green-600 hover:to-green-700 text-white hover:shadow-xl hover:scale-[1.02]"
+                ? "bg-[#326800] hover:bg-green-700 text-white hover:shadow-xl hover:scale-[1.02]"
                 : "bg-gray-300 text-gray-600 cursor-not-allowed"
             }`}
           >

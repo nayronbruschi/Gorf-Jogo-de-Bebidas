@@ -28,7 +28,7 @@ export function GameCard({
         whileTap={{ scale: 0.97 }}
         className="cursor-pointer h-full"
       >
-        <Card className="h-full p-0 bg-white rounded-2xl shadow-lg border-0 overflow-hidden relative backdrop-blur-sm">
+        <Card className="h-full p-0 bg-white rounded-2xl shadow-lg border-2 border-purple-600 overflow-hidden relative backdrop-blur-sm">
           {/* Efeito de vidro e gradiente no fundo */}
           <div className="absolute inset-0 bg-gradient-to-br from-purple-100/30 to-green-50/20 z-0"></div>
           
@@ -53,7 +53,7 @@ export function GameCard({
             
             {/* Botão mais elegante */}
             <div className="flex justify-end mt-5 pt-2 border-t border-gray-100">
-              <div className="inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full bg-gorf-green text-white shadow-sm hover:shadow-md transition-all">
+              <div className="inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full bg-[#326800] text-white shadow-sm hover:shadow-md transition-all">
                 Jogar <ArrowRightIcon className="ml-0.5 h-4 w-4" />
               </div>
             </div>

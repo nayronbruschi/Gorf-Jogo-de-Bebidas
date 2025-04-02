@@ -120,7 +120,7 @@ export function GameRecommendationCard({ className }: GameRecommendationCardProp
           
           {recommendation.reasonsToPlay.length > 0 && (
             <div className="flex items-start">
-              <ThumbsUp className="h-4 w-4 mr-2 text-gorf-green flex-shrink-0 mt-0.5" />
+              <ThumbsUp className="h-4 w-4 mr-2 text-[#326800] flex-shrink-0 mt-0.5" />
               <span className="text-sm text-slate-700">{recommendation.reasonsToPlay[0]}</span>
             </div>
           )}

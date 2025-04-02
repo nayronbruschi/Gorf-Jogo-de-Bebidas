@@ -92,7 +92,7 @@ export function PunishmentDialog({
             Se recusando a beber, {playerName}?
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-6">
+        <div className="space-y-6 px-4">
           <p className="text-center text-2xl font-bold text-purple-700">
             Que coisa feia!
           </p>
@@ -108,10 +108,10 @@ export function PunishmentDialog({
           <div className="text-center text-sm text-purple-600">
             {drinkTextPlural} acumulados neste desafio: {punishmentDrinks}
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 px-2">
             <Button
               onClick={handleAcceptPunishment}
-              className="bg-gorf-green hover:bg-green-700 text-white hover:text-white text-xl py-6"
+              className="bg-[#326800] hover:bg-green-700 text-white hover:text-white text-xl py-6"
             >
               Fez o desafio
             </Button>
