@@ -90,16 +90,16 @@ export default function Dashboard() {
                 inViewThreshold: 0.5,
               }}
             >
-              <CarouselContent>
+              <CarouselContent className="-ml-1">
                 {games.map((game) => (
-                  <CarouselItem key={game.id} className="basis-[28%] sm:basis-[20%]">
+                  <CarouselItem key={game.id} className="pl-1 basis-[25%] sm:basis-[20%]">
                     <div
                       className="flex flex-col items-center gap-2 cursor-pointer group transition-all"
                       onClick={() => navigate(game.route)}
                     >
-                      <div className="relative w-16 h-16">
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-800 rounded-full opacity-90 group-hover:opacity-100 transition-all shadow-md group-hover:shadow-lg"></div>
-                        <game.icon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8 text-white" />
+                      <div className="relative w-20 h-20">
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl opacity-90 group-hover:opacity-100 transition-all shadow-md group-hover:shadow-lg"></div>
+                        <game.icon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-10 w-10 text-white" />
                       </div>
                       <span className="text-sm font-medium text-gray-800 text-center mt-1 leading-tight h-8 whitespace-pre-line group-hover:text-purple-700 transition-colors">
                         {formatGameName(game.name)}
@@ -113,7 +113,7 @@ export default function Dashboard() {
 
           {/* Bem-vindo ao Gorf com estilo Apple */}
           <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-green-500 to-green-400 text-white pb-6">
+            <CardHeader className="bg-[#326800] text-white pb-6">
               <CardTitle className="text-2xl">Bem-vindo ao Gorf!</CardTitle>
               <CardDescription className="text-white/90 text-base">
                 Escolha um jogo para começar a diversão
@@ -123,7 +123,7 @@ export default function Dashboard() {
               <Button
                 size="lg"
                 onClick={() => navigate("/game-modes")}
-                className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-6 rounded-full shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
+                className="w-full bg-[#326800] hover:bg-[#285400] text-white py-6 rounded-full shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
               >
                 <GamepadIcon className="mr-2 h-5 w-5" />
                 Ver Todos os Jogos
@@ -172,7 +172,7 @@ export default function Dashboard() {
           {/* Estatísticas com estilo Apple */}
           <div className="grid grid-cols-2 gap-5">
             <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
-              <CardHeader className="bg-gradient-to-br from-green-500 to-green-400 text-white pb-4 flex flex-col items-center">
+              <CardHeader className="bg-[#326800] text-white pb-4 flex flex-col items-center">
                 <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-2">
                   <Trophy className="h-8 w-8" />
                 </div>
@@ -181,14 +181,14 @@ export default function Dashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-5 pb-5 text-center">
-                <p className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-green-500">
+                <p className="text-4xl font-bold text-[#326800]">
                   {userProfile?.gameStats?.totalGamesPlayed || 0}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
-              <CardHeader className="bg-gradient-to-br from-green-500 to-green-400 text-white pb-4 flex flex-col items-center">
+              <CardHeader className="bg-[#326800] text-white pb-4 flex flex-col items-center">
                 <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-2">
                   <Clock className="h-8 w-8" />
                 </div>
@@ -197,7 +197,7 @@ export default function Dashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-5 pb-5 text-center">
-                <p className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-green-500">
+                <p className="text-4xl font-bold text-[#326800]">
                   {Math.round((userProfile?.gameStats?.totalPlayTime || 0) / 60)}h
                 </p>
               </CardContent>
