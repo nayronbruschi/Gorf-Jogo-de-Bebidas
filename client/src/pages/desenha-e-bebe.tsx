@@ -133,6 +133,7 @@ export default function DesenhaEBebe() {
   const { toast } = useToast();
   const [jogadores, setJogadores] = useState<Jogador[]>([]);
   const [novoJogador, setNovoJogador] = useState("");
+  // Iniciar com etapa de configuração para reorganizar o fluxo
   const [estadoJogo, setEstadoJogo] = useState<EstadoJogo>("configuracao");
   const [config, setConfig] = useState<ConfigJogo>({
     tempo: 60,
@@ -788,7 +789,7 @@ export default function DesenhaEBebe() {
             <CardHeader className="bg-gradient-to-r from-purple-700 to-purple-600 text-white pb-6">
               <div className="flex justify-between items-center">
                 <div>
-                  <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 text-white text-sm font-medium mb-2">
+                  <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-purple-800 text-white text-sm font-medium mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
@@ -799,7 +800,7 @@ export default function DesenhaEBebe() {
                   </CardTitle>
                 </div>
                 
-                <Badge className="bg-white/20 text-white border-0 hover:bg-white/30 px-3 py-1 rounded-full">
+                <Badge className="bg-purple-800 text-white border-0 hover:bg-purple-900 px-3 py-1 rounded-full">
                   {categoriaObj?.nome}
                 </Badge>
               </div>

@@ -113,11 +113,7 @@ export function PlayerManagementDialog({ open, onOpenChange }: PlayerManagementD
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="mx-auto max-w-md w-full h-[90vh] overflow-y-auto bg-white rounded-lg">
-        <div className="absolute right-4 top-4">
-          <DialogClose className="h-8 w-8 text-gray-500 hover:text-gray-800 flex items-center justify-center">
-            <X className="h-5 w-5" />
-          </DialogClose>
-        </div>
+        {/* Botão de fechar já existe no DialogContent, não precisamos adicionar outro */}
 
         <div className="max-w-md mx-auto p-6">
           <h2 className="text-2xl font-bold text-purple-800 mb-6 text-center">Jogadores e pontuação</h2>

@@ -323,12 +323,12 @@ export default function EuNunca() {
                     <div className="bg-gradient-to-b from-purple-50 to-white p-8 rounded-2xl shadow-lg border border-purple-100 relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-600 to-purple-400"></div>
                       
-                      <div className="bg-white/70 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-purple-100 mb-8 flex items-center justify-center">
-                        <div className="bg-purple-100 rounded-full p-3 mr-3">
+                      <div className="bg-purple-100 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-purple-200 mb-8 flex items-center justify-center">
+                        <div className="bg-purple-200 rounded-full p-3 mr-3">
                           <CategoriaIcon className="h-8 w-8 text-purple-600" />
                         </div>
                         <div className="text-left">
-                          <p className="text-xs text-purple-500 font-medium">CATEGORIA</p>
+                          <p className="text-xs text-purple-600 font-medium">CATEGORIA</p>
                           <p className="text-sm font-bold text-purple-900">{categoriasNomes[categoriaAtual]}</p>
                         </div>
                       </div>
@@ -359,9 +359,9 @@ export default function EuNunca() {
                   </div>
                 ) : (
                   <div className="text-center space-y-8">
-                    <div className="bg-white/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-purple-100">
+                    <div className="bg-purple-50 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-purple-100">
                       <div className="flex flex-col items-center justify-center mb-6">
-                        <div className="bg-gradient-to-r from-purple-100 to-purple-50 p-6 rounded-full mb-6">
+                        <div className="bg-gradient-to-r from-purple-200 to-purple-100 p-6 rounded-full mb-6">
                           <FaGlassCheers className="text-purple-600 h-16 w-16" />
                         </div>
                         
@@ -373,7 +373,7 @@ export default function EuNunca() {
                         </p>
                       </div>
                       
-                      <div className="bg-purple-50 p-4 rounded-xl border border-purple-100 mb-6">
+                      <div className="bg-purple-100 p-4 rounded-xl border border-purple-200 mb-6">
                         <p className="text-purple-800 font-medium text-sm">
                           Quem já fez a ação mencionada, bebe! Simples assim.
                         </p>

@@ -67,7 +67,7 @@ export default function GameModes() {
 
   return (
     <GameLayout title="Modos de Jogo">
-      <div className="min-h-screen bg-white -mx-4 px-4 pt-4 pb-16">
+      <div className="min-h-screen bg-white -mx-4 px-4 pt-6 pb-16">
         <div className="max-w-4xl mx-auto">
           <motion.div 
             className="text-center mb-8"

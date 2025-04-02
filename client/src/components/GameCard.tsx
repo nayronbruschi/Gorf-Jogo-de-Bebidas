@@ -46,10 +46,10 @@ export function GameCard({
               <div className="p-3.5 bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl shadow-md flex items-center justify-center">
                 <Icon className="h-7 w-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-purple-900">{title}</h3>
+              <h3 className="text-lg md:text-xl font-bold text-purple-900">{title}</h3>
             </div>
             
-            <p className="text-gray-600 mb-auto text-sm leading-relaxed">{description}</p>
+            <p className="text-gray-600 mb-auto text-sm md:text-base leading-relaxed">{description}</p>
             
             {/* Botão mais elegante */}
             <div className="flex justify-end mt-5 pt-2 border-t border-gray-100">

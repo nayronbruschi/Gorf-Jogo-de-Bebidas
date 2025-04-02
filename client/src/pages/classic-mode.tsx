@@ -258,8 +258,10 @@ export default function ClassicMode() {
                           <h4 className="text-2xl font-bold text-center text-purple-900 mb-4">
                             {currentChallenge}
                           </h4>
-                          <div className="text-center text-md font-medium text-purple-700 bg-purple-50 rounded-full py-2 px-4 inline-block mx-auto">
-                            Ou beba {roundPoints} goles
+                          <div className="flex justify-center">
+                            <div className="text-center text-md font-medium text-purple-700 bg-purple-50 rounded-full py-2 px-4 mx-auto">
+                              Ou beba {roundPoints} goles
+                            </div>
                           </div>
                         </motion.div>
                       )}
