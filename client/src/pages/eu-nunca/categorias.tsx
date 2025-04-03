@@ -106,18 +106,18 @@ export default function EuNuncaCategorias() {
   };
 
   return (
-    <GameLayout title="">
-      <div className="flex flex-col items-center gap-8">
-        <div className="text-center max-w-lg">
+    <GameLayout title="Eu Nunca">
+      <div className="flex flex-col items-center gap-8 bg-purple-900/70 p-6 rounded-xl shadow-lg max-w-lg mx-auto">
+        <div className="text-center w-full">
           <h3 className="text-2xl font-bold text-white mb-4">
             Escolha a Categoria
           </h3>
-          <p className="text-xl text-white/80">
+          <p className="text-xl text-white/90">
             Selecione o tipo de perguntas para o jogo "Eu Nunca".
           </p>
         </div>
 
-        <div className="w-full max-w-lg space-y-4">
+        <div className="w-full space-y-4">
           <div className="grid grid-cols-1 gap-4">
             {categorias.map((categoria) => {
               const CategoryIcon = categoria.icon;
@@ -149,7 +149,7 @@ export default function EuNuncaCategorias() {
         <Button
           size="lg"
           onClick={handleContinue}
-          className="bg-purple-900 hover:bg-purple-950 text-white text-xl px-8 py-6 flex items-center justify-center"
+          className="bg-green-700 hover:bg-green-800 text-white text-xl px-8 py-6 flex items-center justify-center w-full md:w-auto"
         >
           <Play className="mr-2 h-6 w-6" />
           Continuar

@@ -239,11 +239,11 @@ export default function EuNuncaJogo() {
   };
   
   return (
-    <GameLayout title="">
-      <div className="w-full min-h-screen flex flex-col items-center justify-start pt-4 px-4">
-        <div className="max-w-lg w-full flex flex-col items-center">
+    <GameLayout title="Eu Nunca">
+      <div className="w-full flex flex-col items-center justify-start px-4">
+        <div className="max-w-lg w-full flex flex-col items-center bg-purple-900/70 p-6 rounded-xl shadow-lg">
           <div className="mb-4 text-center">
-            <p className="text-white/80 text-lg">
+            <p className="text-white text-lg font-semibold bg-purple-950 px-4 py-2 rounded-full inline-block">
               Categoria: {categoriasNomes[categoriaAtual]}
             </p>
           </div>
@@ -281,7 +281,7 @@ export default function EuNuncaJogo() {
           
           <div className="w-full space-y-4">
             <Button
-              className="w-full bg-purple-900 hover:bg-purple-950 text-white py-6 text-lg"
+              className="w-full bg-green-700 hover:bg-green-800 text-white py-6 text-lg"
               onClick={gerarNovaPergunta}
             >
               <RefreshCcw className="mr-2 h-5 w-5" />

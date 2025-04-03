@@ -21,20 +21,20 @@ export default function EuNuncaJogadores() {
   };
 
   return (
-    <GameLayout title="">
-      <div className="max-w-md mx-auto space-y-8">
+    <GameLayout title="Eu Nunca">
+      <div className="max-w-md mx-auto space-y-8 bg-purple-900/70 p-6 rounded-xl shadow-lg">
         <div className="text-center">
           <h3 className="text-2xl font-bold text-white mb-4">
             Quem vai jogar?
           </h3>
-          <p className="text-white/80 mb-6">
+          <p className="text-white/90 mb-6">
             Adicione pelo menos 2 jogadores para começar!
           </p>
         </div>
 
         <PlayerList />
 
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-8">
           <Button
             size="lg"
             onClick={handleContinue}

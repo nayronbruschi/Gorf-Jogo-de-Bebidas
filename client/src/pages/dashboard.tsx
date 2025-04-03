@@ -92,7 +92,7 @@ export default function Dashboard() {
             >
               <CarouselContent className="-ml-0">
                 {games.map((game) => (
-                  <CarouselItem key={game.id} className="pl-4 basis-[18%] md:basis-[18.5%]">
+                  <CarouselItem key={game.id} className="pl-4 basis-[20%] md:basis-[20%]">
                     <div
                       className="flex flex-col items-center gap-2 cursor-pointer group transition-all mx-2"
                       onClick={() => navigate(game.route)}
@@ -113,7 +113,7 @@ export default function Dashboard() {
 
           {/* Card de boas-vindas com estilo Apple */}
           <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
-            <CardHeader className="bg-[#326800] text-white pb-6">
+            <CardHeader className="bg-purple-900 text-white pb-6">
               <CardTitle className="text-2xl">Bem-vindo!</CardTitle>
               <CardDescription className="text-white/90 text-base">
                 Escolha um jogo para começar a diversão

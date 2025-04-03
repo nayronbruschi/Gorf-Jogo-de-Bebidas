@@ -26,7 +26,7 @@ export function GameLayout({ children, title, className, showPlayers = true }: G
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-purple-800">
       <nav className="p-4 flex items-center justify-between relative bg-gorf-purple shadow-md">
         <Button 
           variant="ghost" 
@@ -87,8 +87,11 @@ export function GameLayout({ children, title, className, showPlayers = true }: G
       <motion.main
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={cn("container mx-auto -mt-2", className)}
+        className={cn("container mx-auto p-4", className)}
       >
+        {title && (
+          <h1 className="text-2xl font-bold text-white mb-6 text-center">{title}</h1>
+        )}
         {children}
       </motion.main>
     </div>
