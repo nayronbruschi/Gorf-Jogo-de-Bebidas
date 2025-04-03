@@ -78,7 +78,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={SplashScreen} />
-      <Route path="/landing" component={LandingPage} />
+      <Route path="/site" component={LandingPage} />
       <Route path="/auth" component={Auth} />
       <Route path="/onboarding">
         <ProtectedRoute component={Onboarding} />

@@ -20,8 +20,8 @@ export default function Home() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 2 }}
-        className="mt-24"
+        transition={{ delay: 1.5 }}
+        className="mt-24 flex flex-col items-center gap-4"
       >
         <Button
           size="lg"
@@ -31,6 +31,20 @@ export default function Home() {
           <Play className="mr-2 h-6 w-6" />
           Começar
         </Button>
+        
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2 }}
+        >
+          <Button
+            variant="link"
+            onClick={() => navigate("/site")}
+            className="text-white/90 hover:text-white hover:underline"
+          >
+            Saiba mais sobre o Gorf
+          </Button>
+        </motion.div>
       </motion.div>
     </div>
   );

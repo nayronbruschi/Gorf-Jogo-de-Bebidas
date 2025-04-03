@@ -37,7 +37,7 @@ export default function LandingPage() {
                 <Button 
                   size="lg" 
                   className="bg-[#326800] hover:bg-[#264f00] text-white mt-4 text-xl px-8 py-6 rounded-full shadow-lg"
-                  onClick={() => window.open("/auth", "_blank")}
+                  onClick={() => navigate("/auth")}
                 >
                   <Play className="mr-2 h-6 w-6" />
                   JOGAR
@@ -148,7 +148,7 @@ export default function LandingPage() {
           <Button 
             size="lg" 
             className="bg-[#326800] hover:bg-[#264f00] text-white text-xl px-8 py-6 rounded-full shadow-lg"
-            onClick={() => window.open("/auth", "_blank")}
+            onClick={() => navigate("/auth")}
           >
             <Play className="mr-2 h-6 w-6" />
             JOGAR AGORA
@@ -166,7 +166,7 @@ export default function LandingPage() {
         <Button 
           size="lg" 
           className="bg-[#326800] hover:bg-[#264f00] text-white rounded-full h-16 w-16 shadow-lg flex items-center justify-center"
-          onClick={() => window.open("/auth", "_blank")}
+          onClick={() => navigate("/auth")}
         >
           <Play className="h-8 w-8" />
         </Button>
