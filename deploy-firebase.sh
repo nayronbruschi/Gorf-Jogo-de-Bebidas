@@ -13,3 +13,4 @@ npx firebase deploy --only=hosting --project=gorf-jogo-de-bebidas
 echo "Deploy concluído! Seu site está disponível em:"
 echo "https://gorf-jogo-de-bebidas.firebaseapp.com"
 echo "https://gorf-jogo-de-bebidas.web.app"
+echo "https://gorf.com.br (após configuração completa do domínio personalizado)"
