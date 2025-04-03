@@ -1123,22 +1123,24 @@ export default function DesenhaEBebe() {
                 </p>
                 
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-purple-50 p-3 rounded-lg border border-purple-100 text-center">
-                    <Target className="h-6 w-6 mx-auto mb-1 text-purple-600" />
-                    <p className="text-xs text-purple-700 font-medium">Categoria</p>
-                    <p className="font-bold text-purple-900">{CATEGORIAS.find(c => c.id === categoriaAtual)?.nome}</p>
+                  <div className="bg-green-50 p-3 rounded-lg border border-green-100 text-center shadow-sm">
+                    <div className="w-8 h-8 mx-auto mb-1 bg-green-600 text-white flex items-center justify-center rounded-full">
+                      <Target className="h-4 w-4" />
+                    </div>
+                    <p className="text-xs text-green-700 font-medium">Categoria</p>
+                    <p className="font-bold text-green-900">{CATEGORIAS.find(c => c.id === categoriaAtual)?.nome}</p>
                   </div>
                   
-                  <div className="bg-purple-50 p-3 rounded-lg border border-purple-100 text-center">
+                  <div className="bg-purple-50 p-3 rounded-lg border border-purple-100 text-center shadow-sm">
                     <Timer className="h-6 w-6 mx-auto mb-1 text-purple-600" />
                     <p className="text-xs text-purple-700 font-medium">Tempo</p>
-                    <p className="font-bold text-purple-900">{tempo} segundos</p>
+                    <p className="font-bold text-purple-900">{tempo} seg</p>
                   </div>
                   
-                  <div className="bg-purple-50 p-3 rounded-lg border border-purple-100 text-center">
-                    <AlertTriangle className="h-6 w-6 mx-auto mb-1 text-purple-600" />
-                    <p className="text-xs text-purple-700 font-medium">Dificuldade</p>
-                    <p className="font-bold text-purple-900">{dificuldadeAtual}</p>
+                  <div className="bg-amber-50 p-3 rounded-lg border border-amber-100 text-center shadow-sm">
+                    <AlertTriangle className="h-6 w-6 mx-auto mb-1 text-amber-600" />
+                    <p className="text-xs text-amber-700 font-medium">Dificuldade</p>
+                    <p className="font-bold text-amber-900">{dificuldadeAtual}</p>
                   </div>
                 </div>
               </div>
@@ -1214,10 +1216,10 @@ export default function DesenhaEBebe() {
               
               <div className="bg-white p-6 border rounded-lg shadow-sm">
                 <h3 className="font-medium text-center text-gray-800 mb-4">Os jogadores acertaram?</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-4">
                   <Button 
                     onClick={() => handleResultado("acerto")} 
-                    className="bg-green-600 hover:bg-green-700 py-6"
+                    className="bg-green-600 hover:bg-green-700 py-6 text-lg w-full"
                   >
                     <Check className="mr-2 h-5 w-5" />
                     Sim! Acertou
@@ -1225,7 +1227,7 @@ export default function DesenhaEBebe() {
                   
                   <Button 
                     onClick={() => handleResultado("erro")} 
-                    className="bg-amber-600 hover:bg-amber-700 py-6"
+                    className="bg-amber-600 hover:bg-amber-700 py-6 text-lg w-full"
                   >
                     <AlertTriangle className="mr-2 h-5 w-5" />
                     Não acertou
@@ -1542,13 +1544,10 @@ export default function DesenhaEBebe() {
       {/* Header com título estilo Apple */}
       <header className="text-center mb-6 pt-6">
 
-        <div className="inline-flex items-center gap-1 px-4 py-1 rounded-full bg-purple-100 text-purple-800 text-sm font-medium mb-2">
+        <div className="inline-flex items-center gap-1 px-4 py-1 rounded-full bg-purple-100 text-purple-800 text-sm font-medium">
           <Palette className="h-4 w-4" />
           Desenha e Bebe
         </div>
-        <p className="text-gray-500 max-w-md mx-auto">
-          Desenhe, adivinhe e... quem falhar, bebe!
-        </p>
       </header>
       
       <div className="flex justify-center items-center min-h-[calc(100vh-200px)] px-4">
