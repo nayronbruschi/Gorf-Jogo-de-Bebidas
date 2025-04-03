@@ -51,7 +51,7 @@ export default function ClassicStart() {
       <div className="container max-w-2xl mx-auto px-4 pt-8 pb-16">
         {/* Header com instrução */}
         <header className="text-center mb-10">
-          <h2 className="text-lg text-gray-700 font-medium">
+          <h2 className="text-lg text-white font-medium bg-purple-950/60 px-4 py-2 rounded-lg inline-block">
             Selecione uma ou mais categorias para continuar
           </h2>
         </header>
