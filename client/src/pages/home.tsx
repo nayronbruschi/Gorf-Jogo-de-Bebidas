@@ -39,7 +39,7 @@ export default function Home() {
         >
           <Button
             variant="link"
-            onClick={() => navigate("/site")}
+            onClick={() => navigate("/")}
             className="text-white/90 hover:text-white hover:underline"
           >
             Saiba mais sobre o Gorf

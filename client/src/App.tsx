@@ -77,8 +77,8 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={SplashScreen} />
-      <Route path="/site" component={LandingPage} />
+      <Route path="/" component={LandingPage} />
+      <Route path="/splash" component={SplashScreen} />
       <Route path="/auth" component={Auth} />
       <Route path="/onboarding">
         <ProtectedRoute component={Onboarding} />
