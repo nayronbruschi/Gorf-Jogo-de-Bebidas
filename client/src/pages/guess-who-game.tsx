@@ -389,7 +389,7 @@ export default function GuessWhoGame() {
         </Button>
 
         <div className="flex items-center gap-4">
-          <span className="text-xl font-medium text-white">
+          <span className="text-xl font-medium text-white bg-purple-950/70 px-4 py-2 rounded-lg">
             {currentPlayerName}
           </span>
         </div>
@@ -405,13 +405,13 @@ export default function GuessWhoGame() {
               exit={{ scale: 0.8, opacity: 0 }}
               className="text-center space-y-6"
             >
-              <h2 className="text-4xl font-bold text-white">
+              <h2 className="text-4xl font-bold text-white bg-purple-950/60 rounded-lg px-6 py-2 inline-block">
                 É a vez de:
               </h2>
-              <p className="text-3xl text-white mb-8">
+              <p className="text-3xl text-white mb-8 bg-purple-950/60 rounded-lg px-6 py-2 inline-block">
                 {currentPlayerName}
               </p>
-              <p className="text-xl text-white/80">
+              <p className="text-xl text-white bg-purple-950/60 rounded-lg px-6 py-2 inline-block">
                 Coloque o celular de lado na testa
               </p>
               {!readyToStart ? (
@@ -437,10 +437,10 @@ export default function GuessWhoGame() {
               exit={{ scale: 0.8, opacity: 0 }}
               className="w-full h-full flex flex-col items-center justify-center"
             >
-              <div className="text-6xl font-bold text-white text-center mb-12">
+              <div className="text-6xl font-bold text-white text-center mb-12 bg-purple-950/60 px-8 py-4 rounded-xl shadow-lg">
                 {playerItems[players[currentPlayerIndex]]}
               </div>
-              <div className="text-4xl font-bold text-white">
+              <div className="text-4xl font-bold text-white bg-purple-950/60 px-6 py-2 rounded-lg">
                 {timeLeft}s
               </div>
             </motion.div>
@@ -452,7 +452,7 @@ export default function GuessWhoGame() {
               exit={{ scale: 0.8, opacity: 0 }}
               className="flex flex-col items-center gap-4 p-4"
             >
-              <h3 className="text-2xl font-bold text-white mb-4">
+              <h3 className="text-2xl font-bold text-white mb-4 bg-purple-950/60 px-6 py-2 rounded-lg">
                 Quem você acha que é?
               </h3>
               <Input
@@ -558,8 +558,10 @@ export default function GuessWhoGame() {
       )}
 
       {eliminated.length > 0 && (
-        <div className="absolute bottom-4 left-0 right-0 text-white/60 text-center">
-          <p>Eliminados: {eliminated.map(id => getPlayerName(id)).join(", ")}</p>
+        <div className="absolute bottom-4 left-0 right-0 text-center">
+          <p className="bg-purple-950/60 px-4 py-2 rounded-lg inline-block text-white">
+            Eliminados: {eliminated.map(id => getPlayerName(id)).join(", ")}
+          </p>
         </div>
       )}
     </div>

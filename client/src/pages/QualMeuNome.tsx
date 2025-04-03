@@ -688,7 +688,7 @@ export default function QualMeuNome() {
   // Componente principal
   return (
     <GameLayout 
-      title="Qual Meu Nome"
+      title=""
       className="bg-slate-50 text-slate-900"
       showPlayers={gameStep === GameStep.WELCOME || gameStep === GameStep.PLAYER_SETUP}
     >

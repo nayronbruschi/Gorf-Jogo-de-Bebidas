@@ -78,8 +78,8 @@ export default function GuessWhoTheme() {
         </Button>
 
         <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold text-white mb-2">Escolha o Tema</h2>
-          <p className="text-white/80">
+          <h2 className="text-2xl font-bold text-white mb-2 bg-purple-950/60 px-6 py-2 rounded-lg inline-block">Escolha o Tema</h2>
+          <p className="text-white bg-purple-950/60 px-6 py-2 rounded-lg mt-2 inline-block">
             Selecione um tema para começar o jogo
           </p>
         </div>

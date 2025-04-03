@@ -52,9 +52,11 @@ export default function GuessWhoPlayers() {
     <GameLayout title="Quem Sou Eu?">
       <div className="flex flex-col items-center gap-8 p-4">
         <div className="text-center mb-4">
-          <Users className="w-16 h-16 text-purple-900 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-purple-900 mb-2">Selecione os Jogadores</h2>
-          <p className="text-purple-900">
+          <div className="bg-purple-950/60 p-4 rounded-full inline-block mb-4">
+            <Users className="w-16 h-16 text-white mx-auto" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-2 bg-purple-950/60 px-6 py-2 rounded-lg inline-block">Selecione os Jogadores</h2>
+          <p className="text-white bg-purple-950/60 px-6 py-2 rounded-lg mt-2 inline-block">
             Escolha pelo menos 2 jogadores para começar
           </p>
         </div>

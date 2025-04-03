@@ -141,9 +141,9 @@ export function GameRecommendationCard({ className }: GameRecommendationCardProp
             </Link>
           </Button>
           
-          <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700 text-white" asChild>
+          <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700 text-white px-4" asChild>
             <Link href={recommendation.route}>
-              Jogar <ArrowRight className="ml-1 h-4 w-4" />
+              Jogar <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </div>

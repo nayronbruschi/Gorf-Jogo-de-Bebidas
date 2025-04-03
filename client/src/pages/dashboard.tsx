@@ -98,7 +98,7 @@ export default function Dashboard() {
                       onClick={() => navigate(game.route)}
                     >
                       <div className="relative w-20 h-20 md:w-28 md:h-28">
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl opacity-90 group-hover:opacity-100 transition-all shadow-md group-hover:shadow-lg"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#326800] to-[#1f4100] rounded-2xl opacity-90 group-hover:opacity-100 transition-all shadow-md group-hover:shadow-lg"></div>
                         <game.icon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-10 w-10 md:h-14 md:w-14 text-white" />
                       </div>
                       <span className="text-sm font-medium text-gray-800 text-center mt-1 leading-tight h-8 whitespace-pre-line group-hover:text-purple-700 transition-colors">
