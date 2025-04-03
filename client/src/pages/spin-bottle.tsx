@@ -83,6 +83,20 @@ export default function SpinBottle() {
 
     loadBottleImage();
     trackGameOpen();
+    
+    // Quando o usuário sair da página, limpar a imagem personalizada
+    return () => {
+      // Chamar a API para limpar a imagem personalizada
+      fetch('/api/bottle-image', {
+        method: 'DELETE',
+      }).catch(error => {
+        console.error('Erro ao limpar imagem da garrafa:', error);
+      });
+      
+      // Limpar da sessão também
+      sessionStorage.removeItem('tempBottleImage');
+      sessionStorage.removeItem('bottleImageExpiry');
+    };
   }, []);
 
   const spinBottle = () => {

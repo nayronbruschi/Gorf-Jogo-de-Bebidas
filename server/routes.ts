@@ -618,6 +618,28 @@ export async function registerRoutes(app: Express) {
       res.status(500).json({ message: "Erro ao salvar imagem da garrafa" });
     }
   });
+  
+  // Rota para limpar a imagem personalizada da garrafa (resetar para a default)
+  app.delete("/api/bottle-image", (req, res) => {
+    try {
+      const bottlePath = path.join(BUCKET_PATH, "user_bottle_image.json");
+      
+      // Verificar se o arquivo existe
+      if (fs.existsSync(bottlePath)) {
+        // Remover o arquivo
+        fs.unlinkSync(bottlePath);
+        console.log('Imagem da garrafa removida, voltando para a padrão');
+      }
+      
+      res.json({ 
+        message: "Imagem da garrafa redefinida com sucesso",
+        url: "/api/images/default-bottle.webp"
+      });
+    } catch (error) {
+      console.error('Erro ao redefinir imagem da garrafa:', error);
+      res.status(500).json({ message: "Erro ao redefinir imagem da garrafa" });
+    }
+  });
 
   // Rota para obter a configuração do popup de instalação
   app.get("/api/install-prompt-config", (req, res) => {
