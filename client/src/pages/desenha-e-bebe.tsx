@@ -1091,81 +1091,79 @@ export default function DesenhaEBebe() {
         
       case "mimica":
         return (
-          <Card className="w-full max-w-3xl">
-            <CardHeader>
+          <Card className="w-full max-w-3xl bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border-none overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-purple-700 to-purple-600 text-white">
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle>
-                    {jogadores[jogadorAtual]?.nome} está fazendo mímica...
+                  <CardTitle className="font-bold">
+                    Pronto para iniciar? Toque em iniciar mímica!
                   </CardTitle>
-                  <CardDescription>
-                    Palavra: <span className="font-bold">[Secreta]</span>
-                  </CardDescription>
                 </div>
                 
-                <Badge variant="outline" className="text-lg font-bold">
+                <Badge variant="secondary" className="text-lg font-bold bg-white text-purple-800">
                   <Clock className="mr-1 h-4 w-4" />
                   {tempo}s
                 </Badge>
               </div>
             </CardHeader>
             
-            <CardContent className="space-y-4">
-              <div className="bg-white p-8 border rounded-lg text-center">
+            <CardContent className="p-6 space-y-6">
+              <div className="text-center">
                 <div className="mb-6 flex justify-center">
                   <Drama className="h-32 w-32 text-purple-700 animate-pulse" />
                 </div>
+              </div>
+              
+              <div className="bg-white p-6 border rounded-lg shadow-sm">
+                <p className="text-lg font-medium text-purple-900 mb-3 text-center">
+                  Você está representando: <span className="font-bold text-purple-800 text-xl">{palavraAtual}</span>
+                </p>
+                <p className="text-gray-700 text-center mb-6">
+                  Use apenas gestos! Não pode falar ou fazer sons!
+                </p>
                 
-                <div className="text-center mb-4">
-                  <p className="text-base text-black">
-                    <Drama className="inline mr-1 h-4 w-4" />
-                    Você está representando: <span className="font-bold text-black text-lg">{palavraAtual}</span>
-                  </p>
-                  <p className="text-sm text-black mt-1">
-                    Use apenas gestos! Não pode falar ou fazer sons!
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-2 text-sm mt-8">
-                  <div className="bg-gray-50 p-3 rounded-lg border shadow-sm">
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-purple-50 p-3 rounded-lg border border-purple-100 text-center">
                     <Target className="h-6 w-6 mx-auto mb-1 text-purple-600" />
-                    <p className="font-medium text-black">Categoria</p>
-                    <p className="font-bold text-black">{CATEGORIAS.find(c => c.id === categoriaAtual)?.nome}</p>
+                    <p className="text-xs text-purple-700 font-medium">Categoria</p>
+                    <p className="font-bold text-purple-900">{CATEGORIAS.find(c => c.id === categoriaAtual)?.nome}</p>
                   </div>
                   
-                  <div className="bg-gray-50 p-3 rounded-lg border shadow-sm">
+                  <div className="bg-purple-50 p-3 rounded-lg border border-purple-100 text-center">
                     <Timer className="h-6 w-6 mx-auto mb-1 text-purple-600" />
-                    <p className="font-medium text-black">Tempo</p>
-                    <p className="font-bold text-black">{tempo} segundos</p>
+                    <p className="text-xs text-purple-700 font-medium">Tempo</p>
+                    <p className="font-bold text-purple-900">{tempo} segundos</p>
                   </div>
                   
-                  <div className="bg-gray-50 p-3 rounded-lg border shadow-sm">
+                  <div className="bg-purple-50 p-3 rounded-lg border border-purple-100 text-center">
                     <AlertTriangle className="h-6 w-6 mx-auto mb-1 text-purple-600" />
-                    <p className="font-medium text-black">Dificuldade</p>
-                    <p className="font-bold text-black">{dificuldadeAtual}</p>
+                    <p className="text-xs text-purple-700 font-medium">Dificuldade</p>
+                    <p className="font-bold text-purple-900">{dificuldadeAtual}</p>
                   </div>
                 </div>
               </div>
-              
+            </CardContent>
+            
+            <CardFooter className="p-6 bg-gray-50 border-t">
               <Button 
                 onClick={iniciarAdivinhacao} 
-                className="w-full bg-purple-700 hover:bg-purple-800"
+                className="w-full bg-purple-700 hover:bg-purple-800 text-lg py-6"
               >
-                <Drama className="mr-2 h-4 w-4" />
-                Iniciar mímica
+                <Drama className="mr-2 h-5 w-5" />
+                Iniciar Mímica
               </Button>
-            </CardContent>
+            </CardFooter>
           </Card>
         );
       
       case "adivinhacao":
         return (
-          <Card className="w-full max-w-3xl">
-            <CardHeader>
+          <Card className="w-full max-w-3xl bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border-none overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-purple-700 to-purple-600 text-white">
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle>Hora de adivinhar!</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="font-bold">Hora de adivinhar!</CardTitle>
+                  <CardDescription className="text-white/90">
                     {config.modoRepresentacao === "desenho" 
                       ? `Desenho de ${jogadores[jogadorAtual]?.nome}`
                       : `Mímica de ${jogadores[jogadorAtual]?.nome}`
@@ -1173,16 +1171,16 @@ export default function DesenhaEBebe() {
                   </CardDescription>
                 </div>
                 
-                <Badge variant="outline" className="text-lg font-bold">
+                <Badge variant="secondary" className="text-lg font-bold bg-white text-purple-800">
                   <Clock className="mr-1 h-4 w-4" />
                   {tempo}s
                 </Badge>
               </div>
             </CardHeader>
             
-            <CardContent className="space-y-4">
+            <CardContent className="p-6 space-y-6">
               {config.modoRepresentacao === "desenho" && (
-                <div className="bg-white border-4 border-gray-300 rounded-lg overflow-hidden shadow-lg flex justify-center">
+                <div className="bg-white border-4 border-gray-200 rounded-lg overflow-hidden shadow-lg flex justify-center">
                   {desenhoAtual ? (
                     // Mostrar a imagem capturada se disponível
                     <img 
@@ -1201,36 +1199,36 @@ export default function DesenhaEBebe() {
               )}
               
               {config.modoRepresentacao === "mimica" && (
-                <div className="bg-white p-8 border rounded-lg text-center">
-                  <div className="mb-4 flex justify-center">
-                    <Drama className="h-20 w-20 text-purple-700" />
+                <div className="bg-white p-8 border rounded-lg shadow-sm text-center">
+                  <div className="mb-6 flex justify-center">
+                    <Drama className="h-24 w-24 text-purple-700 animate-pulse" />
                   </div>
-                  <p className="text-lg font-medium text-black mb-2">
+                  <p className="text-lg font-medium text-gray-800 mb-3">
                     {jogadores[jogadorAtual]?.nome} está fazendo mímica!
                   </p>
-                  <p className="text-sm text-black">
+                  <p className="text-gray-600">
                     Os outros jogadores devem adivinhar a palavra.
                   </p>
                 </div>
               )}
               
-              <div className="space-y-2">
-                <h3 className="font-medium">Os jogadores acertaram?</h3>
-                <div className="flex flex-col gap-2">
+              <div className="bg-white p-6 border rounded-lg shadow-sm">
+                <h3 className="font-medium text-center text-gray-800 mb-4">Os jogadores acertaram?</h3>
+                <div className="grid grid-cols-2 gap-4">
                   <Button 
                     onClick={() => handleResultado("acerto")} 
-                    className="w-full bg-green-600 hover:bg-green-700"
+                    className="bg-green-600 hover:bg-green-700 py-6"
                   >
-                    <Check className="mr-2 h-4 w-4" />
-                    Sim! Alguém acertou
+                    <Check className="mr-2 h-5 w-5" />
+                    Sim! Acertou
                   </Button>
                   
                   <Button 
                     onClick={() => handleResultado("erro")} 
-                    className="w-full bg-red-600 hover:bg-red-700"
+                    className="bg-amber-600 hover:bg-amber-700 py-6"
                   >
-                    <SkipForward className="mr-2 h-4 w-4" />
-                    Não, ninguém acertou
+                    <AlertTriangle className="mr-2 h-5 w-5" />
+                    Não acertou
                   </Button>
                 </div>
               </div>
