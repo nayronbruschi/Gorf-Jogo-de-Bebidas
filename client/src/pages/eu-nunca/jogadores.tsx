@@ -41,8 +41,8 @@ export default function EuNuncaJogadores() {
             disabled={players.length < 2}
             className={`px-8 py-6 flex items-center justify-center text-xl ${
               players.length >= 2 
-                ? "bg-purple-900 hover:bg-purple-950 text-white"
-                : "bg-white/20 hover:bg-white/30 text-white"
+                ? "bg-[#326800] hover:bg-[#264f00] text-white"
+                : "bg-purple-700/50 hover:bg-purple-700/70 text-white"
             }`}
           >
             <Play className="mr-2 h-6 w-6" />

@@ -139,7 +139,7 @@ export default function Cards() {
                             setShowDialog(true);
                           }}
                           variant="outline"
-                          className="bg-purple-900 text-white hover:bg-white hover:text-purple-900 hover:border-purple-900 border-2"
+                          className="bg-purple-900 text-white hover:bg-purple-700 border-2 border-purple-900"
                         >
                           <UserPlus className="mr-2 h-5 w-5" />
                           Registrar jogador
