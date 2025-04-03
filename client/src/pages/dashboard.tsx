@@ -139,8 +139,8 @@ export default function Dashboard() {
           {/* Estatísticas com estilo Apple */}
           <div className="grid grid-cols-2 gap-5">
             <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
-              <CardHeader className="bg-[#326800] text-white pb-4 flex flex-col items-center">
-                <div className="w-14 h-14 bg-[#ceff00] rounded-full flex items-center justify-center mb-2">
+              <CardHeader className="bg-purple-700 text-white pb-4 flex flex-col items-center">
+                <div className="w-14 h-14 bg-purple-300 rounded-full flex items-center justify-center mb-2">
                   <Trophy className="h-8 w-8 text-purple-900" />
                 </div>
                 <CardTitle className="text-base text-center">
@@ -155,8 +155,8 @@ export default function Dashboard() {
             </Card>
 
             <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
-              <CardHeader className="bg-[#326800] text-white pb-4 flex flex-col items-center">
-                <div className="w-14 h-14 bg-[#ceff00] rounded-full flex items-center justify-center mb-2">
+              <CardHeader className="bg-purple-700 text-white pb-4 flex flex-col items-center">
+                <div className="w-14 h-14 bg-purple-300 rounded-full flex items-center justify-center mb-2">
                   <Clock className="h-8 w-8 text-purple-900" />
                 </div>
                 <CardTitle className="text-base text-center">
