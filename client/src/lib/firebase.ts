@@ -5,7 +5,7 @@ import type { UserProfile, InsertUserProfile, UserGameStats } from "@shared/sche
 
 const firebaseConfig = {
   apiKey: "AIzaSyDRZ0akGNllg2YFaJM832PWSXvbNfcFbcE",
-  authDomain: "gorf-jogo-de-bebidas.firebaseapp.com",
+  authDomain: "gorf.com.br",
   projectId: "gorf-jogo-de-bebidas",
   storageBucket: "gorf-jogo-de-bebidas.appspot.com",
   messagingSenderId: "666516951655",
