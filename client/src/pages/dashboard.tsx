@@ -90,9 +90,9 @@ export default function Dashboard() {
                 inViewThreshold: 0.5,
               }}
             >
-              <CarouselContent className="-ml-1">
+              <CarouselContent className="-ml-0">
                 {games.map((game) => (
-                  <CarouselItem key={game.id} className="pl-1 basis-[25%] sm:basis-[20%]">
+                  <CarouselItem key={game.id} className="pl-1 basis-[19%] md:basis-[19.5%]">
                     <div
                       className="flex flex-col items-center gap-2 cursor-pointer group transition-all"
                       onClick={() => navigate(game.route)}

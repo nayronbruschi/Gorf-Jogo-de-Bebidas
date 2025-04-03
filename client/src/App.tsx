@@ -10,6 +10,7 @@ import { Suspense, lazy, useEffect } from "react";
 // Página inicial e autenticação carregadas imediatamente
 import NotFound from "@/pages/not-found";
 import Auth from "@/pages/auth";
+import LandingPage from "@/pages/landing-page";
 
 // Páginas carregadas com lazy loading
 const Dashboard = lazy(() => import("@/pages/dashboard"));
@@ -77,6 +78,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={SplashScreen} />
+      <Route path="/landing" component={LandingPage} />
       <Route path="/auth" component={Auth} />
       <Route path="/onboarding">
         <ProtectedRoute component={Onboarding} />

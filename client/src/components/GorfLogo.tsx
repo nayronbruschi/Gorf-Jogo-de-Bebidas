@@ -18,18 +18,7 @@ export function GorfLogo({ size = "large", className = "" }: { size?: "small" | 
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
       />
-      {size === "large" && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="text-center"
-        >
-          <h1 className="text-2xl font-bold text-white">
-            Bora jogar?
-          </h1>
-        </motion.div>
-      )}
+      {/* Removido o texto "Bora jogar?" conforme solicitado */}
     </motion.div>
   );
 }
