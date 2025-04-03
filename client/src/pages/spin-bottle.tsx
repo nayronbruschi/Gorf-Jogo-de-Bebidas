@@ -45,27 +45,18 @@ export default function SpinBottle() {
           sessionStorage.removeItem('tempBottleImage');
           sessionStorage.removeItem('bottleImageExpiry');
           
-          // Carregar a imagem padrão
-          const response = await fetch('/api/bottle-image');
-          if (response.ok) {
-            const data = await response.json();
-            setBottleImage(data.url);
-            
-            // Pré-carregar a imagem
-            const img = new Image();
-            img.src = data.url;
-            img.onload = () => setImageLoaded(true);
-          } else {
-            console.error('Erro ao buscar imagem da garrafa');
-            // Usar imagem padrão em caso de erro
-            setBottleImage("/api/images/default-bottle.webp");
-            setImageLoaded(true);
-          }
+          // Usar a imagem padrão
+          setBottleImage("/assets/garrafa.png");
+          
+          // Pré-carregar a imagem
+          const img = new Image();
+          img.src = "/assets/garrafa.png";
+          img.onload = () => setImageLoaded(true);
         }
       } catch (error) {
         console.error('Erro ao buscar imagem da garrafa:', error);
         // Usar imagem padrão em caso de erro
-        setBottleImage("/api/images/default-bottle.webp");
+        setBottleImage("/assets/garrafa.png");
         setImageLoaded(true);
       }
     };
@@ -218,7 +209,7 @@ export default function SpinBottle() {
   const resetBottleImage = async () => {
     try {
       // Definir de volta para a imagem padrão local
-      const defaultUrl = "/api/images/default-bottle.webp";
+      const defaultUrl = "/assets/garrafa.png";
       const success = await handleImageUpload(defaultUrl);
       
       if (success) {

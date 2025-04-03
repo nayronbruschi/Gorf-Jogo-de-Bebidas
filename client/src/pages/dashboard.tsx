@@ -90,16 +90,16 @@ export default function Dashboard() {
                 inViewThreshold: 0.5,
               }}
             >
-              <CarouselContent className="-ml-0">
+              <CarouselContent className="-ml-2">
                 {games.map((game) => (
-                  <CarouselItem key={game.id} className="pl-4 basis-[22%] md:basis-[22%]">
+                  <CarouselItem key={game.id} className="pl-4 basis-[26%] md:basis-[26%]">
                     <div
                       className="flex flex-col items-center gap-2 cursor-pointer group transition-all mx-2"
                       onClick={() => navigate(game.route)}
                     >
-                      <div className="relative w-18 h-18 md:w-24 md:h-24">
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl opacity-90 group-hover:opacity-100 transition-all shadow-md group-hover:shadow-lg"></div>
-                        <game.icon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-9 w-9 md:h-12 md:w-12 text-white" />
+                      <div className="relative w-20 h-20 md:w-28 md:h-28">
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl opacity-90 group-hover:opacity-100 transition-all shadow-md group-hover:shadow-lg"></div>
+                        <game.icon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-10 w-10 md:h-14 md:w-14 text-white" />
                       </div>
                       <span className="text-sm font-medium text-gray-800 text-center mt-1 leading-tight h-8 whitespace-pre-line group-hover:text-purple-700 transition-colors">
                         {formatGameName(game.name)}
@@ -114,7 +114,9 @@ export default function Dashboard() {
           {/* Card de boas-vindas com estilo Apple */}
           <Card className="bg-white shadow-lg border-none rounded-2xl overflow-hidden">
             <CardHeader className="bg-purple-900 text-white pb-6">
-              <CardTitle className="text-2xl">Bem-vindo!</CardTitle>
+              <CardTitle className="text-2xl">
+                Bem-vindo, {userProfile?.name?.split(' ')[0] || 'Jogador'}!
+              </CardTitle>
               <CardDescription className="text-white/90 text-base">
                 Escolha um jogo para começar a diversão
               </CardDescription>
@@ -146,7 +148,7 @@ export default function Dashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-5 pb-5 text-center">
-                <p className="text-4xl font-bold text-[#326800]">
+                <p className="text-4xl font-bold text-[#ceff00]">
                   {userProfile?.gameStats?.totalGamesPlayed || 0}
                 </p>
               </CardContent>
@@ -162,7 +164,7 @@ export default function Dashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-5 pb-5 text-center">
-                <p className="text-4xl font-bold text-[#326800]">
+                <p className="text-4xl font-bold text-[#ceff00]">
                   {Math.round((userProfile?.gameStats?.totalPlayTime || 0) / 60)}h
                 </p>
               </CardContent>
