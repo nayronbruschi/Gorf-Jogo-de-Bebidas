@@ -10,14 +10,11 @@ const isDevelopment =
   currentHost.includes('replit') ||
   currentHost.includes('repl.co');
 
-// A melhor prática para resolver o problema do redirect_uri_mismatch
-// é usar o domínio atual para o authDomain em ambientes de desenvolvimento,
-// mas usar o domínio personalizado em produção
+// IMPORTANTE: Sempre usamos gorf.com.br como authDomain para manter
+// a consistência visual e experiência de marca no popup de autenticação
 const firebaseConfig = {
   apiKey: "AIzaSyDRZ0akGNllg2YFaJM832PWSXvbNfcFbcE",
-  authDomain: isDevelopment 
-    ? "gorf-jogo-de-bebidas.firebaseapp.com"  // Domínio padrão do Firebase para desenvolvimento
-    : "gorf.com.br",                           // Domínio personalizado para produção
+  authDomain: "gorf.com.br",  // Sempre usar o domínio personalizado para melhor experiência de marca
   projectId: "gorf-jogo-de-bebidas",
   storageBucket: "gorf-jogo-de-bebidas.appspot.com",
   messagingSenderId: "666516951655",

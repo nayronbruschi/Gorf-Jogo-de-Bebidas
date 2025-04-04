@@ -76,6 +76,7 @@ export default function Auth() {
       console.log("URL completa:", currentOrigin);
       console.log("Protocolo:", currentProtocol);
       console.log("authDomain configurado:", "gorf.com.br");
+      console.log("Verifique se o domínio atual está autorizado no Firebase Console > Authentication > Settings > Authorized domains");
       
       // Mostrar informação útil para o usuário
       toast({
@@ -118,12 +119,13 @@ export default function Auth() {
           console.error("===== ERRO DE URI DE REDIRECIONAMENTO =====");
           console.error("Este domínio precisa ser adicionado à lista de domínios autorizados no console do Firebase");
           console.error("Domínio a ser adicionado:", currentDomain);
+          console.error("URI completo de redirecionamento a ser adicionado:", `${currentOrigin}/__/auth/handler`);
           
           toast({
             variant: "destructive",
             title: "Erro de configuração",
-            description: `Domínio ${currentDomain} não está configurado no Firebase. Adicione-o às origens autorizadas no Console do Firebase.`,
-            duration: 5000
+            description: `Para resolver este erro: 1) Adicione "${currentDomain}" em Firebase Console > Authentication > Settings > Authorized domains, E 2) Adicione "${currentOrigin}/__/auth/handler" em Google Cloud Console > APIs & Services > Credentials > OAuth 2.0 Client IDs > Authorized redirect URIs`,
+            duration: 10000
           });
         }
         

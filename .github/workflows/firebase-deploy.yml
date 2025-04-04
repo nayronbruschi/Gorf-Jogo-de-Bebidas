@@ -20,24 +20,56 @@ jobs:
           cache: 'npm'
           
       - name: Install Dependencies
-        run: npm ci
+        run: |
+          echo "Installing dependencies..."
+          npm ci
+          echo "Installing Firebase CLI..."
+          npm install -g firebase-tools
         
-      - name: Run Linting
-        run: npm run lint || echo "Linting skipped"
+      # Pulando etapa de linting já que não temos script de lint no package.json
+      - name: Skip Linting
+        run: echo "Linting skipped - no lint script in package.json"
         
       - name: Build
-        run: npm run build
+        run: |
+          echo "Iniciando o processo de build..."
+          npm run build
+          echo "Verificando conteúdo da pasta dist após o build..."
+          ls -la dist/
+          echo "Verificando conteúdo da pasta dist/public (destino do Firebase)..."
+          ls -la dist/public/ || echo "Pasta dist/public não existe"
         env:
           # Adicionando variáveis de ambiente necessárias para o build
           NODE_ENV: production
           
+      - name: Preparar pasta para deploy
+        run: |
+          echo "Verificando e criando a pasta dist/public se necessário..."
+          mkdir -p dist/public
+          # Se a pasta dist/public estiver vazia, copiamos o conteúdo de dist/client para ela
+          if [ ! "$(ls -A dist/public 2>/dev/null)" ]; then
+            echo "dist/public está vazia ou não existe, verificando outras pastas..."
+            if [ -d "dist/client" ]; then
+              echo "Copiando conteúdo de dist/client para dist/public..."
+              cp -r dist/client/* dist/public/
+            fi
+          fi
+          echo "Conteúdo final da pasta dist/public:"
+          ls -la dist/public || echo "Pasta dist/public ainda não existe ou está vazia"
+      
       - name: Deploy to Firebase
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
-          channelId: live
-          projectId: gorf-jogo-de-bebidas
+        run: |
+          echo "Verificando a configuração do Firebase..."
+          npx firebase --version
+          echo "Verificando o arquivo firebase.json..."
+          cat firebase.json
+          echo "Verificando o arquivo .firebaserc..."
+          cat .firebaserc
+          echo "Deploying to Firebase using token..."
+          npx firebase deploy --only hosting --token "${{ secrets.FIREBASE_TOKEN }}" --non-interactive --debug
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          CI: true
           
       - name: Notify Deployment Status
         if: always()
