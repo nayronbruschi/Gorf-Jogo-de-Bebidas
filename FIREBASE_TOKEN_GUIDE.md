@@ -2,7 +2,26 @@
 
 ## Problema
 
-Você está recebendo erros de autenticação no workflow do GitHub Actions chamado `build_and_deploy`, o que está impedindo que o deploy automático para o Firebase Hosting seja concluído com sucesso. O erro específico indica: `The process '/opt/hostedtoolcache/node/18.20.7/x64/bin/npx' failed with exit code 1`.
+Você está recebendo erros de autenticação no workflow do GitHub Actions chamado `build_and_deploy`, o que está impedindo que o deploy automático para o Firebase Hosting seja concluído com sucesso. Existem dois problemas comuns:
+
+### 1. Compatibilidade de Versão do Node.js
+
+Se você vir um erro como: 
+```
+Firebase CLI v14.1.0 is incompatible with Node.js v18.20.7
+Please upgrade Node.js to version >=20.0.0 || >=22.0.0
+```
+
+Este erro indica que o Firebase CLI requer uma versão mais recente do Node.js. A solução é atualizar a versão do Node.js no workflow do GitHub Actions para 20 ou superior. Isso já foi corrigido no arquivo `.github/workflows/firebase-deploy.yml`.
+
+### 2. Token Expirado ou Inválido
+
+Se você vir apenas um erro genérico como:
+```
+The process '/opt/hostedtoolcache/node/18.20.7/x64/bin/npx' failed with exit code 1
+```
+
+Provavelmente seu token do Firebase expirou ou está inválido.
 
 ## Solução
 
