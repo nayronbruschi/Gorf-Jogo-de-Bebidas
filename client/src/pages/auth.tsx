@@ -25,6 +25,8 @@ export default function Auth() {
   const { toast } = useToast();
 
   const getErrorMessage = (code: string) => {
+    const currentDomain = window.location.host;
+    
     switch (code) {
       case 'auth/email-already-in-use':
         return 'Este email já está em uso';
@@ -33,7 +35,7 @@ export default function Auth() {
       case 'auth/operation-not-allowed':
         return 'Operação não permitida';
       case 'auth/weak-password':
-        return 'Senha muito fraca';
+        return 'Senha muito fraca (mínimo de 6 caracteres)';
       case 'auth/user-disabled':
         return 'Usuário desativado';
       case 'auth/user-not-found':
@@ -44,8 +46,6 @@ export default function Auth() {
         return 'Login com Google cancelado';
       case 'auth/cancelled-popup-request':
         return 'Operação cancelada';
-      case 'auth/unauthorized-domain':
-        return 'Este domínio não está autorizado para login. Por favor, contate o administrador.';
       case 'auth/invalid-credential':
         return 'Credenciais inválidas. Por favor, tente novamente.';
       case 'auth/redirect-cancelled-by-user':
@@ -54,10 +54,24 @@ export default function Auth() {
         return 'Uma operação de login já está em andamento.';
       case 'auth/web-storage-unsupported':
         return 'Seu navegador não suporta armazenamento web, necessário para o login.';
+      case 'auth/network-request-failed':
+        return 'Falha na conexão de rede. Verifique sua conexão com a internet.';
+      case 'auth/internal-error':
+        return 'Erro interno do Firebase. Tente novamente em alguns instantes.';
+      case 'auth/too-many-requests':
+        return 'Muitas tentativas. Tente novamente mais tarde.';
+      case 'auth/unauthorized-domain':
+        return `Este domínio (${currentDomain}) não está autorizado para login. No Firebase Console, acesse Authentication > Settings > Authorized domains e adicione "${currentDomain}".`;
       case 'auth/redirect-uri-mismatch':
-        return 'O URI de redirecionamento não está configurado ou não corresponde ao registro no console. Acesse Authentication > Sign-in method no Firebase Console e adicione o domínio atual à lista de domínios autorizados.';
+        return `Erro de configuração no Google Cloud. No console, acesse APIs & Services > Credentials > OAuth 2.0 Client IDs e adicione "${window.location.origin}/__/auth/handler" como URI autorizado de redirecionamento.`;
+      case 'auth/timeout':
+        return 'Tempo esgotado na operação. Verifique sua conexão e tente novamente.';
+      case 'auth/popup-blocked':
+        return 'O popup de login foi bloqueado pelo navegador. Permita popups para este site e tente novamente.';
+      case 'auth/popup-window-closed':
+        return 'A janela de login foi fechada. Mantenha a janela aberta até concluir o login.';
       default:
-        return `Ocorreu um erro. Tente novamente. (${code})`;
+        return `Erro no login (${code}). Por favor, tente novamente ou use outro método.`;
     }
   };
 
@@ -75,13 +89,21 @@ export default function Auth() {
       console.log("Domínio atual:", currentDomain);
       console.log("URL completa:", currentOrigin);
       console.log("Protocolo:", currentProtocol);
-      console.log("authDomain configurado:", "gorf.com.br");
+      
+      // Importar dinamicamente para obter o authDomain correto
+      import('@/lib/firebase').then(module => {
+        const isDev = module.isDevelopment || false;
+        const authDomain = isDev ? "gorf-jogo-de-bebidas.firebaseapp.com" : "gorf.com.br";
+        console.log("Ambiente:", isDev ? "Desenvolvimento" : "Produção");
+        console.log("authDomain configurado:", authDomain);
+      });
+      
       console.log("Verifique se o domínio atual está autorizado no Firebase Console > Authentication > Settings > Authorized domains");
       
       // Mostrar informação útil para o usuário
       toast({
         title: "Tentando fazer login...",
-        description: `Utilizando domínio: ${currentDomain}`,
+        description: `Autenticando a partir de ${currentDomain}`,
         duration: 3000
       });
       

@@ -1,0 +1,61 @@
+un echo "Verificando versão do Node.js..."
+  echo "Verificando versão do Node.js..."
+  node --version
+  echo "Verificando versão do NPM..."
+  npm --version
+  echo "Verificando a configuração do Firebase..."
+  npx firebase --version
+  echo "Verificando o arquivo firebase.json..."
+  cat firebase.json
+  echo "Verificando o arquivo .firebaserc..."
+  cat .firebaserc
+  echo "Deploying to Firebase using token..."
+  npx firebase deploy --only hosting --token "" --non-interactive --debug
+  shell: /usr/bin/bash -e {0}
+  env:
+    FIREBASE_TOKEN: 
+    CI: true
+Verificando versão do Node.js...
+v20.19.0
+Verificando versão do NPM...
+10.8.2
+Verificando a configuração do Firebase...
+14.1.0
+Verificando o arquivo firebase.json...
+{
+  "hosting": {
+    "public": "dist/public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}Verificando o arquivo .firebaserc...
+{
+  "projects": {
+    "default": "gorf-jogo-de-bebidas"
+  }
+}Deploying to Firebase using token...
+[2025-04-04T03:28:58.552Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[2025-04-04T03:28:58.562Z] Error: Could not load the default credentials. Browse to https://cloud.google.com/docs/authentication/getting-started for more information.
+    at GoogleAuth.getApplicationDefaultAsync (/home/runner/work/Gorf-Jogo-de-Bebidas/Gorf-Jogo-de-Bebidas/node_modules/google-auth-library/build/src/auth/googleauth.js:287:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async GoogleAuth._GoogleAuth_determineClient (/home/runner/work/Gorf-Jogo-de-Bebidas/Gorf-Jogo-de-Bebidas/node_modules/google-auth-library/build/src/auth/googleauth.js:834:32)
+    at async GoogleAuth.getClient (/home/runner/work/Gorf-Jogo-de-Bebidas/Gorf-Jogo-de-Bebidas/node_modules/google-auth-library/build/src/auth/googleauth.js:698:20)
+    at async GoogleAuth.getAccessToken (/home/runner/work/Gorf-Jogo-de-Bebidas/Gorf-Jogo-de-Bebidas/node_modules/google-auth-library/build/src/auth/googleauth.js:722:24)
+    at async autoAuth (/home/runner/work/Gorf-Jogo-de-Bebidas/Gorf-Jogo-de-Bebidas/node_modules/firebase-tools/lib/requireAuth.js:26:19)
+    at async requireAuth (/home/runner/work/Gorf-Jogo-de-Bebidas/Gorf-Jogo-de-Bebidas/node_modules/firebase-tools/lib/requireAuth.js:81:20)
+    at async requirePermissions (/home/runner/work/Gorf-Jogo-de-Bebidas/Gorf-Jogo-de-Bebidas/node_modules/firebase-tools/lib/requirePermissions.js:17:5)
+    at async /home/runner/work/Gorf-Jogo-de-Bebidas/Gorf-Jogo-de-Bebidas/node_modules/firebase-tools/lib/command.js:241:17
+
+Error: Failed to authenticate, have you run firebase login?
+[2025-04-04T03:28:58.659Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[2025-04-04T03:28:58.659Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+Error: Process completed with exit code 1.

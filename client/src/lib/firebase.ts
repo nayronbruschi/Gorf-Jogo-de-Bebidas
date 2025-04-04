@@ -10,11 +10,19 @@ const isDevelopment =
   currentHost.includes('replit') ||
   currentHost.includes('repl.co');
 
-// IMPORTANTE: Sempre usamos gorf.com.br como authDomain para manter
-// a consistência visual e experiência de marca no popup de autenticação
+// Detectar os domínios de produção
+const isProduction = 
+  currentHost === 'gorf.com.br' || 
+  currentHost === 'www.gorf.com.br' || 
+  currentHost.includes('gorf-jogo-de-bebidas.web.app') || 
+  currentHost.includes('gorf-jogo-de-bebidas.firebaseapp.com');
+
+// Configuração dinâmica do Firebase usando diferentes domínios conforme o ambiente
 const firebaseConfig = {
   apiKey: "AIzaSyDRZ0akGNllg2YFaJM832PWSXvbNfcFbcE",
-  authDomain: "gorf.com.br",  // Sempre usar o domínio personalizado para melhor experiência de marca
+  // Em ambiente de desenvolvimento usamos o domínio padrão do Firebase
+  // Em produção usamos o domínio personalizado
+  authDomain: isDevelopment ? "gorf-jogo-de-bebidas.firebaseapp.com" : "gorf.com.br",
   projectId: "gorf-jogo-de-bebidas",
   storageBucket: "gorf-jogo-de-bebidas.appspot.com",
   messagingSenderId: "666516951655",
@@ -198,4 +206,4 @@ export async function updateGameStats(userId: string, gameName: string): Promise
   }
 }
 
-export { app, auth, googleProvider, db };
+export { app, auth, googleProvider, db, isDevelopment };
