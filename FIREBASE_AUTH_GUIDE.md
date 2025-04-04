@@ -1,192 +1,111 @@
-# Guia de Autenticação Firebase para o Gorf App
+# Guia de Configuração do Firebase Authentication para GORF
 
-Este guia explica como configurar e utilizar a autenticação Firebase no aplicativo Gorf, com foco específico na integração com domínio personalizado.
+Este guia explica como configurar o Firebase Authentication para sempre mostrar o domínio personalizado do GORF (gorf.com.br) e seu logo no popup de autenticação.
 
-## Configuração Inicial
+## 1. Configuração no Console do Firebase
 
-### 1. Configurar Métodos de Autenticação
+### 1.1 Adicionar Domínios Autorizados
 
-No Firebase Console:
-1. Acesse **Authentication** > **Sign-in method**
-2. Habilite os seguintes métodos:
-   - Email/Senha
-   - Google
-   - Anônimo (opcional)
+1. Acesse o [Console do Firebase](https://console.firebase.google.com/)
+2. Selecione o projeto "gorf-jogo-de-bebidas"
+3. No menu lateral, clique em **Authentication**
+4. Clique na aba **Settings**
+5. Role até a seção **Authorized domains**
+6. Adicione os seguintes domínios (se ainda não estiverem presentes):
+   - `gorf.com.br`
+   - `www.gorf.com.br`
+   - `gorf-jogo-de-bebidas.firebaseapp.com`
+   - `gorf-jogo-de-bebidas.web.app`
+   - Domínios de desenvolvimento (como seu ambiente Replit)
 
-### 2. Configurar Domínios Autorizados
+### 1.2 Configurar Providers e Aparência
 
-Para permitir autenticação a partir do domínio personalizado:
-1. Acesse **Authentication** > **Settings** > **Authorized domains**
-2. Adicione os domínios:
-   - gorf.com.br
-   - www.gorf.com.br
-   - [domínio do ambiente de desenvolvimento, se aplicável]
+1. Na página de **Authentication**, clique na aba **Sign-in method**
+2. Certifique-se de que o provedor **Google** esteja ativado
+3. Clique na aba **Templates**
+4. Na seção **Appearance**, configure:
+   - **App name**: GORF
+   - **Logo URL**: URL do seu logo (upload de uma imagem de 128x128 pixels)
+   - **Brand color**: #7E22CE (roxo do GORF)
+   - **Footer**: Marque a opção para mostrar links padrão ou personalize-os
 
-## Configuração no Frontend
+## 2. Configuração no Código
 
-O arquivo `client/src/lib/firebase.ts` contém a inicialização do Firebase e configuração da autenticação:
+### 2.1 Configuração do Firebase (Em client/src/lib/firebase.ts)
+
+Já configuramos a aplicação para usar sempre o domínio `gorf.com.br` no authDomain:
 
 ```typescript
-import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-
-// Configuração do Firebase obtida das variáveis de ambiente
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: 'gorf-jogo-de-bebidas.firebaseapp.com', // ou gorf.com.br para produção
-  projectId: 'gorf-jogo-de-bebidas',
-  storageBucket: 'gorf-jogo-de-bebidas.appspot.com',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyDRZ0akGNllg2YFaJM832PWSXvbNfcFbcE",
+  authDomain: "gorf.com.br", // Sempre usar o domínio personalizado
+  projectId: "gorf-jogo-de-bebidas",
+  storageBucket: "gorf-jogo-de-bebidas.appspot.com",
+  messagingSenderId: "666516951655",
+  appId: "1:666516951655:web:ecade148dce7e08852fac2"
 };
-
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
-
-// ... rest of the authentication functions
 ```
 
-## Hook de Autenticação
+### 2.2 Configuração do GoogleProvider
 
-O arquivo `client/src/hooks/use-auth.ts` contém o hook personalizado que gerencia o estado de autenticação:
+Configuramos o GoogleProvider para uma melhor experiência:
 
 ```typescript
-import { useState, useEffect, createContext, useContext } from 'react';
-import { User, onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-
-type AuthContextType = {
-  user: User | null;
-  loading: boolean;
-  signOut: () => Promise<void>;
-};
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const signOutUser = () => signOut(auth);
-
-  return (
-    <AuthContext.Provider value={{ user, loading, signOut: signOutUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-}
+googleProvider.setCustomParameters({
+  prompt: 'select_account',
+  login_hint: 'user@gmail.com'
+});
 ```
 
-## Rotas Protegidas
+## 3. Verificar Links na Página de Autenticação
 
-As rotas protegidas são implementadas no arquivo `client/src/App.tsx`:
+A página de autenticação deve agora mostrar o logo e nome do GORF, com o domínio gorf.com.br na URL e no popup de autenticação.
 
-```typescript
-function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
+## 4. Verificação e Diagnóstico
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/login');
-    }
-  }, [user, loading, navigate]);
+Se encontrar problemas, verifique:
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
+1. **Regras do Firebase Hosting**: Certifique-se de que as redireções no arquivo `firebase.json` estão corretas para que todos os caminhos sejam servidos pelo seu aplicativo Single Page.
 
-  return user ? <Component /> : null;
-}
-```
+2. **Domínio personalizado**: Verifique se o domínio personalizado está corretamente configurado no Firebase Hosting e se os registros DNS estão apontando para o Firebase.
 
-## Configurando Variáveis de Ambiente
+3. **Cache do navegador**: Limpe o cache do navegador ou use modo anônimo para testar.
 
-Crie um arquivo `.env.local` (para desenvolvimento) com as seguintes variáveis:
+4. **Erros no console**: Verifique erros no console do navegador relacionados ao Firebase Authentication.
 
-```
-VITE_FIREBASE_API_KEY=seu-api-key
-VITE_FIREBASE_AUTH_DOMAIN=gorf-jogo-de-bebidas.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=gorf-jogo-de-bebidas
-VITE_FIREBASE_STORAGE_BUCKET=gorf-jogo-de-bebidas.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=seu-messaging-sender-id
-VITE_FIREBASE_APP_ID=seu-app-id
-VITE_FIREBASE_MEASUREMENT_ID=seu-measurement-id
-```
+## 5. Configuração de Projeto Firebase
 
-Para produção, configure estas variáveis no ambiente de hospedagem.
+### 5.1 Para o Domínio Personalizado
 
-## Personalização da UI de Autenticação
+1. No console do Firebase, vá para **Hosting**
+2. Clique em **Add custom domain**
+3. Siga as instruções para adicionar e verificar seu domínio (gorf.com.br)
+4. Configure os registros DNS conforme solicitado pelo Firebase
 
-Para personalizar a interface de autenticação:
+### 5.2 Verificação de Identidade Firebase Auth
 
-1. Modifique os componentes em `client/src/pages/login.tsx` e `client/src/pages/signup.tsx`
-2. Estilize conforme o design do Gorf App (cores roxo, verde, branco e cinza)
-3. Implemente validação de formulários com feedback visual
+1. No console do Firebase, vá para **Authentication > Settings**
+2. Na seção **Security**, certifique-se de que o projeto esteja configurado com as configurações adequadas de verificação
 
-## Lidando com Erros de Autenticação
+## 6. Logo e Identidade Visual
 
-Implemente tratamento de erros para os seguintes casos:
+Para que o logo do GORF apareça na tela de autenticação:
 
-1. Email já em uso
-2. Credenciais inválidas
-3. Usuário não encontrado
-4. Senha fraca
-5. Falha na conexão com o Firebase
+1. Prepare uma imagem quadrada do logo com pelo menos 128x128 pixels
+2. Faça upload dela em uma URL pública (pode ser no próprio Firebase Storage)
+3. No console do Firebase, vá para **Authentication > Templates > Appearance**
+4. Adicione a URL do logo e selecione a cor de destaque #7E22CE
 
-## Persistência e Segurança
+## Certificação de Domínio
 
-Para configurar a persistência da sessão:
+Para usar domínios personalizados com Firebase Auth, você precisa comprovar a propriedade do domínio:
 
-```typescript
-import { setPersistence, browserLocalPersistence } from 'firebase/auth';
+1. No Google Search Console, adicione e verifique a propriedade do domínio gorf.com.br
+2. Use o mesmo conta Google para gerenciar o projeto Firebase e o domínio
+3. Isso oferece maior credibilidade e segurança para os usuários durante o processo de login
 
-// No arquivo de inicialização do Firebase
-setPersistence(auth, browserLocalPersistence)
-  .catch((error) => {
-    console.error('Erro ao configurar persistência:', error);
-  });
-```
+## Considerações Adicionais
 
-## Testes de Autenticação
-
-Para testar a autenticação:
-
-1. Use contas de teste específicas para desenvolvimento
-2. Simule os diferentes fluxos de autenticação
-3. Verifique a persistência em diferentes navegadores e dispositivos
-4. Teste a recuperação de senha
-
-## Resolução de Problemas Comuns
-
-### Erro: "domain-not-authorized"
-- Verifique se o domínio está adicionado na lista de domínios autorizados no Firebase Console
-- Certifique-se de que o domínio está configurado corretamente nos registros DNS
-
-### Erro: "wrong-password" ou "user-not-found"
-- Implemente mensagens de erro amigáveis para estes casos
-- Ofereça opção de recuperação de senha
-
-### Erro: "popup-closed-by-user"
-- Isto ocorre quando o usuário fecha a janela de autenticação do Google
-- Trate este caso graciosamente, oferecendo opção para tentar novamente
+- **Redirecionamentos pós-login**: Configure URLs de redirecionamento seguras em Authentication > Settings
+- **Cookies**: Firebase Auth usa cookies para sessão, certifique-se de que seu domínio está configurado corretamente
+- **HTTPS**: Certifique-se de que seu domínio está servindo o conteúdo através de HTTPS

@@ -3,16 +3,11 @@ import { getAuth, GoogleAuthProvider, connectAuthEmulator } from "firebase/auth"
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import type { UserProfile, InsertUserProfile, UserGameStats } from "@shared/schema";
 
-// Detectar ambiente de produção
-const isProduction = window.location.host === 'gorf.com.br' || 
-                     window.location.host === 'www.gorf.com.br' ||
-                     window.location.host === 'gorf-jogo-de-bebidas.web.app' ||
-                     window.location.host === 'gorf-jogo-de-bebidas.firebaseapp.com';
-
-// Usar domínio personalizado em produção, domínio padrão do Firebase em desenvolvimento
+// Sempre usar o domínio personalizado gorf.com.br para a autenticação
+// independentemente do ambiente em que estamos executando
 const firebaseConfig = {
   apiKey: "AIzaSyDRZ0akGNllg2YFaJM832PWSXvbNfcFbcE",
-  authDomain: isProduction ? "gorf.com.br" : "gorf-jogo-de-bebidas.firebaseapp.com",
+  authDomain: "gorf.com.br", // Sempre usar o domínio personalizado
   projectId: "gorf-jogo-de-bebidas",
   storageBucket: "gorf-jogo-de-bebidas.appspot.com",
   messagingSenderId: "666516951655",
@@ -25,8 +20,11 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
+// Configurações avançadas para o GoogleProvider
 googleProvider.setCustomParameters({
-  prompt: 'select_account'
+  prompt: 'select_account',
+  // Página de destino após o login
+  login_hint: 'user@gmail.com'
 });
 
 // Função para verificar se o usuário já tem perfil
