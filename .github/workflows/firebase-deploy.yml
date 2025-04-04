@@ -70,7 +70,24 @@ jobs:
           echo "Verificando o arquivo .firebaserc..."
           cat .firebaserc
           echo "Deploying to Firebase using token..."
-          npx firebase deploy --only hosting --token "${{ secrets.FIREBASE_TOKEN }}" --non-interactive --debug
+          # Verificar se o token está definido
+          if [ -z "$FIREBASE_TOKEN" ]; then
+            echo "ERRO: Token do Firebase não encontrado"
+            exit 1
+          fi
+          
+          # Determinar a versão correta do Firebase CLI com base na versão do Node.js
+          NODE_VERSION=$(node -v | cut -d 'v' -f2)
+          NODE_MAJOR_VERSION=$(echo $NODE_VERSION | cut -d '.' -f1)
+          
+          if [ $NODE_MAJOR_VERSION -lt 20 ]; then
+            echo "Usando Firebase CLI v11.30.0 compatível com Node.js $NODE_VERSION"
+            npm install firebase-tools@11.30.0 --no-save
+            npx firebase@11.30.0 deploy --only hosting --token "$FIREBASE_TOKEN" --non-interactive --debug
+          else
+            echo "Usando Firebase CLI versão mais recente"
+            npx firebase deploy --only hosting --token "$FIREBASE_TOKEN" --non-interactive --debug
+          fi
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           CI: true
