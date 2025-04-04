@@ -10,9 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Activity } from "lucide-react";
 import { GorfLogo } from "@/components/GorfLogo";
 import { useToast } from "@/hooks/use-toast";
+import FirebaseAuthDiagnostic from "@/components/FirebaseAuthDiagnostic";
 
 export default function Auth() {
   const [, setLocation] = useLocation();
@@ -369,6 +370,17 @@ export default function Auth() {
               {isLogin ? "Criar conta" : "Fazer login"}
             </button>
           </p>
+          
+          <div className="mt-10 text-center">
+            <details className="text-white/70">
+              <summary className="cursor-pointer flex items-center justify-center gap-2 text-sm">
+                <Activity className="h-4 w-4" /> Diagnóstico de Autenticação
+              </summary>
+              <div className="mt-2">
+                <FirebaseAuthDiagnostic />
+              </div>
+            </details>
+          </div>
         </div>
       </motion.div>
     </div>
