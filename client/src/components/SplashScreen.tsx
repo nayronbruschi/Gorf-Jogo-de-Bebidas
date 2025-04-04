@@ -39,7 +39,7 @@ export function SplashScreen() {
               duration: 1.5
             }}
           >
-            <GorfLogo size="large" />
+            <GorfLogo size="large" showText={true} text="Bora beber?" />
           </motion.div>
         </motion.div>
       )}

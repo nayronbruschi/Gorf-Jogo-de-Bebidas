@@ -287,7 +287,7 @@ export default function Auth() {
         className="w-full max-w-md"
       >
         <div className="mb-8">
-          <GorfLogo />
+          <GorfLogo showText={true} text="Bora beber?" />
         </div>
 
         <div className="bg-white/10 backdrop-blur-lg rounded-lg p-8 shadow-xl">
@@ -295,7 +295,6 @@ export default function Auth() {
             <h1 className="text-3xl font-bold text-white">
               {isLogin ? "Bem-vindo" : "Crie sua conta"}
             </h1>
-            <p className="text-xl text-white/80">Bora beber?</p>
           </div>
 
           <form onSubmit={handleEmailAuth} className="space-y-4">

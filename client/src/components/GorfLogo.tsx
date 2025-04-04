@@ -1,6 +1,16 @@
 import { motion } from "framer-motion";
 
-export function GorfLogo({ size = "large", className = "" }: { size?: "small" | "large", className?: string }) {
+export function GorfLogo({ 
+  size = "large", 
+  className = "", 
+  showText = false,
+  text = "" 
+}: { 
+  size?: "small" | "large", 
+  className?: string,
+  showText?: boolean,
+  text?: string
+}) {
   const logoSize = size === "small" ? "h-8" : "h-16";
 
   return (
@@ -18,7 +28,16 @@ export function GorfLogo({ size = "large", className = "" }: { size?: "small" | 
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
       />
-      {/* Removido o texto "Bora jogar?" conforme solicitado */}
+      {showText && (
+        <motion.h1
+          className="text-center text-xl text-white mt-2"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          {text}
+        </motion.h1>
+      )}
     </motion.div>
   );
 }
