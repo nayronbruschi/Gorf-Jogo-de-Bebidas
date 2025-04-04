@@ -5,10 +5,14 @@ import type { UserProfile, InsertUserProfile, UserGameStats } from "@shared/sche
 
 // Determinar qual domínio de autenticação usar com base no ambiente
 const currentHost = window.location.host;
+const currentOrigin = window.location.origin;
+
+// Detectar ambientes de desenvolvimento
 const isDevelopment = 
   currentHost.includes('localhost') || 
   currentHost.includes('replit') ||
-  currentHost.includes('repl.co');
+  currentHost.includes('repl.co') ||
+  currentHost.includes('.id.repl.co');
 
 // Detectar os domínios de produção
 const isProduction = 
@@ -17,12 +21,17 @@ const isProduction =
   currentHost.includes('gorf-jogo-de-bebidas.web.app') || 
   currentHost.includes('gorf-jogo-de-bebidas.firebaseapp.com');
 
+// Informações de diagnóstico no console para ajudar na depuração
+console.log("[Firebase] Host atual:", currentHost);
+console.log("[Firebase] Origin atual:", currentOrigin);
+console.log("[Firebase] Ambiente detectado:", isDevelopment ? "Desenvolvimento" : "Produção");
+
 // Configuração dinâmica do Firebase usando diferentes domínios conforme o ambiente
+// Em desenvolvimento, usamos o domínio padrão do Firebase
+// Em produção, usamos o domínio personalizado
 const firebaseConfig = {
   apiKey: "AIzaSyDRZ0akGNllg2YFaJM832PWSXvbNfcFbcE",
-  // Em ambiente de desenvolvimento usamos o domínio padrão do Firebase
-  // Em produção usamos o domínio personalizado
-  authDomain: isDevelopment ? "gorf-jogo-de-bebidas.firebaseapp.com" : "gorf.com.br",
+  authDomain: isDevelopment ? "gorf-jogo-de-bebidas.firebaseapp.com" : "gorf.com.br", 
   projectId: "gorf-jogo-de-bebidas",
   storageBucket: "gorf-jogo-de-bebidas.appspot.com",
   messagingSenderId: "666516951655",

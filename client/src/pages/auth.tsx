@@ -80,7 +80,7 @@ export default function Auth() {
       setIsLoading(true);
       setError("");
       
-      // Adicionar logs detalhados para debug
+      // Coletar informações de diagnóstico detalhadas
       const currentDomain = window.location.host;
       const currentOrigin = window.location.origin;
       const currentProtocol = window.location.protocol;
@@ -89,15 +89,16 @@ export default function Auth() {
       console.log("Domínio atual:", currentDomain);
       console.log("URL completa:", currentOrigin);
       console.log("Protocolo:", currentProtocol);
+      console.log("User Agent:", navigator.userAgent);
+      console.log("Verificando suporte a popup:", "Suportado");
       
-      // Importar dinamicamente para obter o authDomain correto
-      import('@/lib/firebase').then(module => {
-        const isDev = module.isDevelopment || false;
-        const authDomain = isDev ? "gorf-jogo-de-bebidas.firebaseapp.com" : "gorf.com.br";
-        console.log("Ambiente:", isDev ? "Desenvolvimento" : "Produção");
-        console.log("authDomain configurado:", authDomain);
-      });
+      // Importar dinamicamente para obter a configuração do Firebase
+      const firebaseModule = await import('@/lib/firebase');
+      const isDev = firebaseModule.isDevelopment || false;
+      const authDomain = isDev ? "gorf-jogo-de-bebidas.firebaseapp.com" : "gorf.com.br";
       
+      console.log("Ambiente:", isDev ? "Desenvolvimento" : "Produção");
+      console.log("authDomain configurado:", authDomain);
       console.log("Verifique se o domínio atual está autorizado no Firebase Console > Authentication > Settings > Authorized domains");
       
       // Mostrar informação útil para o usuário
@@ -108,6 +109,16 @@ export default function Auth() {
       });
       
       try {
+        // Configurar o Google Provider com parâmetros avançados para melhorar a compatibilidade
+        googleProvider.setCustomParameters({
+          // Sempre mostrar a seleção de conta
+          prompt: 'select_account',
+          // Forçar redirecionar para a página atual após autenticação
+          redirect_uri: window.location.origin,
+          // Requerendo todos os escopos necessários
+          scope: 'email profile',
+        });
+        
         // Usar um timeout para garantir que o toast seja exibido
         await new Promise(resolve => setTimeout(resolve, 500));
         
@@ -137,18 +148,61 @@ export default function Auth() {
         console.error("Código do erro:", firebaseError.code);
         console.error("Mensagem do erro:", firebaseError.message);
         
-        if (firebaseError.code === 'auth/redirect-uri-mismatch') {
-          console.error("===== ERRO DE URI DE REDIRECIONAMENTO =====");
+        // Tratamento personalizado para cada tipo de erro comum
+        if (firebaseError.code === 'auth/unauthorized-domain') {
+          console.error("===== ERRO DE DOMÍNIO NÃO AUTORIZADO =====");
           console.error("Este domínio precisa ser adicionado à lista de domínios autorizados no console do Firebase");
           console.error("Domínio a ser adicionado:", currentDomain);
-          console.error("URI completo de redirecionamento a ser adicionado:", `${currentOrigin}/__/auth/handler`);
           
           toast({
             variant: "destructive",
-            title: "Erro de configuração",
-            description: `Para resolver este erro: 1) Adicione "${currentDomain}" em Firebase Console > Authentication > Settings > Authorized domains, E 2) Adicione "${currentOrigin}/__/auth/handler" em Google Cloud Console > APIs & Services > Credentials > OAuth 2.0 Client IDs > Authorized redirect URIs`,
+            title: "Domínio não autorizado",
+            description: `Para resolver este erro: Adicione "${currentDomain}" em Firebase Console > Authentication > Settings > Authorized domains`,
             duration: 10000
           });
+        } else if (firebaseError.code === 'auth/redirect-uri-mismatch') {
+          console.error("===== ERRO DE URI DE REDIRECIONAMENTO =====");
+          console.error("URI de redirecionamento incorreto configurado no Google Cloud Console");
+          console.error("URI a ser adicionado:", `${currentOrigin}/__/auth/handler`);
+          
+          toast({
+            variant: "destructive",
+            title: "Erro de configuração OAuth",
+            description: `Configure no Google Cloud Console: APIs & Services > Credentials > OAuth 2.0 Client IDs e adicione "${currentOrigin}/__/auth/handler" como URI autorizado de redirecionamento`,
+            duration: 10000
+          });
+        } else if (firebaseError.code === 'auth/popup-blocked') {
+          toast({
+            variant: "destructive",
+            title: "Popup bloqueado",
+            description: "O navegador bloqueou o popup de login. Por favor, permita popups para este site e tente novamente.",
+            duration: 6000
+          });
+        } else if (firebaseError.code === 'auth/cancelled-popup-request' || 
+                  firebaseError.code === 'auth/popup-closed-by-user') {
+          // Erros menos graves, apenas mostrar mensagem mais simples
+          toast({
+            variant: "default",
+            title: "Login cancelado",
+            description: "Você fechou a janela de login antes de concluir.",
+            duration: 3000
+          });
+        } else if (firebaseError.code === 'auth/network-request-failed') {
+          toast({
+            variant: "destructive",
+            title: "Erro de conexão",
+            description: "Verifique sua conexão com a internet e tente novamente.",
+            duration: 5000
+          });
+        } else {
+          // Para outros tipos de erro, relançar para o catch externo
+          throw firebaseError;
+        }
+        
+        // Não relançar o erro para certos códigos de erro que já foram tratados
+        if (['auth/popup-closed-by-user', 'auth/cancelled-popup-request'].includes(firebaseError.code)) {
+          setIsLoading(false);
+          return; // Não tratar como erro grave
         }
         
         // Relançar o erro para ser tratado no catch externo
@@ -156,11 +210,12 @@ export default function Auth() {
       }
     } catch (error: any) {
       console.error("Erro no login com Google:", error);
-      const errorMessage = getErrorMessage(error.code || "auth/unknown");
+      const errorCode = error.code || "auth/unknown";
+      const errorMessage = getErrorMessage(errorCode);
       setError(errorMessage);
       
       // Não mostrar o toast para erro de popup fechado pelo usuário
-      if (error.code !== 'auth/popup-closed-by-user') {
+      if (!['auth/popup-closed-by-user', 'auth/cancelled-popup-request'].includes(errorCode)) {
         toast({
           variant: "destructive",
           title: "Erro no login",
