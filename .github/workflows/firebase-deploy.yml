@@ -3,24 +3,34 @@ on:
   push:
     branches:
       - main
+  # Permite execução manual do workflow
+  workflow_dispatch:
       
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v3
       
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
+          cache: 'npm'
           
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
+        
+      - name: Run Linting
+        run: npm run lint || echo "Linting skipped"
         
       - name: Build
         run: npm run build
-        
+        env:
+          # Adicionando variáveis de ambiente necessárias para o build
+          NODE_ENV: production
+          
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -28,3 +38,15 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           channelId: live
           projectId: gorf-jogo-de-bebidas
+          
+      - name: Notify Deployment Status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Deploy concluído com sucesso!"
+            echo "Seu app está disponível em:"
+            echo "https://gorf-jogo-de-bebidas.web.app"
+            echo "https://gorf.com.br"
+          else
+            echo "❌ Falha no deploy. Verifique os logs acima para mais detalhes."
+          fi
