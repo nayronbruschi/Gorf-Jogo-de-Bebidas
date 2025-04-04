@@ -1,11 +1,18 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import type { UserProfile, InsertUserProfile, UserGameStats } from "@shared/schema";
 
+// Detectar ambiente de produção
+const isProduction = window.location.host === 'gorf.com.br' || 
+                     window.location.host === 'www.gorf.com.br' ||
+                     window.location.host === 'gorf-jogo-de-bebidas.web.app' ||
+                     window.location.host === 'gorf-jogo-de-bebidas.firebaseapp.com';
+
+// Usar domínio personalizado em produção, domínio padrão do Firebase em desenvolvimento
 const firebaseConfig = {
   apiKey: "AIzaSyDRZ0akGNllg2YFaJM832PWSXvbNfcFbcE",
-  authDomain: "gorf-jogo-de-bebidas.firebaseapp.com", // Usando domínio padrão do Firebase para garantir compatibilidade
+  authDomain: isProduction ? "gorf.com.br" : "gorf-jogo-de-bebidas.firebaseapp.com",
   projectId: "gorf-jogo-de-bebidas",
   storageBucket: "gorf-jogo-de-bebidas.appspot.com",
   messagingSenderId: "666516951655",
@@ -32,7 +39,7 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
       const userData = userSnap.data() as UserProfile;
       // Garantir que os jogos recentes estejam ordenados por data
       if (userData.gameStats?.recentGames) {
-        userData.gameStats.recentGames = userData.gameStats.recentGames.sort((a, b) => 
+        userData.gameStats.recentGames = userData.gameStats.recentGames.sort((a: { playedAt: string }, b: { playedAt: string }) => 
           new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime()
         );
       }
@@ -147,7 +154,7 @@ export async function updateGameStats(userId: string, gameName: string): Promise
 
     // Pegar lista atual de jogos recentes ordenada por data
     let currentGames = userData.gameStats?.recentGames || [];
-    currentGames = currentGames.sort((a, b) => 
+    currentGames = currentGames.sort((a: { playedAt: string }, b: { playedAt: string }) => 
       new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime()
     );
 
