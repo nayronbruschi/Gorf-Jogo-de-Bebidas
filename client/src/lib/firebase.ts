@@ -1,18 +1,36 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, connectAuthEmulator } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, connectAuthEmulator, browserLocalPersistence, browserSessionPersistence, setPersistence } from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import type { UserProfile, InsertUserProfile, UserGameStats } from "@shared/schema";
 
-// Sempre usar o domínio personalizado gorf.com.br para a autenticação
-// independentemente do ambiente em que estamos executando
+// Determinar qual domínio de autenticação usar com base no ambiente
+const currentHost = window.location.host;
+const isDevelopment = 
+  currentHost.includes('localhost') || 
+  currentHost.includes('replit') ||
+  currentHost.includes('repl.co');
+
+// A melhor prática para resolver o problema do redirect_uri_mismatch
+// é usar o domínio atual para o authDomain em ambientes de desenvolvimento,
+// mas usar o domínio personalizado em produção
 const firebaseConfig = {
   apiKey: "AIzaSyDRZ0akGNllg2YFaJM832PWSXvbNfcFbcE",
-  authDomain: "gorf.com.br", // Sempre usar o domínio personalizado
+  authDomain: isDevelopment 
+    ? "gorf-jogo-de-bebidas.firebaseapp.com"  // Domínio padrão do Firebase para desenvolvimento
+    : "gorf.com.br",                           // Domínio personalizado para produção
   projectId: "gorf-jogo-de-bebidas",
   storageBucket: "gorf-jogo-de-bebidas.appspot.com",
   messagingSenderId: "666516951655",
   appId: "1:666516951655:web:ecade148dce7e08852fac2"
 };
+
+// Registrar a configuração para fins de diagnóstico
+console.log("Firebase Config:", {
+  ...firebaseConfig,
+  apiKey: "REDACTED" // Por segurança, não logar a chave API completa
+});
+console.log("Ambiente detectado:", isDevelopment ? "Desenvolvimento" : "Produção");
+console.log("Usando authDomain:", firebaseConfig.authDomain);
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -20,11 +38,20 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
+// Configurar persistência local para melhorar a experiência do usuário
+// e evitar problemas com popups que fecham inesperadamente
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    console.log("Firebase Auth: Persistência local configurada com sucesso");
+  })
+  .catch((error) => {
+    console.error("Firebase Auth: Erro ao configurar persistência:", error);
+  });
+
 // Configurações avançadas para o GoogleProvider
 googleProvider.setCustomParameters({
-  prompt: 'select_account',
-  // Página de destino após o login
-  login_hint: 'user@gmail.com'
+  prompt: 'select_account', // Sempre mostrar a seleção de conta
+  login_hint: 'user@gmail.com' // Dica de login
 });
 
 // Função para verificar se o usuário já tem perfil

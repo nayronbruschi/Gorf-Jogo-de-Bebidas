@@ -48,8 +48,16 @@ export default function Auth() {
         return 'Este domínio não está autorizado para login. Por favor, contate o administrador.';
       case 'auth/invalid-credential':
         return 'Credenciais inválidas. Por favor, tente novamente.';
+      case 'auth/redirect-cancelled-by-user':
+        return 'Login cancelado pelo usuário.';
+      case 'auth/redirect-operation-pending':
+        return 'Uma operação de login já está em andamento.';
+      case 'auth/web-storage-unsupported':
+        return 'Seu navegador não suporta armazenamento web, necessário para o login.';
+      case 'auth/redirect-uri-mismatch':
+        return 'O URI de redirecionamento não está configurado ou não corresponde ao registro no console. Acesse Authentication > Sign-in method no Firebase Console e adicione o domínio atual à lista de domínios autorizados.';
       default:
-        return 'Ocorreu um erro. Tente novamente.';
+        return `Ocorreu um erro. Tente novamente. (${code})`;
     }
   };
 
@@ -57,40 +65,88 @@ export default function Auth() {
     try {
       setIsLoading(true);
       setError("");
-      console.log("Iniciando login com Google...");
-      console.log("Domínio atual:", window.location.host);
-      console.log("URL completa:", window.location.origin);
-      console.log("Protocolo:", window.location.protocol);
+      
+      // Adicionar logs detalhados para debug
+      const currentDomain = window.location.host;
+      const currentOrigin = window.location.origin;
+      const currentProtocol = window.location.protocol;
+      
+      console.log("===== INÍCIO DO LOGIN COM GOOGLE =====");
+      console.log("Domínio atual:", currentDomain);
+      console.log("URL completa:", currentOrigin);
+      console.log("Protocolo:", currentProtocol);
+      console.log("authDomain configurado:", "gorf.com.br");
+      
+      // Mostrar informação útil para o usuário
+      toast({
+        title: "Tentando fazer login...",
+        description: `Utilizando domínio: ${currentDomain}`,
+        duration: 3000
+      });
       
       try {
+        // Usar um timeout para garantir que o toast seja exibido
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Tentar login com popup
+        console.log("Abrindo popup de autenticação do Google...");
         const result = await signInWithPopup(auth, googleProvider);
+        
         console.log("Login com Google bem sucedido:", result.user.email);
+        toast({
+          title: "Login bem sucedido!",
+          description: "Redirecionando...",
+          duration: 2000
+        });
   
         // Verificar se o usuário já tem perfil
         const profile = await getUserProfile(result.user.uid);
         if (!profile) {
+          console.log("Usuário não tem perfil, redirecionando para onboarding");
           setLocation("/onboarding");
         } else {
+          console.log("Usuário tem perfil, redirecionando para dashboard");
           setLocation("/dashboard");
         }
       } catch (firebaseError: any) {
+        console.error("===== ERRO NO LOGIN COM FIREBASE =====");
         console.error("Erro no login com Firebase:", firebaseError);
         console.error("Código do erro:", firebaseError.code);
         console.error("Mensagem do erro:", firebaseError.message);
+        
+        if (firebaseError.code === 'auth/redirect-uri-mismatch') {
+          console.error("===== ERRO DE URI DE REDIRECIONAMENTO =====");
+          console.error("Este domínio precisa ser adicionado à lista de domínios autorizados no console do Firebase");
+          console.error("Domínio a ser adicionado:", currentDomain);
+          
+          toast({
+            variant: "destructive",
+            title: "Erro de configuração",
+            description: `Domínio ${currentDomain} não está configurado no Firebase. Adicione-o às origens autorizadas no Console do Firebase.`,
+            duration: 5000
+          });
+        }
         
         // Relançar o erro para ser tratado no catch externo
         throw firebaseError;
       }
     } catch (error: any) {
       console.error("Erro no login com Google:", error);
-      setError(getErrorMessage(error.code || "auth/unknown"));
-      toast({
-        variant: "destructive",
-        title: "Erro no login",
-        description: getErrorMessage(error.code || "auth/unknown")
-      });
+      const errorMessage = getErrorMessage(error.code || "auth/unknown");
+      setError(errorMessage);
+      
+      // Não mostrar o toast para erro de popup fechado pelo usuário
+      if (error.code !== 'auth/popup-closed-by-user') {
+        toast({
+          variant: "destructive",
+          title: "Erro no login",
+          description: errorMessage,
+          duration: 4000
+        });
+      }
     } finally {
       setIsLoading(false);
+      console.log("===== FIM DA TENTATIVA DE LOGIN =====");
     }
   };
 
